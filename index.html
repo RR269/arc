@@ -75,7 +75,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .poles-wrap{margin-bottom:28px}
 .poles-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);font-family:var(--fm);margin-bottom:14px}
 .poles-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.pole-card{background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:26px 22px;cursor:pointer;position:relative;overflow:hidden;transition:all .28s cubic-bezier(.4,0,.2,1)}
+.pole-card{background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.01));border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:26px 22px;cursor:pointer;position:relative;overflow:hidden;transition:all .28s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 .pole-card::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,var(--pc,#fff),transparent);opacity:.5}
 .pole-card:hover{border-color:color-mix(in srgb,var(--pc,#fff) 35%,transparent);transform:translateY(-5px);box-shadow:0 20px 60px rgba(0,0,0,.5)}
 .pole-status-dot{position:absolute;top:16px;right:16px;width:8px;height:8px;border-radius:50%;animation:pulse 2s infinite}
@@ -833,25 +833,90 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 }
 /* === MOBILE === */
 @media(max-width:767px){
-  .hw{padding:0 16px 80px}.hn{height:56px}
-  .h-h1{font-size:32px;letter-spacing:-1px}
+  /* Layout global */
+  .hw{padding:0 14px 80px;max-width:100vw;overflow-x:hidden}
+  .hn{height:52px;padding:0 14px;gap:8px}
+  .h-logo-sub{display:none}
+  #sync-pill{display:none}
+  .hn-right{gap:6px}
+  .h-search-btn{padding:6px 10px;font-size:11px}
+  .h-search-kbd{display:none}
+  .h-warroom-btn{padding:6px 10px;font-size:11px}
+  .h-menu-btn{width:28px;height:28px}
+  /* Hero */
+  .h-hero{padding-top:36px}
+  .h-h1{font-size:28px;letter-spacing:-1px}
+  .h-sub{font-size:12px}
+  /* Stats */
   .h-stats{grid-template-columns:repeat(2,1fr);gap:8px}
-  .intel-grid{grid-template-columns:1fr}
-  .hgrid{grid-template-columns:1fr;gap:12px}
+  .h-stat{padding:14px 12px}
+  .h-stat-v{font-size:24px}
+  /* Poles */
   .poles-grid{grid-template-columns:1fr}
-  .wbody{flex-direction:column}.wmain{padding:16px 14px 120px}.wcp{display:none!important}
-  .wband{padding:16px}.wmetrics{grid-template-columns:repeat(2,1fr);gap:8px}
+  .pole-card{padding:20px 18px}
+  /* Intel */
+  .intel-grid{grid-template-columns:1fr}
+  /* Projets */
+  .hgrid{grid-template-columns:1fr;gap:10px}
+  .pc{padding:18px}
+  .pc-name{font-size:18px}
+  /* World */
+  .wtop{height:48px;padding:0 12px;gap:8px}
+  .w-acts{display:none}
+  .w-name{font-size:13px}
+  .wbody{flex-direction:column}
+  .wmain{padding:14px 14px 100px;overflow-x:hidden}
+  .wcp{display:none!important}
+  .wband{padding:14px 16px}
+  .wband-name{font-size:18px}
+  .wband-ring{width:64px;height:64px}
+  .wband-ring svg{width:64px;height:64px}
+  .wband-ring-pct{font-size:12px}
+  .wmetrics{grid-template-columns:repeat(2,1fr);gap:8px}
+  .wm{padding:13px}
+  .wm-v{font-size:20px}
+  /* Tasks */
   .wtask-del,.task-focus-btn{opacity:1!important}
+  .wtask-open-hint{display:none}
+  /* Cockpit */
   #cockpit-body{flex-direction:column}
-  #cockpit-right{width:100%;border-left:none;border-top:1px solid var(--b1);padding:12px 14px;max-height:220px;overflow-y:auto}
+  #cockpit-right{width:100%;border-left:none;border-top:1px solid var(--b1);padding:12px 14px;max-height:200px;overflow-y:auto}
+  #cockpit-top{height:48px;padding:0 12px;gap:8px}
+  /* Drawer */
   .tdrawer{width:100%!important}
-  .pbody{flex-direction:column}.pmain{padding:16px 14px 120px}.pcp{display:none!important}
+  /* Poles S3 S4 */
+  .ptop{height:48px;padding:0 12px;gap:8px}
+  .pbody{flex-direction:column}
+  .pmain{padding:14px 14px 100px;overflow-x:hidden}
+  .pcp{display:none!important}
+  /* Sante */
+  .sante-hero{flex-direction:column;text-align:center;padding:20px 18px;gap:16px}
+  .sante-kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .sante-kpi{padding:12px 10px}
+  .sante-kpi-val{font-size:20px}
+  .checkin-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .checkin-card{padding:14px}
+  .checkin-val-big{font-size:26px}
+  .hab-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .hab-card{padding:12px}
+  .sante-chart-wrap{padding:16px 14px}
+  /* Juridique */
+  .jur-hero{flex-direction:column;text-align:center;gap:12px;padding:18px 16px}
+  .jur-sec-head{padding:13px 14px}
+  /* FAB */
+  #fab-claude{display:flex}
+  /* Prevent horizontal overflow */
+  body{overflow-x:hidden}
+  #S1,#S2,#S3,#S4{overflow-x:hidden}
+}
+
+/* === PETIT MOBILE (iPhone SE, 375px) === */
+@media(max-width:390px){
+  .h-h1{font-size:24px}
+  .checkin-grid{grid-template-columns:1fr}
   .sante-kpi-grid{grid-template-columns:repeat(2,1fr)}
   .hab-grid{grid-template-columns:repeat(2,1fr)}
-  .checkin-grid{grid-template-columns:repeat(2,1fr)}
-  .sante-hero{flex-direction:column;text-align:center}
-  .jur-hero{flex-direction:column;text-align:center}
-  #fab-claude{display:flex}
+  .h-stats{grid-template-columns:repeat(2,1fr)}
 }
 
 #sync-pill{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;border:1px solid var(--b1);background:var(--bg2);user-select:none}
@@ -860,6 +925,73 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #sync-dot.busy{background:var(--orange);animation:pulse 1s infinite}
 #sync-dot.err{background:var(--red)}
 #sync-lbl{font-size:9px;font-family:var(--fm);color:var(--t3);letter-spacing:.3px;transition:color .3s}
+
+
+/* === MOBILE PHONE (max 480px) === */
+@media(max-width:480px){
+  /* Home */
+  .hw{padding:0 12px 80px}
+  .hn{padding:0 12px;height:52px;gap:8px}
+  .h-logo-sub,.h-search-kbd,.h-warroom-btn svg{display:none}
+  .h-warroom-btn{padding:6px 10px;font-size:11px}
+  .h-search-btn{padding:6px 10px;font-size:11px}
+  .h-h1{font-size:28px;letter-spacing:-.8px}
+  .h-hero{padding-top:36px}
+  .h-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+  .h-stat{padding:14px 12px}
+  .h-stat-v{font-size:26px}
+  .poles-grid{grid-template-columns:1fr}
+  .pole-card{padding:20px 16px}
+  .pole-icon{font-size:30px}
+  .intel-grid{grid-template-columns:1fr}
+  .hgrid{grid-template-columns:1fr;gap:10px}
+  .sync-badge{display:none}
+  /* World */
+  .wtop{height:48px;padding:0 12px;gap:8px}
+  .w-acts .w-act{display:none}
+  .w-acts .w-timer{display:flex}
+  .wmain{padding:14px 12px 100px}
+  .wmetrics{grid-template-columns:repeat(2,1fr);gap:8px}
+  .wm{padding:12px}
+  .wm-v{font-size:20px}
+  /* Pôles */
+  .ptop{height:48px;padding:0 12px;gap:8px}
+  .p-acts .p-act{font-size:10px;padding:6px 10px}
+  .pmain{padding:14px 12px 100px}
+  .sante-hero{flex-direction:column;text-align:center;padding:20px 16px;gap:16px}
+  .sante-score-ring{width:90px;height:90px}
+  .sante-score-ring svg{width:90px;height:90px}
+  .sante-kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .sante-kpi{padding:12px 10px}
+  .sante-kpi-val{font-size:20px}
+  .checkin-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .checkin-card{padding:14px}
+  .checkin-val-big{font-size:26px}
+  .hab-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .jur-hero{flex-direction:column;text-align:center;padding:16px}
+  .jur-hero-icon{font-size:36px}
+  .jur-stats-row{justify-content:center}
+  /* Claude panel masqué sur petits écrans */
+  .pcp{display:none!important}
+  .wcp{display:none!important}
+  /* FAB visible */
+  #fab-claude{display:flex}
+  /* Cockpit */
+  #cockpit-right{display:none}
+  #cockpit-left{padding:14px 14px 0}
+  #cockpit-top{padding:0 12px;gap:8px}
+  #cockpit-top-right .cockpit-status-dot,
+  #cockpit-top-right #cockpit-status-lbl{display:none}
+  /* Drawer full width */
+  .tdrawer{width:100%!important}
+  /* War room */
+  #wr-right{display:none}
+  #wr-focus{padding:16px 14px 0}
+  /* Search */
+  #search-modal{padding-top:40px}
+  /* Toast */
+  #toast-el{font-size:12px;padding:10px 18px;bottom:80px}
+}
 
 </style>
 </head>
@@ -1388,7 +1520,9 @@ async function pushToCloud() {
       { onConflict: 'user_id' }
     )).error;
     if(err) throw err;
-    setSyncUI('ok', '✓ Sync');
+    var nowTs = Date.now();
+    localStorage.setItem('arc_cloud_ts', String(nowTs));
+    setSyncUI('ok', '\u2713 Sync');
     setTimeout(function() { setSyncUI('ok', 'ARC'); }, 2000);
   } catch(e) {
     setSyncUI('err', 'Offline');
@@ -1404,7 +1538,7 @@ function schedulePush() {
 
 async function pullFromCloud() {
   if(!_sb) return;
-  setSyncUI('busy', 'Chargement...');
+  setSyncUI('busy', 'Sync...');
   try {
     var res = await _sb.from('arc_data').select('state,updated_at').eq('user_id', getUID()).maybeSingle();
     if(res.error) throw res.error;
@@ -1413,15 +1547,23 @@ async function pullFromCloud() {
       await pushToCloud();
       return;
     }
-    var cloudTs  = new Date(res.data.updated_at).getTime();
+    var cloudTs = new Date(res.data.updated_at).getTime();
     var cloudSavedAt = (res.data.state && res.data.state._savedAt) || 0;
     var localSavedAt = S._savedAt || 0;
-    var cloudWins = cloudSavedAt > localSavedAt;
-    if(cloudWins) {
+    // Cloud wins si sa derniere modification est plus recente que la locale
+    // On prend le max de updated_at serveur et _savedAt embarque
+    var cloudMost = Math.max(cloudTs, cloudSavedAt);
+    var localMost = localSavedAt;
+    if(cloudMost > localMost + 2000) { // 2s de tolerance pour les micro-ecarts
       Object.assign(S, res.data.state);
-      saveS();       // persist local — sans re-déclencher push (saveS pousse lui-même)
+      S._savedAt = cloudMost;
+      localStorage.setItem(SK, JSON.stringify(S));
+      localStorage.setItem('arc_cloud_ts', String(cloudTs));
       renderHome();
-      toast('☁ Données sync · ' + new Date(cloudTs).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}));
+      toast('\u2601 Sync · ' + new Date(cloudTs).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}));
+    } else if(localMost > cloudTs + 2000) {
+      // Local plus recent — push
+      await pushToCloud();
     }
     setSyncUI('ok', 'ARC');
   } catch(e) {
