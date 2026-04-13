@@ -993,6 +993,30 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #toast-el{font-size:12px;padding:10px 18px;bottom:80px}
 }
 
+
+/* ═══ HOME MONDES SECTION ═══ */
+.h-section{margin-bottom:32px}
+.h-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.h-section-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);font-family:var(--fm)}
+.h-section-sub{font-size:10px;color:var(--t3);font-family:var(--fm)}
+.h-mondes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+/* World card on home — redesign */
+.pc{background:var(--bg1);border:1px solid var(--b1);border-radius:22px;padding:22px;cursor:pointer;position:relative;overflow:hidden;transition:all .28s cubic-bezier(.4,0,.2,1)}
+.pc::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 0%,color-mix(in srgb,var(--pc,#fff) 8%,transparent),transparent 70%);pointer-events:none;transition:opacity .3s}
+.pc::after{content:'';position:absolute;top:0;left:20px;right:20px;height:1.5px;background:linear-gradient(90deg,transparent,var(--pc,#fff),transparent)}
+.pc:hover{transform:perspective(1200px) translateY(-10px) scale(1.015);box-shadow:0 28px 80px rgba(0,0,0,.65),0 0 0 1px color-mix(in srgb,var(--pc,#fff) 30%,transparent);border-color:color-mix(in srgb,var(--pc,#fff) 40%,transparent)}
+.pc:hover::before{opacity:1.5}
+/* ═══ WORLD HERO ═══ */
+.w-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;background:linear-gradient(135deg,color-mix(in srgb,var(--wc,#fff) 8%,transparent),transparent);border:1px solid color-mix(in srgb,var(--wc,#fff) 18%,transparent);border-radius:24px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden;animation:glowIn .5s cubic-bezier(.16,1,.3,1)}
+.w-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--wc,#fff),transparent);opacity:.8}
+.w-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% -20%,color-mix(in srgb,var(--wc,#fff) 12%,transparent),transparent 60%);pointer-events:none}
+.w-hero-left{flex:1;min-width:0;position:relative;z-index:1}
+.w-hero-right{flex-shrink:0;position:relative;z-index:1}
+.w-hero-cat{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:color-mix(in srgb,var(--wc,#fff) 70%,transparent);font-family:var(--fm);margin-bottom:8px}
+.w-hero-name{font-size:28px;font-weight:900;letter-spacing:-.8px;margin-bottom:8px;line-height:1;color:var(--wc,#fff);text-shadow:0 0 40px color-mix(in srgb,var(--wc,#fff) 30%,transparent)}
+.w-hero-desc{font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:14px;max-width:380px}
+.w-hero-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
+
 </style>
 </head>
 <body>
@@ -1004,7 +1028,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   </div>
   <div class="hn-right">
     <div id="sync-pill"><div id="sync-dot"></div><span id="sync-lbl">ARC</span></div>
-      <button class="h-search-btn" id="btn-search"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Recherche<span class="h-search-kbd">K</span></button>
+    <button class="h-search-btn" id="btn-search"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Recherche<span class="h-search-kbd">K</span></button>
     <button class="h-warroom-btn" id="btn-warroom"><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M7 1L9 5l4 .5-3 2.8.7 4L7 10 3.3 12.3 4 8.3 1 5.5 5 5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>War Room</button>
     <div style="position:relative"><button class="h-menu-btn" id="btn-menu">&#183;&#183;&#183;</button>
       <div class="h-menu-dropdown" id="h-menu-dd">
@@ -1026,8 +1050,25 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     </div>
   </div>
   <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
-  <div class="poles-wrap"><div class="poles-lbl">Poles personnels</div><div class="poles-grid" id="poles-grid"></div></div>
-  <div id="quick-add-bar"><div id="qa-top"><span id="qa-icon">+</span><input id="qa-inp" placeholder="Ajoute une tache..." autocomplete="off"></div><div id="qa-projects"></div></div>
+  <!-- SECTION MONDES -->
+  <div class="h-section">
+    <div class="h-section-head">
+      <div class="h-section-lbl">&#127759; Mondes</div>
+      <div class="h-section-sub" id="h-mondes-sub">5 projets actifs</div>
+    </div>
+    <div class="h-mondes-grid" id="hgrid"></div>
+  </div>
+
+  <!-- SECTION POLES -->
+  <div class="h-section">
+    <div class="h-section-head">
+      <div class="h-section-lbl">&#9889; P&#244;les personnels</div>
+    </div>
+    <div class="poles-grid" id="poles-grid"></div>
+  </div>
+
+  <!-- QUICK ADD -->
+  <div id="quick-add-bar"><div id="qa-top"><span id="qa-icon">+</span><input id="qa-inp" placeholder="Ajoute une t&#226;che..." autocomplete="off"></div><div id="qa-projects"></div></div>
   <div class="h-intel-head"><div style="display:flex;align-items:center;gap:10px"><div class="h-sec-label">Veille &amp; Sources</div><span class="intel-count" id="intel-count">6 sources</span></div><button class="intel-refresh" id="btn-intel">&#8635; Actualiser</button></div>
   <div class="intel-grid" id="intel-grid"></div>
   <div class="h-sec-label">Tes 5 projets</div>
@@ -1037,69 +1078,220 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 
 <!-- S2 WORLD -->
 <div class="scr off" id="S2">
+  <!-- TOPBAR -->
   <div class="wtop" id="wtop">
-    <button class="w-back" id="btn-back"><svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Mes projets</button>
-    <div class="w-center"><span class="w-icon" id="w-icon">-</span><span class="w-name" id="w-name">-</span><span class="w-pct-b" id="w-pct-b">-</span></div>
-    <div class="w-acts"><span class="w-timer"><span id="w-timer-val">00:00</span></span><button class="w-act lov" id="btn-lov">Lovable</button><button class="w-act" id="btn-ctx">Contexte</button><button class="w-act" id="btn-code">Code &#8599;</button></div>
+    <button class="w-back" id="btn-back">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Mondes
+    </button>
+    <div class="w-center">
+      <span class="w-icon" id="w-icon">-</span>
+      <span class="w-name" id="w-name">-</span>
+      <span class="w-pct-b" id="w-pct-b">0%</span>
+    </div>
+    <div class="w-acts">
+      <span class="w-timer"><span id="w-timer-val">00:00</span></span>
+      <button class="w-act lov" id="btn-lov">Lovable</button>
+      <button class="w-act" id="btn-ctx">Contexte</button>
+      <button class="w-act" id="btn-code">Code &#8599;</button>
+    </div>
   </div>
+
+  <!-- BODY : MAIN + CLAUDE PANEL -->
   <div class="wbody">
     <div class="wmain" id="wmain">
-      <div class="wband" id="wband" data-drawer="project" data-wid="0">
-        <div class="wband-inner">
-          <div class="wband-left"><div class="wband-cat" id="wband-cat"></div><div class="wband-name" id="wband-name"></div><div class="wband-desc" id="wband-desc"></div><div class="wband-tags" id="wband-tags"></div></div>
-          <div class="wband-ring"><svg viewBox="0 0 88 88"><circle class="wband-ring-track" cx="44" cy="44" r="34"/><circle class="wband-ring-arc" id="ring-arc" cx="44" cy="44" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke="var(--wc,#fff)"/></svg><div class="wband-ring-txt"><div class="wband-ring-pct" id="ring-pct">0%</div><div class="wband-ring-lbl">done</div></div></div>
-        </div>
-      </div>
-      <div id="trading-block" style="display:none">
-        <div id="mt5-pnl-hero" class="neutral">
-          <div class="pnl-section main"><div class="pnl-label-row"><span class="pnl-label">P&amp;L Flottant</span><div class="pnl-live-dot" id="pnl-hero-live-dot"></div></div><div class="pnl-hero-value" id="pnl-hero-val">+/-0.00 EUR</div><div class="pnl-pct-badge" id="pnl-hero-pct">0.00%</div></div>
-          <div class="pnl-section"><div class="pnl-stat-val" id="pnl-hero-balance">-</div><div class="pnl-stat-lbl">Balance</div></div>
-          <div class="pnl-section"><div class="pnl-stat-val" id="pnl-hero-equity">-</div><div class="pnl-stat-lbl">Equite</div></div>
-          <div class="pnl-section"><div class="pnl-stat-val" id="pnl-hero-pos">-</div><div class="pnl-stat-lbl">Positions</div></div>
-        </div>
-        <div class="pnl-dissoc"></div>
-        <div id="mt5-widget">
-          <div class="mt5-tabs"><button class="mt5-tab active" data-mt5tab="live">Live P&amp;L</button><button class="mt5-tab" data-mt5tab="ftmo">FTMO</button><button class="mt5-tab" data-mt5tab="sync">Sync</button></div>
-          <div class="mt5-tab-panel active" id="mt5-tab-live">
-            <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--b1);border-radius:10px;margin-bottom:14px"><div class="mt5-conn-dot" id="mt5-dot"></div><span style="font-size:11px;color:var(--t2);flex:1" id="mt5-conn-status">Non connecte</span></div>
-            <div class="mt5-sim-banner"><div class="mt5-sim-dot"></div><span class="mt5-sim-label">SIM</span><span style="flex:1;font-size:10px">Capital</span><input class="mt5-sim-inp" id="mt5-sim-cap" type="number" value="10000"><button class="mt5-sim-toggle" id="mt5-sim-btn" data-action="mt5-sim">Simuler BTC</button></div>
-            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px"><div class="mt5-stat"><div class="mt5-stat-lbl">Solde</div><div class="mt5-stat-val" id="mt5-balance">-</div></div><div class="mt5-stat"><div class="mt5-stat-lbl">Equite</div><div class="mt5-stat-val" id="mt5-equity">-</div></div><div class="mt5-stat"><div class="mt5-stat-lbl">Positions</div><div class="mt5-stat-val" id="mt5-positions">-</div></div><div class="mt5-stat"><div class="mt5-stat-lbl">Marge</div><div class="mt5-stat-val" id="mt5-margin">-</div></div></div>
-            <div class="mt5-bar-row"><div class="mt5-bar-head"><span class="mt5-bar-lbl">DD journalier</span><span class="mt5-bar-val" id="mt5-dd-day-val" style="color:var(--green)">0.00%/5%</span></div><div class="mt5-bar-track"><div class="mt5-bar-fill" id="mt5-dd-day-bar" style="width:0%;background:var(--green)"></div></div></div>
-            <div class="mt5-bar-row"><div class="mt5-bar-head"><span class="mt5-bar-lbl">DD total</span><span class="mt5-bar-val" id="mt5-dd-tot-val" style="color:var(--green)">0.00%/10%</span></div><div class="mt5-bar-track"><div class="mt5-bar-fill" id="mt5-dd-tot-bar" style="width:0%;background:var(--green)"></div></div></div>
-            <div class="mt5-bar-row"><div class="mt5-bar-head"><span class="mt5-bar-lbl">Objectif</span><span class="mt5-bar-val" id="mt5-target-val" style="color:var(--teal)">0.00%/10%</span></div><div class="mt5-bar-track"><div class="mt5-bar-fill" id="mt5-target-bar" style="width:0%;background:var(--teal)"></div></div></div>
-            <div class="h-sec-label" style="margin:14px 0 10px">Mise a jour manuelle</div>
-            <div class="mt5-manual-row"><div><div class="mt5-inp-lbl">Capital</div><input class="mt5-inp" id="mt5-m-capital" placeholder="10000" type="number"></div><div><div class="mt5-inp-lbl">Balance</div><input class="mt5-inp" id="mt5-m-balance" placeholder="10000" type="number"></div><div><div class="mt5-inp-lbl">Equite</div><input class="mt5-inp" id="mt5-m-equity" placeholder="10000" type="number"></div><div><div class="mt5-inp-lbl">Positions</div><input class="mt5-inp" id="mt5-m-pos" placeholder="0" type="number"></div></div>
-            <button class="mt5-manual-apply" data-action="mt5-manual">Mettre a jour</button>
+
+      <!-- HERO WORLD : plein impact à l'entrée -->
+      <div class="w-hero" id="w-hero">
+        <div class="w-hero-left">
+          <div class="w-hero-cat" id="wband-cat"></div>
+          <div class="w-hero-name" id="wband-name"></div>
+          <div class="w-hero-desc" id="wband-desc"></div>
+          <div class="w-hero-tags" id="wband-tags"></div>
+          <!-- FOCUS TASK en premier plan -->
+          <div class="w-focus-banner" id="w-focus-banner" style="display:none" data-open-focus="1">
+            <div class="w-focus-dot"></div>
+            <span class="w-focus-lbl">FOCUS</span>
+            <span class="w-focus-txt" id="w-focus-txt"></span>
+            <span class="w-focus-open">Ouvrir ↗</span>
           </div>
-          <div class="mt5-tab-panel" id="mt5-tab-ftmo"><div class="mt5-bar-row"><div style="font-size:11px;color:var(--t2);margin-bottom:12px">Challenge FTMO 10 000 EUR</div><div id="mt5-ftmo-list"></div></div></div>
-          <div class="mt5-tab-panel" id="mt5-tab-sync">
-            <div class="mt5-ea-block"><div class="mt5-ea-lbl">EA MQL5<button class="mt5-ea-copy" data-action="mt5-copy-ea">Copier</button></div><div class="mt5-ea-code" id="mt5-ea-code"></div></div>
-            <div style="margin-top:12px"><div class="mt5-inp-lbl" style="margin-bottom:6px">JSON manuel</div><div style="display:flex;gap:8px"><input id="mt5-json-inp" placeholder='{"balance":10000}' style="flex:1;background:var(--bg2);border:1px solid var(--b2);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--t1);font-family:var(--fm)" type="text"><button data-action="mt5-json-apply" style="padding:8px 14px;border-radius:8px;font-size:11px;font-weight:700;background:rgba(48,209,88,.12);color:var(--green);border:1px solid rgba(48,209,88,.3)">Apply</button></div><div id="mt5-webhook-status" style="font-size:10px;color:var(--t3);margin-top:6px;font-family:var(--fm)">Paste JSON and click Apply</div></div>
+        </div>
+        <div class="w-hero-right">
+          <!-- Ring de progression -->
+          <div class="wband-ring">
+            <svg viewBox="0 0 88 88">
+              <circle class="wband-ring-track" cx="44" cy="44" r="34"/>
+              <circle class="wband-ring-arc" id="ring-arc" cx="44" cy="44" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6" stroke="var(--wc,#fff)"/>
+            </svg>
+            <div class="wband-ring-txt">
+              <div class="wband-ring-pct" id="ring-pct">0%</div>
+              <div class="wband-ring-lbl">done</div>
+            </div>
           </div>
         </div>
       </div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Metriques</span><div class="wsec-line"></div><span class="wsec-info" data-drawer="done" data-wid="0">i</span></div><div class="wmetrics"><div class="wm" data-drawer="done" data-wid="0"><div class="wm-v" style="color:var(--green)" id="m-done">0</div><div class="wm-l">Faites</div></div><div class="wm" data-drawer="todo" data-wid="0"><div class="wm-v" id="m-todo">0</div><div class="wm-l">En cours</div></div><div class="wm" data-drawer="blocking" data-wid="0"><div class="wm-v" style="color:var(--red)" id="m-blk">0</div><div class="wm-l">Bloquants</div></div><div class="wm" data-drawer="journal" data-wid="0"><div class="wm-v" style="color:var(--teal)" id="m-jou">0</div><div class="wm-l">Journal</div></div></div></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Mission</span><div class="wsec-line"></div><span class="wsec-info" data-drawer="mission" data-wid="0">i</span></div><div class="wmission" data-drawer="mission" data-wid="0"><div class="wmission-dot" id="miss-dot"></div><div><div class="wmission-lbl">Mission active</div><div class="wmission-txt" id="miss-txt">-</div></div></div></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Action prioritaire</span><div class="wsec-line"></div><span class="wsec-info" data-drawer="actions" data-wid="0">i</span></div><div class="waction" data-drawer="actions" data-wid="0"><div class="waction-bar" id="waction-bar"></div><div class="waction-brow">Action <span class="waction-prio-b" id="waction-badge">-</span></div><div class="waction-row"><div class="waction-num" id="waction-num">1</div><div><div class="waction-title" id="waction-title">-</div><div class="waction-detail" id="waction-detail">-</div></div></div></div></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Bloquants</span><div class="wsec-line"></div><span class="wsec-info" data-drawer="blocking" data-wid="0">i</span></div><div class="wblk-list" id="blk-list"></div><div class="wblk-add"><input class="wblk-inp" id="blk-inp" placeholder="Ajouter un bloquant..."><button class="wblk-add-btn" id="blk-add-btn">+ Ajouter</button></div></div>
-      <div id="w-focus-banner" class="w-focus-banner" style="display:none" data-open-focus="1"><div class="w-focus-dot"></div><span class="w-focus-lbl">Focus</span><span class="w-focus-txt" id="w-focus-txt">-</span><span class="w-focus-open">Ouvrir</span></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Taches</span><div class="wsec-line"></div><span class="wsec-info" data-drawer="todo" data-wid="0">i</span></div><div class="wtask-add-row"><input class="wtask-inp" id="task-inp" placeholder="Nouvelle tache..."><button class="wtask-add-btn" id="task-add-btn">Ajouter</button></div><div id="tasks-container"></div></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Outils &amp; Ressources</span><div class="wsec-line"></div></div><div class="wtools-grid" id="tools-grid"></div></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Prochaines actions</span><div class="wsec-line"></div></div><div class="wna-list" id="na-list"></div></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Notes</span><div class="wsec-line"></div></div><textarea class="wnotes-ta" id="notes-ta" placeholder="Notes libres..."></textarea><div class="wnotes-hint" style="display:flex;justify-content:space-between"><span>Sauvegarde auto</span><span id="notes-chars">0 car.</span></div></div>
-      <div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Journal</span><div class="wsec-line"></div><span class="wsec-info" data-drawer="journal" data-wid="0">i</span></div><div class="wjou-add-row"><input class="wjou-inp" id="jou-inp" placeholder="Avancee, decision..."><button class="wjou-btn" id="jou-add-btn">+ Entree</button></div><div id="jou-list"></div></div>
-    </div>
+
+      <!-- MÉTRIQUES RAPIDES -->
+      <div class="wmetrics" id="wmetrics">
+        <div class="wm" data-drawer="done" data-wid="0">
+          <div class="wm-v" style="color:var(--green)" id="m-done">0</div>
+          <div class="wm-l">Accomplies</div>
+        </div>
+        <div class="wm" data-drawer="todo" data-wid="0">
+          <div class="wm-v" id="m-todo">0</div>
+          <div class="wm-l">En cours</div>
+        </div>
+        <div class="wm" data-drawer="blocking" data-wid="0">
+          <div class="wm-v" style="color:var(--red)" id="m-blk">0</div>
+          <div class="wm-l">Bloquants</div>
+        </div>
+        <div class="wm" data-drawer="journal" data-wid="0">
+          <div class="wm-v" style="color:var(--teal)" id="m-jou">0</div>
+          <div class="wm-l">Journal</div>
+        </div>
+      </div>
+
+      <!-- MISSION -->
+      <div class="wmission" data-drawer="mission" data-wid="0">
+        <div class="wmission-dot" id="miss-dot"></div>
+        <div>
+          <div class="wmission-lbl">Mission</div>
+          <div class="wmission-txt" id="miss-txt"></div>
+        </div>
+      </div>
+
+      <!-- ACTION PRIORITAIRE -->
+      <div class="wsec">
+        <div class="wsec-head"><span class="wsec-lbl">Action prioritaire</span><div class="wsec-line"></div></div>
+        <div class="waction" data-drawer="actions" data-wid="0">
+          <div class="waction-bar" id="waction-bar"></div>
+          <div class="waction-brow">
+            <span id="waction-badge" class="waction-prio-b"></span>
+          </div>
+          <div class="waction-row">
+            <div class="waction-num" id="waction-num">1</div>
+            <div>
+              <div class="waction-title" id="waction-title"></div>
+              <div class="waction-detail" id="waction-detail"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TÂCHES -->
+      <div class="wsec">
+        <div class="wsec-head">
+          <span class="wsec-lbl">T&#226;ches</span>
+          <div class="wsec-line"></div>
+          <span class="wsec-info" id="wsec-tasks-count"></span>
+        </div>
+        <div class="wtask-add-row">
+          <input class="wtask-inp" id="task-inp" placeholder="Nouvelle t&#226;che..." autocomplete="off">
+          <button class="wtask-add-btn" id="task-add-btn">+ Ajouter</button>
+        </div>
+        <div id="tasks-container"></div>
+      </div>
+
+      <!-- BLOQUANTS -->
+      <div class="wsec">
+        <div class="wsec-head"><span class="wsec-lbl">Bloquants</span><div class="wsec-line"></div></div>
+        <div class="wblk-list" id="blk-list"></div>
+        <div class="wblk-add">
+          <input class="wblk-inp" id="blk-inp" placeholder="Ajouter un bloquant...">
+          <button class="wblk-add-btn" id="blk-add-btn">+ Ajouter</button>
+        </div>
+      </div>
+
+      <!-- PROCHAINES ACTIONS -->
+      <div class="wsec">
+        <div class="wsec-head"><span class="wsec-lbl">Prochaines actions</span><div class="wsec-line"></div></div>
+        <div class="wna-list" id="na-list"></div>
+      </div>
+
+      <!-- TRADING BLOCK (WORLD 4 only) -->
+      <div id="trading-block" style="display:none"></div>
+
+      <!-- NOTES -->
+      <div class="wsec">
+        <div class="wsec-head"><span class="wsec-lbl">Notes</span><div class="wsec-line"></div><span class="wsec-info" id="notes-chars">0 mots</span></div>
+        <textarea class="wnotes-ta" id="notes-ta" placeholder="Tes notes, id&#233;es, r&#233;flexions..."></textarea>
+        <div class="wnotes-hint">Sauvegarde automatique</div>
+      </div>
+
+      <!-- JOURNAL -->
+      <div class="wsec">
+        <div class="wsec-head"><span class="wsec-lbl">Journal</span><div class="wsec-line"></div></div>
+        <div class="wjou-add-row">
+          <input class="wjou-inp" id="jou-inp" placeholder="Entr&#233;e du jour..." autocomplete="off">
+          <button class="wjou-btn" id="jou-add-btn">+ Ajouter</button>
+        </div>
+        <div id="jou-list"></div>
+      </div>
+
+      <!-- OUTILS -->
+      <div class="wsec">
+        <div class="wsec-head"><span class="wsec-lbl">Outils</span><div class="wsec-line"></div></div>
+        <div class="wtools-grid" id="tools-grid"></div>
+      </div>
+
+    </div><!-- /wmain -->
+
+    <!-- CLAUDE PANEL — TOUJOURS VISIBLE, MAÎTRE DU JEU -->
     <div class="wcp" id="wcp">
-      <div class="cp-head"><div class="cp-logo" id="cp-logo">C</div><div class="cp-info"><div class="cp-title">Claude</div><div class="cp-sub" id="cp-sub">Pret</div></div><button class="cp-clr" id="btn-cp-clr">Effacer</button></div>
-      <div class="cp-brief" id="cp-brief" style="display:none"><div class="cp-brief-dot"></div><div class="cp-brief-txt">Briefing auto actif</div></div>
-      <div class="cp-autocap"><div class="cp-cap-dot"></div><div class="cp-cap-txt">Auto-capture</div><button class="cp-cap-tog" id="cp-cap-tog">Desactiver</button></div>
-      <div class="cp-apikey" id="cp-ak-wrap"><div class="cp-ak-lbl">Cle API Anthropic</div><div class="cp-ak-row"><input class="cp-ak-inp" id="cp-ak" type="password" placeholder="sk-ant-..."><button class="cp-ak-save" id="cp-ak-save">Sauver</button></div></div>
-      <div class="cp-msgs" id="cp-msgs"><div class="cp-welcome" id="cp-welcome"><div class="cp-wi">&#9889;</div><div class="cp-wt">Claude integre</div><div class="cp-wd">Strategie, deblocage, briefing auto.</div><div class="cp-sugs" id="cp-sugs"></div></div><div class="typing" id="cp-typing"><div class="tdots"><span></span><span></span><span></span></div></div></div>
-      <div class="cp-inp" id="cp-inp"><div class="cp-inp-row"><textarea class="cp-ta" id="cp-ta" rows="1" placeholder="Questionne, decide..."></textarea><button class="cp-send" id="cp-send"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button></div><div class="cp-inp-hint"><div class="cp-hint-dot"></div>Echanges journalises</div></div>
-    </div>
-  </div>
-  <button id="fab-claude" aria-label="Claude">C</button>
-</div>
+      <div class="cp-head" style="--wc:var(--wc,#fff)">
+        <div class="cp-logo" id="cp-logo" style="background:var(--wc,#fff)">C</div>
+        <div class="cp-info">
+          <div class="cp-title">Claude</div>
+          <div class="cp-sub" id="cp-sub">Partenaire strat&#233;gique</div>
+        </div>
+        <button class="cp-clr" id="btn-cp-clr">Effacer</button>
+      </div>
+      <!-- Briefing automatique -->
+      <div class="cp-brief" id="cp-brief" style="display:none">
+        <div class="cp-brief-dot"></div>
+        <div class="cp-brief-txt">Analyse en cours...</div>
+      </div>
+      <!-- Suggestions contextuelles -->
+      <div class="cp-autocap" id="cp-autocap" style="display:none">
+        <div class="cp-cap-dot"></div>
+        <span class="cp-cap-txt" id="cp-cap-txt">Auto-capture active</span>
+        <button class="cp-cap-tog" id="cp-cap-tog">D&#233;sactiver</button>
+      </div>
+      <!-- API Key -->
+      <div class="cp-apikey" id="cp-ak-wrap" style="display:none">
+        <div class="cp-ak-lbl">Cl&#233; API Anthropic</div>
+        <div class="cp-ak-row">
+          <input class="cp-ak-inp" id="cp-ak" type="password" placeholder="sk-ant-...">
+          <button class="cp-ak-save" id="cp-ak-save">Sauver</button>
+        </div>
+      </div>
+      <div class="cp-msgs" id="cp-msgs">
+        <div id="cp-welcome">
+          <div style="padding:16px;text-align:center">
+            <div style="font-size:40px;margin-bottom:10px">&#129504;</div>
+            <div style="font-size:13px;font-weight:800;margin-bottom:6px">Claude — ton partenaire</div>
+            <div style="font-size:11px;color:var(--t2);line-height:1.65;margin-bottom:14px">Je connais tes projets, tes bloquants, tes objectifs. Je t'analyse et te challenge.</div>
+            <div class="cp-sugs" id="cp-sugs-world"></div>
+          </div>
+        </div>
+        <div class="typing" id="cp-typing"><div class="tdots"><span></span><span></span><span></span></div></div>
+      </div>
+      <div class="cp-inp">
+        <div class="cp-inp-row">
+          <textarea class="cp-ta" id="cp-ta" rows="1" placeholder="Question, analyse, d&#233;blocage..."></textarea>
+          <button class="cp-send" id="cp-send" style="background:var(--wc,#fff)">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="cp-inp-hint">
+          <div class="cp-hint-dot"></div>
+          Entr&#233;e pour envoyer &middot; Shift+Entr&#233;e pour saut de ligne
+        </div>
+      </div>
+    </div><!-- /wcp -->
+
+  </div><!-- /wbody -->
+</div><!-- /S2 -->
 
 <!-- S3 POLE SANTE -->
 <div class="scr off" id="S3">
@@ -1515,8 +1707,9 @@ async function pushToCloud() {
   _pushing = true;
   setSyncUI('busy', 'Sync...');
   try {
+    var cleanS = JSON.parse(JSON.stringify(S));
     var err = (await _sb.from('arc_data').upsert(
-      { user_id: getUID(), state: S, updated_at: new Date().toISOString() },
+      { user_id: getUID(), state: cleanS, updated_at: new Date().toISOString() },
       { onConflict: 'user_id' }
     )).error;
     if(err) throw err;
@@ -1548,21 +1741,16 @@ async function pullFromCloud() {
       return;
     }
     var cloudTs = new Date(res.data.updated_at).getTime();
-    var cloudSavedAt = (res.data.state && res.data.state._savedAt) || 0;
-    var localSavedAt = S._savedAt || 0;
-    // Cloud wins si sa derniere modification est plus recente que la locale
-    // On prend le max de updated_at serveur et _savedAt embarque
-    var cloudMost = Math.max(cloudTs, cloudSavedAt);
-    var localMost = localSavedAt;
-    if(cloudMost > localMost + 2000) { // 2s de tolerance pour les micro-ecarts
+    var cloudAction = (res.data.state && res.data.state._lastAction) || 0;
+    var localAction = S._lastAction || 0;
+    // Comparaison sur _lastAction (vraie action user) pas _savedAt (auto-save)
+    if(cloudAction > localAction + 1000) {
       Object.assign(S, res.data.state);
-      S._savedAt = cloudMost;
       localStorage.setItem(SK, JSON.stringify(S));
       localStorage.setItem('arc_cloud_ts', String(cloudTs));
       renderHome();
       toast('\u2601 Sync · ' + new Date(cloudTs).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}));
-    } else if(localMost > cloudTs + 2000) {
-      // Local plus recent — push
+    } else if(localAction > cloudAction + 1000) {
       await pushToCloud();
     }
     setSyncUI('ok', 'ARC');
@@ -1578,6 +1766,17 @@ document.addEventListener('visibilitychange', function() {
 });
 window.addEventListener('online',  function() { setSyncUI('busy','Reconnexion...'); if(_sb) pushToCloud(); });
 window.addEventListener('offline', function() { setSyncUI('err','Offline'); });
+
+
+function updateNotesChars(){
+  var ta = document.getElementById('notes-ta');
+  var el = document.getElementById('notes-chars');
+  if(ta && el){
+    var words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
+    el.textContent = words + ' mot' + (words > 1 ? 's' : '');
+  }
+}
+
 
 /* DATA */
 var WORLDS = [
@@ -1806,9 +2005,12 @@ function loadS(){
   if(!S.tools.juridique) S.tools.juridique=[];
 }
 
-function saveS(){
+function saveS(isAction){
+  if(isAction !== false){
+    S._lastAction = Date.now();
+  }
   S._savedAt = Date.now();
-  schedulePush();
+  if(isAction !== false) schedulePush();
   try{
     var json=JSON.stringify(S);
     localStorage.setItem(SK,json);
@@ -1825,7 +2027,7 @@ function saveS(){
 }
 
 // AUTO-SAVE every 30 seconds
-setInterval(saveS, 30000);
+setInterval(function(){ saveS(false); }, 30000);
 window.addEventListener("beforeunload", saveS);
 
 function getApiKey(){ return localStorage.getItem("arc_key")||""; }
@@ -1968,6 +2170,12 @@ function renderIntel(){
 
 /* ===== ENTER WORLD ===== */
 var wTimer={s:0,running:false,iv:null};
+function initMT5(){
+  var tb = document.getElementById('trading-block');
+  if(!tb) return;
+  tb.innerHTML = '<div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Trading MT5</span><div class="wsec-line"></div></div><div style="background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:18px;text-align:center"><div style="font-size:28px;margin-bottom:8px">&#128200;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Expert Advisor BTC/USDT</div><div style="font-size:11px;color:var(--t2)">Configure le webhook MT5 pour voir ton P&L en temps r&#233;el.</div></div></div>';
+}
+
 function enterWorld(wid){
   CUR.wid=wid;
   var w=WORLDS[wid];
@@ -1975,6 +2183,9 @@ function enterWorld(wid){
   document.getElementById("S2").style.background=w.wbg;
   document.getElementById("w-icon").textContent=w.icon;
   document.getElementById("w-name").textContent=w.name;
+  // Update metrics data-wid
+  document.querySelectorAll('.wm[data-drawer]').forEach(function(el){ el.setAttribute('data-wid', wid); });
+  document.querySelectorAll('[data-drawer="project"],[data-drawer="done"],[data-drawer="todo"],[data-drawer="blocking"],[data-drawer="journal"],[data-drawer="mission"],[data-drawer="actions"]').forEach(function(el){ el.setAttribute('data-wid', wid); });
   var allT=w.tasks_done.concat(w.tasks_todo);
   var done=allT.filter(function(t){ return S.tasks[wid]&&S.tasks[wid][t.id]; }).length;
   var pct=allT.length>0?Math.round(done/allT.length*100):0;
@@ -2985,6 +3196,9 @@ document.addEventListener("click",function(ev){
   if(srTaskEl){ var wid=parseInt(srTaskEl.getAttribute("data-wid")); var tid=srTaskEl.getAttribute("data-tid"); closeSearch(); enterWorld(wid); setTimeout(function(){ openCockpit(wid,tid); },400); return; }
   var srWorldEl=t.closest("[data-action='sr-open-world']");
   if(srWorldEl){ var wid=parseInt(srWorldEl.getAttribute("data-wid")); closeSearch(); enterWorld(wid); return; }
+  // Claude suggestion buttons
+  var sugEl = t.closest('[data-sug-wid]');
+  if(sugEl){ var swid=parseInt(sugEl.getAttribute('data-sug-wid')); var stxt=sugEl.getAttribute('data-sug-txt'); cpSend(swid, stxt); return; }
   // Lovable
   if(t.id==="btn-lov"){ var w=WORLDS[CUR.wid]; if(w.lovable) window.open(w.lovable,"_blank"); return; }
   if(t.id==="btn-code"){ var w=WORLDS[CUR.wid]; window.open("https://github.com","_blank"); return; }
@@ -3600,6 +3814,18 @@ function initClaude(wid){
   var ak=getApiKey();
   var akWrap=document.getElementById("cp-ak-wrap");
   if(akWrap) akWrap.style.display=ak?"none":"block";
+  // Show contextual suggestions
+  var sugsEl = document.getElementById('cp-sugs-world');
+  if(sugsEl && wid >= 0){
+    var w2 = WORLDS[wid];
+    var sugs = (w2 && w2.suggestions) ? w2.suggestions : [];
+    var h2 = '';
+    for(var si=0; si<Math.min(sugs.length,4); si++){
+      var sg = sugs[si];
+      h2 += '<button class="cp-sug" data-sug-wid="'+wid+'" data-sug-txt="'+esc(sg)+'">'+esc(sg)+'</button>';
+    }
+    sugsEl.innerHTML = h2;
+  }
   var cpInp=document.getElementById("cp-inp");
   if(cpInp) cpInp.style.display="flex";
   // Show suggestions
@@ -3685,7 +3911,8 @@ init();
 // ── SERVICE WORKER ──
 if('serviceWorker' in navigator){
   var swPath = (location.pathname.replace(/\/[^\/]*$/, '') + '/sw.js').replace('//', '/');
-  navigator.serviceWorker.register(swPath)
+  var swScope = swPath.replace('sw.js','');
+  navigator.serviceWorker.register(swPath, {scope: swScope})
     .then(function(){ console.log('SW ok'); })
     .catch(function(e){ console.warn('SW:', e.message); });
 }
