@@ -639,6 +639,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .ccb-mode.active{color:var(--ck-c,#fff);border-color:var(--ck-c,#fff)}
 #ccb-send{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#000;border:none;transition:all .18s;cursor:pointer}
 #ccb-send svg{width:14px;height:14px}
+#ccb-prompt-badge{border-radius:7px 7px 0 0;background:color-mix(in srgb,var(--ck-c,#ff6b35) 8%,transparent);border:1px solid color-mix(in srgb,var(--ck-c,#ff6b35) 20%,transparent);border-bottom:none;margin:0 0 -1px;font-family:var(--fm)}
 #ccb-status{font-size:10px;color:var(--t3);padding:6px 4px 0;font-family:var(--fm);display:flex;align-items:center;gap:6px}
 #ccb-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;animation:pulse 2s infinite}
 #cockpit-right{width:300px;flex-shrink:0;border-left:1px solid var(--b1);overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px;background:var(--bg1)}
@@ -1307,13 +1308,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <span class="cp-cap-txt" id="cp-cap-txt">Auto-capture active</span>
         <button class="cp-cap-tog" id="cp-cap-tog">D&#233;sactiver</button>
       </div>
-      <!-- API Key -->
-      <div class="cp-apikey" id="cp-ak-wrap" style="display:none">
-        <div class="cp-ak-lbl">Cl&#233; API Anthropic</div>
-        <div class="cp-ak-row">
-          <input class="cp-ak-inp" id="cp-ak" type="password" placeholder="sk-ant-...">
-          <button class="cp-ak-save" id="cp-ak-save">Sauver</button>
-        </div>
       </div>
       <div class="cp-msgs" id="cp-msgs">
         <div id="cp-welcome">
@@ -1534,9 +1528,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         </div>
         <div class="typing" id="cp-typing-sante"><div class="tdots"><span></span><span></span><span></span></div></div>
       </div>
-      <div class="cp-apikey" id="cp-ak-wrap-sante" style="display:none">
-        <div class="cp-ak-lbl">Cl&#233; API Anthropic</div>
-        <div class="cp-ak-row"><input class="cp-ak-inp" id="cp-ak-sante" type="password" placeholder="sk-ant-..."><button class="cp-ak-save" id="cp-ak-save-sante">Sauver</button></div>
+              <div class="cp-ak-row"><input class="cp-ak-inp" id="cp-ak-sante" type="password" placeholder="sk-ant-..."><button class="cp-ak-save" id="cp-ak-save-sante">Sauver</button></div>
       </div>
       <div class="cp-inp">
         <div class="cp-inp-row">
@@ -1668,24 +1660,25 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <div id="cockpit-left-head"><div id="cockpit-left-lbl">Zone de travail</div><div id="cockpit-word-count">0 mots</div><div id="cockpit-saved-badge">Sauvegarde</div></div>
       <textarea id="cockpit-textarea" placeholder="Travaille ici..."></textarea>
       <div id="cockpit-claude-bar">
-        <div id="ccb-inner"><div id="ccb-logo">C</div><input id="ccb-inp" placeholder="Demande a Claude..." autocomplete="off"><div id="ccb-mode-wrap"><button class="ccb-mode active" data-mode="inject">Injecter</button><button class="ccb-mode" data-mode="chat">Chat</button></div><button id="ccb-send"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button></div>
-        <div id="ccb-status">Claude voit le contexte complet</div>
+        <div id="ccb-prompt-badge" style="display:none;align-items:center;gap:6px;padding:5px 10px 2px;font-size:10px;color:var(--text3);letter-spacing:.04em"><span style="color:var(--ck-c,#ff6b35);font-size:11px">✦</span>Prompt préparé pour cette tâche — modifie ou envoie<span id="ccb-prompt-clear" style="margin-left:auto;cursor:pointer;opacity:.6;font-size:10px" data-action="ccb-clear-prompt">✕ Effacer</span></div>
+      <div id="ccb-inner"><div id="ccb-logo">C</div><input id="ccb-inp" placeholder="Demande à Claude..." autocomplete="off"><div id="ccb-mode-wrap"><button class="ccb-mode active" data-mode="inject">Injecter</button><button class="ccb-mode" data-mode="chat">Chat</button></div><button id="ccb-send"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button></div>
+        <div id="ccb-status">Claude actif — contexte complet chargé</div>
       </div>
     </div>
     <div id="cockpit-right">
       <div id="cockpit-ctx-card"><div class="ck-sec-lbl">Contexte</div><div id="cockpit-ctx-mission"></div><div id="cockpit-ctx-prio"></div></div>
       <div id="cockpit-claude-msgs" style="display:none"><div class="ck-sec-lbl">Claude</div><div id="cockpit-msgs-list"></div><div class="ck-typing" id="ck-typing"><div class="ck-tdots"><span></span><span></span><span></span></div></div></div>
-      <div id="cockpit-jou-card"><div class="ck-sec-lbl">Journal</div><div id="cockpit-jou-rows"></div><div style="display:flex;gap:7px;margin-top:8px"><input id="cockpit-jou-inp" class="ck-inp" placeholder="Avancee..."><button id="cockpit-jou-btn" class="ck-btn">+</button></div></div>
+      <div id="cockpit-jou-card"><div class="ck-sec-lbl">Journal</div><div id="cockpit-jou-rows"></div><div style="display:flex;gap:7px;margin-top:8px"><input id="cockpit-jou-inp" class="ck-inp" placeholder="Avancée..."><button id="cockpit-jou-btn" class="ck-btn">+</button></div></div>
     </div>
   </div>
 </div>
 <div id="search-modal">
-  <div id="search-box"><div id="search-inp-wrap"><span><svg viewBox="0 0 16 16" fill="none" width="18" height="18"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><input id="search-inp" placeholder="Rechercher..." autocomplete="off" spellcheck="false"><span id="search-kbd">Esc</span></div><div id="search-results"><div class="sr-empty">Commence a taper</div></div><div id="search-footer"><span class="sf-hint"><span class="sf-key">Esc</span> fermer</span></div></div>
+  <div id="search-box"><div id="search-inp-wrap"><span><svg viewBox="0 0 16 16" fill="none" width="18" height="18"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><input id="search-inp" placeholder="Rechercher..." autocomplete="off" spellcheck="false"><span id="search-kbd">Esc</span></div><div id="search-results"><div class="sr-empty">Commence à taper</div></div><div id="search-footer"><span class="sf-hint"><span class="sf-key">Esc</span> fermer</span></div></div>
 </div>
 <div id="onboarding">
-  <div class="ob-step active" id="ob-0"><span class="ob-icon">&#128640;</span><div class="ob-title">Bienvenue dans ARC v2</div><div class="ob-text">5 mondes + 2 poles personnels (Sante et Juridique). Claude integre partout.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
-  <div class="ob-step" id="ob-1"><span class="ob-icon">&#9889;</span><div class="ob-title">Cockpit par tache</div><div class="ob-text">Clique sur n'importe quelle tache pour ton espace de travail dedie avec Claude.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
-  <div class="ob-step" id="ob-2"><span class="ob-icon">&#127919;</span><div class="ob-title">War Room + Poles</div><div class="ob-text">War Room pour focus absolu. Pole Sante. Pole Juridique pour tes demarches.</div><button class="ob-next" data-action="ob-finish">Cest parti</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div></div>
+  <div class="ob-step active" id="ob-0"><span class="ob-icon">&#128640;</span><div class="ob-title">Bienvenue dans ARC v2</div><div class="ob-text">5 mondes + 2 pôles personnels (Santé et Juridique). Claude intégré partout.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
+  <div class="ob-step" id="ob-1"><span class="ob-icon">&#9889;</span><div class="ob-title">Cockpit par tâche</div><div class="ob-text">Clique sur n'importe quelle tâche pour ton espace de travail dédié avec Claude.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
+  <div class="ob-step" id="ob-2"><span class="ob-icon">&#127919;</span><div class="ob-title">War Room + Poles</div><div class="ob-text">War Room pour focus absolu. Pôle Santé. Pôle Juridique pour tes démarches.</div><button class="ob-next" data-action="ob-finish">Cest parti</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div></div>
 </div>
 <div id="war-room">
   <div id="wr-top">
@@ -1697,7 +1690,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div id="wr-focus">
       <div id="wr-task-name">-</div><div id="wr-task-mission">-</div>
       <textarea id="wr-textarea" placeholder="Travaille ici. Une seule chose."></textarea>
-      <div id="wr-bar"><div style="display:flex;gap:8px;align-items:center;background:var(--bg2);border:1px solid var(--b2);border-radius:12px;padding:8px 12px"><div style="width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-style:italic;color:#000" id="wr-ccb-logo">C</div><input id="wr-ccb-inp" style="flex:1;background:none;border:none;font-size:13px;color:var(--t1)" placeholder="Demande a Claude..."><button id="wr-ccb-send" style="width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#000;border:none;flex-shrink:0"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button></div></div>
+      <div id="wr-bar"><div style="display:flex;gap:8px;align-items:center;background:var(--bg2);border:1px solid var(--b2);border-radius:12px;padding:8px 12px"><div style="width:22px;height:22px;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-style:italic;color:#000" id="wr-ccb-logo">C</div><input id="wr-ccb-inp" style="flex:1;background:none;border:none;font-size:13px;color:var(--t1)" placeholder="Demande à Claude..."><button id="wr-ccb-send" style="width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#000;border:none;flex-shrink:0"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button></div></div>
     </div>
     <div id="wr-right">
       <button id="wr-done-btn">Accomplir</button>
@@ -1831,138 +1824,292 @@ function updateNotesChars(){
 /* DATA */
 var WORLDS = [
   {
-    id:0,icon:"🚀",name:"ARYAN",color:"#ff6b35",wbg:"#050200",
-    cat:"App · Startup · Valence 26",tags:["React + Lovable","Supabase ✓","Stripe ✓"],
-    desc:"App livraison locale multi-secteurs Valence. 3 interfaces React. Backend Supabase connecté, 28 tables en prod, Stripe activé.",
-    mission:"State Machine + Auth 3 rôles + connecter les 3 interfaces au backend réel.",
-    priority:{num:1,title:"Auth 3 roles + State Machine",detail:"Auth Supabase multi-roles (client/livreur/commercant) avec RLS policies. Puis state machine commande bout en bout.",badge:"EN COURS"},
+    id:0, icon:"🚀", name:"ARYAN", color:"#ff6b35", wbg:"#050200",
+    cat:"App · Livraison halal · Valence 26",
+    tags:["React + Lovable","Supabase ✓","Stripe ✓"],
+    desc:"App de livraison halal locale — 3 interfaces React en production, 28 tables Supabase, Stripe Connect actif. Le moteur est là. Ce qui manque : l'auth qui fait tout tourner.",
+    mission:"Brancher l'auth 3 rôles sur les 3 interfaces. Dès que ça tourne, le premier flux commande est testable de bout en bout.",
+    priority:{
+      num:1,
+      title:"Auth 3 rôles → RLS → State Machine",
+      detail:"Client, livreur, commerçant — chacun son accès, ses données, ses actions. Sans ça, rien ne peut être testé en conditions réelles.",
+      badge:"EN COURS"
+    },
     tasks_done:[
-      {id:"a1",t:"Setup projet React + Lovable compte"},
-      {id:"a2",t:"Structure des 3 interfaces (Client, Livreur, Commercant)"},
-      {id:"a3",t:"Design system couleurs et composants UI"},
-      {id:"a4",t:"Interface Client — ecrans commande"},
-      {id:"a5",t:"Interface Livreur — ecran carte et livraisons"},
-      {id:"a6",t:"Interface Commercant — catalogue produits"},
-      {id:"a7",t:"Maquettes validees et approuvees"},
-      {id:"a8",t:"Creer projet Supabase + configurer variables env dans Lovable"},
-      {id:"a10",t:"28 tables deployees en production dans Lovable"},
-      {id:"a13",t:"Stripe Connect active mode test + cles API sauvegardees"}
+      {id:"a1", t:"Projet React créé sur Lovable",
+       prompt:"Je travaille sur ARYAN, une app de livraison halal locale (Valence). Le projet React est créé sur Lovable. Qu'est-ce que cette étape débloque concrètement et quel est le risque technique le plus sous-estimé à ce stade ? Réponse directe, 3-4 phrases."},
+      {id:"a2", t:"3 interfaces structurées : Client, Livreur, Commerçant",
+       prompt:"ARYAN — 3 interfaces React structurées (client, livreur, commerçant). Quel est le point d'architecture le plus fragile entre ces 3 interfaces aujourd'hui, avant de brancher l'auth ? Identifie le risque principal et dis-moi comment le prévenir."},
+      {id:"a3", t:"Design system couleurs + composants UI définis",
+       prompt:"ARYAN design system défini. Quels sont les 3 points de friction UI qui apparaissent systématiquement quand on connecte un backend réel à des interfaces mockées ? Comment les anticiper maintenant avant d'être bloqué plus tard ?"},
+      {id:"a4", t:"Interface Client — flux de commande complet",
+       prompt:"Interface Client ARYAN terminée. Décris les 3 flux utilisateur critiques à valider en priorité quand l'auth sera active. Pour chacun, précise ce qui peut casser si le backend ne répond pas comme attendu."},
+      {id:"a5", t:"Interface Livreur — carte + gestion livraisons",
+       prompt:"Interface Livreur ARYAN terminée. Quels états de commande le livreur doit-il pouvoir gérer depuis son interface ? Donne-moi le mapping exact entre les états UI et les transitions de la state machine Supabase."},
+      {id:"a6", t:"Interface Commerçant — catalogue produits",
+       prompt:"Interface Commerçant ARYAN terminée. Quelles tables Supabase cette interface doit-elle lire et écrire en priorité pour le MVP ? Donne-moi la liste exacte avec les opérations CRUD par table."},
+      {id:"a7", t:"Maquettes validées",
+       prompt:"Maquettes ARYAN validées. Qu'est-ce qui change visuellement quand on branche les vraies données à la place des mocks ? Donne-moi les 2 points de friction UI les plus probables à corriger après la connexion backend."},
+      {id:"a8", t:"Supabase connecté à Lovable — variables env configurées",
+       prompt:"Supabase connecté à Lovable pour ARYAN. Donne-moi un checklist de vérification complet : variables d'environnement critiques, test de connexion, et les 3 premières choses à tester pour confirmer que la connexion est stable."},
+      {id:"a10", t:"28 tables déployées en production Supabase",
+       prompt:"28 tables ARYAN en prod Supabase. Quelles sont les 5 tables les plus critiques pour l'auth multi-rôles et la state machine commande ? Pour chacune, explique son rôle exact dans le flux."},
+      {id:"a13", t:"Stripe Connect activé en mode test + clés API sauvegardées",
+       prompt:"Stripe Connect ARYAN en mode test. Quelles sont les étapes exactes pour passer en production ? Quels webhooks sont indispensables pour le split payment commerçant et comment les tester en mode test avant de basculer ?"}
     ],
     tasks_todo:[
-      {id:"a9",t:"Auth multi-roles : client, livreur, commercant + RLS policies"},
-      {id:"a11",t:"State machine commande (placed to accepted to delivered)"},
-      {id:"a12",t:"Edge Functions + RLS policies par role"},
-      {id:"a14",t:"Connecter les 3 interfaces React au backend Supabase"},
-      {id:"a15",t:"Tests E2E flux commande complet"},
-      {id:"a16",t:"Stripe Connect — webhooks + split payment commercant"}
+      {id:"a9", t:"Auth multi-rôles Supabase : client, livreur, commerçant + RLS",
+       prompt:"ARYAN — Je dois implémenter l'auth Supabase multi-rôles. Stack : React/Lovable + Supabase Auth. 3 rôles : client, livreur, commerçant. Donne-moi le plan d'implémentation complet : structure des métadonnées user dans la table profiles, RLS policies par rôle sur les tables critiques (orders, products, deliveries), et comment Lovable gère le routing conditionnel selon le rôle. Commence par le premier fichier SQL à écrire."},
+      {id:"a11", t:"State machine commande : placed → accepted → picked → delivered",
+       prompt:"ARYAN — State machine commande Supabase. États : placed, accepted, picked_up, delivered, cancelled. Donne-moi l'architecture complète : schéma SQL de la table orders avec les contraintes d'état, triggers Postgres pour valider les transitions, et la Edge Function qui orchestre chaque changement d'état avec les permissions par rôle. Code complet, pas de pseudo-code."},
+      {id:"a12", t:"Edge Functions sécurisées + RLS policies complètes",
+       prompt:"ARYAN — Je dois implémenter les RLS policies pour 3 rôles (client, livreur, commerçant) sur les tables orders, products, deliveries. Donne-moi les policies exactes en SQL pour chaque table, puis la structure d'une Edge Function typique sécurisée par rôle. Code prêt à déployer."},
+      {id:"a14", t:"Connecter les 3 interfaces React au backend Supabase",
+       prompt:"ARYAN — Connexion frontend/backend. J'ai 3 interfaces React dans Lovable et Supabase connecté avec 28 tables. Par quelle interface commencer pour valider le flux de bout en bout ? Donne-moi la checklist de connexion avec les hooks Supabase React à implémenter en premier, les erreurs courantes à éviter avec Lovable."},
+      {id:"a15", t:"Tests E2E : flux commande complet de bout en bout",
+       prompt:"ARYAN — Tests E2E flux complet : client commande → commerçant accepte → livreur récupère → livré. Donne-moi le scénario de test avec les données à créer dans Supabase, les assertions critiques à vérifier à chaque étape, et comment simuler les 3 rôles simultanément en dev."},
+      {id:"a16", t:"Stripe Connect — webhooks + split payment commerçant",
+       prompt:"ARYAN — Stripe Connect webhooks + split payment. Le client paie → ARYAN prend une commission → le commerçant reçoit le reste. Donne-moi le code complet de la Edge Function webhook Stripe, la gestion des events payment_intent.succeeded et transfer.created, et le schéma de la table payments dans Supabase."}
     ],
-    blockers:["Auth 3 roles non implementee — bloque les interfaces","State machine non codee — bloque le flux commande"],
-    nextActions:["Implementer Auth Supabase 3 roles avec metadata","Creer RLS policies par role","Coder state machine Edge Functions","Connecter interface Client en premier","Tests flux commande complet"],
-    suggestions:["Auth Supabase multi-roles implementation","State machine MQL5 vers Edge Function Supabase","RLS policies securite par role","Connecter Lovable au backend Supabase"],
+    blockers:[
+      "Auth 3 rôles non implémentée — les 3 interfaces sont déconnectées du backend",
+      "State machine non codée — impossible de tester un flux commande réel"
+    ],
+    nextActions:[
+      "Écrire le SQL de la table profiles avec les métadonnées rôle",
+      "Implémenter les RLS policies sur orders, products, deliveries",
+      "Coder la state machine commande en Edge Functions",
+      "Connecter l'interface Client en priorité pour valider le premier flux",
+      "Tester le flux E2E complet avant de toucher Stripe"
+    ],
+    suggestions:[
+      "Implémente l'auth Supabase 3 rôles pour ARYAN",
+      "Écris les RLS policies pour mes 28 tables ARYAN",
+      "Comment coder la state machine commande ARYAN ?",
+      "Connecte Lovable à Supabase Auth pas à pas"
+    ],
     lovable:"https://lovable.dev",
-    context:"ARYAN — App livraison Valence\nStack: React/Lovable + Supabase (28 tables en prod) + Stripe Connect (mode test)\nPhase: Auth + State Machine"
+    context:"ARYAN — App livraison halal Valence\nStack: React/Lovable + Supabase (28 tables en prod) + Stripe Connect (mode test)\nRôles: client, livreur, commerçant\nBloquant principal: Auth multi-rôles + State Machine commande"
   },
   {
-    id:1,icon:"📦",name:"FBA",color:"#ff9f0a",wbg:"#050300",
-    cat:"E-commerce · Revenu passif · Europe + US",tags:["Amazon FBA","Private Label","Helium 10"],
-    desc:"Private label Europe et US. Produit non encore trouve. Phase de recherche et selection de niche.",
-    mission:"Trouver le produit gagnant. Analyse marche + selection niche Europe/US.",
-    priority:{num:1,title:"Scanner 10 niches avec Helium 10",detail:"Criteres : prix 20-50e, demande >3000/mois, concurrence moderee, marge nette cible 40%.",badge:"BLOQUE"},
+    id:1, icon:"📦", name:"FBA", color:"#ff9f0a", wbg:"#050300",
+    cat:"E-commerce · Private Label · Europe + US",
+    tags:["Amazon FBA","Private Label","Helium 10"],
+    desc:"Private label Amazon Europe + US. Aucun produit sélectionné à ce jour — phase 0. La prochaine heure passée sur Helium 10 vaut plus que 10 heures de réflexion.",
+    mission:"Sortir de la phase 0. Trouver un produit avec données validées. Tout le reste — sourcing, listing, pub — vient après.",
+    priority:{
+      num:1,
+      title:"Scanner 10 niches avec Helium 10 Black Box",
+      detail:"Critères durs : prix 20-50€, demande >3 000/mois, concurrence modérée (<200 reviews top concurrent), marge nette cible ≥40%. Shortlist 3 produits.",
+      badge:"BLOQUÉ"
+    },
     tasks_done:[],
     tasks_todo:[
-      {id:"b1",t:"Definir criteres produit (prix, demande, concurrence)"},
-      {id:"b2",t:"Scanner niches avec Helium 10 Black Box"},
-      {id:"b3",t:"Analyser top 10 concurrents par niche cible"},
-      {id:"b4",t:"Shortlist 3 produits valides par les donnees"},
-      {id:"b5",t:"Trouver fournisseurs sur Alibaba pour le top 3"},
-      {id:"b6",t:"Demander devis et MOQ aux fournisseurs"},
-      {id:"b7",t:"Calculer marge nette reelle (FBA + PPC + achat)"},
-      {id:"b8",t:"Commander echantillons et valider qualite"},
-      {id:"b9",t:"Creer listing optimise A+ sur Amazon"}
+      {id:"b1", t:"Définir les critères produit exacts (prix, demande, concurrence, marge)",
+       prompt:"Amazon FBA — Je démarre la recherche produit. Je suis en France, je vise Amazon Europe + US. Donne-moi un tableau de critères avec les seuils exacts pour 2025 : prix de vente min/max, volume BSR, nombre de reviews du top concurrent, marge nette après FBA fees, PPC et shipping. Sois précis sur les chiffres — pas de généralités."},
+      {id:"b2", t:"Scanner 10 niches avec Helium 10 Black Box",
+       prompt:"FBA — Helium 10 Black Box. Donne-moi la configuration exacte des filtres pour trouver un produit à 20-50€ avec revenue >5 000€/mois et reviews top concurrent <200. Inclus 5 catégories Amazon Europe prometteuses à explorer en premier, avec le raisonnement pour chacune."},
+      {id:"b3", t:"Analyser les 10 meilleurs concurrents sur la niche choisie",
+       prompt:"FBA — Analyse concurrentielle Amazon. Pour une niche donnée, donne-moi le framework complet : métriques à regarder (BSR, evolution reviews, prix history, listing quality score), comment identifier les faiblesses exploitables, et le critère décisif pour dire 'cette niche est entrable'. Format checklist actionnable."},
+      {id:"b4", t:"Shortlister 3 produits validés par les données",
+       prompt:"FBA — Scoring produit. J'ai analysé plusieurs niches. Donne-moi un tableau de décision avec pondération pour comparer 3 produits candidats : potentiel de marge, facilité sourcing, différenciabilité, risque concurrentiel, barrière à l'entrée. Crée le tableau avec les formules de scoring."},
+      {id:"b5", t:"Trouver des fournisseurs Alibaba pour le top 3",
+       prompt:"FBA — Sourcing Alibaba. Méthode complète pour trouver et qualifier un fournisseur : filtres de recherche, signaux de qualité (Gold Supplier, verified, années d'activité), questions à poser absolument, red flags à éliminer immédiatement, et template de premier message en anglais pour négocier MOQ et prix."},
+      {id:"b6", t:"Obtenir devis comparatifs de 5 fournisseurs minimum",
+       prompt:"FBA — Template RFQ fournisseur Alibaba. Rédige un message professionnel couvrant : spécifications produit, quantités demandées (20/50/100 pièces), packaging personnalisé, certification CE ou FCC, délai de production, prix FOB Guangzhou et EXW. Inclus les critères pour comparer les 5 offres reçues objectivement."},
+      {id:"b7", t:"Calculer la marge nette réelle (FBA + PPC + achat + shipping)",
+       prompt:"FBA — Calcul de marge complète. Donne-moi la formule exacte avec tous les postes de coût : prix achat FOB, fret maritime depuis Guangzhou, droits de douane import France (taux exact pour la catégorie produit), FBA fulfillment fees, storage fees, budget PPC estimé, TVA, commission Amazon 15%. Résultat : marge nette % et montant €."},
+      {id:"b8", t:"Commander des échantillons et valider la qualité",
+       prompt:"FBA — Validation qualité échantillons. Protocole complet de test : critères visuels, fonctionnels, de conformité CE, photos à prendre pour le dossier, et comment rédiger un rapport de feedback fournisseur actionnable pour négocier les améliorations avant la commande MOQ."},
+      {id:"b9", t:"Créer le listing A+ optimisé sur Amazon",
+       prompt:"FBA — Listing Amazon optimisé. Structure complète : titre (formule avec mots-clés principaux), 5 bullet points (format persuasif + bénéfices concrets), description A+ (sections visuelles), backend keywords. Montre un exemple concret pour un produit lifestyle 20-50€ vendu sur Amazon France."}
     ],
-    blockers:["Aucun produit selectionne — tout est bloque","Compte vendeur Amazon non cree","Budget sourcing non alloue"],
-    nextActions:["Scanner 10 niches avec Helium 10 Black Box","Shortlist 3 produits avec donnees validees","Commander echantillons du produit choisi"],
-    suggestions:["Analyse niche produit Amazon Europe 2025","Criteres selection produit anti-echec","Calcul marge FBA + PPC + sourcing Alibaba","Strategie lancement listing page 1"],
+    blockers:[
+      "Aucun produit sélectionné — tout le reste est gelé en attendant",
+      "Compte vendeur Amazon Europe non créé",
+      "Budget sourcing non alloué — décision à prendre"
+    ],
+    nextActions:[
+      "Ouvrir Helium 10 maintenant et lancer Black Box",
+      "Shortlister 3 produits avec les données brutes",
+      "Créer le compte vendeur Amazon Europe",
+      "Allouer un budget sourcing réaliste (échantillons 200-500€)"
+    ],
+    suggestions:[
+      "Trouve-moi 5 niches FBA prometteuses sur Amazon France",
+      "Configure Helium 10 Black Box pour mon produit idéal",
+      "Calcule la marge nette pour un produit à 30€ sur Amazon FR",
+      "Comment qualifier un fournisseur Alibaba sans se faire avoir ?"
+    ],
     lovable:"https://app.helium10.com",
-    context:"Amazon FBA — Private label Europe + US\nPhase: recherche produit\nCriteres: prix 20-50e, demande >3000/mois, marge nette 40%"
+    context:"Amazon FBA — Private label Europe + US\nPhase: recherche produit (phase 0)\nCritères: prix 20-50€, demande >3000/mois, marge nette ≥40%\nOutils: Helium 10, Alibaba"
   },
   {
-    id:2,icon:"🍳",name:"KITCHEN",color:"#ff375f",wbg:"#050002",
-    cat:"Restauration · Livraison · Halal · Valence",tags:["Dark Kitchen","Halal","Valence 26"],
-    desc:"Cuisine halal livraison — dark kitchen. Concept et positionnement a definir. Zone Valence.",
-    mission:"Definir le concept. Niche halal + menu test + zone de livraison + plateforme.",
-    priority:{num:1,title:"Definir concept : niche, menu, zone, plateforme",detail:"Analyser Deliveroo Valence, identifier les gaps, choisir 1 niche unique et defensable.",badge:"URGENT"},
+    id:2, icon:"🍳", name:"KITCHEN", color:"#ff375f", wbg:"#050002",
+    cat:"Restauration · Dark Kitchen · Halal · Valence",
+    tags:["Dark Kitchen","Halal","Valence 26"],
+    desc:"Cuisine halal en livraison pure — dark kitchen. Zéro salle, zéro service, 100% production. Concept non défini. La fenêtre pour entrer sur Deliveroo Valence est maintenant.",
+    mission:"Choisir 1 niche, construire le menu test en 5-8 références, trouver un espace de production et tester 20 commandes. Pas de structure avant les 20 commandes.",
+    priority:{
+      num:1,
+      title:"Auditer Deliveroo Valence + choisir la niche halal",
+      detail:"Ouvrir Deliveroo, lister tous les restaurants halal actifs, noter leurs faiblesses (notes, temps, prix, photos). Le gap identifié devient le positionnement d'entrée.",
+      badge:"URGENT"
+    },
     tasks_done:[],
     tasks_todo:[
-      {id:"c1",t:"Choisir la niche culinaire (burgers, poulet, oriental)"},
-      {id:"c2",t:"Analyser concurrence Deliveroo et Uber Eats Valence"},
-      {id:"c3",t:"Definir le menu test (5-8 references maximum)"},
-      {id:"c4",t:"Trouver laboratoire cuisine dark kitchen a louer"},
-      {id:"c5",t:"Calculer cout de production par plat"},
-      {id:"c6",t:"Inscrire sur Deliveroo et Uber Eats commercant"},
-      {id:"c7",t:"Tester avec 20 commandes avant toute structure"}
+      {id:"c1", t:"Choisir la niche culinaire (burgers, poulet, oriental, fusion)",
+       prompt:"KITCHEN — Choisir la niche culinaire halal pour une dark kitchen à Valence (Drôme, 65k hab). Options : burgers halal, poulet grillé, cuisine orientale, fusion. Donne-moi un tableau de décision avec : demande estimée locale, nombre de concurrents sur Deliveroo Valence, coût matières premières, temps de préparation, différenciabilité. Recommande 1 niche avec justification chiffrée."},
+      {id:"c2", t:"Auditer la concurrence halal sur Deliveroo et Uber Eats Valence",
+       prompt:"KITCHEN — Audit concurrence halal Deliveroo + Uber Eats à Valence. Méthode : quels restaurants halal sont présents, comment noter leurs faiblesses (notes <4, temps >45min, peu de photos, menu pauvre), créneaux horaires non couverts, zones de livraison non desservies. Structure un rapport d'audit que je peux remplir en 30 minutes sur l'appli."},
+      {id:"c3", t:"Construire le menu test (5 à 8 références maximum)",
+       prompt:"KITCHEN — Menu test dark kitchen halal, livraison Valence. Structure idéale pour le lancement : 1 produit star à fort potentiel viral, 2-3 déclinaisons, 1-2 accompagnements, 1 dessert simple. Contraintes : temps de préparation <15min, coût matières <30% du prix de vente, équipement domestique ou semi-pro. Donne le menu avec les prix suggérés."},
+      {id:"c4", t:"Trouver un espace de production conforme à Valence",
+       prompt:"KITCHEN — Trouver un espace de production dark kitchen à Valence. Options à explorer : laboratoires alimentaires à louer (qui contacter), cuisines de restaurants en sous-location le matin, cuisines partagées. Quelles sont les obligations légales minimales (normes HACCP, agrément) et comment les obtenir rapidement pour un micro-entrepreneur ?"},
+      {id:"c5", t:"Calculer le coût de production par plat et le seuil de rentabilité",
+       prompt:"KITCHEN — Calcul de rentabilité dark kitchen. Pour un plat vendu 12€ sur Deliveroo : détaille tous les coûts (matières premières, emballage, commission Deliveroo ~30%, location cuisine, charges fixes mensuelles). Calcule le seuil de rentabilité en nombre de commandes par jour et par mois."},
+      {id:"c6", t:"S'inscrire comme restaurateur sur Deliveroo + Uber Eats",
+       prompt:"KITCHEN — Inscription restaurateur sur Deliveroo et Uber Eats France. Process complet : documents obligatoires (SIRET, assurance RC Pro, attestation hygiène HACCP), délai d'activation, taux de commission, et comment optimiser le profil restaurant pour apparaître en priorité dans les résultats à Valence dès le lancement."},
+      {id:"c7", t:"Tester avec 20 commandes réelles avant toute structure",
+       prompt:"KITCHEN — Lancement test 20 commandes. Comment démarrer légalement et rapidement : micro-entrepreneur pour commencer, utiliser ma cuisine si conforme HACCP, activer Deliveroo. Donne-moi un plan de lancement en 7 jours avec les actions quotidiennes et les risques légaux à surveiller absolument."}
     ],
-    blockers:["Concept non defini — aucune action possible","Laboratoire cuisine non trouve","Inscriptions plateformes non faites"],
-    nextActions:["Analyser Deliveroo Valence — identifier les gaps","Choisir 1 niche unique et defensable","Tester avec 20 commandes avant toute structure"],
-    suggestions:["Analyse marche dark kitchen halal Valence","Menu test optimal pour lancement rapide","Calcul marge par plat avec commission Deliveroo","Synergies avec ARYAN pour livraison locale"],
+    blockers:[
+      "Concept non défini — impossible de poser la moindre action opérationnelle",
+      "Espace de production non trouvé — nécessaire avant toute inscription plateforme",
+      "Inscriptions Deliveroo / Uber Eats non faites"
+    ],
+    nextActions:[
+      "Ouvrir Deliveroo Valence et auditer les restaurants halal (30 min)",
+      "Choisir 1 niche sur la base de l'analyse concurrentielle",
+      "Rédiger le menu test 5-8 références avec les prix",
+      "Tester 20 commandes avant tout investissement structure"
+    ],
+    suggestions:[
+      "Quelle niche halal choisir à Valence selon la concurrence ?",
+      "Construis-moi le menu test KITCHEN idéal",
+      "Calcule la marge de mon plat à 12€ sur Deliveroo",
+      "Synergie KITCHEN + ARYAN : comment livrer avec ma propre app ?"
+    ],
     lovable:"https://restaurant.deliveroo.com",
-    context:"Dark Kitchen — cuisine halal livraison, Valence (Drome)\nPhase: concept non defini\nSynergie: ARYAN pour livraison locale"
+    context:"Dark Kitchen halal livraison — Valence (Drôme, 26)\nPhase: concept non défini, zéro structure\nSynergie stratégique: ARYAN pour la livraison locale\nRègle d'or: 20 commandes test avant tout investissement"
   },
   {
-    id:3,icon:"📺",name:"TELENEUF",color:"#bf5af2",wbg:"#030005",
-    cat:"Produit · Box Streaming · Vente directe",tags:["HD 150e","4K 180e","100e/an","WhatsApp"],
-    desc:"Box HDMI HD 150e / 4K 180e + abonnement 100e/an. Streaming, sport, cinema. Marche a valider.",
-    mission:"Valider le sourcing box HDMI + tester le marche avec une premiere batch.",
-    priority:{num:1,title:"Valider fournisseur box HDMI + prix unitaire",detail:"Contacter 5 fournisseurs Alibaba, obtenir devis, calculer marge complete avec shipping et douanes.",badge:"EN COURS"},
+    id:3, icon:"📺", name:"TELENEUF", color:"#bf5af2", wbg:"#030005",
+    cat:"Produit · Box Streaming · Vente directe",
+    tags:["HD 150€","4K 180€","100€/an","WhatsApp"],
+    desc:"Box HDMI HD 150€ / 4K 180€ + abonnement 100€/an. Streaming, sport, cinéma. Fournisseur non qualifié, marge réelle inconnue, légalité IPTV à valider. 3 inconnues critiques avant d'acheter le moindre stock.",
+    mission:"Résoudre les 3 inconnues dans l'ordre : légalité, marge réelle, demande validée. Pas de stock avant les 3 réponses.",
+    priority:{
+      num:1,
+      title:"Légalité IPTV + marge réelle + devis fournisseur",
+      detail:"Ces 3 points se font en parallèle cette semaine. Si la légalité est bloquante, tout s'arrête. Si la marge <30% net, le modèle est à revoir. Si aucun fournisseur fiable, pas de produit.",
+      badge:"EN COURS"
+    },
     tasks_done:[
-      {id:"d1",t:"Valider le concept box HDMI streaming"},
-      {id:"d2",t:"Definir grille tarifaire (HD 150e, 4K 180e, 100e/an)"},
-      {id:"d3",t:"Identifier fournisseurs potentiels Alibaba"},
-      {id:"d4",t:"Analyser la concurrence box streaming existante"},
-      {id:"d5",t:"Creer structure commerciale de base"}
+      {id:"d1", t:"Concept box HDMI streaming validé",
+       prompt:"TELENEUF concept validé. Identifie les 3 risques majeurs à anticiper maintenant : légalité du contenu IPTV en France, pression concurrentielle des box officielles (Canal+, Netflix), et fidélisation abonné à 100€/an. Pour chaque risque, donne une réponse concrète et défendable."},
+      {id:"d2", t:"Grille tarifaire définie : HD 150€, 4K 180€, 100€/an",
+       prompt:"TELENEUF — Grille tarifaire : HD 150€ + 100€/an, 4K 180€ + 100€/an. Analyse : est-elle compétitive vs la concurrence directe ? Calcule la LTV sur 2 ans, 3 ans. Comment optimiser le renouvellement et réduire le churn sur l'abonnement annuel ?"},
+      {id:"d3", t:"Fournisseurs Alibaba potentiels identifiés",
+       prompt:"TELENEUF fournisseurs identifiés sur Alibaba. Donne-moi les 5 critères décisifs pour choisir entre eux : certification CE (obligatoire pour vente en France), MOQ, délai de production, politique SAV, et possibilité de personnalisation logo/interface. Comment éliminer les non-sérieux rapidement ?"},
+      {id:"d4", t:"Analyse concurrentielle box streaming faite",
+       prompt:"TELENEUF analyse concurrentielle. Quel est mon avantage différenciant réel vs Canal+, OCS, Amazon Prime, Netflix ? Comment le formuler en 1 phrase punchy pour ma page de vente et mes messages WhatsApp ? Donne 3 angles différents, je choisis."},
+      {id:"d5", t:"Structure commerciale de base créée",
+       prompt:"TELENEUF structure commerciale en place. Comment passer d'une structure de base à un système de vente scalable via WhatsApp et réseaux sociaux ? Quelles sont les 3 prochaines actions pour automatiser la prospection et la prise de commande ?"}
     ],
     tasks_todo:[
-      {id:"d6",t:"Contacter 5 fournisseurs et obtenir devis"},
-      {id:"d7",t:"Calculer marge complete (achat + shipping + douanes)"},
-      {id:"d8",t:"Valider legalite du contenu streaming"},
-      {id:"d9",t:"Creer landing page + pre-vente 50 clients"},
-      {id:"d10",t:"Commander premiere batch 20 boxes test"}
+      {id:"d6", t:"Obtenir devis comparatifs de 5 fournisseurs Alibaba",
+       prompt:"TELENEUF — Contacter des fournisseurs Alibaba pour Android TV Box. Rédige le template RFQ complet en anglais : prix unitaire pour 20/50/100 pièces, personnalisation logo et interface, certification CE, délai de production, prix FOB Guangzhou. Inclus la méthode pour comparer objectivement 5 devis reçus et identifier le meilleur rapport qualité/prix/sécurité."},
+      {id:"d7", t:"Calculer la marge nette réelle (achat + shipping + douanes + TVA)",
+       prompt:"TELENEUF — Calcul de marge complète. Box achetée ~25€ Alibaba, vendue 150€ HD ou 180€ 4K. Calcule tous les coûts : fret maritime Chine → France, droits de douane (taux exact pour Android TV Box, code douanier 8528), TVA à l'import, packaging, SAV estimé 1er an. Résultat : marge nette réelle en % et €, et seuil de rentabilité par batch."},
+      {id:"d8", t:"Valider la légalité du contenu streaming IPTV en France",
+       prompt:"TELENEUF — Légalité IPTV France. Quels sont les risques juridiques réels et chiffrés de la revente de box IPTV pré-configurées en France en 2024-2025 ? Quelle est la différence légale entre vendre une box Android TV vierge vs pré-configurée avec accès IPTV ? Quelle structure commerciale minimise le risque légal tout en gardant l'offre attractive ?"},
+      {id:"d9", t:"Landing page + prévente 50 clients avant achat stock",
+       prompt:"TELENEUF — Landing page et prévente WhatsApp. Je veux valider la demande avant d'acheter le stock. Donne-moi la structure de la landing page parfaite : headline accrocheur, 3 bénéfices clés, preuve sociale, offre de lancement limitée. Plus le script WhatsApp pour convertir un prospect en pré-acheteur en moins de 3 messages."},
+      {id:"d10", t:"Commander la première batch de 20 boxes test",
+       prompt:"TELENEUF — Première commande Alibaba. J'ai un fournisseur qualifié et une prévente validée. Processus d'achat sécurisé : Trade Assurance obligatoire, inspection qualité avant expédition (qui contacter, coût), incoterms recommandés pour <5 000€, et procédure d'import en France avec déclaration en douane."}
     ],
-    blockers:["Fournisseur box non valide — prix unitaire inconnu","Legalite contenu streaming a verifier avant investissement"],
-    nextActions:["Contacter fournisseurs Alibaba Android TV Box","Calculer marge nette complete","Valider legalite contenu streaming","Landing page + pre-vente avant achat stock"],
-    suggestions:["Meilleurs fournisseurs box Android TV sur Alibaba","Calcul marge complete box HDMI revente","Risques juridiques streaming halal IPTV","Strategie pre-vente 50 clients avant stock"],
-    lovable:"https://www.aliexpress.com",
-    context:"TELENEUF — box HDMI streaming\nOffre: HD 150e / 4K 180e / 100e/an\nPhase: sourcing fournisseur + validation legale"
+    blockers:[
+      "Légalité IPTV non vérifiée — risque juridique non quantifié avant tout investissement",
+      "Fournisseur non qualifié — prix unitaire réel et marge inconnus"
+    ],
+    nextActions:[
+      "Consulter un avocat ou resource légale sur l'IPTV en France (priorité absolue)",
+      "Contacter 5 fournisseurs Alibaba cette semaine et obtenir les devis",
+      "Calculer la marge nette avec le premier devis reçu",
+      "Créer la landing page + prévente avant tout achat stock"
+    ],
+    suggestions:[
+      "Quels sont les risques juridiques IPTV en France en 2025 ?",
+      "Calcule la marge complète TELENEUF pour une box à 25€ achat",
+      "Trouve les meilleurs fournisseurs Android TV Box sur Alibaba",
+      "Écris-moi le script WhatsApp pour convertir un prospect TELENEUF"
+    ],
+    lovable:"https://www.alibaba.com/trade/search?SearchText=android+tv+box+4k",
+    context:"TELENEUF — Box HDMI streaming\nOffre: HD 150€ / 4K 180€ / 100€/an\n3 inconnues à résoudre: légalité IPTV + marge réelle + fournisseur qualifié\nCible: vente directe WhatsApp + réseaux sociaux"
   },
   {
-    id:4,icon:"📈",name:"TRADING",color:"#30d158",wbg:"#010502",
-    cat:"Finance · Bot MT5 · Prop Firm FTMO",tags:["MT5 + MQL5","BTC/USDT CFD","News Filter","FTMO"],
-    desc:"Expert Advisor MQL5 sur BTC/USDT CFD. Objectif : passer le FTMO Challenge et obtenir un compte finance.",
-    mission:"EA MQL5 BTC/USDT CFD — backtester, optimiser, passer le FTMO Challenge 10k.",
-    priority:{num:1,title:"Backtest EA sur 2 ans BTC M15",detail:"Telecharger donnees historiques 2022-2024, lancer Strategy Tester, noter toutes les metriques.",badge:"PRIORITE"},
+    id:4, icon:"📈", name:"TRADING", color:"#30d158", wbg:"#010502",
+    cat:"Finance · EA MQL5 · Prop Firm FTMO",
+    tags:["MT5 + MQL5","BTC/USDT CFD","News Filter","FTMO 10k"],
+    desc:"Expert Advisor MQL5 sur BTC/USDT CFD. Structure de base codée, filtre news actif, premier backtest 6 mois fait. Maintenant : backtest 2 ans + validation métriques + forward test avant FTMO.",
+    mission:"Valider l'EA sur 2 ans de données réelles. Si les métriques passent le seuil, forward test 30 jours. Si le forward test passe, FTMO Challenge 10k.",
+    priority:{
+      num:1,
+      title:"Backtest complet 2 ans BTC/USDT M15",
+      detail:"Télécharger les données 2022-2024 en qualité tick, lancer le Strategy Tester en mode 'Every tick based on real ticks', noter drawdown max, profit factor, win rate, consecutive losses.",
+      badge:"PRIORITÉ"
+    },
     tasks_done:[
-      {id:"e1",t:"Installer MetaTrader 5 et configurer compte demo"},
-      {id:"e2",t:"Ecrire structure de base EA MQL5"},
-      {id:"e3",t:"Implementer la logique entree et sortie"},
-      {id:"e4",t:"Configurer filtre news MQL5"},
-      {id:"e5",t:"Premier backtest rapide sur 6 mois"}
+      {id:"e1", t:"MetaTrader 5 installé + compte démo configuré",
+       prompt:"TRADING MT5 configuré. Quels sont les paramètres de compte démo qui simulent le mieux les conditions réelles FTMO Challenge 10k : capital initial exact, levier, spread réaliste pour BTC/USDT CFD, et comment vérifier que la simulation est fidèle aux conditions de la prop firm ?"},
+      {id:"e2", t:"Structure de base EA MQL5 écrite",
+       prompt:"TRADING structure EA MQL5 en place. Passe en revue les fonctions critiques : OnInit, OnDeinit, OnTick, OnTrade. Quels sont les 3 pièges les plus courants dans la structure d'un EA MQL5 pour CFD qui causent des résultats de backtest non reproductibles en live ?"},
+      {id:"e3", t:"Logique d'entrée et de sortie implémentée",
+       prompt:"TRADING logique entrée/sortie implémentée. Comment optimiser les conditions d'entrée pour BTC/USDT M15 sans tomber dans l'overfitting ? Quels indicateurs combiner, quelle méthode pour valider que la logique est robuste sur différentes périodes de marché (bull 2023, bear 2022, consolidation 2024) ?"},
+      {id:"e4", t:"Filtre news MQL5 configuré",
+       prompt:"TRADING filtre news configuré. Comment tester que le filtre news fonctionne correctement dans le Strategy Tester ? Quels événements macro ont le plus d'impact sur BTC/USDT CFD et sur quelle fenêtre de temps bloquer les trades avant/après l'annonce ?"},
+      {id:"e5", t:"Premier backtest 6 mois effectué",
+       prompt:"TRADING premier backtest 6 mois fait. Quelles métriques analyser en priorité et quels seuils minimaux atteindre pour valider que l'EA mérite un backtest complet 2 ans ? Donne-moi un tableau go/no-go avec les seuils exacts : profit factor, drawdown max, win rate, consecutive losses maximum."}
     ],
     tasks_todo:[
-      {id:"e6",t:"Telecharger donnees historiques BTC/USDT M15 2022-2024"},
-      {id:"e7",t:"Backtest complet sur 2 ans avec Strategy Tester"},
-      {id:"e8",t:"Analyser metriques : drawdown, profit factor, win rate"},
-      {id:"e9",t:"Optimiser parametres (SL, TP, taille position)"},
-      {id:"e10",t:"Forward test 30 jours sur compte demo"},
-      {id:"e11",t:"Valider metriques forward vs backtest"},
-      {id:"e12",t:"Ouvrir FTMO Challenge 10k si forward valide"}
+      {id:"e6", t:"Télécharger les données historiques BTC/USDT M15 2022-2024",
+       prompt:"TRADING — Télécharger données historiques BTC/USDT M15 pour MT5. Meilleures sources pour des données tick de qualité (Dukascopy, TickStory, broker direct) et comment importer dans MT5 Strategy Tester. Quelle qualité de modélisation viser pour un résultat de backtest fiable ?"},
+      {id:"e7", t:"Backtest complet 2 ans avec le Strategy Tester MT5",
+       prompt:"TRADING — Backtest complet EA MQL5 sur BTC/USDT M15 2022-2024. Configuration optimale du Strategy Tester : mode Every tick based on real ticks, slippage réaliste, spread BTC/USDT CFD à simuler, et comment lire chaque section du rapport de résultat. Quels chiffres noter absolument ?"},
+      {id:"e8", t:"Analyser les métriques : drawdown, profit factor, win rate",
+       prompt:"TRADING — Analyser les métriques de backtest pour validation FTMO. Grille d'analyse avec seuils go/no-go : profit factor minimum (>1.5 ?), drawdown maximum (<10%), win rate acceptable pour un système trend-following BTC M15, consecutive losses maximum tolérable. Explique comment interpréter chaque métrique dans le contexte FTMO."},
+      {id:"e9", t:"Optimiser les paramètres (SL, TP, taille de position)",
+       prompt:"TRADING — Optimisation paramètres EA sans overfitting. Comment utiliser l'optimiseur MT5 de manière robuste : génétique vs exhaustif, walk-forward analysis obligatoire, nombre de passes raisonnable. Comment choisir les paramètres finaux qui restent performants hors de la fenêtre d'optimisation ?"},
+      {id:"e10", t:"Forward test 30 jours sur compte démo",
+       prompt:"TRADING — Forward test 30 jours. L'EA a passé le backtest 2 ans. Comment organiser le forward test : sur quel broker démo, comment logger automatiquement les trades, et quel template de suivi quotidien utiliser pour comparer les métriques backtest vs forward en temps réel ?"},
+      {id:"e11", t:"Valider la cohérence métriques forward vs backtest",
+       prompt:"TRADING — Validation forward vs backtest. J'ai 30 jours de forward test. Comment déterminer si l'EA est prêt pour le FTMO : quelle dégradation de performance est acceptable (profit factor, drawdown, win rate) ? Quels signaux indiquent clairement un overfitting vs une variation normale ?"},
+      {id:"e12", t:"Ouvrir le FTMO Challenge 10k si forward test validé",
+       prompt:"TRADING — FTMO Challenge 10k. Règles exactes : objectif +10%, max drawdown journalier -5%, max drawdown total -10%, durée minimale 10 jours de trading. Donne-moi la stratégie de gestion du risque par trade pour respecter ces règles : taille de position maximale, règle d'arrêt journalier, et comment gérer une série perdante sans violer les règles."}
     ],
-    blockers:["Backtest complet non effectue — aucune validation","Parametres EA non optimises","Forward test non commence"],
-    nextActions:["Telecharger donnees historiques BTC M15 sur MT5","Backtest EA sur 2 ans complets","Analyser drawdown max et profit factor","Forward test 30 jours avant FTMO"],
-    suggestions:["Optimisation EA MQL5 BTC/USDT CFD","Regles FTMO Challenge et criteres validation","Analyse drawdown max acceptable prop firm","Strategie position sizing pour FTMO"],
+    blockers:[
+      "Backtest 2 ans non effectué — performance réelle de l'EA inconnue",
+      "Paramètres non optimisés — forward test prématuré sans optimisation",
+      "Forward test non commencé — FTMO hors de portée tant que ces 3 étapes ne sont pas faites"
+    ],
+    nextActions:[
+      "Télécharger les données tick BTC/USDT M15 2022-2024 depuis Dukascopy",
+      "Lancer le Strategy Tester en mode 'Every tick based on real ticks'",
+      "Analyser drawdown max, profit factor, win rate, consecutive losses",
+      "Si métriques OK : démarrer le forward test 30 jours immédiatement"
+    ],
+    suggestions:[
+      "Analyse mes métriques de backtest MT5 pour FTMO",
+      "Comment éviter l'overfitting sur mon EA MQL5 BTC M15 ?",
+      "Règles FTMO Challenge 10k et stratégie de gestion du risque",
+      "Configure le walk-forward analysis pour mon EA"
+    ],
     lovable:"https://ftmo.com",
-    context:"Trading EA MQL5 BTC/USDT CFD — MetaTrader 5\nObjectif: FTMO Challenge 10k (max -5%/jour, max -10% total, +10% objectif)\nPhase: backtest non effectue"
+    context:"Trading EA MQL5 BTC/USDT CFD — MetaTrader 5\nObjectif: FTMO Challenge 10k\nRègles FTMO: max -5%/jour, max -10% total, +10% objectif, min 10 jours\nPhase actuelle: backtest 2 ans à effectuer"
   }
 ];
+
 
 var POLES = [
   {
@@ -2291,8 +2438,6 @@ function enterWorld(wid){
 }
 
 function autoWorldBriefing(wid){
-  var key=localStorage.getItem("arc_key");
-  if(!key) return;
   var brief=document.getElementById("cp-brief"); if(brief) brief.style.display="flex";
   var w=WORLDS[wid];
   var allT=w.tasks_done.concat(w.tasks_todo);
@@ -2487,7 +2632,6 @@ function enterPole(poleId){
   if(poleId==="sante"){ renderSante(); }
   else{ if(!S.poles.juridique) S.poles.juridique={}; JUR_SECTIONS.forEach(function(s){ if(!S.poles.juridique[s.id]) S.poles.juridique[s.id]=[]; }); renderJuridique(); }
   // Init Claude panel for this pole
-  var ak=getApiKey();
   var akWrap=document.getElementById("cp-ak-wrap-"+poleId);
   if(akWrap) akWrap.style.display=ak?"none":"block";
   var cpInp=document.getElementById("cp-inp");
@@ -3158,9 +3302,7 @@ document.addEventListener("click",function(ev){
   }
   // War room done
   if(t.id==="wr-done-btn"){ var wid=wrState.wid; var task=wrState.task; if(wid>=0&&task){ S.tasks[wid][task.id]=true; saveS(); renderTasks(); toast("✓ Accomplie ! 🎯"); closeWarRoom(); } return; }
-  // API key save
-  if(t.id==="cp-ak-save"){ var k=document.getElementById("cp-ak").value.trim(); if(k){ setApiKey(k); document.getElementById("cp-ak-wrap").style.display="none"; toast("Clé API sauvegardée ✓"); initClaude(CUR.wid); } return; }
-  if(t.id==="cp-ak-save-sante"){ var k=document.getElementById("cp-ak-sante").value.trim(); if(k){ setApiKey(k); document.getElementById("cp-ak-wrap-sante").style.display="none"; toast("Clé API sauvegardée ✓"); } return; }
+  // API key — géré côté serveur via proxy
   // Claude panel send
   if(t.id==="cp-send"||t.closest("#cp-send")){ cpSend(CUR.wid); return; }
   if(t.id==="cp-send-sante"||t.closest("#cp-send-sante")){ santeCpSend(); return; }
@@ -3177,8 +3319,14 @@ document.addEventListener("click",function(ev){
   if(t.getAttribute&&t.getAttribute("data-action")==="intel-open"){ window.open(t.getAttribute("data-url"),"_blank"); return; }
   // War room CCB send
   if(t.id==="wr-ccb-send"){ var inp=document.getElementById("wr-ccb-inp"); if(inp&&inp.value.trim()){ cpSend(wrState.wid>=0?wrState.wid:CUR.wid,inp.value.trim()); inp.value=""; } return; }
+  // Cockpit CCB — effacer prompt
+  if(t.getAttribute&&t.getAttribute("data-action")==="ccb-clear-prompt"){
+    var ci=document.getElementById("ccb-inp"); if(ci) ci.value="";
+    var pb=document.getElementById("ccb-prompt-badge"); if(pb) pb.style.display="none";
+    return;
+  }
   // Cockpit CCB send
-  if(t.id==="ccb-send"){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt) return; inp.value=""; var mode=cockpitState.mode||"inject"; if(mode==="inject"){ var prompt="Pour la tâche: "+cockpitState.task.t+"\n\nDemande: "+txt+"\n\nRéponds directement avec du contenu utilisable — pas d'intro."; claudeCall(prompt,CUR.wid,"cockpit"); } else cpSend(CUR.wid,txt); return; }
+  if(t.id==="ccb-send"){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt) return; inp.value=""; var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.style.display="none"; var mode=cockpitState.mode||"inject"; if(mode==="inject"){ var prompt="Pour la tâche: "+cockpitState.task.t+"\n\nDemande: "+txt+"\n\nRéponds directement avec du contenu utilisable — pas d'intro."; claudeCall(prompt,CUR.wid,"cockpit"); } else cpSend(CUR.wid,txt); return; }
   // CCB mode
   if(t.closest("[data-mode]")){ var mode=t.closest("[data-mode]").getAttribute("data-mode"); cockpitState.mode=mode; document.querySelectorAll(".ccb-mode").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mode")===mode); }); return; }
   // MT5 actions
@@ -3474,6 +3622,16 @@ function openCockpit(wid, tid){
   var saved = (S.taskNotes[wid] && S.taskNotes[wid][task.id]) || '';
   if(ta) ta.value = saved;
   updateCockpitWordCount();
+  // ── Prompt pré-injecté dans la zone Claude ──────────────────────────────
+  var ccbInp = document.getElementById('ccb-inp');
+  if(ccbInp && task.prompt){
+    ccbInp.value = task.prompt;
+    ccbInp.dataset.promptReady = '1';
+  }
+  var promptBadge = document.getElementById('ccb-prompt-badge');
+  if(promptBadge){
+    promptBadge.style.display = task.prompt ? 'flex' : 'none';
+  }
   var cm = document.getElementById('cockpit-ctx-mission'); if(cm) cm.textContent = w.mission;
   var cp = document.getElementById('cockpit-ctx-prio');
   if(cp) cp.innerHTML = '<strong style="color:'+w.color+'">'+w.priority.badge+'</strong> — '+w.priority.title;
@@ -3481,11 +3639,10 @@ function openCockpit(wid, tid){
   var pf = document.querySelector('.pomo-fill'); if(pf) pf.style.stroke = w.color;
   var pb = document.getElementById('cockpit-pomo-btn'); if(pb) pb.style.setProperty('--ck-c',w.color);
   // Claude auto-briefing pour cette tâche
-  var key = getApiKey();
-  if(key){
+  {
     var blk = w.blockers.concat(S.blkCustom[wid]||[]);
     var prompt = 'Tache: '+task.t+' | Projet: '+w.name+' | Mission: '+w.mission+' | Bloquants: '+blk.slice(0,3).join(', ')+' | Analyse cette tache en 4-5 phrases et donne les 3 premiers pas concrets. Sois direct.';
-    claudeCall(prompt, wid, 'cockpit');
+    claudeCall(task.prompt || prompt, wid, 'cockpit');
   }
 }
 function closeCockpit(){
@@ -3518,8 +3675,7 @@ function openWarRoom(wid){
   var db = document.getElementById('wr-done-btn'); if(db){ db.style.background = w.color; }
   var rf = document.querySelector('.wr-ring-fill'); if(rf) rf.style.stroke = w.color;
   // Claude War Room briefing
-  var key = getApiKey();
-  if(key && task){
+  if(task){
     var blk = w.blockers.concat(S.blkCustom[idx]||[]);
     var prompt = 'WAR ROOM | Focus: '+task.t+' | Projet: '+w.name+' | Bloquants: '+blk.slice(0,3).join('; ')+' | Plan attaque 5 etapes numerotees. Premier geste concret dans les 5 prochaines minutes.';
     var msgs = document.getElementById('cp-msgs'); 
@@ -3720,7 +3876,6 @@ var intelRefreshed=false;
 
 
 async function claudeCall(prompt,ctxId,type,sysprompt){
-  var key=getApiKey(); if(!key) return;
   var typing;
   var msgsEl;
   if(type==="briefing"||type==="chat"){
@@ -3745,9 +3900,9 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
         body.messages=msgs.slice(0,-1).concat([{role:"user",content:prompt}]);
       }
     }
-    var resp=await fetch("https://api.anthropic.com/v1/messages",{
+    var resp=await fetch("https://zcelpyexerxlhwtfpcbf.supabase.co/functions/v1/arc-claude-proxy",{
       method:"POST",
-      headers:{"Content-Type":"application/json","x-api-key":key,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+      headers:{"Content-Type":"application/json","x-arc-token":"arc-2026-xK9mP3qR7nZ"},
       body:JSON.stringify(body)
     });
     var data=await resp.json();
@@ -3849,48 +4004,7 @@ async function cpSend(widOverride, textOverride){
 }
 /* ═══ PÔLE SANTÉ ═══ */
 
-function initClaude(wid){
-  var ak=getApiKey();
-  var akWrap=document.getElementById("cp-ak-wrap");
-  if(akWrap) akWrap.style.display=ak?"none":"block";
-  // Show contextual suggestions
-  var sugsEl = document.getElementById('cp-sugs-world');
-  if(sugsEl && wid >= 0){
-    var w2 = WORLDS[wid];
-    var sugs = (w2 && w2.suggestions) ? w2.suggestions : [];
-    var h2 = '';
-    for(var si=0; si<Math.min(sugs.length,4); si++){
-      var sg = sugs[si];
-      h2 += '<button class="cp-sug" data-sug-wid="'+wid+'" data-sug-txt="'+esc(sg)+'">'+esc(sg)+'</button>';
-    }
-    sugsEl.innerHTML = h2;
-  }
-  var cpInp=document.getElementById("cp-inp");
-  if(cpInp) cpInp.style.display="flex";
-  // Show suggestions
-  var w=WORLDS[wid];
-  var sugsEl=document.getElementById("cp-sugs");
-  if(sugsEl){
-    sugsEl.innerHTML="";
-    w.suggestions.slice(0,4).forEach(function(s){
-      var b=document.createElement("button");
-      b.className="cp-sug"; b.textContent=s;
-      b.style.setProperty("--wc",w.color);
-      b.addEventListener("click",function(){ cpSend(wid,s); });
-      sugsEl.appendChild(b);
-    });
-  }
-  // Set logo color
-  var logo=document.getElementById("cp-logo"); if(logo) logo.style.background=w.color;
-  var cSend=document.getElementById("cp-send"); if(cSend) cSend.style.background=w.color;
-  var ccbL=document.getElementById("ccb-logo"); if(ccbL) ccbL.style.background=w.color;
-  var ccbS=document.getElementById("ccb-send"); if(ccbS) ccbS.style.background=w.color;
-  var wrL=document.getElementById("wr-ccb-logo"); if(wrL) wrL.style.background=w.color;
-  var wrS=document.getElementById("wr-ccb-send"); if(wrS) wrS.style.background=w.color;
-  var ckL=document.getElementById("ccb-logo"); if(ckL) ckL.style.background=w.color;
-  // Restore chat history
-  renderChatHistory(wid);
-}
+function initClaude(wid){ claudeCall(WORLDS[wid].suggestions[0], wid, "briefing"); }
 
 
 function renderChatHistory(wid){
@@ -3934,8 +4048,7 @@ function addChatMsg(wid,role,txt){
 function init(){
   sbInit();
   loadS();
-  var key=getApiKey();
-  if(key){ var akWrap=document.getElementById("cp-ak-wrap"); if(akWrap) akWrap.style.display="none"; }
+
   // Onboarding
   if(!S.seen||S.seen==="new"){ document.getElementById("onboarding").classList.add("active"); }
   renderHome();
