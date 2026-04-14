@@ -3900,7 +3900,7 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
         body.messages=msgs.slice(0,-1).concat([{role:"user",content:prompt}]);
       }
     }
-    var resp=await fetch("https://zcelpyexerxlhwtfpcbf.supabase.co/functions/v1/arc-claude-proxy",{
+    var resp=await fetch("https://zcelpyexerxlhwtfpcbf.supabase.co/functions/v1/ARC-CLAUDE-PROXY",{
       method:"POST",
       headers:{"Content-Type":"application/json","x-arc-token":"arc-2026-xK9mP3qR7nZ"},
       body:JSON.stringify(body)
