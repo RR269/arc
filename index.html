@@ -608,6 +608,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 
 /* === COCKPIT === */
 #cockpit{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column}
+#cockpit.open{display:flex}
 #cockpit-top{height:54px;display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;background:rgba(0,0,0,.8);backdrop-filter:blur(24px);border-bottom:1px solid var(--b1);position:relative;z-index:2}
 #cockpit-back{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--t2);padding:7px 13px;border-radius:9px;border:1px solid var(--b1);background:var(--bg2);transition:all .18s;flex-shrink:0}
 #cockpit-back svg{width:12px;height:12px}
@@ -1647,7 +1648,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 </div>
 
 <!-- OVERLAYS -->
-<div id="cockpit" style="display:none;flex-direction:column">
+<div id="cockpit">
   <div id="cockpit-top" style="position:relative">
     <button id="cockpit-back"><svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cockpit-back-lbl">Retour</span></button>
     <div id="cockpit-task-name">-</div>
@@ -2091,6 +2092,7 @@ function fmtDate(d){ var now=d||new Date(); return now.toLocaleDateString("fr-FR
 function fmtTs(ts){ var d=new Date(ts); return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); }
 
 var CUR={wid:-1,autocap:true,intel:[],sug:[],pole:null};
+var drTarget = null;
 
 function tickClock(){ var el=document.getElementById("h-clock"); if(el) el.textContent=new Date().toLocaleTimeString("fr-FR"); }
 setInterval(tickClock,1000); tickClock();
@@ -3125,7 +3127,7 @@ document.addEventListener("click",function(ev){
   if(t.closest("[data-action='toggle-done-grp']")){ var grp=document.getElementById("done-grp"); if(grp){ grp.style.display=grp.style.display==="none"?"block":"none"; t.closest("[data-action='toggle-done-grp']").innerHTML=t.closest("[data-action='toggle-done-grp']").innerHTML.replace(grp.style.display==="block"?"▸":"▾",grp.style.display==="block"?"▾":"▸"); } return; }
   // Task row click → open task drawer
   var taskRow=t.closest(".wtask-row");
-  if(taskRow&&!t.closest("[data-action]")&&!t.closest(".wtask-cb")&&!t.closest(".drag-handle")){ var tid=taskRow.getAttribute("data-tid"); var wid=parseInt(taskRow.getAttribute("data-wid")); if(tid&&wid>=0){ var w=WORLDS[wid]; var allT=w.tasks_done.concat(w.tasks_todo).concat((S.custom[wid]||[]).map(function(tt){ return {id:tt.id,t:tt.t}; })); var task=allT.find(function(tt){ return tt.id===tid; }); if(task) openDrawer("task-work",wid,task); } return; }
+  if(taskRow&&!t.closest("[data-action]")&&!t.closest(".wtask-cb")&&!t.closest(".drag-handle")){ var tid=taskRow.getAttribute("data-tid"); var wid=parseInt(taskRow.getAttribute("data-wid")); if(tid&&wid>=0) openCockpit(wid,tid); return; }
   // Cockpit back
   if(t.id==="cockpit-back"||t.closest("#cockpit-back")){ closeCockpit(); return; }
   // Cockpit done
@@ -3423,10 +3425,6 @@ function deleteTool(widOrPoleId,toolId){
 
 /* ===== INIT ===== */
 /* ===== SCREEN NAVIGATION ===== */
-var cockpitState={wid:-1,tid:null,task:null,mode:"inject",pomoActive:false,pomoS:25*60,pomoBreak:false,pomoSessions:0,pomoIv:null};
-
-var wrState={wid:-1,task:null,pomoS:25*60,pomoBreak:false,pomoSessions:0,pomoActive:false,pomoIv:null};
-
 var mt5State={sim:false,simIv:null,btcBase:42000};
 
 
@@ -3460,7 +3458,7 @@ function openCockpit(wid, tid){
   if(!task) return;
   cockpitState.wid = wid; cockpitState.tid = tid; cockpitState.task = task;
   var ck = document.getElementById('cockpit'); if(!ck) return;
-  ck.style.display = 'flex';
+  ck.classList.add('open');
   ck.style.setProperty('--ck-c', w.color);
   var tn = document.getElementById('cockpit-task-name'); if(tn) tn.textContent = task.t;
   var db = document.getElementById('cockpit-done-btn');
@@ -3491,7 +3489,7 @@ function openCockpit(wid, tid){
   }
 }
 function closeCockpit(){
-  var ck = document.getElementById('cockpit'); if(ck) ck.style.display = 'none';
+  var ck = document.getElementById('cockpit'); if(ck) ck.classList.remove('open');
   saveCockpitWork();
 }
 
