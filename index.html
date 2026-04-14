@@ -3902,7 +3902,7 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
     }
     var resp=await fetch("https://zcelpyexerxlhwtfpcbf.supabase.co/functions/v1/ARC-CLAUDE-PROXY",{
       method:"POST",
-      headers:{"Content-Type":"application/json","x-arc-token":"arc-2026-xK9mP3qR7nZ"},
+      headers:{"Content-Type":"application/json","x-arc-token":"arc-2026-xK9mP3qR7nZ","Authorization":"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZWxweWV4ZXJ4bGh3dGZwY2JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODY0NzQsImV4cCI6MjA5MTY2MjQ3NH0.lqwIh2iS5k4Yaz3y4LF5eS7yI30vsx63G_3suPzyi7Y"},
       body:JSON.stringify(body)
     });
     var data=await resp.json();
