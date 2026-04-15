@@ -4072,12 +4072,11 @@ function init(){
 init();
 
 // ── SERVICE WORKER ──
+// SW désactivé — supprime les anciens SW pour éviter les conflits de cache
 if('serviceWorker' in navigator){
-  var swPath = (location.pathname.replace(/\/[^\/]*$/, '') + '/sw.js').replace('//', '/');
-  var swScope = swPath.replace('sw.js','');
-  navigator.serviceWorker.register(swPath, {scope: swScope})
-    .then(function(){ console.log('SW ok'); })
-    .catch(function(e){ console.warn('SW:', e.message); });
+  navigator.serviceWorker.getRegistrations().then(function(regs){
+    regs.forEach(function(r){ r.unregister(); });
+  });
 }
 
 
