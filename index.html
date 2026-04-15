@@ -12,6 +12,7 @@
 <meta name="theme-color" content="#000000">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Azeret+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
@@ -639,6 +640,8 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .ccb-mode.active{color:var(--ck-c,#fff);border-color:var(--ck-c,#fff)}
 #ccb-send{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#000;border:none;transition:all .18s;cursor:pointer}
 #ccb-send svg{width:14px;height:14px}
+#ccb-send.pulse-ready{animation:ccbPulse 1.5s ease-in-out 3}
+@keyframes ccbPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,255,255,.3)}50%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(255,255,255,0)}}
 #ccb-prompt-badge{border-radius:7px 7px 0 0;background:color-mix(in srgb,var(--ck-c,#ff6b35) 8%,transparent);border:1px solid color-mix(in srgb,var(--ck-c,#ff6b35) 20%,transparent);border-bottom:none;margin:0 0 -1px;font-family:var(--fm)}
 #ccb-status{font-size:10px;color:var(--t3);padding:6px 4px 0;font-family:var(--fm);display:flex;align-items:center;gap:6px}
 #ccb-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;animation:pulse 2s infinite}
@@ -648,6 +651,19 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 #cockpit-ctx-mission{font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:10px}
 #cockpit-ctx-prio{font-size:11px;font-weight:700;padding:8px 11px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid var(--b1);line-height:1.5}
 #cockpit-msgs-list{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto}
+.ck-msg h1,.ck-msg h2,.ck-msg h3{font-size:13px;font-weight:700;color:var(--t1);margin:8px 0 4px}
+.ck-msg p{margin:0 0 6px}
+.ck-msg ul,.ck-msg ol{margin:4px 0 6px;padding-left:18px}
+.ck-msg li{margin-bottom:3px}
+.ck-msg code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-family:var(--fm);font-size:11px}
+.ck-msg pre{background:rgba(255,255,255,.05);border-radius:8px;padding:10px;overflow-x:auto;margin:6px 0}
+.ck-msg pre code{background:none;padding:0}
+.ck-msg strong{color:var(--t1);font-weight:700}
+.msg.assistant h1,.msg.assistant h2,.msg.assistant h3{font-size:13px;font-weight:700;margin:8px 0 4px}
+.msg.assistant p{margin:0 0 6px}
+.msg.assistant ul,.msg.assistant ol{margin:4px 0 6px;padding-left:18px}
+.msg.assistant code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-family:var(--fm);font-size:11px}
+.msg.assistant strong{font-weight:700}
 .ck-msg{font-size:12px;line-height:1.7;color:var(--t2);padding:10px 12px;background:var(--bg3);border-radius:10px;border:1px solid var(--b1)}
 .ck-inject-btn{margin-top:8px}
 .ck-inject-btn-el{font-size:10px;font-weight:700;padding:4px 11px;border-radius:7px;border:1px solid;cursor:pointer;transition:all .15s;font-family:var(--f)}
@@ -3326,7 +3342,7 @@ document.addEventListener("click",function(ev){
     return;
   }
   // Cockpit CCB send
-  if(t.id==="ccb-send"){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt) return; inp.value=""; var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.style.display="none"; var mode=cockpitState.mode||"inject"; if(mode==="inject"){ var prompt="Pour la tâche: "+cockpitState.task.t+"\n\nDemande: "+txt+"\n\nRéponds directement avec du contenu utilisable — pas d'intro."; claudeCall(prompt,CUR.wid,"cockpit"); } else cpSend(CUR.wid,txt); return; }
+  if(t.id==="ccb-send"){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt) return; inp.value=""; var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.style.display="none"; var cs2=document.getElementById("ccb-send"); if(cs2) cs2.classList.remove("pulse-ready"); var mode=cockpitState.mode||"inject"; if(mode==="inject"){ var prompt="Pour la tâche: "+cockpitState.task.t+"\n\nDemande: "+txt+"\n\nRéponds directement avec du contenu utilisable — pas d'intro."; claudeCall(prompt,CUR.wid,"cockpit"); } else cpSend(CUR.wid,txt); return; }
   // CCB mode
   if(t.closest("[data-mode]")){ var mode=t.closest("[data-mode]").getAttribute("data-mode"); cockpitState.mode=mode; document.querySelectorAll(".ccb-mode").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mode")===mode); }); return; }
   // MT5 actions
@@ -3622,7 +3638,7 @@ function openCockpit(wid, tid){
   var saved = (S.taskNotes[wid] && S.taskNotes[wid][task.id]) || '';
   if(ta) ta.value = saved;
   updateCockpitWordCount();
-  // ── Prompt pré-injecté dans la zone Claude ──────────────────────────────
+  // ── Prompt pré-injecté dans la zone Claude (pas d'envoi auto) ───────────
   var ccbInp = document.getElementById('ccb-inp');
   if(ccbInp && task.prompt){
     ccbInp.value = task.prompt;
@@ -3632,18 +3648,16 @@ function openCockpit(wid, tid){
   if(promptBadge){
     promptBadge.style.display = task.prompt ? 'flex' : 'none';
   }
+  // Pulse le bouton d'envoi pour signaler que le prompt est prêt
+  var ccbSendBtn = document.getElementById('ccb-send');
+  if(ccbSendBtn && task.prompt){ ccbSendBtn.classList.add('pulse-ready'); }
   var cm = document.getElementById('cockpit-ctx-mission'); if(cm) cm.textContent = w.mission;
   var cp = document.getElementById('cockpit-ctx-prio');
   if(cp) cp.innerHTML = '<strong style="color:'+w.color+'">'+w.priority.badge+'</strong> — '+w.priority.title;
   renderCockpitJou(wid);
   var pf = document.querySelector('.pomo-fill'); if(pf) pf.style.stroke = w.color;
   var pb = document.getElementById('cockpit-pomo-btn'); if(pb) pb.style.setProperty('--ck-c',w.color);
-  // Claude auto-briefing pour cette tâche
-  {
-    var blk = w.blockers.concat(S.blkCustom[wid]||[]);
-    var prompt = 'Tache: '+task.t+' | Projet: '+w.name+' | Mission: '+w.mission+' | Bloquants: '+blk.slice(0,3).join(', ')+' | Analyse cette tache en 4-5 phrases et donne les 3 premiers pas concrets. Sois direct.';
-    claudeCall(task.prompt || prompt, wid, 'cockpit');
-  }
+  // Prompt prêt dans ccb-inp — envoi à la demande de l'utilisateur
 }
 function closeCockpit(){
   var ck = document.getElementById('cockpit'); if(ck) ck.classList.remove('open');
@@ -3916,7 +3930,7 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
       if(ckMsgList&&ckMsgs){
         ckMsgs.style.display="block";
         var div=document.createElement("div");
-        div.className="ck-msg"; div.textContent=txt;
+        div.className="ck-msg"; div.innerHTML=typeof marked!=="undefined"?marked.parse(txt):txt.replace(/\n/g,"<br>");
         ckMsgList.appendChild(div);
         var inj=document.createElement("div");
         inj.className="ck-inject-btn";
@@ -4030,7 +4044,7 @@ function createMsgEl(role,txt,color){
   var bub=document.createElement("div");
   bub.className="mbub";
   if(role==="user") bub.style.background=color;
-  bub.textContent=txt;
+  bub.innerHTML=typeof marked!=="undefined"?marked.parse(txt):txt.replace(/\n/g,"<br>");
   var ts=document.createElement("div");
   ts.className="mts";
   ts.textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
