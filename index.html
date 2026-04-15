@@ -2447,9 +2447,6 @@ function enterWorld(wid){
   S.lastActive=S.lastActive.filter(function(x){ return x!==wid; });
   S.lastActive.unshift(wid);
   if(S.lastActive.length>5) S.lastActive=S.lastActive.slice(0,5);
-  // Init Claude panel for this world
-  initClaude(wid);
-  autoWorldBriefing(wid);
   saveS();
 }
 
@@ -4018,7 +4015,7 @@ async function cpSend(widOverride, textOverride){
 }
 /* ═══ PÔLE SANTÉ ═══ */
 
-function initClaude(wid){ claudeCall(WORLDS[wid].suggestions[0], wid, "briefing"); }
+function initClaude(wid){ /* Claude appelé uniquement à la demande */ }
 
 
 function renderChatHistory(wid){
