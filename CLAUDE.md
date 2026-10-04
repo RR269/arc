@@ -31,7 +31,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## État au 4 octobre 2026
 
-Branche `reprise-octobre` (non fusionnée) : panneau Claude des mondes et de Santé réparé, bouton de veille,
+Branche `reprise-octobre`, fusionnée dans `main` le 4 octobre (`e2c6573`) et en ligne : panneau Claude des mondes et de Santé réparé, bouton de veille,
 affichage des erreurs Claude, hors ligne réactivé, restes de la clé API retirés, texte de Claude nettoyé (DOMPurify).
 Mondes v2 : Trading et tout le code MT5 retirés (données archivées dans `S.archive.trading`), monde ATLAS créé,
 ARYAN remis à son état du tour 113.
@@ -39,11 +39,27 @@ ARYAN remis à son état du tour 113.
 Sources du contenu : ARYAN, compte rendu du tour 113 (4 octobre) et points de reprise d'août ; ATLAS, sessions de
 juillet à septembre — état à recaler avec Rayan (immatriculation, pages légales, achat en mode test : non confirmés).
 
+### Supabase : état au 4 octobre, 07 h 15
+
+Le projet ARC (organisation RAYAN, offre gratuite) était en pause ; Rayan l'a rallumé, puis a posé deux verrous :
+- `arc_data` : sécurité au niveau des lignes activée et tous les droits retirés au rôle `anon`. Vérifié dans l'éditeur SQL :
+  3 lignes, protection active, lecture anonyme refusée. Aucune règle d'accès n'existe encore : la table est fermée à tous
+  sauf au rôle de service.
+- `ARC-CLAUDE-PROXY` : le jeton était écrit en dur à la ligne 2 de `index.ts` (`const ARC_SECRET`). Il a été remplacé par
+  une valeur aléatoire et redéployé. Le jeton encore présent dans `claudeCall` ne vaut plus rien.
+
+Conséquence voulue : ARC affiche « Offline » et Claude répond « Unauthorized » jusqu'au chantier connexion.
+Le proxy lit la clé Anthropic dans le secret `ANTHROPIC_KEY`, répond aux requêtes `OPTIONS` avec `Access-Control-Allow-Origin: *`
+et vérifie l'en-tête `x-arc-token`. Son code complet est à demander à Rayan (onglet Code de la fonction).
+
+Les 3 lignes de `arc_data` sont celles de trois appareils distincts : à reprendre sous un seul compte au chantier connexion.
+
 ### Ouvert, par ordre de gravité
 
-1. **Données ouvertes.** `arc_data` est lue et écrite sans connexion avec la clé `anon` : n'importe qui peut la lire,
-   pôles Santé et Juridique compris.
-2. **Secret du proxy public.** `x-arc-token` est en clair dans `claudeCall` : n'importe qui peut consommer la clé Anthropic.
+1. **Données fermées, mais plus de synchronisation.** `arc_data` est verrouillée (voir plus haut) ; il manque les règles
+   « chacun sa ligne » et la connexion pour la rouvrir à Rayan seul.
+2. **Proxy verrouillé, mais Claude éteint.** L'ancien jeton est révoqué ; le proxy doit vérifier la session de Rayan
+   à la place d'un jeton partagé, et `x-arc-token` doit disparaître de `claudeCall`.
 3. **Synchronisation entre appareils inopérante.** `getUID` fabrique un identifiant au hasard par appareil
    (`arc_uid`) : chaque appareil a sa propre ligne.
 4. **Contenu de FBA, KITCHEN et TELENEUF daté d'avril 2026.** ATLAS est à recaler (voir plus haut).
