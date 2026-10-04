@@ -50,6 +50,11 @@ juillet à septembre — état à recaler avec Rayan (immatriculation, pages lé
 5. **Code jamais appelé** : `autoWorldBriefing`, `fmtDate`, `initClaude`, `renderChatHistory`, `renderSanteHistory`,
    `resetPomoWR`.
 
+### Audit et feuille de route
+
+`docs/AUDIT.md` (4 octobre 2026) : mesures, défauts prouvés D1 à D10, nouveau modèle (mondes en données, point d'étape
+publié par les projets), règles de design, fonctionnalités classées, ordre des chantiers 0 à 8. À lire avant tout chantier.
+
 ### Chantier suivant : la connexion
 
 Les points 1 à 3 ont une seule solution : connexion Supabase par lien magique (e-mail).
