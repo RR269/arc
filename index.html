@@ -38,9 +38,6 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 @keyframes blinkDot{0%,100%{opacity:1}50%{opacity:.2}}
 @keyframes scoreIn{0%{stroke-dashoffset:326.7}100%{}}
 @keyframes h1Word{0%{opacity:0;transform:translateY(16px) skewY(3deg)}100%{opacity:1;transform:none}}
-@keyframes pnlPulseBlue{0%,100%{box-shadow:0 0 0 1px rgba(0,122,255,.55)}50%{box-shadow:0 0 0 1px rgba(0,122,255,.8),0 0 24px rgba(0,122,255,.25)}}
-@keyframes pnlPulseRed{0%,100%{box-shadow:0 0 0 1px rgba(255,59,48,.55)}50%{box-shadow:0 0 0 1px rgba(255,59,48,.8)}}
-@keyframes pnlPulseWhite{0%,100%{box-shadow:0 0 0 1px rgba(255,255,255,.12)}50%{box-shadow:0 0 0 1px rgba(255,255,255,.22)}}
 
 /* === SCREENS === */
 .scr{position:fixed;inset:0;transition:opacity .42s cubic-bezier(.4,0,.2,1),transform .42s cubic-bezier(.4,0,.2,1)}
@@ -749,70 +746,6 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .ob-dot.active{background:var(--t1);width:18px}
 .ob-skip{font-size:11px;color:var(--t3);margin-top:14px;cursor:pointer;background:none;border:none}
 
-/* === TRADING MT5 === */
-#mt5-pnl-hero{display:none;position:relative;border-radius:14px;background:#070707;border:1px solid rgba(255,255,255,.1);overflow:hidden;margin-bottom:32px}
-#mt5-pnl-hero.active{display:flex;align-items:center}
-#mt5-pnl-hero.profit{border-color:rgba(0,122,255,.4);animation:pnlPulseBlue 3s ease-in-out infinite}
-#mt5-pnl-hero.loss{border-color:rgba(255,59,48,.4);animation:pnlPulseRed 3s ease-in-out infinite}
-#mt5-pnl-hero.neutral{border-color:rgba(255,255,255,.1);animation:pnlPulseWhite 4s ease-in-out infinite}
-.pnl-section{padding:14px 18px;display:flex;flex-direction:column;justify-content:center;position:relative;flex-shrink:0}
-.pnl-section+.pnl-section::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:rgba(255,255,255,.06)}
-.pnl-section.main{flex:1;min-width:0}
-.pnl-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-family:var(--fm)}
-.pnl-live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blinkDot 1.5s infinite;display:none;flex-shrink:0}
-.pnl-live-dot.on{display:block}
-.pnl-label-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
-.pnl-hero-value{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1;transition:color .3s;font-family:var(--fm)}
-#mt5-pnl-hero.profit .pnl-hero-value{color:#007AFF}
-#mt5-pnl-hero.loss .pnl-hero-value{color:#FF3B30}
-#mt5-pnl-hero.neutral .pnl-hero-value{color:#f5f5f7}
-.pnl-pct-badge{font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px;border:1px solid;margin-top:5px;display:inline-block;font-family:var(--fm)}
-#mt5-pnl-hero.profit .pnl-pct-badge{color:#007AFF;border-color:rgba(0,122,255,.25)}
-#mt5-pnl-hero.loss .pnl-pct-badge{color:#FF3B30;border-color:rgba(255,59,48,.25)}
-#mt5-pnl-hero.neutral .pnl-pct-badge{color:var(--t3);border-color:rgba(255,255,255,.08)}
-.pnl-stat-val{font-size:13px;font-weight:500;line-height:1;font-family:var(--fm)}
-.pnl-stat-lbl{font-size:8px;color:var(--t3);font-family:var(--fm);text-transform:uppercase;letter-spacing:1.5px;margin-top:3px}
-.pnl-dissoc{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);margin-bottom:20px}
-.mt5-stat{background:var(--bg2);border:1px solid var(--b1);border-radius:12px;padding:14px 16px}
-.mt5-stat-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);font-family:var(--fm);margin-bottom:6px}
-.mt5-stat-val{font-size:20px;font-weight:800;font-family:var(--fm);letter-spacing:-.5px}
-.mt5-bar-row{background:var(--bg2);border:1px solid var(--b1);border-radius:12px;padding:14px 16px;margin-bottom:10px}
-.mt5-bar-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.mt5-bar-lbl{font-size:10px;font-weight:700;color:var(--t2)}
-.mt5-bar-val{font-size:11px;font-weight:700;font-family:var(--fm)}
-.mt5-bar-track{height:6px;background:var(--bg4);border-radius:6px;overflow:hidden}
-.mt5-bar-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1)}
-.mt5-manual-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
-.mt5-inp{background:var(--bg2);border:1px solid var(--b2);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--t1);font-family:var(--fm);transition:border-color .15s;width:100%}
-.mt5-inp:focus{border-color:rgba(48,209,88,.5);outline:none}
-.mt5-inp::placeholder{color:var(--t3)}
-.mt5-inp-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);font-family:var(--fm);margin-bottom:4px}
-.mt5-manual-apply{width:100%;padding:10px;border-radius:9px;font-size:12px;font-weight:700;background:rgba(48,209,88,.12);border:1px solid rgba(48,209,88,.35);color:var(--green);cursor:pointer;margin-top:4px}
-.mt5-tabs{display:flex;gap:6px;margin-bottom:12px}
-.mt5-tab{font-size:10px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid var(--b2);color:var(--t3);background:transparent;transition:all .15s;cursor:pointer}
-.mt5-tab.active{color:var(--green);border-color:rgba(48,209,88,.4);background:rgba(48,209,88,.08)}
-.mt5-tab-panel{display:none}
-.mt5-tab-panel.active{display:block}
-.mt5-limit-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.mt5-limit-info{flex:1}
-.mt5-limit-name{font-size:11px;font-weight:700}
-.mt5-limit-sub{font-size:10px;color:var(--t3);font-family:var(--fm)}
-.mt5-limit-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;font-family:var(--fm);flex-shrink:0}
-.mt5-limit-badge.safe{background:rgba(48,209,88,.12);color:var(--green);border:1px solid rgba(48,209,88,.25)}
-.mt5-limit-badge.warn{background:rgba(255,149,0,.12);color:var(--orange);border:1px solid rgba(255,149,0,.25)}
-.mt5-limit-badge.danger{background:rgba(255,55,95,.12);color:var(--red);border:1px solid rgba(255,55,95,.25)}
-.mt5-sim-banner{display:flex;align-items:center;gap:10px;background:rgba(48,209,88,.05);border:1px solid rgba(48,209,88,.18);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:var(--t2)}
-.mt5-sim-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;animation:blinkDot 1s infinite}
-.mt5-sim-label{font-size:10px;font-weight:700;color:var(--green);font-family:var(--fm);flex-shrink:0}
-.mt5-sim-inp{flex:1;background:var(--bg3);border:1px solid var(--b2);border-radius:6px;padding:5px 9px;font-size:12px;color:var(--t1);font-family:var(--fm);max-width:100px}
-.mt5-sim-toggle{font-size:10px;font-weight:700;padding:5px 11px;border-radius:7px;border:1px solid rgba(48,209,88,.3);color:var(--green);background:rgba(48,209,88,.08);flex-shrink:0;cursor:pointer}
-.mt5-conn-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0}
-.mt5-conn-dot.connected{background:var(--green)}
-.mt5-ea-block{background:var(--bg3);border:1px solid var(--b2);border-radius:10px;padding:12px 14px;margin-top:10px}
-.mt5-ea-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t3);font-family:var(--fm);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
-.mt5-ea-copy{font-size:9px;font-weight:700;color:var(--teal);padding:3px 8px;border-radius:5px;border:1px solid rgba(90,200,250,.3);cursor:pointer}
-.mt5-ea-code{font-size:10px;font-family:var(--fm);color:var(--t2);line-height:1.7;white-space:pre-wrap;overflow-x:auto}
-
 /* === FAB === */
 #fab-claude{display:none;position:fixed;bottom:22px;right:18px;z-index:80;width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;font-size:20px;font-style:italic;font-weight:800;color:#000;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:all .2s;align-items:center;justify-content:center}
 
@@ -1271,9 +1204,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <div class="wna-list" id="na-list"></div>
       </div>
 
-      <!-- TRADING BLOCK (WORLD 4 only) -->
-      <div id="trading-block" style="display:none"></div>
-
       <!-- NOTES -->
       <div class="wsec">
         <div class="wsec-head"><span class="wsec-lbl">Notes</span><div class="wsec-line"></div><span class="wsec-info" id="notes-chars">0 mots</span></div>
@@ -1631,7 +1561,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Aides ACRE, CAPE et subventions Valence pour cr&#233;er entreprise')">Aides cr&#233;ation</button>
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Obligations l&#233;gales app livraison alimentaire France')">Obligations app</button>
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Contrat type partenariat restaurateur halal')">Contrat restaurateur</button>
-            <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Fiscalit&#233; trading EA MT5 en France')">Fiscalit&#233; trading</button>
+            <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Quel statut pour vendre Atlas, ma formation en ligne ?')">Statut Atlas</button>
           </div>
         </div>
         <div class="typing" id="cp-typing-jur"><div class="tdots"><span></span><span></span><span></span></div></div>
@@ -1797,7 +1727,9 @@ async function pullFromCloud() {
     var localAction = S._lastAction || 0;
     // Comparaison sur _lastAction (vraie action user) pas _savedAt (auto-save)
     if(cloudAction > localAction + 1000) {
+      if(!res.data.state._worldsV) S._worldsV=0; // état venu d'un appareil pas encore migré
       Object.assign(S, res.data.state);
+      normalizeS();
       localStorage.setItem(SK, JSON.stringify(S));
       localStorage.setItem('arc_cloud_ts', String(cloudTs));
       renderHome();
@@ -1835,70 +1767,103 @@ var WORLDS = [
   {
     id:0, icon:"🚀", name:"ARYAN", color:"#ff6b35", wbg:"#050200",
     cat:"App · Livraison halal · Valence 26",
-    tags:["React + Lovable","Supabase ✓","Stripe ✓"],
-    desc:"App de livraison halal locale — 3 interfaces React en production, 28 tables Supabase, Stripe Connect actif. Le moteur est là. Ce qui manque : l'auth qui fait tout tourner.",
-    mission:"Brancher l'auth 3 rôles sur les 3 interfaces. Dès que ça tourne, le premier flux commande est testable de bout en bout.",
+    tags:["React + Vite", "Supabase", "Stripe Connect", "Vercel"],
+    desc:"Marketplace de livraison halal locale, en production : client, commerçant, livreur et espace admin. Au tour 113 (4 octobre) : 928 tests verts, 387 dettes numérotées et suivies. Ce qui reste : le dernier mètre avant le premier vrai client.",
+    mission:"Amener ARYAN à son premier vrai client. Pilote décidé en août : 2 boutiques, 2 à 3 livreurs de confiance, 1 zone, 2 à 3 semaines — les boutiques avant les livreurs.",
     priority:{
       num:1,
-      title:"Auth 3 rôles → RLS → State Machine",
-      detail:"Client, livreur, commerçant — chacun son accès, ses données, ses actions. Sans ça, rien ne peut être testé en conditions réelles.",
-      badge:"EN COURS"
+      title:"Essai « Ma boutique », puis réponses Q1-Q4",
+      detail:"Ouvrir « Ma boutique » : le métier Boulangerie doit s'afficher dès l'ouverture, bouton Enregistrer grisé. C'est la seule preuve qui manque à la correction du tour 113. Ensuite, répondre à Q1-Q4 pour débloquer le nettoyage des courses anciennes.",
+      badge:"TOUR 113"
     },
     tasks_done:[
-      {id:"a1", t:"Projet React créé sur Lovable",
-       prompt:"Je travaille sur ARYAN, une app de livraison halal locale (Valence). Le projet React est créé sur Lovable. Qu'est-ce que cette étape débloque concrètement et quel est le risque technique le plus sous-estimé à ce stade ? Réponse directe, 3-4 phrases."},
+      {id:"a1", t:"Projet React créé",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le socle React est en place depuis le début. Quel est aujourd'hui le risque technique le plus sous-estimé du socle ? Réponse directe, 3-4 phrases."},
       {id:"a2", t:"3 interfaces structurées : Client, Livreur, Commerçant",
-       prompt:"ARYAN — 3 interfaces React structurées (client, livreur, commerçant). Quel est le point d'architecture le plus fragile entre ces 3 interfaces aujourd'hui, avant de brancher l'auth ? Identifie le risque principal et dis-moi comment le prévenir."},
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Les trois interfaces existent et tournent en production. Quel est le point le plus fragile entre elles avant un pilote réel ?"},
       {id:"a3", t:"Design system couleurs + composants UI définis",
-       prompt:"ARYAN design system défini. Quels sont les 3 points de friction UI qui apparaissent systématiquement quand on connecte un backend réel à des interfaces mockées ? Comment les anticiper maintenant avant d'être bloqué plus tard ?"},
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le design system est posé. Quels défauts d'interface coûtent une signature de commerçant lors d'une démonstration ?"},
       {id:"a4", t:"Interface Client — flux de commande complet",
-       prompt:"Interface Client ARYAN terminée. Décris les 3 flux utilisateur critiques à valider en priorité quand l'auth sera active. Pour chacun, précise ce qui peut casser si le backend ne répond pas comme attendu."},
-      {id:"a5", t:"Interface Livreur — carte + gestion livraisons",
-       prompt:"Interface Livreur ARYAN terminée. Quels états de commande le livreur doit-il pouvoir gérer depuis son interface ? Donne-moi le mapping exact entre les états UI et les transitions de la state machine Supabase."},
-      {id:"a6", t:"Interface Commerçant — catalogue produits",
-       prompt:"Interface Commerçant ARYAN terminée. Quelles tables Supabase cette interface doit-elle lire et écrire en priorité pour le MVP ? Donne-moi la liste exacte avec les opérations CRUD par table."},
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le client commande, voit les frais avant de payer et suit sa livraison. Quels cas limites tester avant le pilote ?"},
+      {id:"a5", t:"Interface Livreur — courses, position, gains",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le livreur passe en ligne, prend les courses de sa zone et livre. Que vérifier sur téléphone avant de confier l'app à un vrai livreur ?"},
+      {id:"a6", t:"Interface Commerçant — boutique, catalogue, commandes",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le commerçant gère sa boutique, ses produits et ses commandes. Que doit-il comprendre seul, sans moi à côté ?"},
       {id:"a7", t:"Maquettes validées",
-       prompt:"Maquettes ARYAN validées. Qu'est-ce qui change visuellement quand on branche les vraies données à la place des mocks ? Donne-moi les 2 points de friction UI les plus probables à corriger après la connexion backend."},
-      {id:"a8", t:"Supabase connecté à Lovable — variables env configurées",
-       prompt:"Supabase connecté à Lovable pour ARYAN. Donne-moi un checklist de vérification complet : variables d'environnement critiques, test de connexion, et les 3 premières choses à tester pour confirmer que la connexion est stable."},
-      {id:"a10", t:"28 tables déployées en production Supabase",
-       prompt:"28 tables ARYAN en prod Supabase. Quelles sont les 5 tables les plus critiques pour l'auth multi-rôles et la state machine commande ? Pour chacune, explique son rôle exact dans le flux."},
-      {id:"a13", t:"Stripe Connect activé en mode test + clés API sauvegardées",
-       prompt:"Stripe Connect ARYAN en mode test. Quelles sont les étapes exactes pour passer en production ? Quels webhooks sont indispensables pour le split payment commerçant et comment les tester en mode test avant de basculer ?"}
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Les maquettes sont validées et codées. Quels écarts maquette/réel guetter à l'usage ?"},
+      {id:"a8", t:"Supabase connecté — variables d'environnement configurées",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Supabase est branché. Quelle vérification de configuration refaire avant une bascule en réel ?"},
+      {id:"a10", t:"Base de données déployée en production",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La base est en production. Quelles tables surveiller en premier pendant un pilote ?"},
+      {id:"a13", t:"Stripe Connect activé en mode test",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Stripe Connect fonctionne en mode test. Liste exacte de ce qu'exige le passage en réel : clés, webhook, comptes Connect à recréer."},
+      {id:"a9", t:"Auth multi-rôles : client, livreur, commerçant + RLS",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — L'auth multi-rôles et les règles d'accès sont en place. Comment auditer qu'aucun rôle ne voit les données d'un autre ?"},
+      {id:"a11", t:"Cycle de vie d'une commande, de « passée » à « livrée »",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le cycle complet d'une commande fonctionne. Quelles transitions anormales tester (annulation, boutique fermée, livreur qui abandonne) ?"},
+      {id:"a12", t:"Edge Functions sécurisées + règles d'accès complètes",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Les fonctions serveur et les règles d'accès sont déployées. Quel contrôle régulier mettre en place ?"},
+      {id:"a14", t:"Les 3 interfaces connectées au backend",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Les trois interfaces lisent et écrivent la vraie base. Que reste-t-il qui pourrait encore reposer sur des données d'exemple ?"},
+      {id:"a15", t:"Flux commande prouvé de bout en bout par Rayan (2 août)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — J'ai vu une commande passer de « en attente d'un livreur » à « livrée » dans l'interface. Quel scénario rejouer avant chaque mise en production ?"},
+      {id:"a16", t:"Paiement réparti : boutique, livreur, plateforme (#43 résolue)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le paiement est réparti correctement, vérifié chez Stripe en mode test. Comment prouver la même chose en réel au premier euro ?"},
+      {id:"a17", t:"Chantier Livreur complet en production (2-3 août)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Inscription, Stripe, mise en ligne, prise de course, position privée par défaut, gains : tout le parcours livreur est en production. Que montrer en premier à un livreur de confiance ?"},
+      {id:"a18", t:"Approbation des livreurs + adresses de retour corrigées",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Un livreur doit être approuvé avant de passer en ligne. Quelle procédure simple pour approuver mes 2-3 premiers livreurs ?"},
+      {id:"a19", t:"Espace admin : pilotage, courses, versements, remboursement, agents",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — L'espace admin existe : poste de pilotage, courses, versements, remboursement, salle de commandement. Quelle routine quotidienne de 5 minutes pendant le pilote ?"},
+      {id:"a20", t:"Métier de boutique obligatoire + catégories de produit (tours 108-109)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Chaque boutique a un métier, chaque produit une catégorie. Comment présenter ça à un commerçant en une phrase ?"},
+      {id:"a21", t:"Tour 113 en production : métier affiché, en-tête admin, numéro des versements",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le tour 113 est en production (commit ea9f67c). Résume ce qu'il reste à voir de mes yeux pour le clore."}
     ],
     tasks_todo:[
-      {id:"a9", t:"Auth multi-rôles Supabase : client, livreur, commerçant + RLS",
-       prompt:"ARYAN — Je dois implémenter l'auth Supabase multi-rôles. Stack : React/Lovable + Supabase Auth. 3 rôles : client, livreur, commerçant. Donne-moi le plan d'implémentation complet : structure des métadonnées user dans la table profiles, RLS policies par rôle sur les tables critiques (orders, products, deliveries), et comment Lovable gère le routing conditionnel selon le rôle. Commence par le premier fichier SQL à écrire."},
-      {id:"a11", t:"State machine commande : placed → accepted → picked → delivered",
-       prompt:"ARYAN — State machine commande Supabase. États : placed, accepted, picked_up, delivered, cancelled. Donne-moi l'architecture complète : schéma SQL de la table orders avec les contraintes d'état, triggers Postgres pour valider les transitions, et la Edge Function qui orchestre chaque changement d'état avec les permissions par rôle. Code complet, pas de pseudo-code."},
-      {id:"a12", t:"Edge Functions sécurisées + RLS policies complètes",
-       prompt:"ARYAN — Je dois implémenter les RLS policies pour 3 rôles (client, livreur, commerçant) sur les tables orders, products, deliveries. Donne-moi les policies exactes en SQL pour chaque table, puis la structure d'une Edge Function typique sécurisée par rôle. Code prêt à déployer."},
-      {id:"a14", t:"Connecter les 3 interfaces React au backend Supabase",
-       prompt:"ARYAN — Connexion frontend/backend. J'ai 3 interfaces React dans Lovable et Supabase connecté avec 28 tables. Par quelle interface commencer pour valider le flux de bout en bout ? Donne-moi la checklist de connexion avec les hooks Supabase React à implémenter en premier, les erreurs courantes à éviter avec Lovable."},
-      {id:"a15", t:"Tests E2E : flux commande complet de bout en bout",
-       prompt:"ARYAN — Tests E2E flux complet : client commande → commerçant accepte → livreur récupère → livré. Donne-moi le scénario de test avec les données à créer dans Supabase, les assertions critiques à vérifier à chaque étape, et comment simuler les 3 rôles simultanément en dev."},
-      {id:"a16", t:"Stripe Connect — webhooks + split payment commerçant",
-       prompt:"ARYAN — Stripe Connect webhooks + split payment. Le client paie → ARYAN prend une commission → le commerçant reçoit le reste. Donne-moi le code complet de la Edge Function webhook Stripe, la gestion des events payment_intent.succeeded et transfer.created, et le schéma de la table payments dans Supabase."}
+      {id:"a30", t:"Essai « Ma boutique » : Boulangerie affichée à l'ouverture, bouton grisé (#385)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La dette #385 est corrigée mais pas encore vue dans un navigateur. Donne-moi le parcours d'essai exact, en 4 gestes, et ce que je dois noter."},
+      {id:"a31", t:"Rapporter le groupe grisé « Hors du périmètre d'ARYAN » (métiers et catégories)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Je n'ai pas encore confirmé à l'écran le groupe grisé en bas des listes de métiers et de catégories (tour 109). Où regarder et que noter ?"},
+      {id:"a32", t:"Répondre à Q1-Q4, puis nettoyer les courses anciennes (#284)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — 22 courses sont listées dans l'admin, dont 8 de plus de 30 jours, et 4 payées et capturées attendent un livreur. Aide-moi à trancher Q1-Q4 : pose-moi les questions une par une avec les conséquences de chaque réponse."},
+      {id:"a33", t:"Lire les deux anomalies Stripe en production (#387)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Deux événements stripe_anomaly « à router » apparaissent dans la salle de commandement, sans date, jamais lus. Comment les instruire proprement, et que décider selon ce qu'ils contiennent ?"},
+      {id:"a34", t:"Mettre à jour la boussole (ligne 6, §0.5, ligne 7)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La boussole du projet doit être mise à jour avec mon accord. Aide-moi à formuler les trois lignes à partir de ce que j'ai vu le 4 octobre."},
+      {id:"a35", t:"Livreur affiché « En ligne » sans aucune course (#345)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Un livreur qui ferme l'app reste affiché en ligne. Quelles règles simples pour le repasser hors ligne, et quels risques pour le pilote si je ne corrige pas ?"},
+      {id:"a36", t:"Verrou de publication sur l'identité légale (#95)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — L'interrupteur « Publiée au catalogue » est allumé alors que le bandeau dit qu'il manque le SIREN, le nom et le téléphone. Faut-il bloquer la publication avant le pilote ? Arguments pour et contre."},
+      {id:"a37", t:"Recaler la carte du formulaire de remboursement sur téléphone (#386)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La carte du formulaire de remboursement est mal calée sur téléphone. Est-ce à corriger avant le pilote ou après ?"},
+      {id:"a38", t:"Traiter les dettes #356 et #379",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Les dettes #356 et #379 sont les prochaines sur la liste. Rappelle-moi de les relire dans DETTES.md et aide-moi à les prioriser face au pilote."},
+      {id:"a39", t:"Pilote : signer 2 boutiques, puis 2 à 3 livreurs de confiance",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Offre pilote décidée : 0 % pendant 3 semaines, 17 % annoncé dès le premier jour, tarif fondateur à vie. Prépare mon argumentaire de 2 minutes pour un commerçant de Valence."},
+      {id:"a40", t:"Bascule Stripe en réel : clés, webhook, comptes Connect à recréer",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La bascule en réel dépend du terrain, du juridique et des CGU. Donne-moi la liste de contrôle dans l'ordre, avec le point de non-retour."}
     ],
     blockers:[
-      "Auth 3 rôles non implémentée — les 3 interfaces sont déconnectées du backend",
-      "State machine non codée — impossible de tester un flux commande réel"
+      "Quatre courses payées et capturées attendent un livreur ; 8 courses sur 22 ont plus de 30 jours (#284)",
+      "Deux anomalies Stripe signalées, jamais lues (#387)",
+      "Bascule en réel conditionnée au terrain, au juridique et aux CGU (point d'août, à confirmer)"
     ],
     nextActions:[
-      "Écrire le SQL de la table profiles avec les métadonnées rôle",
-      "Implémenter les RLS policies sur orders, products, deliveries",
-      "Coder la state machine commande en Edge Functions",
-      "Connecter l'interface Client en priorité pour valider le premier flux",
-      "Tester le flux E2E complet avant de toucher Stripe"
+      "Faire l'essai « Ma boutique » et rapporter ce que je vois",
+      "Répondre à Q1-Q4",
+      "Lire les deux anomalies Stripe en production",
+      "Mettre à jour la boussole",
+      "Prospecter les 2 boutiques du pilote"
     ],
     suggestions:[
-      "Implémente l'auth Supabase 3 rôles pour ARYAN",
-      "Écris les RLS policies pour mes 28 tables ARYAN",
-      "Comment coder la state machine commande ARYAN ?",
-      "Connecte Lovable à Supabase Auth pas à pas"
+      "Où en est ARYAN par rapport au premier vrai client ?",
+      "Aide-moi à trancher Q1-Q4 sur les courses anciennes",
+      "Prépare mon argumentaire pour un commerçant de Valence",
+      "Quelles dettes traiter avant le pilote, lesquelles après ?"
     ],
-    lovable:"https://lovable.dev",
-    context:"ARYAN — App livraison halal Valence\nStack: React/Lovable + Supabase (28 tables en prod) + Stripe Connect (mode test)\nRôles: client, livreur, commerçant\nBloquant principal: Auth multi-rôles + State Machine commande"
+    lovable:"https://aryan-drab.vercel.app", linkLabel:"Prod ↗",
+    context:"ARYAN — marketplace de livraison halal locale, Valence\nStack : React + Vite, Supabase, Stripe Connect, Vercel (aryan-drab.vercel.app)\nRôles : client, commerçant, livreur, admin\nÉtat au 4 octobre 2026 (tour 113) : 928 tests verts, 387 dettes numérotées, dernière mise en production ea9f67c\nPilote décidé : 2 boutiques, 2-3 livreurs, 1 zone, 2-3 semaines ; offre 0 % pendant 3 semaines puis 17 %, tarif fondateur\nOuvert : essai « Ma boutique » (#385), courses anciennes (#284, Q1-Q4), anomalies Stripe (#387), état en ligne (#345), verrou de publication (#95)\nMéthode : une cause se prouve avant de se corriger ; rien n'est clos sans que Rayan l'ait vu à l'écran"
   },
   {
     id:1, icon:"📦", name:"FBA", color:"#ff9f0a", wbg:"#050300",
@@ -1950,7 +1915,7 @@ var WORLDS = [
       "Calcule la marge nette pour un produit à 30€ sur Amazon FR",
       "Comment qualifier un fournisseur Alibaba sans se faire avoir ?"
     ],
-    lovable:"https://app.helium10.com",
+    lovable:"https://app.helium10.com", linkLabel:"Helium 10 ↗",
     context:"Amazon FBA — Private label Europe + US\nPhase: recherche produit (phase 0)\nCritères: prix 20-50€, demande >3000/mois, marge nette ≥40%\nOutils: Helium 10, Alibaba"
   },
   {
@@ -1999,7 +1964,7 @@ var WORLDS = [
       "Calcule la marge de mon plat à 12€ sur Deliveroo",
       "Synergie KITCHEN + ARYAN : comment livrer avec ma propre app ?"
     ],
-    lovable:"https://restaurant.deliveroo.com",
+    lovable:"https://restaurant.deliveroo.com", linkLabel:"Deliveroo ↗",
     context:"Dark Kitchen halal livraison — Valence (Drôme, 26)\nPhase: concept non défini, zéro structure\nSynergie stratégique: ARYAN pour la livraison locale\nRègle d'or: 20 commandes test avant tout investissement"
   },
   {
@@ -2054,68 +2019,78 @@ var WORLDS = [
       "Trouve les meilleurs fournisseurs Android TV Box sur Alibaba",
       "Écris-moi le script WhatsApp pour convertir un prospect TELENEUF"
     ],
-    lovable:"https://www.alibaba.com/trade/search?SearchText=android+tv+box+4k",
+    lovable:"https://www.alibaba.com/trade/search?SearchText=android+tv+box+4k", linkLabel:"Alibaba ↗",
     context:"TELENEUF — Box HDMI streaming\nOffre: HD 150€ / 4K 180€ / 100€/an\n3 inconnues à résoudre: légalité IPTV + marge réelle + fournisseur qualifié\nCible: vente directe WhatsApp + réseaux sociaux"
   },
   {
-    id:4, icon:"📈", name:"TRADING", color:"#30d158", wbg:"#010502",
-    cat:"Finance · EA MQL5 · Prop Firm FTMO",
-    tags:["MT5 + MQL5","BTC/USDT CFD","News Filter","FTMO 10k"],
-    desc:"Expert Advisor MQL5 sur BTC/USDT CFD. Structure de base codée, filtre news actif, premier backtest 6 mois fait. Maintenant : backtest 2 ans + validation métriques + forward test avant FTMO.",
-    mission:"Valider l'EA sur 2 ans de données réelles. Si les métriques passent le seuil, forward test 30 jours. Si le forward test passe, FTMO Challenge 10k.",
+    id:4, icon:"🧭", name:"ATLAS", color:"#32d2c9", wbg:"#000504",
+    cat:"Formation · Amazon FBA · Méthode + outils",
+    tags:["Next.js", "Supabase", "Stripe", "2 offres"],
+    desc:"Formation Amazon FBA honnête, livrée avec ses outils : 16 modules, 22 outils, 28 étapes, 7 jalons. Deux offres à accès à vie, en paiement unique : Essentiel 490 €, Intégrale 990 €. État reconstitué d'après les sessions de juillet à septembre : coche ce qui a bougé depuis.",
+    mission:"Passer du produit qui se construit au produit qui se vend : structure immatriculée, pages légales complètes, achat prouvé de bout en bout, premiers testeurs.",
     priority:{
       num:1,
-      title:"Backtest complet 2 ans BTC/USDT M15",
-      detail:"Télécharger les données 2022-2024 en qualité tick, lancer le Strategy Tester en mode 'Every tick based on real ticks', noter drawdown max, profit factor, win rate, consecutive losses.",
-      badge:"PRIORITÉ"
+      title:"Immatriculer la structure",
+      detail:"Sans SIREN : pas de CGV opposables, pas de compte Stripe, pas d'encaissement. Les 30 champs des pages légales en dépendent tous. C'est le seul bloquant qui ne se règle pas avec du code.",
+      badge:"CHEMIN CRITIQUE"
     },
     tasks_done:[
-      {id:"e1", t:"MetaTrader 5 installé + compte démo configuré",
-       prompt:"TRADING MT5 configuré. Quels sont les paramètres de compte démo qui simulent le mieux les conditions réelles FTMO Challenge 10k : capital initial exact, levier, spread réaliste pour BTC/USDT CFD, et comment vérifier que la simulation est fidèle aux conditions de la prop firm ?"},
-      {id:"e2", t:"Structure de base EA MQL5 écrite",
-       prompt:"TRADING structure EA MQL5 en place. Passe en revue les fonctions critiques : OnInit, OnDeinit, OnTick, OnTrade. Quels sont les 3 pièges les plus courants dans la structure d'un EA MQL5 pour CFD qui causent des résultats de backtest non reproductibles en live ?"},
-      {id:"e3", t:"Logique d'entrée et de sortie implémentée",
-       prompt:"TRADING logique entrée/sortie implémentée. Comment optimiser les conditions d'entrée pour BTC/USDT M15 sans tomber dans l'overfitting ? Quels indicateurs combiner, quelle méthode pour valider que la logique est robuste sur différentes périodes de marché (bull 2023, bear 2022, consolidation 2024) ?"},
-      {id:"e4", t:"Filtre news MQL5 configuré",
-       prompt:"TRADING filtre news configuré. Comment tester que le filtre news fonctionne correctement dans le Strategy Tester ? Quels événements macro ont le plus d'impact sur BTC/USDT CFD et sur quelle fenêtre de temps bloquer les trades avant/après l'annonce ?"},
-      {id:"e5", t:"Premier backtest 6 mois effectué",
-       prompt:"TRADING premier backtest 6 mois fait. Quelles métriques analyser en priorité et quels seuils minimaux atteindre pour valider que l'EA mérite un backtest complet 2 ans ? Donne-moi un tableau go/no-go avec les seuils exacts : profit factor, drawdown max, win rate, consecutive losses maximum."}
+      {id:"t1", t:"Sommet supprimé : deux offres définitives, 490 € et 990 € (9 juillet)",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — L'offre Sommet a été supprimée parce qu'elle promettait ce qui n'existait pas. Relis mes deux cartes d'offre en débutant méfiant : l'écart de 500 € se justifie-t-il tout seul ?"},
+      {id:"t2", t:"Paiement unique : le paiement en plusieurs fois est retiré",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — J'ai retiré le paiement en plusieurs fois pour ne pas faire payer d'intérêts. Comment l'expliquer en une phrase sur la page des offres, sans perdre l'acheteur qui hésite ?"},
+      {id:"t3", t:"Quatre pages légales rédigées, champs à compléter visibles",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — CGV, mentions légales, confidentialité et rétractation sont rédigées avec leurs champs à compléter. Liste ce que je dois réunir pour les remplir d'une traite."},
+      {id:"t4", t:"Garde d'accès par offre testé (Essentiel / Intégrale)",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — L'accès par offre est testé. Quels cas vérifier encore : compte sans offre, offre inconnue, changement d'offre ?"},
+      {id:"t5", t:"Parcours guidé déployé sur les 16 modules (22 juillet)",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Les 16 modules suivent la même grille : accroche par le bénéfice, quiz à 2-3 questions, carte d'action finale. Quel module relire en premier avec un œil neuf ?"},
+      {id:"t6", t:"Couche pratique complète : 22 outils, 28 étapes, 7 jalons",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Chaque chiffre de la page d'accueil correspond à quelque chose qui existe. Comment garder cette règle quand j'ajouterai du contenu ?"},
+      {id:"t7", t:"Simulateur de trésorerie validé",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Le simulateur de trésorerie est validé. Quel cas d'usage montrer à un testeur pour qu'il en voie l'intérêt en 2 minutes ?"},
+      {id:"t8", t:"Atelier : fiches produit, pipeline de décision, estimateur de marge",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — L'Atelier permet de travailler sur ses propres produits. Qu'est-ce qui manque à un vendeur pour décider « j'y vais ou pas » sur un produit ?"}
     ],
     tasks_todo:[
-      {id:"e6", t:"Télécharger les données historiques BTC/USDT M15 2022-2024",
-       prompt:"TRADING — Télécharger données historiques BTC/USDT M15 pour MT5. Meilleures sources pour des données tick de qualité (Dukascopy, TickStory, broker direct) et comment importer dans MT5 Strategy Tester. Quelle qualité de modélisation viser pour un résultat de backtest fiable ?"},
-      {id:"e7", t:"Backtest complet 2 ans avec le Strategy Tester MT5",
-       prompt:"TRADING — Backtest complet EA MQL5 sur BTC/USDT M15 2022-2024. Configuration optimale du Strategy Tester : mode Every tick based on real ticks, slippage réaliste, spread BTC/USDT CFD à simuler, et comment lire chaque section du rapport de résultat. Quels chiffres noter absolument ?"},
-      {id:"e8", t:"Analyser les métriques : drawdown, profit factor, win rate",
-       prompt:"TRADING — Analyser les métriques de backtest pour validation FTMO. Grille d'analyse avec seuils go/no-go : profit factor minimum (>1.5 ?), drawdown maximum (<10%), win rate acceptable pour un système trend-following BTC M15, consecutive losses maximum tolérable. Explique comment interpréter chaque métrique dans le contexte FTMO."},
-      {id:"e9", t:"Optimiser les paramètres (SL, TP, taille de position)",
-       prompt:"TRADING — Optimisation paramètres EA sans overfitting. Comment utiliser l'optimiseur MT5 de manière robuste : génétique vs exhaustif, walk-forward analysis obligatoire, nombre de passes raisonnable. Comment choisir les paramètres finaux qui restent performants hors de la fenêtre d'optimisation ?"},
-      {id:"e10", t:"Forward test 30 jours sur compte démo",
-       prompt:"TRADING — Forward test 30 jours. L'EA a passé le backtest 2 ans. Comment organiser le forward test : sur quel broker démo, comment logger automatiquement les trades, et quel template de suivi quotidien utiliser pour comparer les métriques backtest vs forward en temps réel ?"},
-      {id:"e11", t:"Valider la cohérence métriques forward vs backtest",
-       prompt:"TRADING — Validation forward vs backtest. J'ai 30 jours de forward test. Comment déterminer si l'EA est prêt pour le FTMO : quelle dégradation de performance est acceptable (profit factor, drawdown, win rate) ? Quels signaux indiquent clairement un overfitting vs une variation normale ?"},
-      {id:"e12", t:"Ouvrir le FTMO Challenge 10k si forward test validé",
-       prompt:"TRADING — FTMO Challenge 10k. Règles exactes : objectif +10%, max drawdown journalier -5%, max drawdown total -10%, durée minimale 10 jours de trading. Donne-moi la stratégie de gestion du risque par trade pour respecter ces règles : taille de position maximale, règle d'arrêt journalier, et comment gérer une série perdante sans violer les règles."}
+      {id:"t10", t:"Immatriculer la structure (micro ou société) et obtenir le SIREN",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Je n'avais pas de structure immatriculée en juillet. Aide-moi à trancher micro-entreprise ou société pour vendre Atlas, à partir de ma situation : pose-moi les questions qui comptent. Rappel : tu n'es pas juriste, je ferai valider."},
+      {id:"t11", t:"Compléter les 30 champs des pages légales",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Une fois le SIREN obtenu, il reste 30 champs à remplir dans les pages légales. Fais-moi la liste groupée par document, avec ce que chaque champ attend."},
+      {id:"t12", t:"Case de consentement au paiement + renonciation à la rétractation",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Au paiement : une case non précochée, acceptation des CGV, accès immédiat et renonciation à la rétractation, horodatée et enregistrée. Vérifie avec moi que le mécanisme est complet."},
+      {id:"t13", t:"Achat de bout en bout en mode test : paiement, confirmation, accueil",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — L'achat doit fonctionner de bout en bout en mode test : paiement, activation de l'offre, confirmation écrite, page « commence ici ». Donne-moi le parcours de vérification en 6 étapes."},
+      {id:"t14", t:"Relecture juridique des CGV avant le premier encaissement",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Avant d'encaisser 990 €, je veux une relecture juridique. Quelles questions poser au professionnel pour une relecture courte et utile ?"},
+      {id:"t15", t:"Trois bêta-testeurs sur le produit réel",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Je veux trois bêta-testeurs. Qui choisir, que leur demander, et comment recueillir leurs retours sans les orienter ?"},
+      {id:"t16", t:"Atlas 2.0 : trancher la direction visuelle (maquettes du 29 septembre)",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — J'ai des maquettes Atlas 2.0 : cinq écrans, trois calligraphies, deux parcours. Aide-moi à trancher avec des critères, pas au goût."},
+      {id:"t17", t:"Frictions : formulaire de l'Atelier sur téléphone, photo produit dans les fiches",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Deux frictions connues : le formulaire de l'Atelier sur petit écran et la photo produit dans les fiches. Avant ou après la mise en vente ?"},
+      {id:"t18", t:"Mise en vente",
+       prompt:"Atlas (formation Amazon FBA avec ses outils ; Next.js, Supabase, Stripe ; deux offres à accès à vie, Essentiel 490 € et Intégrale 990 €) — Liste de contrôle finale avant d'ouvrir la vente d'Atlas : légal, paiement, accueil après achat, support. Qu'est-ce qui est bloquant, qu'est-ce qui peut attendre ?"}
     ],
     blockers:[
-      "Backtest 2 ans non effectué — performance réelle de l'EA inconnue",
-      "Paramètres non optimisés — forward test prématuré sans optimisation",
-      "Forward test non commencé — FTMO hors de portée tant que ces 3 étapes ne sont pas faites"
+      "Pas de structure immatriculée (point de juillet, à confirmer) : aucun encaissement légal possible",
+      "Pages légales : 30 champs en attente du SIREN",
+      "Achat réel pas encore prouvé de bout en bout"
     ],
     nextActions:[
-      "Télécharger les données tick BTC/USDT M15 2022-2024 depuis Dukascopy",
-      "Lancer le Strategy Tester en mode 'Every tick based on real ticks'",
-      "Analyser drawdown max, profit factor, win rate, consecutive losses",
-      "Si métriques OK : démarrer le forward test 30 jours immédiatement"
+      "Trancher micro-entreprise ou société, puis déclarer",
+      "Compléter les pages légales dès le SIREN reçu",
+      "Prouver un achat complet en mode test",
+      "Recruter trois bêta-testeurs",
+      "Trancher la direction visuelle d'Atlas 2.0"
     ],
     suggestions:[
-      "Analyse mes métriques de backtest MT5 pour FTMO",
-      "Comment éviter l'overfitting sur mon EA MQL5 BTC M15 ?",
-      "Règles FTMO Challenge 10k et stratégie de gestion du risque",
-      "Configure le walk-forward analysis pour mon EA"
+      "Micro-entreprise ou société pour vendre Atlas ?",
+      "Que reste-t-il avant de pouvoir encaisser légalement ?",
+      "Prépare le parcours de test d'un achat complet",
+      "Aide-moi à choisir entre les maquettes Atlas 2.0"
     ],
-    lovable:"https://ftmo.com",
-    context:"Trading EA MQL5 BTC/USDT CFD — MetaTrader 5\nObjectif: FTMO Challenge 10k\nRègles FTMO: max -5%/jour, max -10% total, +10% objectif, min 10 jours\nPhase actuelle: backtest 2 ans à effectuer"
+    context:"ATLAS — formation Amazon FBA avec ses outils\nStack : Next.js, Supabase, Stripe\nOffres : Essentiel 490 € (la méthode), Intégrale 990 € (la méthode + Atelier, Cockpit, Boîte à outils, Fiscalité) ; accès à vie, paiement unique\nContenu : 16 modules, 22 outils, 28 étapes, 7 jalons ; parcours guidé déployé partout\nChemin critique : immatriculation → pages légales → consentement au paiement → achat prouvé → relecture juridique → mise en vente\nRègle du produit : ne promettre que ce qui existe ; aucune promesse de gain\nÉtat reconstitué d'après les sessions de juillet à septembre 2026 : demander à Rayan ce qui a bougé depuis"
   }
 ];
 
@@ -2144,24 +2119,36 @@ var POLES = [
       {id:"demarches",icon:"📋",title:"Démarches en cours",badge:""}
     ],
     suggestions:["Quel statut juridique pour ARYAN ?","Aides à la création entreprise Valence","Obligations légales livraison alimentaire","Contrat type commerçant partenaire"],
-    context:"Pôle Juridique — entrepreneur Valence (France). Projets : ARYAN (app livraison halal), FBA, Dark Kitchen, TELENEUF. Besoin : statut, contrats, aides état, démarches."
+    context:"Pôle Juridique — entrepreneur Valence (France). Projets : ARYAN (app livraison halal), Atlas (formation Amazon FBA vendue en ligne), FBA, Dark Kitchen, TELENEUF. Besoin : statut, contrats, aides état, démarches."
   }
 ];
 
 var INTEL_STATIC=[
-  {text:"Supabase Auth v2 — JWT multi-rôles natifs + RLS simplifié. Implémentation directe pour tes 3 interfaces ARYAN sans Edge Function supplémentaire.",cat:"ARYAN",icon:"🚀",url:"https://supabase.com/docs/guides/auth",source:"supabase.com"},
   {text:"Amazon FBA frais 2025 Europe — le FBA Calculator officiel te donne la marge nette exacte produit par produit avant tout sourcing.",cat:"FBA",icon:"📦",url:"https://sellercentral.amazon.fr/hz/fba/profitabilitycalculator/index",source:"sellercentral.amazon.fr"},
-  {text:"FTMO Challenge règles 2025 — drawdown relatif 10%, objectif profit +10%, durée illimitée. Vérifie la conformité de ton EA avant soumission.",cat:"TRADING",icon:"📈",url:"https://ftmo.com/en/trading-objectives/",source:"ftmo.com"},
   {text:"Deliveroo France — tarifs et conditions partenaires actuels. Commission ~30%, délai paiement 7 jours. Calcule ta marge nette par plat avant lancement.",cat:"KITCHEN",icon:"🍳",url:"https://restaurants.deliveroo.fr/",source:"restaurants.deliveroo.fr"},
   {text:"Android TV Box Alibaba — sourcing direct fournisseurs vérifiés. Compare H96 Max, X98Q et TX9 Pro : prix unitaire 15-25€ MOQ 10 pièces.",cat:"TELENEUF",icon:"📺",url:"https://www.alibaba.com/trade/search?SearchText=android+tv+box+4k",source:"alibaba.com"},
   {text:"Helium 10 Black Box — outil de recherche produit FBA. Filtre : prix 20-50€, revenu mensuel >3000€, score concurrence <40. Accès direct.",cat:"FBA",icon:"📦",url:"https://app.helium10.com/black-box",source:"app.helium10.com"}
 ];
 
-var MT5_EA_CODE = '//+------------------------------------------------------------------+\n//| ARC_Sync.mq5 — Synchronisation ARC Dashboard                   |\n//+------------------------------------------------------------------+\n#property version "1.00"\ninput string WebhookURL = "https://webhook.site/VOTRE-ID";\ninput int RefreshSeconds = 5;\nint OnInit(){ EventSetTimer(RefreshSeconds); return(INIT_SUCCEEDED); }\nvoid OnDeinit(const int reason){ EventKillTimer(); }\nvoid OnTimer(){\n  double balance = AccountInfoDouble(ACCOUNT_BALANCE);\n  double equity  = AccountInfoDouble(ACCOUNT_EQUITY);\n  double margin  = AccountInfoDouble(ACCOUNT_MARGIN_FREE);\n  int pos = PositionsTotal();\n  double profit = equity - balance;\n  string payload = StringFormat("{\\"balance\\":%.2f,\\"equity\\":%.2f,\\"margin\\":%.2f,\\"positions\\":%d,\\"profit\\":%.2f,\\"ts\\":%d}", balance, equity, margin, pos, profit, (int)TimeCurrent());\n  char data[]; StringToCharArray(payload, data);\n  char res[]; string headers;\n  WebRequest("POST", WebhookURL, "Content-Type: application/json\\r\\n", 5000, data, res, headers);\n}';
 
 /* STORAGE */
 var SK = "arc_v2";
 var S = {tasks:{},notes:{},journal:{},custom:{},blkCustom:{},seen:new Date().toISOString()};
+
+/* Mondes v2 (octobre 2026) : Trading retiré, Atlas prend sa place (id 4), ARYAN remis à son état réel.
+   Les données de l'ancien monde Trading sont mises de côté dans S.archive.trading, jamais effacées. */
+var WORLDS_V=2;
+function migrateWorlds(){
+  if((S._worldsV||0)>=WORLDS_V) return;
+  var keys=["tasks","notes","journal","custom","blkCustom","taskNotes","chatMsgs","deadlines","taskOrder","taskDates","tools","focus"];
+  var arch={}; var had=false;
+  keys.forEach(function(k){ if(S[k]&&S[k][4]!==undefined){ arch[k]=S[k][4]; delete S[k][4]; had=true; } });
+  if(S.mt5){ arch.mt5=S.mt5; delete S.mt5; had=true; }
+  if(had){ if(!S.archive) S.archive={}; S.archive.trading=arch; }
+  // ARYAN : ce qui était « à faire » en avril et qui est fait depuis
+  if(S.tasks&&S.tasks[0]){ WORLDS[0].tasks_done.forEach(function(t){ S.tasks[0][t.id]=true; }); }
+  S._worldsV=WORLDS_V;
+}
 
 function loadS(){
   try{ var raw=localStorage.getItem(SK); if(raw){var p=JSON.parse(raw);Object.assign(S,p);} } catch(e){}
@@ -2169,15 +2156,19 @@ function loadS(){
   if(!S.tasks||Object.keys(S.tasks).length===0){
     try{ var old=localStorage.getItem("arc_v1"); if(old){var op=JSON.parse(old);Object.assign(S,op);} } catch(e){}
   }
+  normalizeS();
+}
+
+/* Valeurs par défaut et migrations : appelé au chargement local et après une récupération cloud */
+function normalizeS(){
   if(!S.focus) S.focus={};
+  migrateWorlds();
   if(!S.taskNotes) S.taskNotes={};
   if(!S.chatMsgs) S.chatMsgs={};
   if(!S.deadlines) S.deadlines={};
   if(!S.lastActive) S.lastActive=[];
   if(!S.taskOrder) S.taskOrder={};
   if(!S.notifEnabled) S.notifEnabled=false;
-  if(!S.mt5) S.mt5={capital:10000,last:null,webhookUrl:""};
-  else{ if(!S.mt5.capital) S.mt5.capital=10000; if(!S.mt5.webhookUrl) S.mt5.webhookUrl=""; }
   if(!S.tools) S.tools={};
   if(!S.poles) S.poles={sante:[],juridique:{statut:[],contrats:[],aides:[],demarches:[]}};
   else{
@@ -2382,7 +2373,7 @@ function renderIntel(){
   var grid=document.getElementById("intel-grid"); if(!grid) return;
   var items=CUR.intel.length>0?CUR.intel:INTEL_STATIC;
   document.getElementById("intel-count").textContent=items.length+" sources";
-  var colors={"ARYAN":"#ff6b35","FBA":"#ff9f0a","TRADING":"#30d158","KITCHEN":"#ff375f","TELENEUF":"#bf5af2"};
+  var colors={"ARYAN":"#ff6b35","FBA":"#ff9f0a","ATLAS":"#32d2c9","KITCHEN":"#ff375f","TELENEUF":"#bf5af2"};
   var html="";
   items.forEach(function(it,i){
     var c=colors[it.cat]||"#888";
@@ -2397,12 +2388,6 @@ function renderIntel(){
 
 /* ===== ENTER WORLD ===== */
 var wTimer={s:0,running:false,iv:null};
-function initMT5(){
-  var tb = document.getElementById('trading-block');
-  if(!tb) return;
-  tb.innerHTML = '<div class="wsec"><div class="wsec-head"><span class="wsec-lbl">Trading MT5</span><div class="wsec-line"></div></div><div style="background:var(--bg2);border:1px solid var(--b1);border-radius:14px;padding:18px;text-align:center"><div style="font-size:28px;margin-bottom:8px">&#128200;</div><div style="font-size:13px;font-weight:700;margin-bottom:6px">Expert Advisor BTC/USDT</div><div style="font-size:11px;color:var(--t2)">Configure le webhook MT5 pour voir ton P&L en temps r&#233;el.</div></div></div>';
-}
-
 function enterWorld(wid){
   CUR.wid=wid;
   var w=WORLDS[wid];
@@ -2429,16 +2414,9 @@ function enterWorld(wid){
     var el=document.getElementById("w-timer-val");
     if(el) el.textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
   },1000);
-  // Show/hide trading block
-  var tb=document.getElementById("trading-block");
-  if(tb) tb.style.display=wid===4?"block":"none";
-  if(wid===4) initMT5();
-
-  // Lovable button
-  if(w.lovable){
-    var lov=document.getElementById("btn-lov");
-    if(lov){ lov.textContent=w.id===1?"Helium 10":w.id===4?"FTMO":w.id===2?"Deliveroo ↗":"Lovable ↗"; }
-  }
+  // Bouton de lien externe du monde : masqué quand le monde n'a pas de lien
+  var lov=document.getElementById("btn-lov");
+  if(lov){ lov.style.display=w.lovable?"":"none"; lov.textContent=w.linkLabel||"Ouvrir ↗"; }
   showScreen("S2");
   renderWorld();
   // Track last active
@@ -2970,7 +2948,7 @@ function santeCpSend(textOverride){
   var key = 'hab_' + today;
   var doneHab = (S.poles.habDone && S.poles.habDone[key]) || [];
   var habTxt = hab.length ? hab.map(function(h){ return h.name + (doneHab.indexOf(h.id)!==-1 ? ' (fait)' : ' (pas encore)'); }).join(', ') : 'Pas d\'habitudes configurees.';
-  var sys = 'Tu es le conseiller sante et bien-etre personnel de Rayan, entrepreneur a Valence (France). Il a plusieurs projets actifs (ARYAN app livraison, FBA, Dark Kitchen, TELENEUF, Trading EA MT5) et doit performer mentalement et physiquement.\n\nDonnees: '+ciTxt+'\nStreak check-in: '+streak+' jour(s) de suite\nScore moyen 7j: '+avgScore+'/100\nHabitudes: '+habTxt+'\n\nSois direct, pratique, scientifiquement fonde. 3-4 phrases max sauf si demande plus. Reponds en francais.';
+  var sys = 'Tu es le conseiller sante et bien-etre personnel de Rayan, entrepreneur a Valence (France). Il a plusieurs projets actifs (ARYAN app livraison, Atlas formation FBA, FBA, Dark Kitchen, TELENEUF) et doit performer mentalement et physiquement.\n\nDonnees: '+ciTxt+'\nStreak check-in: '+streak+' jour(s) de suite\nScore moyen 7j: '+avgScore+'/100\nHabitudes: '+habTxt+'\n\nSois direct, pratique, scientifiquement fonde. 3-4 phrases max sauf si demande plus. Reponds en francais.';
   claudeCall(txt, 'sante', 'sante', sys);
 }
 
@@ -3193,7 +3171,7 @@ function jurCpSend(textOverride){
   var items = [];
   JUR_SECTIONS.forEach(function(sec){ (S.poles.juridique[sec.id]||[]).forEach(function(it){ if(it.status !== 'done') items.push('['+sec.title+'] '+it.t); }); });
   var itemsTxt = items.length ? items.slice(0,10).join('; ') : 'Aucun element enregistre.';
-  var sys = 'Tu es le conseiller juridique et administratif personnel de Rayan. Rayan est entrepreneur a Valence (Drome, France). Ses projets: ARYAN (app livraison halal, recherche statut juridique), FBA Amazon (private label), Dark Kitchen halal, TELENEUF (box streaming HDMI), Trading EA MT5.\n\nSon dossier juridique actuel: '+itemsTxt+'\n\nREGLE ABSOLUE: Usage personnel uniquement, pas d\'acte juridique reel. Fournis des infos pratiques claires. Recommande toujours de consulter un avocat ou expert-comptable pour tout acte reel. Reponds en francais, sois concret et precis.';
+  var sys = 'Tu es le conseiller juridique et administratif personnel de Rayan. Rayan est entrepreneur a Valence (Drome, France). Ses projets: ARYAN (app livraison halal, recherche statut juridique), FBA Amazon (private label), Dark Kitchen halal, TELENEUF (box streaming HDMI), Atlas (formation Amazon FBA vendue en ligne).\n\nSon dossier juridique actuel: '+itemsTxt+'\n\nREGLE ABSOLUE: Usage personnel uniquement, pas d\'acte juridique reel. Fournis des infos pratiques claires. Recommande toujours de consulter un avocat ou expert-comptable pour tout acte reel. Reponds en francais, sois concret et precis.';
   claudeCall(txt, 'juridique', 'juridique', sys);
 }
 
@@ -3336,40 +3314,6 @@ document.addEventListener("click",function(ev){
   if(t.id==="ccb-send"){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt) return; inp.value=""; var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.style.display="none"; var cs2=document.getElementById("ccb-send"); if(cs2) cs2.classList.remove("pulse-ready"); var mode=cockpitState.mode||"inject"; if(mode==="inject"){ var prompt="Pour la tâche: "+cockpitState.task.t+"\n\nDemande: "+txt+"\n\nRéponds directement avec du contenu utilisable — pas d'intro."; claudeCall(prompt,CUR.wid,"cockpit"); } else cpSend(CUR.wid,txt); return; }
   // CCB mode
   if(t.closest("[data-mode]")){ var mode=t.closest("[data-mode]").getAttribute("data-mode"); cockpitState.mode=mode; document.querySelectorAll(".ccb-mode").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mode")===mode); }); return; }
-  // MT5 actions
-  if(t.getAttribute&&t.getAttribute("data-action")==="mt5-manual"){
-    var cap=parseFloat(document.getElementById("mt5-m-capital").value)||10000;
-    var bal=parseFloat(document.getElementById("mt5-m-balance").value)||cap;
-    var eq=parseFloat(document.getElementById("mt5-m-equity").value)||bal;
-    var pos=parseInt(document.getElementById("mt5-m-pos").value)||0;
-    S.mt5.capital=cap;
-    updateMT5Display({balance:bal,equity:eq,profit:eq-bal,positions:pos,margin:0});
-    updateFTMOList();
-    toast("Métriques MT5 mises à jour ✓");
-    return;
-  }
-  if(t.getAttribute&&t.getAttribute("data-action")==="mt5-sim"){ startMT5Sim(); return; }
-  if(t.getAttribute&&t.getAttribute("data-action")==="mt5-copy-ea"){ navigator.clipboard&&navigator.clipboard.writeText(MT5_EA_CODE).then(function(){ toast("Code EA copié ✓"); }); return; }
-  if(t.getAttribute&&t.getAttribute("data-action")==="mt5-connect"){ toast("Connexion locale — démarrez l'API REST MT5 sur le port "+document.getElementById("mt5-port-inp").value); return; }
-  if(t.getAttribute&&t.getAttribute("data-action")==="mt5-webhook-open"){ window.open("https://webhook.site","_blank"); return; }
-  if(t.getAttribute&&t.getAttribute("data-action")==="mt5-json-apply"){
-    try{
-      var json=JSON.parse(document.getElementById("mt5-json-inp").value);
-      S.mt5.capital=S.mt5.capital||10000;
-      updateMT5Display(json); updateFTMOList();
-      var whStatus=document.getElementById("mt5-webhook-status"); if(whStatus) whStatus.textContent="✓ JSON appliqué — "+new Date().toLocaleTimeString("fr-FR");
-      toast("Données MT5 appliquées ✓");
-    } catch(e){ toast("❌ JSON invalide"); }
-    return;
-  }
-  if(t.getAttribute&&t.getAttribute("data-action")==="mt5-webhook-connect"){
-    var url=document.getElementById("mt5-webhook-inp").value.trim();
-    if(url){ S.mt5.webhookUrl=url; saveS(); toast("URL webhook sauvegardée ✓"); }
-    return;
-  }
-  // MT5 tabs
-  var mt5tabEl=t.closest("[data-mt5tab]");
-  if(mt5tabEl){ var tab=mt5tabEl.getAttribute("data-mt5tab"); document.querySelectorAll(".mt5-tab").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mt5tab")===tab); }); document.querySelectorAll(".mt5-tab-panel").forEach(function(p){ p.classList.toggle("active",p.id==="mt5-tab-"+tab); }); return; }
   // QA project select
   var qaProjEl=t.closest("[data-qa-world]");
   if(qaProjEl){ CUR.qaWorld=parseInt(qaProjEl.getAttribute("data-qa-world")); renderQA(); return; }
@@ -3580,7 +3524,6 @@ function deleteTool(widOrPoleId,toolId){
 
 /* ===== INIT ===== */
 /* ===== SCREEN NAVIGATION ===== */
-var mt5State={sim:false,simIv:null,btcBase:42000};
 
 
 var _screens=['S1','S2','S3','S4'];
@@ -4007,7 +3950,7 @@ async function cpSend(widOverride, textOverride){
   var todo = allT.filter(function(t){ return !S.tasks[wid] || !S.tasks[wid][t.id]; }).map(function(t){ return t.t; });
   var sysprompt = w ?
     'Tu es le partenaire stratégique de Rayan, entrepreneur à Valence (France).\n\nPROJET: '+w.name+'\nMISSION: '+w.mission+'\nCONTEXTE: '+w.context+'\n\nACCOMPLI: '+done.slice(0,6).join(', ')+'\nEN COURS: '+todo.slice(0,6).join(', ')+'\n\nRègle: identifie les risques en premier, sois direct sans filtre. Réponds en français, 3-5 phrases.' :
-    'Tu es Claude, partenaire exigeant de Rayan, entrepreneur à Valence (France). Projets: ARYAN (app halal), FBA, Kitchen, TELENEUF, Trading EA MT5. Sois direct, sans filtre. Réponds en français.';
+    'Tu es Claude, partenaire exigeant de Rayan, entrepreneur à Valence (France). Projets: ARYAN (app halal), Atlas (formation FBA), FBA, Kitchen, TELENEUF. Sois direct, sans filtre. Réponds en français.';
   claudeCall(txt, wid, 'chat', sysprompt);
 }
 /* ═══ PÔLE SANTÉ ═══ */

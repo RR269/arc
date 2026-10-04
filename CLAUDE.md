@@ -4,13 +4,15 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 4 080 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 4 020 lignes, sans étape de build.
 - `sw.js` : service worker, réseau d'abord, cache `arc-v5` en secours hors ligne.
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
 ## Ce que fait ARC
 
-- Cinq mondes (tableau `WORLDS`) : ARYAN, FBA, KITCHEN, TELENEUF, TRADING.
+- Cinq mondes (tableau `WORLDS`, l'`id` est l'index) : ARYAN, FBA, KITCHEN, TELENEUF, ATLAS.
+- Le contenu d'un monde (tâches, bloquants, mission) est écrit en dur dans `WORLDS` ; ce que Rayan coche vit dans `S`.
+- Changer la liste des mondes ou marquer des tâches comme faites : incrémenter `WORLDS_V` et compléter `migrateWorlds`.
 - Deux pôles personnels : Santé et Juridique.
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
@@ -31,6 +33,11 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 Branche `reprise-octobre` (non fusionnée) : panneau Claude des mondes et de Santé réparé, bouton de veille,
 affichage des erreurs Claude, hors ligne réactivé, restes de la clé API retirés, texte de Claude nettoyé (DOMPurify).
+Mondes v2 : Trading et tout le code MT5 retirés (données archivées dans `S.archive.trading`), monde ATLAS créé,
+ARYAN remis à son état du tour 113.
+
+Sources du contenu : ARYAN, compte rendu du tour 113 (4 octobre) et points de reprise d'août ; ATLAS, sessions de
+juillet à septembre — état à recaler avec Rayan (immatriculation, pages légales, achat en mode test : non confirmés).
 
 ### Ouvert, par ordre de gravité
 
@@ -39,10 +46,8 @@ affichage des erreurs Claude, hors ligne réactivé, restes de la clé API retir
 2. **Secret du proxy public.** `x-arc-token` est en clair dans `claudeCall` : n'importe qui peut consommer la clé Anthropic.
 3. **Synchronisation entre appareils inopérante.** `getUID` fabrique un identifiant au hasard par appareil
    (`arc_uid`) : chaque appareil a sa propre ligne.
-4. **Suivi MT5 mort.** Les gestionnaires existent (`mt5-json-inp`, `mt5-webhook-inp`, `mt5-m-capital`) mais les champs
-   ont disparu de la page. À rebrancher ou à retirer : décision de Rayan.
-5. **Contenu daté d'avril 2026.** Les cinq mondes ne reflètent plus l'état réel des projets ; Atlas n'y figure pas.
-6. **Code jamais appelé** : `autoWorldBriefing`, `fmtDate`, `initClaude`, `renderChatHistory`, `renderSanteHistory`,
+4. **Contenu de FBA, KITCHEN et TELENEUF daté d'avril 2026.** ATLAS est à recaler (voir plus haut).
+5. **Code jamais appelé** : `autoWorldBriefing`, `fmtDate`, `initClaude`, `renderChatHistory`, `renderSanteHistory`,
    `resetPomoWR`.
 
 ### Chantier suivant : la connexion
