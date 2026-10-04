@@ -4,7 +4,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 4 020 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 4 260 lignes, sans étape de build.
+- `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v5` en secours hors ligne.
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
@@ -16,8 +17,10 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Deux pôles personnels : Santé et Juridique.
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
-- Synchronisation Supabase : table `arc_data` (`pushToCloud`, `pullFromCloud`).
-- Claude : `claudeCall` appelle la fonction Supabase `ARC-CLAUDE-PROXY` ; le modèle est dans `CLAUDE_MODEL`.
+- Connexion par e-mail (code à 6 chiffres ou lien) : `showAuthScreen`, `authSendCode`, `authVerifyCode` ; `getUID` = identifiant du compte.
+- Synchronisation Supabase : table `arc_data`, une ligne par compte (`pushToCloud`, `pullFromCloud`). Sans session, rien n'est lu ni écrit.
+- Claude : `claudeCall` appelle la fonction Supabase `ARC-CLAUDE-PROXY` avec le jeton de session ; le modèle est dans `CLAUDE_MODEL`,
+  qui doit figurer dans `ALLOWED_MODELS` du proxy.
 
 ## Règles de travail
 
@@ -31,39 +34,48 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## État au 4 octobre 2026
 
-Branche `reprise-octobre`, fusionnée dans `main` le 4 octobre (`e2c6573`) et en ligne : panneau Claude des mondes et de Santé réparé, bouton de veille,
+Sur `main` (`e2c6573`, en ligne) : branche `reprise-octobre` — panneau Claude des mondes et de Santé réparé, bouton de veille,
 affichage des erreurs Claude, hors ligne réactivé, restes de la clé API retirés, texte de Claude nettoyé (DOMPurify).
 Mondes v2 : Trading et tout le code MT5 retirés (données archivées dans `S.archive.trading`), monde ATLAS créé,
 ARYAN remis à son état du tour 113.
 
+Sur la branche `connexion` (non fusionnée, testée en réel sur localhost le 4 octobre) : chantier connexion terminé.
+- Écran de connexion par e-mail (code ou lien), « Continuer sans connexion » pour un usage local.
+- `getUID` renvoie l'identifiant du compte ; `arc_uid` est effacé quand l'appareil est relié (`arc_linked_uid`).
+- Première synchronisation d'un appareil : si le compte n'a pas de ligne, l'appareil devient la référence après
+  confirmation ; sinon la version en ligne l'emporte et l'état local est gardé sous `arc_v2_avant_connexion`.
+- `claudeCall` : `x-arc-token` supprimé, envoi du jeton de session ; tous les blocs `text` de la réponse sont lus ;
+  une réponse vide s'affiche en erreur (stop_reason, types de blocs) et n'est jamais enregistrée ; les messages vides
+  sont retirés de l'historique envoyé ; les erreurs affichent statut et message, avec « (proxy ARC) » pour nos refus.
+
+Tant que `connexion` n'est pas fusionnée, le site en ligne garde l'ancien `claudeCall` (jeton révoqué) et l'ancienne
+synchronisation (table fermée à `anon`) : Claude et la synchronisation y sont hors service.
+
 Sources du contenu : ARYAN, compte rendu du tour 113 (4 octobre) et points de reprise d'août ; ATLAS, sessions de
 juillet à septembre — état à recaler avec Rayan (immatriculation, pages légales, achat en mode test : non confirmés).
 
-### Supabase : état au 4 octobre, 07 h 15
+### Supabase : état au 4 octobre
 
-Le projet ARC (organisation RAYAN, offre gratuite) était en pause ; Rayan l'a rallumé, puis a posé deux verrous :
-- `arc_data` : sécurité au niveau des lignes activée et tous les droits retirés au rôle `anon`. Vérifié dans l'éditeur SQL :
-  3 lignes, protection active, lecture anonyme refusée. Aucune règle d'accès n'existe encore : la table est fermée à tous
-  sauf au rôle de service.
-- `ARC-CLAUDE-PROXY` : le jeton était écrit en dur à la ligne 2 de `index.ts` (`const ARC_SECRET`). Il a été remplacé par
-  une valeur aléatoire et redéployé. Le jeton encore présent dans `claudeCall` ne vaut plus rien.
-
-Conséquence voulue : ARC affiche « Offline » et Claude répond « Unauthorized » jusqu'au chantier connexion.
-Le proxy lit la clé Anthropic dans le secret `ANTHROPIC_KEY`, répond aux requêtes `OPTIONS` avec `Access-Control-Allow-Origin: *`
-et vérifie l'en-tête `x-arc-token`. Son code complet est à demander à Rayan (onglet Code de la fonction).
-
-Les 3 lignes de `arc_data` sont celles de trois appareils distincts : à reprendre sous un seul compte au chantier connexion.
+Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
+- **Auth** : connexion par e-mail activée, compte de Rayan ; ARC demande le code avec `shouldCreateUser: false`
+  (aucun compte créé depuis ARC). Le proxy refuse tout autre compte que `ARC_OWNER_ID`.
+- **`arc_data`** (`user_id` text, `state` jsonb, `updated_at` timestamptz) : sécurité au niveau des lignes activée,
+  aucun droit pour `anon`, trois règles pour `authenticated` — `arc_select_own`, `arc_insert_own`, `arc_update_own` —
+  avec `user_id = (select auth.uid())::text`. Pas de règle de suppression.
+- **`arc_data_archive`** : les 3 lignes d'avril 2026 (état par défaut de trois appareils), archivées au chantier
+  connexion ; fermée à `anon` et `authenticated`. `arc_data` est repartie vide avant la première connexion.
+- **`ARC-CLAUDE-PROXY` v2** (code : `supabase/functions/ARC-CLAUDE-PROXY/index.ts`) : vérifie le jeton de session auprès
+  de `/auth/v1/user`, puis que le compte est `ARC_OWNER_ID` (401 session invalide, 403 autre compte, cause dans les
+  journaux de la fonction sans jeton ni identifiant complet). Modèles limités à `ALLOWED_MODELS`, `max_tokens` plafonné
+  à 1 500, origines `https://rr269.github.io` et `http://localhost:8080`. Secrets : `ANTHROPIC_KEY`, `ARC_OWNER_ID`.
+  `ARC_SECRET` et `x-arc-token` n'existent plus.
 
 ### Ouvert, par ordre de gravité
 
-1. **Données fermées, mais plus de synchronisation.** `arc_data` est verrouillée (voir plus haut) ; il manque les règles
-   « chacun sa ligne » et la connexion pour la rouvrir à Rayan seul.
-2. **Proxy verrouillé, mais Claude éteint.** L'ancien jeton est révoqué ; le proxy doit vérifier la session de Rayan
-   à la place d'un jeton partagé, et `x-arc-token` doit disparaître de `claudeCall`.
-3. **Synchronisation entre appareils inopérante.** `getUID` fabrique un identifiant au hasard par appareil
-   (`arc_uid`) : chaque appareil a sa propre ligne.
-4. **Contenu de FBA, KITCHEN et TELENEUF daté d'avril 2026.** ATLAS est à recaler (voir plus haut).
-5. **Code jamais appelé** : `autoWorldBriefing`, `fmtDate`, `initClaude`, `renderChatHistory`, `renderSanteHistory`,
+1. **Fusion de `connexion` dans `main`** : à faire avec l'accord de Rayan ; d'ici là, Claude et la synchronisation sont
+   hors service sur le site en ligne.
+2. **Contenu de FBA, KITCHEN et TELENEUF daté d'avril 2026.** ATLAS est à recaler (voir plus haut).
+3. **Code jamais appelé** : `autoWorldBriefing`, `fmtDate`, `initClaude`, `renderChatHistory`, `renderSanteHistory`,
    `resetPomoWR`.
 
 ### Audit et feuille de route
@@ -71,12 +83,6 @@ Les 3 lignes de `arc_data` sont celles de trois appareils distincts : à reprend
 `docs/AUDIT.md` (4 octobre 2026) : mesures, défauts prouvés D1 à D10, nouveau modèle (mondes en données, point d'étape
 publié par les projets), règles de design, fonctionnalités classées, ordre des chantiers 0 à 8. À lire avant tout chantier.
 
-### Chantier suivant : la connexion
+### Chantier suivant
 
-Les points 1 à 3 ont une seule solution : connexion Supabase par lien magique (e-mail).
-- `arc_data` : `user_id` = `auth.uid()`, sécurité au niveau des lignes activée, une règle « chacun sa ligne ».
-- `ARC-CLAUDE-PROXY` : vérifier le jeton de session de l'utilisateur, supprimer `x-arc-token`.
-- `index.html` : écran de connexion, `getUID` remplacé par l'identifiant du compte, reprise des données locales
-  à la première connexion.
-- Côté Rayan, dans Supabase : activer l'e-mail, exécuter le SQL, redéployer la fonction. Le code du proxy n'est pas
-  dans ce dépôt : le demander à Rayan avant d'écrire.
+Après la fusion de `connexion` : chantier 2 de `docs/AUDIT.md`, les mondes en données (`S.worlds`).
