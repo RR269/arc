@@ -99,7 +99,7 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
   `ARC_SECRET` et `x-arc-token` n'existent plus.
 - **`thoughts`** et **`arc_events`** (5 octobre, créées par Rayan, avec son accord) : ajout seul, sécurité au niveau
   des lignes, lecture et ajout de ses propres lignes seulement, ni modification ni suppression. Schéma pour mémoire :
-  `supabase/schema/2026-10-05-thoughts.sql` (reconstruit d'après la description de Rayan, à remplacer par son SQL exact).
+  `supabase/schema/2026-10-05-thoughts.sql` (le SQL exact exécuté par Rayan).
 
 ### Documents à lire avant tout chantier, dans cet ordre
 
