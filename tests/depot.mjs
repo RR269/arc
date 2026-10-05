@@ -238,6 +238,81 @@ for (const vp of [{ n: 'iPhone 390×844', width: 390, height: 844 }, { n: 'Mac 1
   await ctx.close();
 }
 
+/* 9. Deux onglets : A (hors ligne) dépose puis se ferme, B (chargé avant) enregistre ensuite.
+      La pensée de A ne doit pas disparaître de l'appareil. */
+{
+  const fk = fakeSupabase();
+  const { ctx, page: B } = await open({ fk });           // B chargé en premier
+  const A = await ctx.newPage();
+  await A.route(u => u.href.startsWith(SB), r => r.abort('internetdisconnected')); // A hors ligne
+  await A.goto(URL0, { waitUntil: 'load' }); await A.waitForTimeout(700);
+  const TA = 'Pensée de l\'onglet A, hors ligne';
+  await deposit(A, TA); await A.waitForTimeout(200);
+  const idA = await idOf(A, TA);
+  await A.close();
+  await deposit(B, 'Pensée de l\'onglet B'); await B.waitForTimeout(200);   // B enregistre
+  await B.evaluate(() => { depotEvent('open'); });                          // et un événement
+  const C = await ctx.newPage();
+  await C.route(u => u.href.startsWith(SB), r => r.abort('internetdisconnected'));
+  await C.goto(URL0, { waitUntil: 'load' }); await C.waitForTimeout(500);
+  const kept = await C.evaluate(i => { const d = JSON.parse(localStorage.getItem('arc_thoughts_v1') || '{}'); return !!(d.thoughts && d.thoughts[i]); }, idA);
+  ok(kept, 'Deux onglets : la pensée de A (hors ligne, fermé) survit à un enregistrement de B', `présente sur l'appareil : ${kept}`);
+  await ctx.close();
+}
+
+/* 10. Un dépôt dans A apparaît dans la liste de B sans rechargement */
+{
+  const fk = fakeSupabase();
+  const { ctx, page: B } = await open({ fk });
+  await B.click('#depot-open');
+  const A = await ctx.newPage();
+  await A.route(u => u.href.startsWith(SB), r => fk.handler(r));
+  await A.goto(URL0, { waitUntil: 'load' }); await A.waitForTimeout(700);
+  const T = 'Déposée dans A, vue dans B';
+  await deposit(A, T); await B.waitForTimeout(500);
+  const st = await stateOf(B, T);
+  ok(st !== null, 'Un dépôt dans A apparaît dans la liste de B sans rechargement', `état affiché dans B : ${st}`);
+  await ctx.close();
+}
+
+/* 11. Un événement confirmé par le serveur ne revient pas par la fusion (onglet resté en arrière) */
+{
+  const fk = fakeSupabase();
+  fk.mode = 'down';
+  const { ctx, page: B } = await open({ fk });             // B garde en mémoire ses événements non envoyés
+  const evIds = await B.evaluate(() => Object.keys(_depot.events));
+  const A = await ctx.newPage();
+  await A.route(u => u.href.startsWith(SB), r => fk.handler(r));
+  await A.goto(URL0, { waitUntil: 'load' }); await A.waitForTimeout(300);
+  fk.mode = 'up';
+  await A.evaluate(() => depotFlush()); await A.waitForTimeout(400);  // A envoie tout, le serveur confirme
+  const sentByA = fk.db.events.size;
+  // B remet dans sa mémoire les événements déjà confirmés (comme un onglet resté en arrière), puis enregistre
+  await B.evaluate(ids => { ids.forEach(id => { _depot.events[id] = _depot.events[id] || { id, kind: 'open', at: new Date().toISOString() }; }); depotSave(); }, evIds);
+  const back = await B.evaluate(ids => { const d = JSON.parse(localStorage.getItem('arc_thoughts_v1')); return ids.filter(id => d.events[id]).length; }, evIds);
+  ok(sentByA >= evIds.length && back === 0, 'Un événement confirmé ne revient pas par la fusion',
+     `confirmés par le serveur : ${sentByA}, revenus sur l'appareil : ${back}`);
+  await ctx.close();
+}
+
+/* 12. Plafond : 500 événements non envoyés au plus (les plus anciens sortent) ; les pensées ne sont pas plafonnées */
+{
+  const { ctx, page } = await open({ session: false });
+  const r = await page.evaluate(() => {
+    for (let i = 0; i < 600; i++) {
+      const id = depotUUID(); _depot.events[id] = { id, kind: 'open', at: new Date(Date.UTC(2026, 0, 1, 0, 0, i)).toISOString() };
+      const tid = depotUUID(); _depot.thoughts[tid] = { id: tid, body: 'p' + i, source: 'text', device: 'mac', created_at: new Date().toISOString(), status: 'pending' };
+    }
+    depotSave();
+    const d = JSON.parse(localStorage.getItem('arc_thoughts_v1'));
+    const ats = Object.values(d.events).map(e => e.at).sort();
+    return { events: Object.keys(d.events).length, thoughts: Object.keys(d.thoughts).length, oldest: ats[0] };
+  });
+  ok(r.events === 500 && r.thoughts >= 600 && r.oldest > '2026-01-01T00:00:00',
+     'Plafond : 500 événements non envoyés, pensées non plafonnées', `événements : ${r.events}, pensées : ${r.thoughts}, plus ancien gardé : ${r.oldest}`);
+  await ctx.close();
+}
+
 /* 8. Balisage */
 {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');

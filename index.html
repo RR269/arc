@@ -4323,16 +4323,54 @@ function depotDevice() {
   if(/Android/.test(ua)) return 'android';
   return 'web';
 }
-function depotLoad() {
-  var d = null;
-  try { d = JSON.parse(localStorage.getItem(DEPOT_KEY) || 'null'); } catch(e) {}
+/* Plusieurs onglets partagent la même clé, mais chacun garde sa copie en mémoire. Pour qu'aucun n'efface ce
+   qu'un autre a écrit, on ne remplace jamais la clé : on relit, on fusionne par id, puis on écrit.
+   - Pensées : union ; si l'une des deux copies est « sent », la pensée reste « sent ». Jamais retirées, jamais plafonnées.
+   - Événements : union, moins ceux que le serveur a confirmés (liste « acked », gardée 30 jours et 2 000 au plus,
+     pour qu'un onglet resté en arrière ne les ressuscite pas). Même si l'un passait, le serveur ignore le doublon
+     (id unique, doublons ignorés) : il ne serait pas compté deux fois. Au-delà de 500 non envoyés, les plus anciens sortent. */
+var DEPOT_EVENTS_MAX = 500, DEPOT_ACK_MAX = 2000, DEPOT_ACK_DAYS = 30;
+
+function depotNorm(d) {
   if(!d || typeof d !== 'object') d = {};
   if(!d.thoughts || typeof d.thoughts !== 'object') d.thoughts = {};
   if(!d.events || typeof d.events !== 'object') d.events = {};
-  _depot = d;
+  if(!d.acked || typeof d.acked !== 'object') d.acked = {};
+  return d;
 }
-// Renvoie false si l'appareil n'a pas pu enregistrer (stockage plein ou refusé)
+function depotRead() {
+  try { return depotNorm(JSON.parse(localStorage.getItem(DEPOT_KEY) || 'null')); } catch(e) { return depotNorm(null); }
+}
+function depotMerge(a, b) {
+  var out = depotNorm({});
+  [a, b].forEach(function(src) {
+    Object.keys(src.acked).forEach(function(id) { if(!out.acked[id] || src.acked[id] > out.acked[id]) out.acked[id] = src.acked[id]; });
+  });
+  [a, b].forEach(function(src) {
+    Object.keys(src.thoughts).forEach(function(id) {
+      var t = src.thoughts[id], cur = out.thoughts[id];
+      if(!cur) out.thoughts[id] = Object.assign({}, t);
+      else if(t.status === 'sent' && cur.status !== 'sent') { cur.status = 'sent'; cur.sent_at = t.sent_at || cur.sent_at || null; }
+    });
+    Object.keys(src.events).forEach(function(id) { if(!out.acked[id]) out.events[id] = src.events[id]; });
+  });
+  // Liste des confirmés : 30 jours, 2 000 au plus
+  var limit = new Date(Date.now() - DEPOT_ACK_DAYS * 864e5).toISOString();
+  var acks = Object.keys(out.acked).filter(function(id) { return out.acked[id] >= limit; })
+    .sort(function(x, y) { return out.acked[x] < out.acked[y] ? 1 : -1; }).slice(0, DEPOT_ACK_MAX);
+  var kept = {}; acks.forEach(function(id) { kept[id] = out.acked[id]; }); out.acked = kept;
+  // Événements non envoyés : 500 au plus, les plus anciens sortent
+  var evs = Object.keys(out.events);
+  if(evs.length > DEPOT_EVENTS_MAX) {
+    evs.sort(function(x, y) { return out.events[x].at < out.events[y].at ? -1 : 1; })
+       .slice(0, evs.length - DEPOT_EVENTS_MAX).forEach(function(id) { delete out.events[id]; });
+  }
+  return out;
+}
+function depotLoad() { _depot = depotRead(); }
+// Relit, fusionne, écrit. Renvoie false si l'appareil n'a pas pu enregistrer (stockage plein ou refusé).
 function depotSave() {
+  _depot = depotMerge(depotRead(), _depot);
   try { localStorage.setItem(DEPOT_KEY, JSON.stringify(_depot)); return true; } catch(e) { return false; }
 }
 function depotList() {
@@ -4390,8 +4428,9 @@ async function depotFlush() {
       var re = await _sb.from('arc_events').upsert(batch.map(function(e) { return { id: e.id, kind: e.kind, at: e.at }; }),
                                                    { onConflict: 'id', ignoreDuplicates: true });
       if(re.error) throw re.error;
-      // Un événement confirmé n'a plus besoin d'être gardé sur l'appareil
-      batch.forEach(function(e) { delete _depot.events[e.id]; });
+      // Un événement confirmé quitte l'appareil ; son id rejoint « acked » pour que la fusion ne le fasse pas revenir
+      var ackAt = new Date().toISOString();
+      batch.forEach(function(e) { delete _depot.events[e.id]; _depot.acked[e.id] = ackAt; });
       depotSave();
     }
   } catch(e) {
@@ -4545,6 +4584,12 @@ function depotInit() {
     if(session && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN')) setTimeout(depotSync, 0);
   });
   window.addEventListener('online', function() { depotFlush(); });
+  // Un autre onglet a écrit : on fusionne sa version dans la mémoire (sans réécrire la clé) et on réaffiche
+  window.addEventListener('storage', function(ev) {
+    if(ev.key !== DEPOT_KEY || ev.storageArea !== localStorage) return;
+    _depot = depotMerge(depotRead(), _depot);
+    depotRender();
+  });
   document.addEventListener('visibilitychange', function() { if(document.visibilityState === 'visible') depotSync(); });
   depotRender();
   depotLayout();

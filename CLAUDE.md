@@ -70,7 +70,7 @@ Branche `depot` (non fusionnée, partie de `etude-v2`) : chantier 2 de la révis
   l'appareil. Au lancement avec session : lecture des 200 dernières pensées, fusion par `id`.
 - Sans session : pensée gardée sur l'appareil, « Sur cet appareil seulement », envoyée à la connexion suivante.
 - Écran « Déposé » depuis l'accueil ; texte des pensées affiché par `textContent` seulement.
-- `pushToCloud` et `pullFromCloud` ne sont pas touchés. `tests/depot.mjs` : 15 sur 15 le 5 octobre (faux Supabase).
+- `pushToCloud` et `pullFromCloud` ne sont pas touchés. `tests/depot.mjs` : 19 sur 19 le 5 octobre (faux Supabase), dont deux onglets ouverts en même temps.
 - Pas encore essayé sur l'iPhone ni le Mac de Rayan, ni contre la vraie table `thoughts`.
 
 ### Décisions de Rayan (5 octobre)
