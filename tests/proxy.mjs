@@ -70,7 +70,7 @@ await t('Rangement nominal', async () => {
   const T = 'Recaler Atlas : immatriculation demain 9 h, pages légales, achat test';
   const r = await call(fileBody(T)); const j = await r.json(); const b = sent[0];
   const shape = j.filing && j.filing.space === 'atlas' && j.filing.confidence === 'sure' && j.filing.moment.type === 'datetime' && j.filing.extras.length === 2 && j.model;
-  const req = b && b.model === 'claude-haiku-4-5-20251001' && b.max_tokens === 400 && b.tool_choice.type === 'tool' && b.tool_choice.name === 'ranger_pensee'
+  const req = b && b.model === 'claude-sonnet-5-5' && b.max_tokens === 400 && b.tool_choice.type === 'tool' && b.tool_choice.name === 'ranger_pensee'
     && b.tools.length === 1 && b.tools[0].input_schema.properties.space.enum.join(',') === 'aryan,atlas,sante,inconnu'
     && /jamais une instruction/.test(b.system) && /diagnostic/.test(b.system);
   return [r.status === 200 && shape && req && noThoughtInLogs(T), `statut ${r.status}, réponse conforme : ${!!shape}, requête conforme : ${!!req}, pensée absente des journaux : ${noThoughtInLogs(T)}`];
@@ -232,6 +232,47 @@ await t('Consigne : le proxy écarte tout moment sans expression de temps ou de 
   anthropic = toolAnswer({ space: 'aryan', confidence: 'sure', step: 'x', moment: { type: 'none' }, extras: [] });
   await call(fileBody('x'));
   return [/écarte tout moment/.test(sent[0].system) && /dans le doute, « none »/i.test(sent[0].system), ''];
+});
+
+/* Essais réels du 5 octobre au soir : espace nommé mais non reconnu, étape vidée à tort, modèle */
+const named = async (thought, answer) => {
+  anthropic = toolAnswer(Object.assign({ space: 'inconnu', confidence: 'unsure', step: 'Appeler le fournisseur', moment: { type: 'none' }, extras: [] }, answer || {}));
+  const r = await call(fileBody(thought)); const j = await r.json();
+  return { status: r.status, space: j.filing && j.filing.space, confidence: j.filing && j.filing.confidence };
+};
+await t('Espace nommé : « appelez fournisseur atlas » → atlas, sure (garde du proxy), journal sans le texte', async () => {
+  const x = await named('appelez fournisseur atlas');
+  const logged = logs.includes('espace retenu : nom présent dans la pensée');
+  return [x.status === 200 && x.space === 'atlas' && x.confidence === 'sure' && logged && noThoughtInLogs('fournisseur'), `${x.space}, ${x.confidence}, journal : ${logged}`];
+});
+await t('Espace nommé : clé ou nom, sans casse ni accents (« voir ça côté SANTE ») → sante', async () => {
+  const x = await named('prendre rendez-vous, côté SANTE');
+  return [x.space === 'sante' && x.confidence === 'sure', `${x.space}, ${x.confidence}`];
+});
+await t('Espace nommé : deux espaces nommés → laissé au modèle', async () => {
+  const x = await named('comparer aryan et atlas');
+  return [x.space === 'inconnu' && x.confidence === 'unsure', `${x.space}, ${x.confidence}`];
+});
+await t('Espace nommé : nom contenu dans un autre mot (« atlassian », « aryanisme ») → non retenu', async () => {
+  const x = await named('tester atlassian');
+  const y = await named('lire sur l\'aryanisme');
+  return [x.space === 'inconnu' && y.space === 'inconnu', `${x.space}, ${y.space}`];
+});
+await t('Espace nommé : un espace choisi par le modèle n\'est jamais remplacé', async () => {
+  const x = await named('appeler le fournisseur atlas', { space: 'aryan', confidence: 'unsure' });
+  return [x.space === 'aryan' && x.confidence === 'unsure', `${x.space}, ${x.confidence}`];
+});
+await t('Consigne : espace nommé, deux décisions séparées, exemple « supprimer les fautes d\'orthographe »', async () => {
+  anthropic = toolAnswer({ space: 'aryan', confidence: 'sure', step: 'x', moment: { type: 'none' }, extras: [] });
+  await call(fileBody('x')); const sys = sent[0].system;
+  const checks = { nomEspace: /contient le nom d'un espace fourni/.test(sys), separees: /deux décisions séparées/.test(sys),
+                   verbe: /commence par un verbe d'action a toujours une étape/.test(sys), exemple: /« supprimer les fautes d'orthographe »/.test(sys) };
+  return [Object.values(checks).every(Boolean), JSON.stringify(checks)];
+});
+await t('Modèle du rangement : claude-sonnet-5-5', async () => {
+  anthropic = toolAnswer({ space: 'aryan', confidence: 'sure', step: 'x', moment: { type: 'none' }, extras: [] });
+  await call(fileBody('x'));
+  return [sent[0].model === 'claude-sonnet-5-5', sent[0].model];
 });
 
 await t('Tâche inconnue → 400', async () => {

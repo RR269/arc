@@ -434,6 +434,33 @@ const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('onlin
   await ctx.close();
 }
 
+/* 20. Origine visible : « ARC propose » tant que la ligne la plus récente vient de l'IA, « Rangé » dès que Rayan a
+       modifié quelque chose — dans « Déposé », « Prochaines étapes » et le point du matin */
+{
+  const fk = fakeSupabase(); fk.proxy = filingReply({ ...ATLAS, moment: { type: 'none' } });
+  const { ctx, page } = await open({ fk });
+  const T = 'Vérifier l\'immatriculation';
+  await deposit(page, T); const id = await idOf(page, T); await waitFiled(page, id);
+  const labels = () => page.evaluate(i => {
+    const lbl = sel => { const e = document.querySelector(sel); return e ? e.textContent : null; };
+    if (typeof matinShow === 'function') matinShow('manual');
+    const r = { depose: lbl(`#depot-list [data-id="${i}"] .rg-box .rg-lbl`), accueil: lbl(`#next-list [data-id="${i}"] .rg-lbl`),
+                matin: lbl(`#matin-body .matin-row[data-id="${i}"] .rg-lbl`) };
+    if (typeof matinClose === 'function') matinClose();
+    return r;
+  }, id);
+  await page.click('#depot-open'); await page.click('#depot-back');
+  const before = await labels();
+  // Rayan fixe le moment (bouton « Ce soir ») : ce n'est plus une proposition d'ARC
+  await page.evaluate(i => rangeAdd(i, { moment: rangeTonight() }, 'user'), id);
+  const after = await labels();
+  const ok1 = Object.values(before).every(v => v === 'ARC propose');
+  const ok2 = Object.values(after).every(v => v === 'Rangé');
+  ok(ok1 && ok2, 'Origine visible : « ARC propose » pour l\'IA, « Rangé » dès que Rayan modifie (Déposé, accueil, point du matin)',
+     `avant : ${JSON.stringify(before)} ; après : ${JSON.stringify(after)}`);
+  await ctx.close();
+}
+
 /* 12. Balisage */
 {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');

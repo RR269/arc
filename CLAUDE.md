@@ -83,7 +83,7 @@ Dépôt (PR #3, `c563e8c`) : chantier 2 de la révision de l'ordre
 
 Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3 de la révision.
 - Proxy : task `file`, consigne écrite par le proxy, sortie par un outil unique forcé (`ranger_pensee`), validation
-  (espace connu, longueurs, date plausible), 502 si invalide ; modèle `FILE_MODEL` (`claude-haiku-4-5-20251001`) ;
+  (espace connu, longueurs, date plausible), 502 si invalide ; modèle `FILE_MODEL` (`claude-haiku-4-5-20251001` à l'origine, `claude-sonnet-5-5` ensuite) ;
   journaux sans le texte des pensées. La discussion (corps sans `task`) est inchangée.
   **Déployé par Rayan le 5 octobre (version du commit `9ecb6b5`)** ; le rangement marche en réel sur son Mac (vrai
   modèle, vraie table). Premier essai réel : trois défauts (moment inventé, étape fabriquée pour « dg »,
@@ -92,8 +92,9 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
   (champ `source` de l'outil, vérifié sans casse ni apostrophes typographiques, 2 caractères au moins), sinon il
   est ramené à « none » et le journal note « moment écarté : source introuvable » ; étape vide permise (une note) ;
   consigne : pas de moment par défaut, une action déjà formulée gardée presque telle quelle, trois exemples.
-  Version du commit `2c5e7d6` déployée par Rayan (373 lignes) : au second essai réel, moment encore inventé
-  (« faire la typo des modules complet » → ce soir 20 h, source « complet »).
+  Version du commit `2c5e7d6` déployée par Rayan (373 lignes). Second essai réel : un moment « ce soir 20 h » est
+  apparu sur « faire la typo des modules complet ». Qu'il ait été inventé par le modèle n'est PAS établi : rien
+  ne le prouve dans les journaux de cette version, et la garde stricte ci-dessous a été posée par prudence.
 - Proxy, après le second essai (**à redéployer par Rayan**) : un moment n'est gardé que si sa source, retrouvée dans
   la pensée, contient une expression de temps (`hasTimeExpression` : aujourd'hui, ce soir, demain, jours, « dans
   N jours », « d'ici », semaine ou mois prochain, fin de mois, heures « 9 h » « 14:00 », dates « le 12 » « 12/10 »,
@@ -101,6 +102,18 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
   dès que, une fois que, au prochain, au retour, avant de, après avoir, pendant). Reconnu par le proxy lui-même,
   sans casse ni accents, avec limites de mots. Sinon « none » ; journal « moment écarté : source introuvable »,
   « source sans expression de temps » ou « source sans expression de situation ».
+  Version du commit `a1ca2ca` déployée par Rayan (423 lignes). Ses journaux, aux essais de 19 h 23 et 19 h 44,
+  montrent « moment none » dans les trois cas : le proxy n'a inventé aucun moment. Les moments affichés
+  (« Ce soir · 20:00 », « Demain · 08:00 », « Demain · 10:00 ») correspondent aux boutons « Ce soir »,
+  « Demain matin » et « Choisir… » de la page : ils ont très probablement été fixés par Rayan. La garde reste.
+- Proxy, après les essais du 5 octobre au soir (**à redéployer par Rayan**) : garde de l'espace nommé (« inconnu »
+  alors que la pensée contient, comme mot entier, le nom ou la clé d'un seul espace → cet espace, confiance sure,
+  journal « espace retenu : nom présent dans la pensée ») ; consigne : espace nommé = cet espace, l'étape et
+  l'espace sont deux décisions séparées (une action a toujours une étape, même si l'espace est inconnu), deux
+  exemples ajoutés ; `FILE_MODEL` passe à `claude-sonnet-5-5` (le petit modèle jugeait trop juste ; retour arrière
+  possible dans la constante).
+- Page : l'origine se voit dans « Déposé », « Prochaines étapes » et le point du matin : « ARC propose » tant que
+  la ligne la plus récente vient de l'IA, « Rangé » dès que Rayan a modifié quelque chose.
 - Page : rangement demandé après l'envoi de la pensée, sans jamais bloquer le dépôt ; nouvel essai aux mêmes moments
   que la file ; une pensée n'est rangée par l'IA qu'une fois. Sous chaque pensée : espace, étape, moment, « gardé pour
   après », « ARC hésite » avec les sept espaces ; actions : changer d'espace, modifier l'étape, fixer le moment,
@@ -120,7 +133,7 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
   étape ») ; « Prochaines étapes » et le point du matin ne montrent que des actions réelles (ni hésitation, ni espace
   inconnu, ni note) et une seule ligne « N pensées à ranger » qui ouvre « Déposé » ; aucune demande à l'IA avant la
   lecture des rangements déjà faits (sinon une pensée rangée sur un autre appareil était redemandée).
-- Tests : `tests/proxy.mjs` 34 sur 34, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 24 sur 24, `tests/matin.mjs` 27 sur 27
+- Tests : `tests/proxy.mjs` 41 sur 41, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 25 sur 25, `tests/matin.mjs` 27 sur 27
   (le faux Supabase applique la règle de `thought_filings` : la pensée doit exister sur le serveur).
 - Essayé en réel sur le Mac de Rayan (5 octobre) avec le proxy `9ecb6b5`. Pas encore sur l'iPhone.
 
@@ -183,7 +196,7 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 ### Ouvert
 
 1. **Le geste central est construit, en essai** : dépôt en ligne ; rangement et point du matin sur la branche
-   `rangement` ; proxy `2c5e7d6` déployé et essayé sur le Mac, version corrigée à redéployer ; iPhone pas essayé.
+   `rangement` ; proxy `a1ca2ca` déployé et essayé sur le Mac, version suivante à redéployer ; iPhone pas essayé.
 2. **La synchronisation remplace tout l'état d'un coup** (dernière action gagne, `pullFromCloud`) : à remplacer
    par des pensées en ajout seul avant d'ouvrir le dépôt sur deux appareils.
 3. **Santé reste un suivi à curseurs** (check-in, score, série) : les consignes envoyées à Claude ne jouent plus
