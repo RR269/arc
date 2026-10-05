@@ -1,6 +1,6 @@
 // ARC — service worker. Réseau d'abord, cache en secours (hors ligne).
 // Une nouvelle version d'ARC est donc visible dès le rechargement, sans vider le cache à la main.
-var CACHE = 'arc-v5';
+var CACHE = 'arc-v6';
 var SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function(e){
