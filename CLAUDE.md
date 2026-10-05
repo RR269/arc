@@ -82,7 +82,7 @@ Dépôt (PR #3, `c563e8c`) : chantier 2 de la révision de l'ordre
 - `pushToCloud` et `pullFromCloud` ne sont pas touchés. `tests/depot.mjs` : 19 sur 19 le 5 octobre (faux Supabase), dont deux onglets ouverts en même temps.
 
 Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3 de la révision.
-- Proxy : task `file`, consigne écrite par le proxy, sortie par un outil unique forcé (`ranger_pensee`), validation
+- Proxy : task `file`, consigne écrite par le proxy, sortie par un outil unique (`ranger_pensee`, forcé à l'origine, `tool_choice` « auto » depuis le 6 octobre), validation
   (espace connu, longueurs, date plausible), 502 si invalide ; modèle `FILE_MODEL` (`claude-haiku-4-5-20251001` à l'origine, `claude-sonnet-5-5` ensuite) ;
   journaux sans le texte des pensées. La discussion (corps sans `task`) est inchangée.
   **Déployé par Rayan le 5 octobre (version du commit `9ecb6b5`)** ; le rangement marche en réel sur son Mac (vrai
@@ -112,6 +112,11 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
   l'espace sont deux décisions séparées (une action a toujours une étape, même si l'espace est inconnu), deux
   exemples ajoutés ; `FILE_MODEL` passe à `claude-sonnet-5-5` (le petit modèle jugeait trop juste ; retour arrière
   possible dans la constante).
+- Proxy, 6 octobre (**à redéployer par Rayan**, 455 lignes) : la version `b03fc14` déployée le 5 au soir échouait
+  à chaque rangement. Preuve : journal « rangement 400 : erreur de l'API Anthropic » et motif gardé par la page
+  (`attempts[].why`) : « tool_choice: type "tool" and "any" are not supported for this model ». `claude-sonnet-5-5`
+  refuse l'outil forcé ; `tool_choice` passe à « auto » (un seul outil fourni, la consigne l'impose, une réponse
+  sans outil reste un 502 que la page réessaie) et `FILE_MAX_TOKENS` à 700. Pas encore essayé en réel.
 - Page : l'origine se voit dans « Déposé », « Prochaines étapes » et le point du matin : « ARC propose » tant que
   la ligne la plus récente vient de l'IA, « Rangé » dès que Rayan a modifié quelque chose.
 - Page : rangement demandé après l'envoi de la pensée, sans jamais bloquer le dépôt ; nouvel essai aux mêmes moments

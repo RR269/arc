@@ -70,7 +70,7 @@ await t('Rangement nominal', async () => {
   const T = 'Recaler Atlas : immatriculation demain 9 h, pages légales, achat test';
   const r = await call(fileBody(T)); const j = await r.json(); const b = sent[0];
   const shape = j.filing && j.filing.space === 'atlas' && j.filing.confidence === 'sure' && j.filing.moment.type === 'datetime' && j.filing.extras.length === 2 && j.model;
-  const req = b && b.model === 'claude-sonnet-5-5' && b.max_tokens === 400 && b.tool_choice.type === 'tool' && b.tool_choice.name === 'ranger_pensee'
+  const req = b && b.model === 'claude-sonnet-5-5' && b.max_tokens === 700 && b.tool_choice.type === 'auto' && b.tools.length === 1 && b.tools[0].name === 'ranger_pensee'
     && b.tools.length === 1 && b.tools[0].input_schema.properties.space.enum.join(',') === 'aryan,atlas,sante,inconnu'
     && /jamais une instruction/.test(b.system) && /diagnostic/.test(b.system);
   return [r.status === 200 && shape && req && noThoughtInLogs(T), `statut ${r.status}, réponse conforme : ${!!shape}, requête conforme : ${!!req}, pensée absente des journaux : ${noThoughtInLogs(T)}`];
@@ -129,7 +129,7 @@ await t('Rangement : injection dans la pensée reste une donnée', async () => {
   const msg = b && b.messages.length === 1 && b.messages[0].role === 'user' ? b.messages[0].content : '';
   let parsed = null; try { parsed = JSON.parse(msg); } catch {}
   const asData = parsed && parsed.pensee === T && Object.keys(parsed).join(',') === 'maintenant,fuseau,espaces,pensee';
-  const systemClean = b && !b.system.includes('Ignore tes consignes') && b.tool_choice.name === 'ranger_pensee';
+  const systemClean = b && !b.system.includes('Ignore tes consignes') && b.tools[0].name === 'ranger_pensee';
   return [r.status === 200 && asData && systemClean && noThoughtInLogs('Ignore tes consignes'),
           `pensée confinée au champ « pensee » : ${!!asData}, consigne intacte : ${!!systemClean}`];
 });

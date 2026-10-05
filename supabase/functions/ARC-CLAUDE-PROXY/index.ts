@@ -27,7 +27,8 @@ const MAX_MESSAGES = 40;
 // jugeait trop juste (espace nommé dans la pensée mais « inconnu », étape vidée pour une action claire).
 // Rayan peut revenir en arrière en remettant "claude-haiku-4-5-20251001" ici, puis en redéployant.
 const FILE_MODEL = "claude-sonnet-5-5";
-const FILE_MAX_TOKENS = 400;
+// 700 : l'outil n'est plus forcé, le modèle peut écrire quelques mots avant de l'appeler.
+const FILE_MAX_TOKENS = 700;
 const FILE_TIMEOUT_MS = 25_000;
 // Plafonds de la demande (au-delà : 400)
 const THOUGHT_MAX = 8000;
@@ -358,7 +359,10 @@ async function fileThought(req: Request, body: Record<string, unknown>, anthropi
     max_tokens: FILE_MAX_TOKENS,
     system: FILE_SYSTEM,
     tools: [fileTool(keys)],
-    tool_choice: { type: "tool", name: "ranger_pensee" },
+    // « auto » et non un outil forcé : claude-sonnet-5-5 refuse tool_choice « tool » et « any » (400 constaté le
+    // 5 octobre : « tool_choice: type "tool" and "any" are not supported for this model »). L'outil est le seul
+    // fourni et la consigne l'impose ; une réponse sans outil reste refusée plus bas (502, la page réessaie).
+    tool_choice: { type: "auto" },
     messages: [{ role: "user", content: JSON.stringify(data) }],
   };
 
