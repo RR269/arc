@@ -764,6 +764,44 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .auth-err{min-height:20px;font-size:14px;color:var(--red);margin:4px 0 10px;line-height:1.5}
 .auth-note{font-size:13px;color:var(--t2);line-height:1.6;margin-top:18px}
 #sync-pill{cursor:pointer}
+/* ═══ DÉPÔT ═══ Barre fixe en bas (z 30 : au-dessus des écrans, sous le tiroir, le cockpit, la War Room,
+   la recherche, l'accueil et la connexion). --depot-right : largeur du panneau Claude visible à droite (Mac).
+   --depot-space : hauteur réservée en bas des écrans pour que la barre ne masque rien. */
+#depot-bar{position:fixed;left:0;right:var(--depot-right,0px);bottom:var(--depot-kb,0px);z-index:30;padding:0 16px calc(12px + env(safe-area-inset-bottom));pointer-events:none}
+#depot-bar.kb{padding-bottom:8px}
+.depot-pill{pointer-events:auto;max-width:720px;margin:0 auto;display:flex;align-items:flex-end;gap:8px;padding:6px;border-radius:24px;background:rgba(28,28,30,.92);border:1px solid var(--b2);box-shadow:0 8px 30px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.depot-pill:focus-within{border-color:var(--b3)}
+#depot-ta{flex:1;min-height:44px;max-height:160px;padding:11px 12px;border:none;outline:none;background:transparent;color:var(--t1);font-family:-apple-system,system-ui,sans-serif;font-size:17px;line-height:22px;resize:none;overflow-y:auto}
+#depot-ta::placeholder{color:#8e8e93}
+.depot-send{flex-shrink:0;min-width:44px;min-height:44px;padding:0 18px;border-radius:18px;border:none;background:#f5f5f7;color:#000;font-family:-apple-system,system-ui,sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.depot-send:disabled{opacity:.35;cursor:default}
+.depot-note{pointer-events:auto;max-width:720px;margin:0 auto 6px;min-height:0;font-family:-apple-system,system-ui,sans-serif;font-size:14px;color:var(--t2);text-align:center;opacity:0;transition:opacity .2s}
+.depot-note.on{opacity:1}
+.depot-note button{background:none;border:none;color:var(--t1);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer;min-height:32px;padding:0 4px}
+.depot-note.err{color:var(--red)}
+.depot-entry{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;min-height:52px;margin:14px 0 4px;padding:10px 16px;border-radius:16px;border:1px solid var(--b2);background:var(--bg2);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;cursor:pointer;text-align:left}
+.depot-entry:hover{border-color:var(--b3)}
+.depot-entry-t{font-size:16px;font-weight:600}
+.depot-entry-n{flex:1;font-size:15px;color:var(--t2)}
+.depot-entry-go{font-size:22px;color:var(--t2)}
+#depot-screen{position:fixed;inset:0;z-index:25;background:var(--bg);overflow-y:auto;display:none;-webkit-overflow-scrolling:touch}
+#depot-screen.open{display:block}
+.depot-wrap{max-width:720px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 20px calc(var(--depot-space,0px) + 24px);font-family:-apple-system,system-ui,sans-serif}
+.depot-back{min-height:44px;padding:0 4px;border:none;background:none;color:var(--t2);font-size:16px;cursor:pointer}
+.depot-back:hover{color:var(--t1)}
+.depot-title{font-size:34px;font-weight:800;letter-spacing:-.5px;color:var(--t1);margin:6px 0 4px}
+.depot-sub{font-size:15px;color:var(--t2);margin-bottom:20px}
+.depot-pending{font-size:14px;color:var(--orange);margin-bottom:14px}
+.depot-item{padding:14px 16px;border-radius:16px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:10px}
+.depot-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--t2);margin-bottom:6px}
+.depot-state{padding:2px 8px;border-radius:10px;font-size:13px;font-weight:600}
+.depot-state.sent{background:rgba(48,209,88,.14);color:#4ade80}
+.depot-state.wait{background:rgba(255,149,0,.14);color:#ffb340}
+.depot-state.local{background:rgba(255,255,255,.08);color:var(--t1)}
+.depot-body{font-size:17px;line-height:1.45;color:var(--t1);white-space:pre-wrap;word-break:break-word}
+.depot-empty{text-align:center;padding:48px 12px}
+.depot-empty-t{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:8px}
+.depot-empty-s{font-size:15px;line-height:1.55;color:var(--t2);max-width:380px;margin:0 auto}
 
 /* === FAB === */
 #fab-claude{display:none;position:fixed;bottom:22px;right:18px;z-index:80;width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;font-size:20px;font-style:italic;font-weight:800;color:#000;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:all .2s;align-items:center;justify-content:center}
@@ -1032,6 +1070,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .h-mondes-grid{grid-template-columns:repeat(3,1fr)}
 }
 
+/* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
+.hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
+.wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 </style>
 </head>
 <body>
@@ -1058,6 +1099,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="h-h1"><span class="h-h1-gradient">Un cerveau.</span><span class="h-h1-light">Sept espaces.</span></div>
     <div class="h-sub" id="h-sub-txt">Rayan &middot; Valence.</div>
     <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span class="h-sub-critical-dot" style="background:var(--red)"></span><span id="h-critical-txt"></span></div>
+    <button class="depot-entry" id="depot-open" type="button"><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true">›</span></button>
     <div class="h-stats">
       <div class="h-stat" style="animation-delay:.1s"><div class="h-stat-v" style="color:#FF9500" id="hs-proj">5</div><div class="h-stat-l">Projets</div></div>
       <div class="h-stat" style="animation-delay:.15s"><div class="h-stat-v" style="color:var(--green)" id="hs-done">0</div><div class="h-stat-l">Accomplies</div></div>
@@ -1638,6 +1680,30 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   <div class="ob-step active" id="ob-0"><span class="ob-icon">&#128640;</span><div class="ob-title">Bienvenue dans ARC v2</div><div class="ob-text">5 mondes + 2 pôles personnels (Santé et Juridique). Claude intégré partout.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
   <div class="ob-step" id="ob-1"><span class="ob-icon">&#9889;</span><div class="ob-title">Cockpit par tâche</div><div class="ob-text">Clique sur n'importe quelle tâche pour ton espace de travail dédié avec Claude.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
   <div class="ob-step" id="ob-2"><span class="ob-icon">&#127919;</span><div class="ob-title">War Room + Poles</div><div class="ob-text">War Room pour focus absolu. Pôle Santé. Pôle Juridique pour tes démarches.</div><button class="ob-next" data-action="ob-finish">Cest parti</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div></div>
+</div>
+<!-- DÉPÔT : liste des pensées déposées (sous la barre, au-dessus des écrans) -->
+<div id="depot-screen" aria-hidden="true">
+  <div class="depot-wrap">
+    <div class="depot-head">
+      <button class="depot-back" id="depot-back" type="button">‹ Accueil</button>
+      <div class="depot-title">Déposé</div>
+      <div class="depot-sub">Tes pensées, telles que tu les as écrites.</div>
+    </div>
+    <div class="depot-pending" id="depot-pending" hidden></div>
+    <div id="depot-list"></div>
+    <div class="depot-empty" id="depot-empty" hidden>
+      <div class="depot-empty-t">Rien de déposé pour l'instant</div>
+      <div class="depot-empty-s">Écris ou dicte une pensée dans la barre en bas de l'écran. Elle restera ici, telle quelle, sur ce Mac comme sur ton iPhone.</div>
+    </div>
+  </div>
+</div>
+<!-- DÉPÔT : barre fixe en bas de l'écran -->
+<div id="depot-bar">
+  <div class="depot-note" id="depot-note" role="status" aria-live="polite"></div>
+  <form class="depot-pill" id="depot-form" autocomplete="off">
+    <textarea id="depot-ta" rows="1" maxlength="8000" placeholder="Dépose une pensée…" aria-label="Dépose une pensée" enterkeyhint="enter"></textarea>
+    <button class="depot-send" id="depot-send" type="submit" disabled>Déposer</button>
+  </form>
 </div>
 <div id="auth-screen">
   <div class="auth-box">
@@ -4230,9 +4296,309 @@ function addChatMsg(wid,role,txt){
   if(S.chatMsgs[wid].length>100) S.chatMsgs[wid]=S.chatMsgs[wid].slice(-100);
 }
 
+/* ═══ DÉPÔT ═══
+   Une pensée déposée est écrite d'abord sur l'appareil (clé arc_thoughts_v1, jamais dans S : la synchronisation
+   de S ne peut pas l'écraser), puis ajoutée dans la table thoughts (ajout seul, doublons ignorés sur id).
+   Elle ne quitte jamais l'appareil tant que le serveur ne l'a pas confirmée. Les mesures (open, deposit)
+   passent par la même file vers arc_events. Sans session : aucune requête, tout reste sur l'appareil.
+   Le texte d'une pensée ne s'affiche que par textContent. */
+var DEPOT_KEY = 'arc_thoughts_v1';
+var DEPOT_MAX = 8000;
+var _depot = null;          // { thoughts: { id: {...} }, events: { id: {...} } }
+var _depotBusy = false, _depotAgain = false;
+var _depotNoteT = null;
+
+function depotUUID() {
+  if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  // Repli pour les navigateurs sans randomUUID : UUID v4 à partir de getRandomValues
+  var b = crypto.getRandomValues(new Uint8Array(16)); b[6] = (b[6] & 15) | 64; b[8] = (b[8] & 63) | 128;
+  var h = Array.prototype.map.call(b, function(x) { return (x + 256).toString(16).slice(1); }).join('');
+  return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);
+}
+function depotDevice() {
+  var ua = navigator.userAgent || '';
+  if(/iPhone/.test(ua)) return 'iphone';
+  if(/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ipad';
+  if(/Macintosh|Mac OS X/.test(ua)) return 'mac';
+  if(/Android/.test(ua)) return 'android';
+  return 'web';
+}
+/* Plusieurs onglets partagent la même clé, mais chacun garde sa copie en mémoire. Pour qu'aucun n'efface ce
+   qu'un autre a écrit, on ne remplace jamais la clé : on relit, on fusionne par id, puis on écrit.
+   - Pensées : union ; si l'une des deux copies est « sent », la pensée reste « sent ». Jamais retirées, jamais plafonnées.
+   - Événements : union, moins ceux que le serveur a confirmés (liste « acked », gardée 30 jours et 2 000 au plus,
+     pour qu'un onglet resté en arrière ne les ressuscite pas). Même si l'un passait, le serveur ignore le doublon
+     (id unique, doublons ignorés) : il ne serait pas compté deux fois. Au-delà de 500 non envoyés, les plus anciens sortent. */
+var DEPOT_EVENTS_MAX = 500, DEPOT_ACK_MAX = 2000, DEPOT_ACK_DAYS = 30;
+
+function depotNorm(d) {
+  if(!d || typeof d !== 'object') d = {};
+  if(!d.thoughts || typeof d.thoughts !== 'object') d.thoughts = {};
+  if(!d.events || typeof d.events !== 'object') d.events = {};
+  if(!d.acked || typeof d.acked !== 'object') d.acked = {};
+  return d;
+}
+function depotRead() {
+  try { return depotNorm(JSON.parse(localStorage.getItem(DEPOT_KEY) || 'null')); } catch(e) { return depotNorm(null); }
+}
+function depotMerge(a, b) {
+  var out = depotNorm({});
+  [a, b].forEach(function(src) {
+    Object.keys(src.acked).forEach(function(id) { if(!out.acked[id] || src.acked[id] > out.acked[id]) out.acked[id] = src.acked[id]; });
+  });
+  [a, b].forEach(function(src) {
+    Object.keys(src.thoughts).forEach(function(id) {
+      var t = src.thoughts[id], cur = out.thoughts[id];
+      if(!cur) out.thoughts[id] = Object.assign({}, t);
+      else if(t.status === 'sent' && cur.status !== 'sent') { cur.status = 'sent'; cur.sent_at = t.sent_at || cur.sent_at || null; }
+    });
+    Object.keys(src.events).forEach(function(id) { if(!out.acked[id]) out.events[id] = src.events[id]; });
+  });
+  // Liste des confirmés : 30 jours, 2 000 au plus
+  var limit = new Date(Date.now() - DEPOT_ACK_DAYS * 864e5).toISOString();
+  var acks = Object.keys(out.acked).filter(function(id) { return out.acked[id] >= limit; })
+    .sort(function(x, y) { return out.acked[x] < out.acked[y] ? 1 : -1; }).slice(0, DEPOT_ACK_MAX);
+  var kept = {}; acks.forEach(function(id) { kept[id] = out.acked[id]; }); out.acked = kept;
+  // Événements non envoyés : 500 au plus, les plus anciens sortent
+  var evs = Object.keys(out.events);
+  if(evs.length > DEPOT_EVENTS_MAX) {
+    evs.sort(function(x, y) { return out.events[x].at < out.events[y].at ? -1 : 1; })
+       .slice(0, evs.length - DEPOT_EVENTS_MAX).forEach(function(id) { delete out.events[id]; });
+  }
+  return out;
+}
+function depotLoad() { _depot = depotRead(); }
+// Relit, fusionne, écrit. Renvoie false si l'appareil n'a pas pu enregistrer (stockage plein ou refusé).
+function depotSave() {
+  _depot = depotMerge(depotRead(), _depot);
+  try { localStorage.setItem(DEPOT_KEY, JSON.stringify(_depot)); return true; } catch(e) { return false; }
+}
+function depotList() {
+  return Object.keys(_depot.thoughts).map(function(k) { return _depot.thoughts[k]; })
+    .sort(function(a, b) { return a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0; });
+}
+function depotEvent(kind) {
+  var id = depotUUID();
+  _depot.events[id] = { id: id, kind: kind, at: new Date().toISOString() };
+  depotSave();
+}
+
+// Dépôt : écriture locale d'abord, affichage immédiat, envoi ensuite sans bloquer
+function depotSubmit() {
+  var ta = document.getElementById('depot-ta');
+  var body = ta.value;
+  if(!body.trim()) return;
+  if(body.length > DEPOT_MAX) { depotNote('Trop long : 8 000 caractères au plus.', true); return; }
+  var id = depotUUID();
+  _depot.thoughts[id] = { id: id, body: body, source: 'text', device: depotDevice(),
+                          created_at: new Date().toISOString(), status: 'pending' };
+  if(!depotSave()) {
+    // Rien n'est perdu : le texte reste dans le champ
+    delete _depot.thoughts[id];
+    depotNote('Impossible d\'enregistrer sur cet appareil : ta pensée est restée dans le champ.', true);
+    return;
+  }
+  depotEvent('deposit');
+  ta.value = ''; depotAutoGrow(); depotSendState();
+  depotRender();
+  depotNote(getUID() ? 'Déposé.' : 'Déposé sur cet appareil seulement.', false, true);
+  setTimeout(depotFlush, 0);
+}
+
+// Envoi de la file : pensées en attente puis événements. Jamais sans session.
+async function depotFlush() {
+  if(!_sb || !getUID()) return;
+  if(_depotBusy) { _depotAgain = true; return; }
+  _depotBusy = true;
+  try {
+    var pend = depotList().filter(function(t) { return t.status !== 'sent'; });
+    for(var i = 0; i < pend.length; i += 50) {
+      var rows = pend.slice(i, i + 50).map(function(t) {
+        return { id: t.id, body: t.body, source: t.source || 'text', device: (t.device || 'web').slice(0, 40), created_at: t.created_at };
+      });
+      var r = await _sb.from('thoughts').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+      if(r.error) throw r.error;
+      var now = new Date().toISOString();
+      rows.forEach(function(x) { var t = _depot.thoughts[x.id]; if(t) { t.status = 'sent'; t.sent_at = now; } });
+      depotSave();
+    }
+    var evs = Object.keys(_depot.events).map(function(k) { return _depot.events[k]; });
+    for(var j = 0; j < evs.length; j += 100) {
+      var batch = evs.slice(j, j + 100);
+      var re = await _sb.from('arc_events').upsert(batch.map(function(e) { return { id: e.id, kind: e.kind, at: e.at }; }),
+                                                   { onConflict: 'id', ignoreDuplicates: true });
+      if(re.error) throw re.error;
+      // Un événement confirmé quitte l'appareil ; son id rejoint « acked » pour que la fusion ne le fasse pas revenir
+      var ackAt = new Date().toISOString();
+      batch.forEach(function(e) { delete _depot.events[e.id]; _depot.acked[e.id] = ackAt; });
+      depotSave();
+    }
+  } catch(e) {
+    console.warn('Dépôt : envoi reporté —', e && e.message || e);
+  }
+  _depotBusy = false;
+  depotRender();
+  if(_depotAgain) { _depotAgain = false; setTimeout(depotFlush, 0); }
+}
+
+// Lecture des 200 dernières pensées du compte, fusionnées par id avec celles de l'appareil
+async function depotPull() {
+  if(!_sb || !getUID()) return;
+  try {
+    var r = await _sb.from('thoughts').select('id,body,source,device,created_at,received_at')
+      .order('created_at', { ascending: false }).limit(200);
+    if(r.error) throw r.error;
+    (r.data || []).forEach(function(row) {
+      var t = _depot.thoughts[row.id];
+      if(t) { t.status = 'sent'; if(!t.sent_at) t.sent_at = row.received_at || null; }
+      else _depot.thoughts[row.id] = { id: row.id, body: row.body, source: row.source, device: row.device,
+                                       created_at: row.created_at, status: 'sent', sent_at: row.received_at || null };
+    });
+    depotSave();
+    depotRender();
+  } catch(e) { console.warn('Dépôt : lecture reportée —', e && e.message || e); }
+}
+function depotSync() { depotFlush().then(depotPull); }
+
+/* Affichage */
+function depotWhen(iso) {
+  var d = new Date(iso); if(isNaN(d)) return '';
+  var h = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  var today = new Date(); var y = new Date(); y.setDate(today.getDate() - 1);
+  if(d.toDateString() === today.toDateString()) return 'Aujourd\'hui · ' + h;
+  if(d.toDateString() === y.toDateString()) return 'Hier · ' + h;
+  return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short',
+    year: d.getFullYear() === today.getFullYear() ? undefined : 'numeric' }) + ' · ' + h;
+}
+function depotRender() {
+  var all = depotList();
+  var waiting = all.filter(function(t) { return t.status !== 'sent'; }).length;
+  var signed = !!getUID();
+  var cnt = document.getElementById('depot-count');
+  if(cnt) {
+    var txt = all.length === 0 ? 'Aucune pensée' : all.length + ' pensée' + (all.length > 1 ? 's' : '');
+    if(waiting) txt += ' · ' + waiting + (signed ? ' en attente' : ' sur cet appareil');
+    cnt.textContent = txt;
+  }
+  var list = document.getElementById('depot-list'); if(!list) return;
+  var pend = document.getElementById('depot-pending');
+  if(waiting) {
+    pend.hidden = false;
+    pend.textContent = signed
+      ? waiting + ' pensée' + (waiting > 1 ? 's' : '') + ' en attente d\'envoi : elles partiront dès que le réseau le permet.'
+      : waiting + ' pensée' + (waiting > 1 ? 's' : '') + ' sur cet appareil seulement : elles partiront à ta prochaine connexion.';
+  } else pend.hidden = true;
+  document.getElementById('depot-empty').hidden = all.length > 0;
+  list.textContent = '';
+  all.forEach(function(t) {
+    var item = document.createElement('article'); item.className = 'depot-item'; item.setAttribute('data-id', t.id);
+    var meta = document.createElement('div'); meta.className = 'depot-meta';
+    var when = document.createElement('span'); when.textContent = depotWhen(t.created_at);
+    var st = document.createElement('span');
+    if(t.status === 'sent') { st.className = 'depot-state sent'; st.textContent = 'Envoyée'; }
+    else if(signed) { st.className = 'depot-state wait'; st.textContent = 'En attente'; }
+    else { st.className = 'depot-state local'; st.textContent = 'Sur cet appareil seulement'; }
+    meta.appendChild(when); meta.appendChild(st);
+    var body = document.createElement('div'); body.className = 'depot-body'; body.textContent = t.body;
+    item.appendChild(meta); item.appendChild(body);
+    list.appendChild(item);
+  });
+}
+function depotNote(msg, isErr, withLink) {
+  var n = document.getElementById('depot-note'); if(!n) return;
+  n.textContent = msg;
+  if(withLink && !document.getElementById('depot-screen').classList.contains('open')) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = 'Voir';
+    b.addEventListener('click', depotOpen); n.appendChild(document.createTextNode(' ')); n.appendChild(b);
+  }
+  n.classList.toggle('err', !!isErr); n.classList.add('on');
+  clearTimeout(_depotNoteT);
+  _depotNoteT = setTimeout(function() { n.classList.remove('on'); }, isErr ? 6000 : 3000);
+}
+function depotOpen() {
+  depotRender();
+  var s = document.getElementById('depot-screen'); s.classList.add('open'); s.setAttribute('aria-hidden', 'false');
+  s.scrollTop = 0; depotLayout();
+}
+function depotClose() {
+  var s = document.getElementById('depot-screen'); s.classList.remove('open'); s.setAttribute('aria-hidden', 'true');
+  depotLayout();
+}
+
+/* Barre : hauteur du champ, place réservée, panneau Claude à droite, clavier de l'iPhone */
+function depotSendState() {
+  var ta = document.getElementById('depot-ta');
+  document.getElementById('depot-send').disabled = !ta.value.trim();
+}
+function depotAutoGrow() {
+  var ta = document.getElementById('depot-ta');
+  ta.style.height = 'auto';
+  ta.style.height = Math.min(ta.scrollHeight, 160) + 'px';
+  depotLayout();
+}
+function depotLayout() {
+  var root = document.documentElement, bar = document.getElementById('depot-bar'); if(!bar) return;
+  // Panneau Claude visible à droite d'un monde ou d'un pôle : la barre s'arrête avant lui
+  var right = 0;
+  if(!document.getElementById('depot-screen').classList.contains('open')) {
+    ['S2', 'S3', 'S4'].forEach(function(id) {
+      var scr = document.getElementById(id);
+      if(!scr || scr.classList.contains('off')) return;
+      var p = scr.querySelector('.wcp, .pcp');
+      if(p && p.offsetWidth > 0 && getComputedStyle(p).display !== 'none') right = p.offsetWidth;
+    });
+  }
+  root.style.setProperty('--depot-right', right + 'px');
+  // Clavier ouvert sur iPhone : la barre remonte au-dessus
+  var kb = 0, vv = window.visualViewport;
+  if(vv) kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+  if(kb < 80) kb = 0;
+  root.style.setProperty('--depot-kb', kb + 'px');
+  bar.classList.toggle('kb', kb > 0);
+  root.style.setProperty('--depot-space', bar.offsetHeight + 'px');
+}
+
+function depotInit() {
+  depotLoad();
+  depotEvent('open');
+  var ta = document.getElementById('depot-ta');
+  document.getElementById('depot-form').addEventListener('submit', function(ev) { ev.preventDefault(); depotSubmit(); });
+  ta.addEventListener('input', function() { depotAutoGrow(); depotSendState(); });
+  ta.addEventListener('keydown', function(ev) {
+    // Sur Mac (pointeur précis) : Entrée dépose, Maj+Entrée va à la ligne. Sur iPhone, Entrée va à la ligne.
+    if(ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      ev.preventDefault(); depotSubmit();
+    }
+  });
+  document.getElementById('depot-open').addEventListener('click', depotOpen);
+  document.getElementById('depot-back').addEventListener('click', depotClose);
+  window.addEventListener('resize', depotLayout);
+  if(window.visualViewport) { visualViewport.addEventListener('resize', depotLayout); visualViewport.addEventListener('scroll', depotLayout); }
+  // Changement d'écran (accueil, monde, pôle) : recalcul de la place du panneau Claude
+  var mo = new MutationObserver(function() { depotLayout(); });
+  ['S1', 'S2', 'S3', 'S4'].forEach(function(id) { var el = document.getElementById(id); if(el) mo.observe(el, { attributes: true, attributeFilter: ['class'] }); });
+  // Nouvel essai : session ouverte, retour du réseau, retour au premier plan
+  // Ce rappel s'exécute après celui de sbInit (enregistré avant) : getUID() est déjà à jour
+  if(_sb) _sb.auth.onAuthStateChange(function(event, session) {
+    setTimeout(depotRender, 0);
+    if(session && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN')) setTimeout(depotSync, 0);
+  });
+  window.addEventListener('online', function() { depotFlush(); });
+  // Un autre onglet a écrit : on fusionne sa version dans la mémoire (sans réécrire la clé) et on réaffiche
+  window.addEventListener('storage', function(ev) {
+    if(ev.key !== DEPOT_KEY || ev.storageArea !== localStorage) return;
+    _depot = depotMerge(depotRead(), _depot);
+    depotRender();
+  });
+  document.addEventListener('visibilitychange', function() { if(document.visibilityState === 'visible') depotSync(); });
+  depotRender();
+  depotLayout();
+}
+
 function init(){
   sbInit();
   loadS();
+  depotInit();
 
   // Onboarding
   if(!S.seen||S.seen==="new"){ document.getElementById("onboarding").classList.add("active"); }
