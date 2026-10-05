@@ -775,8 +775,9 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 #depot-ta::placeholder{color:#8e8e93}
 .depot-send{flex-shrink:0;min-width:44px;min-height:44px;padding:0 18px;border-radius:18px;border:none;background:#f5f5f7;color:#000;font-family:-apple-system,system-ui,sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
 .depot-send:disabled{opacity:.35;cursor:default}
-.depot-note{pointer-events:auto;max-width:720px;margin:0 auto 6px;min-height:0;font-family:-apple-system,system-ui,sans-serif;font-size:14px;color:var(--t2);text-align:center;opacity:0;transition:opacity .2s}
-.depot-note.on{opacity:1}
+.depot-note{pointer-events:none;width:fit-content;max-width:min(720px,100%);margin:0 auto 6px;padding:4px 12px;border-radius:14px;background:rgba(28,28,30,.95);border:1px solid var(--b2);font-family:-apple-system,system-ui,sans-serif;font-size:14px;color:var(--t1);text-align:center;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+/* Invisible = ni visible ni cliquable : le message effacé ne doit pas capter les clics du contenu dessous */
+.depot-note.on{opacity:1;visibility:visible;pointer-events:auto}
 .depot-note button{background:none;border:none;color:var(--t1);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer;min-height:32px;padding:0 4px}
 .depot-note.err{color:var(--red)}
 .depot-entry{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;min-height:52px;margin:14px 0 4px;padding:10px 16px;border-radius:16px;border:1px solid var(--b2);background:var(--bg2);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;cursor:pointer;text-align:left}
@@ -1070,6 +1071,43 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .h-mondes-grid{grid-template-columns:repeat(3,1fr)}
 }
 
+/* ═══ RANGEMENT ═══ */
+.rg-box{margin-top:12px;padding-top:12px;border-top:1px solid var(--b1);font-family:-apple-system,system-ui,sans-serif}
+.rg-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.rg-lbl{font-size:13px;font-weight:600;color:var(--t2)}
+.rg-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:12px;border:1px solid color-mix(in srgb,var(--rg-c) 55%,transparent);background:color-mix(in srgb,var(--rg-c) 14%,transparent);color:var(--t1);font-size:13px;font-weight:600}
+.rg-dot{width:8px;height:8px;border-radius:50%;background:var(--rg-c);flex-shrink:0}
+.rg-done{font-size:13px;font-weight:600;color:#4ade80}
+.rg-step{font-size:17px;font-weight:600;line-height:1.4;color:var(--t1);white-space:pre-wrap;word-break:break-word}
+.rg-step.done{text-decoration:line-through;color:var(--t2)}
+.rg-moment{font-size:15px;color:#ffb340;margin-top:4px}
+.rg-extras{margin-top:10px}
+.rg-extras ul{margin:4px 0 0 18px;padding:0}
+.rg-extras li{font-size:15px;line-height:1.45;color:var(--t2);white-space:pre-wrap;word-break:break-word}
+.rg-hesite{font-size:15px;color:var(--t1);margin:2px 0 8px}
+.rg-wait{font-size:14px;color:var(--t2)}
+.rg-wait.busy{color:var(--t1)}
+.rg-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.rg-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.rg-btn{min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:var(--bg3);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;font-size:15px;font-weight:500;cursor:pointer}
+.rg-btn:hover{border-color:var(--b3)}
+.rg-btn.main{background:#f5f5f7;color:#000;border-color:#f5f5f7;font-weight:600}
+.rg-btn.quiet{background:none;border-color:transparent;color:var(--t2)}
+.rg-btn.rg-chip{padding:0 8px;background:none}
+.rg-btn.rg-chip.on{border-color:var(--t2)}
+.rg-edit{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.rg-input{flex:1 1 220px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--b2);background:var(--bg3);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;font-size:16px;color-scheme:dark}
+.depot-cancelled{margin-top:20px}
+.depot-cancelled summary{min-height:44px;display:flex;align-items:center;font-size:15px;color:var(--t2);cursor:pointer}
+.depot-item.off{opacity:.7}
+.next-wrap{margin:8px 0 26px;font-family:-apple-system,system-ui,sans-serif}
+.next-title{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:12px}
+.next-item{padding:14px 16px;border-radius:16px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:10px}
+.next-step{font-size:17px;font-weight:600;line-height:1.4;color:var(--t1);word-break:break-word}
+.next-when{font-size:14px;color:#ffb340}
+.next-item .rg-acts{margin-top:8px}
+.next-empty{font-size:15px;line-height:1.55;color:var(--t2);padding:14px 16px;border-radius:16px;border:1px dashed var(--b2)}
+.next-empty[hidden]{display:none}
 /* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
@@ -1108,6 +1146,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     </div>
   </div>
   <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
+  <!-- PROCHAINES ÉTAPES : tirées des pensées rangées -->
+  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
+    <div class="next-title" id="next-title">Prochaines étapes</div>
+    <div id="next-list"></div>
+    <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
+  </section>
   <!-- SECTION MONDES -->
   <div class="h-section">
     <div class="h-section-head">
@@ -1513,7 +1557,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="pcp">
       <div class="cp-head" style="--wc:#30d158">
         <div class="cp-logo" style="background:#30d158">C</div>
-        <div class="cp-info"><div class="cp-title">Claude Sant&#233;</div><div class="cp-sub" id="sante-cp-sub">Conseiller bien-&#234;tre</div></div>
+        <div class="cp-info"><div class="cp-title">Claude Sant&#233;</div><div class="cp-sub" id="sante-cp-sub">M&#233;moire et organisation</div></div>
         <button class="cp-clr" id="btn-sante-cp-clr">Effacer</button>
       </div>
       <div class="cp-msgs" id="cp-msgs-sante">
@@ -1607,7 +1651,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="pcp">
       <div class="cp-head" style="--wc:#0a84ff">
         <div class="cp-logo" style="background:#0a84ff">C</div>
-        <div class="cp-info"><div class="cp-title">Claude Juridique</div><div class="cp-sub">Conseiller personnel</div></div>
+        <div class="cp-info"><div class="cp-title">Claude Juridique</div><div class="cp-sub">M&#233;moire et organisation</div></div>
         <button class="cp-clr" id="btn-jur-cp-clr">Effacer</button>
       </div>
       <div class="cp-msgs" id="cp-msgs-jur">
@@ -2380,7 +2424,7 @@ var POLES = [
   },
   {
     id:"juridique",icon:"⚖️",name:"Juridique",color:"#0a84ff",wbg:"#000305",
-    desc:"Ton conseiller juridique personnel. Droits, contrats, démarches.",
+    desc:"Tes démarches, contrats et échéances, rangés et datés.",
     jurSections:[
       {id:"statut",icon:"🏢",title:"Mon entreprise & statut",badge:"ARYAN"},
       {id:"contrats",icon:"📄",title:"Contrats & documents",badge:""},
@@ -3211,13 +3255,9 @@ function santeCpSend(textOverride){
   var today = new Date().toDateString();
   var ci = S.poles.sante.find(function(c){ return new Date(c.date).toDateString() === today; });
   var ciTxt = ci ? 'Check-in aujourd\'hui : Sommeil='+ci.sommeil+'h, Energie='+ci.energie+'/10, Sport='+ci.sport+'min, Mental='+ci.mental+'/10, Score='+calcSanteScore(ci)+'/100' : 'Pas encore de check-in aujourd\'hui.';
-  var streak = getSanteStreak();
-  var avgScore = getAvgScore(7);
-  var hab = S.poles.habitudes || [];
-  var key = 'hab_' + today;
-  var doneHab = (S.poles.habDone && S.poles.habDone[key]) || [];
-  var habTxt = hab.length ? hab.map(function(h){ return h.name + (doneHab.indexOf(h.id)!==-1 ? ' (fait)' : ' (pas encore)'); }).join(', ') : 'Pas d\'habitudes configurees.';
-  var sys = 'Tu es le conseiller sante et bien-etre personnel de Rayan, entrepreneur a Valence (France). Il a plusieurs projets actifs (ARYAN app livraison, Atlas formation FBA, FBA, Dark Kitchen, TELENEUF) et doit performer mentalement et physiquement.\n\nDonnees: '+ciTxt+'\nStreak check-in: '+streak+' jour(s) de suite\nScore moyen 7j: '+avgScore+'/100\nHabitudes: '+habTxt+'\n\nSois direct, pratique, scientifiquement fonde. 3-4 phrases max sauf si demande plus. Reponds en francais.';
+  // Mémoire et organisation seulement : les notes datées de Rayan, jamais un score ni une série à interpréter
+  var jou = (S.poles.sante_journal || []).slice(-10).map(function(n){ return '- ' + new Date(n.ts).toLocaleDateString('fr-FR') + ' : ' + n.t; }).join('\n');
+  var sys = 'Tu aides Rayan a tenir la memoire et l\'organisation de sa sante. Ton role : noter et dater ce qu\'il dit, retrouver et resumer fidelement ses notes, preparer un rendez-vous (questions a poser au medecin, elements et documents a apporter), lister les pieces a reunir, lui rappeler les rendez-vous et echeances qu\'il a lui-meme fixes, et donner une regle generale avec le lien de la source officielle (ameli.fr, service-public.fr, has-sante.fr).\n\nTu ne poses aucun diagnostic, tu n\'interpretes ni symptome ni mesure ni tendance, tu ne dis pas si une situation est urgente, tu ne proposes ni traitement ni dose. Si on te le demande, refuse poliment en une phrase et oriente vers un medecin ou un pharmacien ; en cas de doute sur une urgence, rappelle simplement que le 15 ou le 112 repondent a toute heure.\n\n'+ciTxt.replace(/, Score=[^,]*$/, '')+'\nSes notes sante recentes :\n'+(jou || 'Aucune note.')+'\n\nReponds en francais, en 3 a 5 phrases, de facon concrete.';
   claudeCall(txt, 'sante', 'sante', sys);
 }
 
@@ -3440,7 +3480,7 @@ function jurCpSend(textOverride){
   var items = [];
   JUR_SECTIONS.forEach(function(sec){ (S.poles.juridique[sec.id]||[]).forEach(function(it){ if(it.status !== 'done') items.push('['+sec.title+'] '+it.t); }); });
   var itemsTxt = items.length ? items.slice(0,10).join('; ') : 'Aucun element enregistre.';
-  var sys = 'Tu es le conseiller juridique et administratif personnel de Rayan. Rayan est entrepreneur a Valence (Drome, France). Ses projets: ARYAN (app livraison halal, recherche statut juridique), FBA Amazon (private label), Dark Kitchen halal, TELENEUF (box streaming HDMI), Atlas (formation Amazon FBA vendue en ligne).\n\nSon dossier juridique actuel: '+itemsTxt+'\n\nREGLE ABSOLUE: Usage personnel uniquement, pas d\'acte juridique reel. Fournis des infos pratiques claires. Recommande toujours de consulter un avocat ou expert-comptable pour tout acte reel. Reponds en francais, sois concret et precis.';
+  var sys = 'Tu aides Rayan a tenir la memoire et l\'organisation de ses demarches juridiques et administratives. Rayan est entrepreneur a Valence (Drome, France). Ton role : noter et dater, retrouver et resumer fidelement son dossier, lister les pieces a reunir, preparer un rendez-vous (questions pour l\'avocat, le notaire, l\'expert-comptable ou l\'administration), lui rappeler les echeances qu\'il a lui-meme fixees, et donner une regle generale avec le lien de la source officielle (service-public.fr, legifrance.gouv.fr, urssaf.fr, impots.gouv.fr).\n\nTu ne donnes aucun avis sur son cas : pas de « dans votre cas, vous avez droit a… », pas de calcul de delai de recours, pas de montant ni de taux tire de memoire, pas d\'acte redige sur mesure. Si on te le demande, refuse poliment en une phrase et oriente vers un avocat, un notaire, un expert-comptable ou le service public concerne.\n\nSon dossier actuel : '+itemsTxt+'\n\nReponds en francais, de facon concrete et breve.';
   claudeCall(txt, 'juridique', 'juridique', sys);
 }
 
@@ -4401,7 +4441,8 @@ function depotSubmit() {
   depotEvent('deposit');
   ta.value = ''; depotAutoGrow(); depotSendState();
   depotRender();
-  depotNote(getUID() ? 'Déposé.' : 'Déposé sur cet appareil seulement.', false, true);
+  _rangeLastDeposit = { id: id, at: Date.now() };
+  depotNote(getUID() ? 'Déposé · à ranger' : 'Déposé sur cet appareil seulement.', false, true);
   setTimeout(depotFlush, 0);
 }
 
@@ -4439,6 +4480,7 @@ async function depotFlush() {
   _depotBusy = false;
   depotRender();
   if(_depotAgain) { _depotAgain = false; setTimeout(depotFlush, 0); }
+  else setTimeout(rangeRun, 0);   // les pensées envoyées peuvent être rangées
 }
 
 // Lecture des 200 dernières pensées du compte, fusionnées par id avec celles de l'appareil
@@ -4458,7 +4500,7 @@ async function depotPull() {
     depotRender();
   } catch(e) { console.warn('Dépôt : lecture reportée —', e && e.message || e); }
 }
-function depotSync() { depotFlush().then(depotPull); }
+function depotSync() { depotFlush().then(depotPull).then(rangePull); }
 
 /* Affichage */
 function depotWhen(iso) {
@@ -4470,8 +4512,17 @@ function depotWhen(iso) {
   return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short',
     year: d.getFullYear() === today.getFullYear() ? undefined : 'numeric' }) + ' · ' + h;
 }
-function depotRender() {
-  var all = depotList();
+// force : rendu demandé par un éditeur de la liste (sinon, on ne détruit pas un champ en cours de saisie)
+function depotRender(force) {
+  var ae = document.activeElement;
+  if(force !== true && ae && ae.closest && ae.closest('#depot-list') && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) {
+    _renderDeferred = true; rangeHomeRender(); return;
+  }
+  _renderDeferred = false;
+  var idx = _range ? rangeIndex() : { latest: {} };
+  var everything = depotList();
+  var cancelled = everything.filter(function(t) { var f = idx.latest[t.id]; return f && f.status === 'cancelled'; });
+  var all = everything.filter(function(t) { return cancelled.indexOf(t) === -1; });
   var waiting = all.filter(function(t) { return t.status !== 'sent'; }).length;
   var signed = !!getUID();
   var cnt = document.getElementById('depot-count');
@@ -4480,6 +4531,7 @@ function depotRender() {
     if(waiting) txt += ' · ' + waiting + (signed ? ' en attente' : ' sur cet appareil');
     cnt.textContent = txt;
   }
+  if(_range) rangeHomeRender();
   var list = document.getElementById('depot-list'); if(!list) return;
   var pend = document.getElementById('depot-pending');
   if(waiting) {
@@ -4501,8 +4553,28 @@ function depotRender() {
     meta.appendChild(when); meta.appendChild(st);
     var body = document.createElement('div'); body.className = 'depot-body'; body.textContent = t.body;
     item.appendChild(meta); item.appendChild(body);
+    if(_range) item.appendChild(rangeBlock(t));
     list.appendChild(item);
   });
+  // Annulées : repliées, rien n'est effacé, on peut rétablir
+  if(cancelled.length) {
+    var det = document.createElement('details'); det.className = 'depot-cancelled'; det.open = _rangeCancelOpen;
+    det.addEventListener('toggle', function() { _rangeCancelOpen = det.open; });
+    det.appendChild(rgEl('summary', null, 'Annulées (' + cancelled.length + ')'));
+    cancelled.forEach(function(t) {
+      var item = rgEl('article', 'depot-item off'); item.setAttribute('data-id', t.id);
+      item.appendChild(rgEl('div', 'depot-meta', depotWhen(t.created_at)));
+      item.appendChild(rgEl('div', 'depot-body', t.body));
+      var acts = rgEl('div', 'rg-acts');
+      acts.appendChild(rangeBtn('Rétablir', function() {
+        var f = rangeIndex().latest[t.id];
+        rangeAdd(t.id, { status: f && f.step && f.space !== 'inconnu' ? 'filed' : 'unsure' }, 'user');
+      }));
+      item.appendChild(acts);
+      det.appendChild(item);
+    });
+    list.appendChild(det);
+  }
 }
 function depotNote(msg, isErr, withLink) {
   var n = document.getElementById('depot-note'); if(!n) return;
@@ -4558,8 +4630,405 @@ function depotLayout() {
   root.style.setProperty('--depot-space', bar.offsetHeight + 'px');
 }
 
+/* ═══ RANGEMENT ═══
+   Après l'envoi d'une pensée, ARC demande au proxy (task "file") où la ranger : un espace, une prochaine étape,
+   un moment, ce qui est gardé pour après. Chaque rangement est une ligne, jamais modifiée : une correction de
+   Rayan est une nouvelle ligne (origin "user"). Pour une pensée, la ligne la plus récente (created_at) fait foi.
+   Les lignes vivent dans arc_filings_v1 (même mécanique que les pensées : écriture locale, fusion par id entre
+   onglets), puis partent dans thought_filings (ajout seul, doublons ignorés). Le dépôt n'attend jamais le rangement.
+   Tout texte de Rayan ou de l'IA s'affiche par textContent. */
+var RANGE_KEY = 'arc_filings_v1';
+var RANGE_PER_RUN = 5, RANGE_TIMEOUT_MS = 30000;
+var RANGE_DORMANT = ['fba', 'kitchen', 'teleneuf'];   // décision de Rayan du 5 octobre : endormis, pas archivés
+var _range = null;                 // { filings: { id: {...} }, stats: { proposed, corrected } }
+var _rangeBusy = false, _rangeAgain = false;
+var _rangeInFlight = {};           // pensée → rangement demandé en ce moment
+var _rangeFailed = {};             // pensée → dernier essai échoué (pendant ce lancement)
+var _rangeEdit = null;             // { tid, kind } : éditeur ouvert dans la liste
+var _rangeLastDeposit = null;      // { id, at } : pour le message sous la barre
+var _rangeCancelOpen = false, _renderDeferred = false;
+
+function rangeNorm(d) {
+  if(!d || typeof d !== 'object') d = {};
+  if(!d.filings || typeof d.filings !== 'object') d.filings = {};
+  if(!d.stats || typeof d.stats !== 'object') d.stats = { proposed: 0, corrected: 0 };
+  return d;
+}
+function rangeRead() {
+  try { return rangeNorm(JSON.parse(localStorage.getItem(RANGE_KEY) || 'null')); } catch(e) { return rangeNorm(null); }
+}
+// Union par id ; une ligne envoyée le reste. Les lignes ne sont jamais retirées.
+function rangeMerge(a, b) {
+  var out = rangeNorm({});
+  [a, b].forEach(function(src) {
+    Object.keys(src.filings).forEach(function(id) {
+      var f = src.filings[id], cur = out.filings[id];
+      if(!cur) out.filings[id] = Object.assign({}, f);
+      else if(f.sync === 'sent') cur.sync = 'sent';
+    });
+  });
+  out.stats = rangeStats(out.filings);
+  return out;
+}
+function rangeLoad() { _range = rangeRead(); }
+function rangeSave() {
+  _range = rangeMerge(rangeRead(), _range);
+  try { localStorage.setItem(RANGE_KEY, JSON.stringify(_range)); return true; } catch(e) { return false; }
+}
+function rangeNewer(a, b) { return a.created_at > b.created_at || (a.created_at === b.created_at && a.id > b.id); }
+// Pour chaque pensée : la ligne la plus récente, et la première proposition de l'IA
+function rangeIndex(filings) {
+  var latest = {}, ai = {};
+  Object.keys(filings || _range.filings).forEach(function(id) {
+    var f = (filings || _range.filings)[id];
+    if(!latest[f.thought_id] || rangeNewer(f, latest[f.thought_id])) latest[f.thought_id] = f;
+    if(f.origin === 'ai' && (!ai[f.thought_id] || rangeNewer(ai[f.thought_id], f))) ai[f.thought_id] = f;
+  });
+  return { latest: latest, ai: ai };
+}
+// Mesures locales : pensées rangées par l'IA, et celles dont Rayan a changé l'espace, l'étape ou le moment
+function rangeStats(filings) {
+  var idx = rangeIndex(filings), proposed = 0, corrected = 0;
+  Object.keys(idx.ai).forEach(function(tid) {
+    proposed++;
+    var a = idx.ai[tid];
+    var changed = Object.keys(filings).some(function(id) {
+      var f = filings[id];
+      return f.thought_id === tid && f.origin === 'user' && (f.space !== a.space || f.step !== a.step ||
+        JSON.stringify(f.moment || null) !== JSON.stringify(a.moment || null));
+    });
+    if(changed) corrected++;
+  });
+  return { proposed: proposed, corrected: corrected, updatedAt: new Date().toISOString() };
+}
+
+/* Espaces envoyés au proxy : les cinq mondes et les deux pôles, avec une clé stable */
+function rangeSpaces() {
+  var list = WORLDS.map(function(w) {
+    var key = String(w.name).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
+    var note = (RANGE_DORMANT.indexOf(key) !== -1 ? 'Endormi. ' : '') + String(w.cat || '') + '. ' + String(w.mission || '');
+    return { key: key, name: w.name, kind: 'project', note: note.slice(0, 200), color: w.color };
+  });
+  list.push({ key: 'sante', name: 'Santé', kind: 'life', color: '#30d158',
+    note: 'Santé de Rayan : rendez-vous, notes, documents, questions pour le médecin. Organisation seulement.' });
+  list.push({ key: 'juridique', name: 'Juridique', kind: 'life', color: '#0a84ff',
+    note: 'Démarches administratives et juridiques, contrats, échéances. Organisation seulement.' });
+  return list;
+}
+function rangeSpaceInfo(key) {
+  var s = rangeSpaces().filter(function(x) { return x.key === key; })[0];
+  return s || { key: 'inconnu', name: 'Sans espace', color: '#8e8e93' };
+}
+
+/* Moments */
+function rangeIsoLocal(d) {
+  var p = function(n) { return (n < 10 ? '0' : '') + n; };
+  var off = -d.getTimezoneOffset(), sign = off >= 0 ? '+' : '-'; off = Math.abs(off);
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':00' +
+         sign + p(Math.floor(off / 60)) + ':' + p(off % 60);
+}
+function rangeTonight() {
+  var d = new Date(), at = new Date(); at.setHours(20, 0, 0, 0);
+  if(d >= at) { at = new Date(d.getTime() + 3600e3); at.setMinutes(0, 0, 0); }
+  return { type: 'datetime', at: rangeIsoLocal(at) };
+}
+function rangeTomorrowMorning() {
+  var at = new Date(); at.setDate(at.getDate() + 1); at.setHours(8, 0, 0, 0);
+  return { type: 'datetime', at: rangeIsoLocal(at) };
+}
+function rangeMomentText(m) {
+  if(!m || m.type === 'none') return '';
+  if(m.type === 'situation') return m.text || '';
+  if(m.type === 'datetime') {
+    var d = new Date(m.at); if(isNaN(d)) return '';
+    var h = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    var today = new Date(), tom = new Date(); tom.setDate(today.getDate() + 1);
+    if(d.toDateString() === today.toDateString()) return (d.getHours() >= 18 ? 'Ce soir · ' : 'Aujourd\'hui · ') + h;
+    if(d.toDateString() === tom.toDateString()) return 'Demain · ' + h;
+    return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + h;
+  }
+  return '';
+}
+
+/* Une nouvelle ligne : proposition de l'IA, ou correction de Rayan */
+// atBefore : date d'insertion imposée (proposition de l'IA arrivée après une correction de Rayan)
+function rangeAdd(tid, changes, origin, model, atBefore) {
+  var cur = rangeIndex().latest[tid];
+  var base = cur && !atBefore ? { status: cur.status, space: cur.space, step: cur.step, moment: cur.moment, extras: cur.extras }
+                              : { status: 'unsure', space: 'inconnu', step: null, moment: { type: 'none' }, extras: [] };
+  var now = atBefore || new Date().toISOString();
+  // Horloges d'appareils différentes : la nouvelle ligne doit rester la plus récente
+  if(cur && !atBefore && now <= cur.created_at) now = new Date(new Date(cur.created_at).getTime() + 1).toISOString();
+  var row = Object.assign(base, changes, { id: depotUUID(), thought_id: tid, origin: origin,
+    model: model || null, created_at: now, sync: 'pending' });
+  _range.filings[row.id] = row;
+  rangeSave();
+  depotRender();
+  setTimeout(rangeRun, 0);
+  return row;
+}
+
+/* Envoi des lignes en attente (seulement pour des pensées déjà reçues par le serveur) */
+async function rangeFlush() {
+  var pend = Object.keys(_range.filings).map(function(k) { return _range.filings[k]; }).filter(function(f) {
+    var t = _depot.thoughts[f.thought_id];
+    return f.sync !== 'sent' && (!t || t.status === 'sent');
+  });
+  for(var i = 0; i < pend.length; i += 50) {
+    var rows = pend.slice(i, i + 50).map(function(f) {
+      return { id: f.id, thought_id: f.thought_id, origin: f.origin, status: f.status, space: f.space,
+               step: f.step, moment: f.moment || null, extras: f.extras || [], model: f.model || null, created_at: f.created_at };
+    });
+    var r = await _sb.from('thought_filings').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+    if(r.error) throw r.error;
+    rows.forEach(function(x) { if(_range.filings[x.id]) _range.filings[x.id].sync = 'sent'; });
+    rangeSave();
+  }
+}
+
+/* Demande de rangement au proxy, pour les pensées envoyées qui n'en ont pas encore reçu */
+async function rangeRequest(t) {
+  var sess = await _sb.auth.getSession();
+  var token = sess.data && sess.data.session && sess.data.session.access_token;
+  if(!token) throw new Error('pas de session');
+  var ctrl = window.AbortController ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, RANGE_TIMEOUT_MS) : null;
+  try {
+    var resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', {
+      method: 'POST', signal: ctrl ? ctrl.signal : undefined,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ task: 'file', thought: { id: t.id, body: t.body },
+        spaces: rangeSpaces().map(function(s) { return { key: s.key, name: s.name, kind: s.kind, note: s.note }; }),
+        now: rangeIsoLocal(new Date()), tz: (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Paris') })
+    });
+    var data = await resp.json().catch(function() { return {}; });
+    if(!resp.ok || !data.filing) throw new Error('statut ' + resp.status);
+    return data;
+  } finally { if(timer) clearTimeout(timer); }
+}
+async function rangeRequestAll() {
+  var idx = rangeIndex();
+  var todo = depotList().filter(function(t) {
+    var l = idx.latest[t.id];
+    return t.status === 'sent' && !idx.ai[t.id] && !(l && l.status === 'cancelled') && !_rangeInFlight[t.id];
+  }).slice(0, RANGE_PER_RUN);
+  for(var i = 0; i < todo.length; i++) {
+    var t = todo[i];
+    _rangeInFlight[t.id] = true; delete _rangeFailed[t.id]; depotRender();
+    try {
+      var data = await rangeRequest(t);
+      var f = data.filing;
+      var unsure = f.confidence === 'unsure' || f.space === 'inconnu';
+      // Si Rayan a agi pendant l'attente (annulation…), sa ligne doit rester la plus récente :
+      // la proposition est datée juste avant sa première ligne.
+      var mine = Object.keys(_range.filings).map(function(k) { return _range.filings[k]; })
+        .filter(function(x) { return x.thought_id === t.id && x.origin === 'user'; })
+        .sort(function(a, b) { return a.created_at < b.created_at ? -1 : 1; })[0];
+      var before = mine ? new Date(new Date(mine.created_at).getTime() - 1).toISOString() : null;
+      rangeAdd(t.id, { status: unsure ? 'unsure' : 'filed', space: f.space, step: f.step, moment: f.moment, extras: f.extras || [] }, 'ai', data.model, before);
+      if(_rangeLastDeposit && _rangeLastDeposit.id === t.id && Date.now() - _rangeLastDeposit.at < 60000) {
+        depotNote(unsure ? 'Déposé · ARC hésite' : 'Rangé dans ' + rangeSpaceInfo(f.space).name, false, true);
+      }
+    } catch(e) {
+      _rangeFailed[t.id] = true;
+      console.warn('Rangement : reporté —', e && e.message || e);
+    }
+    delete _rangeInFlight[t.id];
+    depotRender();
+  }
+}
+// Un tour complet : envoyer les corrections, demander les rangements manquants, envoyer leurs lignes
+async function rangeRun() {
+  if(!_sb || !getUID()) return;
+  if(_rangeBusy) { _rangeAgain = true; return; }
+  _rangeBusy = true;
+  try { await rangeFlush(); await rangeRequestAll(); await rangeFlush(); }
+  catch(e) { console.warn('Rangement : envoi reporté —', e && e.message || e); }
+  _rangeBusy = false;
+  depotRender();
+  if(_rangeAgain) { _rangeAgain = false; setTimeout(rangeRun, 0); }
+}
+// Lecture des 500 derniers rangements du compte, fusionnés par id
+async function rangePull() {
+  if(!_sb || !getUID()) return;
+  try {
+    var r = await _sb.from('thought_filings').select('id,thought_id,origin,status,space,step,moment,extras,model,created_at')
+      .order('created_at', { ascending: false }).limit(500);
+    if(r.error) throw r.error;
+    (r.data || []).forEach(function(row) {
+      var f = _range.filings[row.id];
+      if(f) f.sync = 'sent';
+      else _range.filings[row.id] = Object.assign({}, row, { extras: row.extras || [], sync: 'sent' });
+    });
+    rangeSave();
+    depotRender();
+    setTimeout(rangeRun, 0);
+  } catch(e) { console.warn('Rangement : lecture reportée —', e && e.message || e); }
+}
+
+/* Affichage : sous chaque pensée, ce qu'ARC propose */
+function rgEl(tag, cls, text) {
+  var e = document.createElement(tag); if(cls) e.className = cls;
+  if(text !== undefined && text !== null) e.textContent = text;
+  return e;
+}
+function rangeBtn(label, onClick, cls) {
+  var b = rgEl('button', 'rg-btn' + (cls ? ' ' + cls : ''), label); b.type = 'button';
+  b.addEventListener('click', function(ev) { ev.stopPropagation(); onClick(); });
+  return b;
+}
+function rangePill(key) {
+  var s = rangeSpaceInfo(key);
+  var p = rgEl('span', 'rg-pill'); p.style.setProperty('--rg-c', s.color);
+  p.appendChild(rgEl('span', 'rg-dot')); p.appendChild(rgEl('span', null, s.name));
+  return p;
+}
+function rangeEditOpen(tid, kind) { _rangeEdit = { tid: tid, kind: kind }; depotRender(true); }
+function rangeEditClose() { _rangeEdit = null; depotRender(true); }
+function rangeSpaceChips(tid, current) {
+  var box = rgEl('div', 'rg-chips');
+  rangeSpaces().forEach(function(s) {
+    var b = rangeBtn('', function() { _rangeEdit = null; rangeAdd(tid, { space: s.key, status: 'filed' }, 'user'); }, 'rg-chip' + (s.key === current ? ' on' : ''));
+    b.appendChild(rangePill(s.key)); b.setAttribute('aria-label', 'Ranger dans ' + s.name);
+    box.appendChild(b);
+  });
+  return box;
+}
+function rangeBlock(t) {
+  var idx = rangeIndex(), f = idx.latest[t.id];
+  var box = rgEl('div', 'rg-box');
+  var editing = _rangeEdit && _rangeEdit.tid === t.id ? _rangeEdit.kind : null;
+  if(!f || !f.step) {
+    // Pas encore de proposition
+    var st = _rangeInFlight[t.id] ? 'ARC range…' : _rangeFailed[t.id] ? 'À ranger plus tard' : 'À ranger';
+    box.appendChild(rgEl('div', 'rg-wait' + (_rangeInFlight[t.id] ? ' busy' : ''), st));
+    if(f && f.space && f.space !== 'inconnu') { var r0 = rgEl('div', 'rg-row'); r0.appendChild(rangePill(f.space)); box.appendChild(r0); }
+    var acts0 = rgEl('div', 'rg-acts');
+    acts0.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
+    box.appendChild(acts0);
+    return box;
+  }
+  var unsure = f.status === 'unsure' || f.space === 'inconnu';
+  var head = rgEl('div', 'rg-row');
+  head.appendChild(rgEl('span', 'rg-lbl', 'ARC propose'));
+  if(!unsure) head.appendChild(rangePill(f.space));
+  if(f.status === 'done') head.appendChild(rgEl('span', 'rg-done', 'Fait'));
+  box.appendChild(head);
+  if(unsure && f.status !== 'done') {
+    box.appendChild(rgEl('div', 'rg-hesite', 'ARC hésite : choisis l\'espace.'));
+    box.appendChild(rangeSpaceChips(t.id, null));
+  }
+  // Étape
+  if(editing === 'step') {
+    var form = rgEl('form', 'rg-edit');
+    var inp = rgEl('input', 'rg-input'); inp.type = 'text'; inp.maxLength = 300; inp.value = f.step || ''; inp.setAttribute('aria-label', 'Prochaine étape');
+    form.appendChild(inp);
+    form.appendChild(rangeBtn('Enregistrer', function() { form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit')); }));
+    form.appendChild(rangeBtn('Annuler', rangeEditClose, 'quiet'));
+    form.addEventListener('submit', function(ev) {
+      ev.preventDefault(); var v = inp.value.trim();
+      if(v && v !== f.step) { _rangeEdit = null; rangeAdd(t.id, { step: v.slice(0, 300) }, 'user'); } else rangeEditClose();
+    });
+    box.appendChild(form);
+    setTimeout(function() { inp.focus(); }, 0);
+  } else box.appendChild(rgEl('div', 'rg-step' + (f.status === 'done' ? ' done' : ''), f.step));
+  // Moment
+  var mt = rangeMomentText(f.moment);
+  if(mt) box.appendChild(rgEl('div', 'rg-moment', mt));
+  // Gardé pour après
+  if(f.extras && f.extras.length) {
+    var ex = rgEl('div', 'rg-extras'); ex.appendChild(rgEl('div', 'rg-lbl', 'Gardé pour après'));
+    var ul = rgEl('ul'); f.extras.forEach(function(x) { ul.appendChild(rgEl('li', null, x)); }); ex.appendChild(ul);
+    box.appendChild(ex);
+  }
+  if(f.status === 'done') return box;
+  // Éditeurs du moment
+  if(editing === 'moment') {
+    var mm = rgEl('div', 'rg-acts');
+    mm.appendChild(rangeBtn('Ce soir', function() { _rangeEdit = null; rangeAdd(t.id, { moment: rangeTonight() }, 'user'); }));
+    mm.appendChild(rangeBtn('Demain matin', function() { _rangeEdit = null; rangeAdd(t.id, { moment: rangeTomorrowMorning() }, 'user'); }));
+    mm.appendChild(rangeBtn('Choisir…', function() { rangeEditOpen(t.id, 'when'); }));
+    mm.appendChild(rangeBtn('Une situation…', function() { rangeEditOpen(t.id, 'situation'); }));
+    if(f.moment && f.moment.type !== 'none') mm.appendChild(rangeBtn('Sans moment', function() { _rangeEdit = null; rangeAdd(t.id, { moment: { type: 'none' } }, 'user'); }, 'quiet'));
+    mm.appendChild(rangeBtn('Fermer', rangeEditClose, 'quiet'));
+    box.appendChild(mm);
+  } else if(editing === 'when' || editing === 'situation') {
+    var fm = rgEl('form', 'rg-edit');
+    var i2 = rgEl('input', 'rg-input');
+    if(editing === 'when') { i2.type = 'datetime-local'; i2.setAttribute('aria-label', 'Date et heure'); i2.value = rangeTomorrowMorning().at.slice(0, 16); }
+    else { i2.type = 'text'; i2.maxLength = 160; i2.placeholder = 'en ouvrant le Mac'; i2.setAttribute('aria-label', 'Situation'); }
+    fm.appendChild(i2);
+    fm.appendChild(rangeBtn('Valider', function() { fm.requestSubmit ? fm.requestSubmit() : fm.dispatchEvent(new Event('submit')); }));
+    fm.appendChild(rangeBtn('Annuler', rangeEditClose, 'quiet'));
+    fm.addEventListener('submit', function(ev) {
+      ev.preventDefault(); var v = i2.value.trim(); if(!v) return;
+      var m = editing === 'when' ? { type: 'datetime', at: rangeIsoLocal(new Date(v)) } : { type: 'situation', text: v.slice(0, 160) };
+      if(m.type === 'datetime' && isNaN(new Date(v))) return;
+      _rangeEdit = null; rangeAdd(t.id, { moment: m }, 'user');
+    });
+    box.appendChild(fm);
+    setTimeout(function() { i2.focus(); }, 0);
+  } else if(editing === 'space') {
+    box.appendChild(rangeSpaceChips(t.id, f.space));
+    var cl = rgEl('div', 'rg-acts'); cl.appendChild(rangeBtn('Fermer', rangeEditClose, 'quiet')); box.appendChild(cl);
+  }
+  // Actions
+  if(!editing) {
+    var acts = rgEl('div', 'rg-acts');
+    acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(t.id, { status: 'done' }, 'user'); }, 'main'));
+    acts.appendChild(rangeBtn(mt ? 'Changer le moment' : 'Fixer un moment', function() { rangeEditOpen(t.id, 'moment'); }));
+    acts.appendChild(rangeBtn('Modifier l\'étape', function() { rangeEditOpen(t.id, 'step'); }));
+    if(!unsure) acts.appendChild(rangeBtn('Changer d\'espace', function() { rangeEditOpen(t.id, 'space'); }));
+    acts.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
+    box.appendChild(acts);
+  }
+  return box;
+}
+
+/* Accueil : prochaines étapes (non faites, non annulées), celles qui ont un moment d'abord */
+function rangeNextSteps() {
+  var idx = rangeIndex(), rows = [];
+  depotList().forEach(function(t) {
+    var f = idx.latest[t.id];
+    if(f && f.step && f.status !== 'done' && f.status !== 'cancelled') rows.push({ t: t, f: f });
+  });
+  var rank = function(m) { return !m || m.type === 'none' ? 2 : m.type === 'datetime' ? 0 : 1; };
+  rows.sort(function(a, b) {
+    var ra = rank(a.f.moment), rb = rank(b.f.moment);
+    if(ra !== rb) return ra - rb;
+    if(ra === 0) return a.f.moment.at < b.f.moment.at ? -1 : 1;
+    return a.t.created_at < b.t.created_at ? 1 : -1;
+  });
+  return rows.slice(0, 5);
+}
+function rangeHomeRender() {
+  var list = document.getElementById('next-list'); if(!list) return;
+  var rows = rangeNextSteps();
+  document.getElementById('next-empty').hidden = rows.length > 0;
+  list.textContent = '';
+  rows.forEach(function(r) {
+    var it = rgEl('div', 'next-item'); it.setAttribute('data-id', r.t.id);
+    var top = rgEl('div', 'rg-row');
+    if(r.f.status === 'unsure' || r.f.space === 'inconnu') top.appendChild(rgEl('span', 'rg-lbl', 'ARC hésite'));
+    else top.appendChild(rangePill(r.f.space));
+    var mt = rangeMomentText(r.f.moment);
+    if(mt) top.appendChild(rgEl('span', 'next-when', mt));
+    it.appendChild(top);
+    it.appendChild(rgEl('div', 'next-step', r.f.step));
+    var acts = rgEl('div', 'rg-acts');
+    acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(r.t.id, { status: 'done' }, 'user'); }, 'main'));
+    if(!mt) acts.appendChild(rangeBtn('Fixer un moment', function() {
+      _rangeEdit = { tid: r.t.id, kind: 'moment' }; depotOpen();
+      var target = document.querySelector('#depot-list [data-id="' + r.t.id + '"]'); if(target) target.scrollIntoView({ block: 'center' });
+    }));
+    it.appendChild(acts);
+    list.appendChild(it);
+  });
+}
+
 function depotInit() {
   depotLoad();
+  rangeLoad();
   depotEvent('open');
   var ta = document.getElementById('depot-ta');
   document.getElementById('depot-form').addEventListener('submit', function(ev) { ev.preventDefault(); depotSubmit(); });
@@ -4589,6 +5058,15 @@ function depotInit() {
     if(ev.key !== DEPOT_KEY || ev.storageArea !== localStorage) return;
     _depot = depotMerge(depotRead(), _depot);
     depotRender();
+  });
+  window.addEventListener('storage', function(ev) {
+    if(ev.key !== RANGE_KEY || ev.storageArea !== localStorage) return;
+    _range = rangeMerge(rangeRead(), _range);
+    depotRender();
+  });
+  // Un rendu reporté pendant une saisie dans la liste reprend quand la saisie se termine
+  document.getElementById('depot-list').addEventListener('focusout', function() {
+    setTimeout(function() { if(_renderDeferred) depotRender(); }, 0);
   });
   document.addEventListener('visibilitychange', function() { if(document.visibilityState === 'visible') depotSync(); });
   depotRender();
