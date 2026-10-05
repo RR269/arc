@@ -54,7 +54,7 @@ Sur les dates : le code de la connexion a été fusionné le 4 octobre à 18 h 3
 | Briefing de la War Room | Le « plan d'attaque » est construit mais jamais envoyé à Claude. « Analyse War Room en cours… » reste affiché sans suite. | `:3845`, `:3847` |
 | Claude sur téléphone | Les trois panneaux (mondes, Santé, Juridique) sont masqués. Le bouton flottant et la feuille prévus n'existent pas dans la page. Seul le champ du cockpit d'une tâche reste visible (202×24 px). | `:835`, `:857`, `:941-942` ; `:769`, `:873`, `:3647` |
 | Écran de connexion si le serveur tiers ne répond pas | Si `supabase-js` ne se charge pas, l'écran de connexion n'apparaît pas. ARC passe en local, pastille « Hors ligne ». | `:1716-1719`, `:1730` |
-| « Continuer sans connexion » | Le choix est gardé pour l'onglet seulement. Il est redemandé dans chaque nouvel onglet. | `sessionStorage`, `:1760`, `:3444` |
+| « Continuer sans connexion » (choix délibéré, pas une panne : à rediscuter) | Le choix est gardé pour l'onglet seulement. Il est redemandé dans chaque nouvel onglet. | `sessionStorage`, `:1760`, `:3444` |
 | Bouton « Code ↗ » | Ouvre l'accueil de GitHub, pas le dépôt du projet. | `:3586` |
 | Veille | Quatre fiches en dur, une datée 2025. « Actualiser » réaffiche les mêmes et dit « Veille actualisée ». Le compteur annonce 6 sources, il y en a 4. | `:2329-2334`, `:3519`, `:1088` |
 | Compteur « urgents » de Juridique | Compte aussi les éléments terminés (`!it.status !== 'done'` est toujours vrai). | `:3184` |
@@ -104,7 +104,7 @@ Tout le bloc « Supabase : état au 4 octobre » (lignes 57-71) est invérifiabl
 
 ### Sécurité
 
-- **L'ancien jeton reste lisible dans l'historique public.** La valeur de `x-arc-token` apparaît dans trois commits (`a330e3c`, `559a04e`, `67123df`) d'un dépôt public. PROUVÉ. `CLAUDE.md:71` dit que ce jeton n'existe plus depuis le changement fait par Rayan dans Supabase le 4 octobre. Le 4 octobre, Rayan a remplacé la valeur dans la fonction (capture d'écran), et la session Claude Code d'ARC a obtenu un refus 401 avec l'ancien jeton. Depuis, le proxy v2 ne lit plus du tout `x-arc-token` (`supabase/functions/ARC-CLAUDE-PROXY/index.ts`). La valeur de l'historique ne sert donc plus à rien : PROBABLE (constaté le 4 octobre, non rejoué le 5).
+- **L'ancien jeton reste lisible dans l'historique public.** La valeur de `x-arc-token` est lisible dans 16 commits de `main`, du 14 avril (`2c19c3d`, où elle entre) à `60a79d9` ; elle sort du code avec `b97a938`. Le dépôt est public. PROUVÉ (`git log -S` et `git grep` sur chaque commit, relecture par la session Claude Code d'ARC le 5 octobre ; la première version de cette étude disait à tort « trois commits »). `CLAUDE.md:71` dit que ce jeton n'existe plus depuis le changement fait par Rayan dans Supabase le 4 octobre. Le 4 octobre, Rayan a remplacé la valeur dans la fonction (capture d'écran), et la session Claude Code d'ARC a obtenu un refus 401 avec l'ancien jeton. Depuis, le proxy v2 ne lit plus du tout `x-arc-token` (`supabase/functions/ARC-CLAUDE-PROXY/index.ts`). La valeur de l'historique ne sert donc plus à rien : PROBABLE (constaté le 4 octobre, non rejoué le 5).
 - **Bibliothèque de connexion non figée.** `supabase-js` est chargé en version `@2` (la dernière 2.x à chaque visite) depuis un serveur tiers (`:1701`). Elle gère la connexion et le jeton de session. C'est le point le plus sensible de la page. PROUVÉ.
 - **Aucun contrôle d'empreinte** (SRI : le navigateur refuse un fichier tiers modifié) sur `marked`, `DOMPurify` et `supabase-js`. Aucune politique de sécurité de contenu (CSP) dans la page. PROUVÉ.
 - **Texte inséré sans échappement.** Plusieurs valeurs de l'état sont placées telles quelles dans la page : `:3100` (`h.em`), `:3098`, `:3237`, `:3231`, `:2746-2753`, `:3894`, `:3923`. Un lien `javascript:` est accepté dans les outils (`:2798`, `:2810`). Aujourd'hui seul Rayan écrit son état : risque faible. Il devient sérieux dès que du texte dicté, du texte d'IA et des noms d'espaces arrivent à ces endroits. PROUVÉ pour la présence.
@@ -113,7 +113,7 @@ Tout le bloc « Supabase : état au 4 octobre » (lignes 57-71) est invérifiabl
 
 ### Bilan honnête
 
-**Ce qui a servi.** La page s'ouvre sans erreur sur Mac et sur téléphone, alors qu'en avril le balisage était cassé. Le travail local marche. La connexion a un parcours propre, avec une copie de l'état local avant écrasement (`:1915`). Le code n'expose plus ni jeton ni identifiant d'appareil ; le proxy vérifie la session et le compte (`index.ts:58`, `:77`) — PROUVÉ dans le code, SUPPOSÉ côté serveur. ARYAN et ATLAS ont un contenu d'octobre. L'audit est chiffré et ses mesures se refont.
+**Ce qui a servi.** La page s'ouvre sans erreur sur Mac et sur téléphone, alors qu'en avril le balisage était cassé. Le travail local marche. La connexion a un parcours propre, avec une copie de l'état local avant écrasement (`:1915`). Le code n'expose plus ni jeton ni identifiant d'appareil ; le proxy vérifie la session et le compte (`index.ts:58`, `:91-94`) — PROUVÉ dans le code, SUPPOSÉ côté serveur. ARYAN et ATLAS ont un contenu d'octobre. L'audit est chiffré et ses mesures se refont.
 
 **Ce qui n'a pas servi.** Le geste voulu n'existe pas : le seul dépôt rapide est « Ajoute une tâche… » (`:1087`), où il faut choisir le monde soi-même. Les dix défauts sont là. Claude est invisible sur téléphone. Santé est un suivi quotidien à curseurs avec score et série de jours ; Juridique s'appelle « conseiller juridique » : les deux sont du mauvais côté de la ligne posée par la vision. Le contenu de FBA, KITCHEN et TELENEUF n'a pas bougé depuis avril (3 lignes changées sur 157).
 
@@ -711,6 +711,25 @@ Chaque chantier passe par une branche, se termine par un écran que Rayan regard
 | 10 | **Ma vie.** Santé et Juridique : mémoire, échéances, préparation de rendez-vous ; anciennes données archivées et exportables. | Une question du type « mes symptômes évoquent quoi ? » reçoit le renvoi vers un médecin. Les échéances juridiques migrées s'affichent. Les anciens check-ins s'exportent. | 9 |
 | 11 | **Alimentation automatique.** Commande `/point-etape`, fonction, table `points_etape`. | Un point publié depuis une session ARYAN apparaît dans ARC avec sa date et sa preuve. | 9, accord de Rayan |
 | 12 | **Plus tard, sur preuve d'usage.** Raccourci Apple, micro et transcription, photo, recherche, revue de la semaine complète. | À définir chantier par chantier. | les trente jours |
+
+### Révision de l'ordre (5 octobre, après relecture par la session Claude Code d'ARC)
+
+La relecture a relevé une contradiction : cette étude dit qu'un outil se juge à l'usage, mais le tableau ci-dessus
+ne fait commencer les trente jours d'usage qu'au chantier 8, après le découpage en modules, la migration et le
+design figé. L'objection est juste. L'ordre retenu devient :
+
+| # | Chantier | Terminé quand |
+|---|---|---|
+| 0 | Vérité (fait le 5 octobre sur `etude-v2`) | `CLAUDE.md` dit vrai |
+| 1 | Essais sur l'iPhone de Rayan | Tableau de cinq résultats (dictée, micro, notification, stockage, reconnaissance vocale) |
+| 2 | **Dépôt minimal sur le socle actuel** : un champ de dépôt dans l'ARC d'aujourd'hui, une table `thoughts` en ajout seul (accord de Rayan requis), une file d'attente hors ligne, les mesures d'usage | Une pensée déposée sur l'iPhone apparaît sur le Mac, sans doublon ni perte. **L'usage quotidien et les mesures commencent ici.** |
+| 3 | Rangement par l'IA et prochaine étape avec un moment, toujours sur le socle actuel ; retrait des rôles « conseiller » | Une pensée déposée revient rangée, corrigible, avec une étape |
+| 4 | Point du matin à heure convenue | Sept jours de suite, le point est prêt à l'heure choisie |
+| 5 et suivants | Tests et modules, modèle version 3 et migration, système de design et maquettes corrigées, interface reconstruite (« Aujourd'hui », projets, Ma vie), alimentation automatique | Critères du tableau précédent |
+
+Ce qui n'est pas refait deux fois : la table `thoughts`, l'appel de rangement dans le proxy et les mesures sont
+gardés tels quels par la reconstruction. Seul le champ de dépôt provisoire, quelques dizaines de lignes, sera
+redessiné. Le risque accepté : pendant quelques semaines, le dépôt vit dans l'ancienne interface, avec ses défauts.
 
 ### Ce qu'ARC doit mesurer dès le premier jour
 
