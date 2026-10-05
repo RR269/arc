@@ -92,6 +92,15 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
   (champ `source` de l'outil, vérifié sans casse ni apostrophes typographiques, 2 caractères au moins), sinon il
   est ramené à « none » et le journal note « moment écarté : source introuvable » ; étape vide permise (une note) ;
   consigne : pas de moment par défaut, une action déjà formulée gardée presque telle quelle, trois exemples.
+  Version du commit `2c5e7d6` déployée par Rayan (373 lignes) : au second essai réel, moment encore inventé
+  (« faire la typo des modules complet » → ce soir 20 h, source « complet »).
+- Proxy, après le second essai (**à redéployer par Rayan**) : un moment n'est gardé que si sa source, retrouvée dans
+  la pensée, contient une expression de temps (`hasTimeExpression` : aujourd'hui, ce soir, demain, jours, « dans
+  N jours », « d'ici », semaine ou mois prochain, fin de mois, heures « 9 h » « 14:00 », dates « le 12 » « 12/10 »,
+  mois) ou, pour une situation, un déclencheur (`hasSituationTrigger` : « en » + participe présent, quand, lorsque,
+  dès que, une fois que, au prochain, au retour, avant de, après avoir, pendant). Reconnu par le proxy lui-même,
+  sans casse ni accents, avec limites de mots. Sinon « none » ; journal « moment écarté : source introuvable »,
+  « source sans expression de temps » ou « source sans expression de situation ».
 - Page : rangement demandé après l'envoi de la pensée, sans jamais bloquer le dépôt ; nouvel essai aux mêmes moments
   que la file ; une pensée n'est rangée par l'IA qu'une fois. Sous chaque pensée : espace, étape, moment, « gardé pour
   après », « ARC hésite » avec les sept espaces ; actions : changer d'espace, modifier l'étape, fixer le moment,
@@ -111,7 +120,7 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
   étape ») ; « Prochaines étapes » et le point du matin ne montrent que des actions réelles (ni hésitation, ni espace
   inconnu, ni note) et une seule ligne « N pensées à ranger » qui ouvre « Déposé » ; aucune demande à l'IA avant la
   lecture des rangements déjà faits (sinon une pensée rangée sur un autre appareil était redemandée).
-- Tests : `tests/proxy.mjs` 19 sur 19, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 24 sur 24, `tests/matin.mjs` 27 sur 27
+- Tests : `tests/proxy.mjs` 34 sur 34, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 24 sur 24, `tests/matin.mjs` 27 sur 27
   (le faux Supabase applique la règle de `thought_filings` : la pensée doit exister sur le serveur).
 - Essayé en réel sur le Mac de Rayan (5 octobre) avec le proxy `9ecb6b5`. Pas encore sur l'iPhone.
 
@@ -174,7 +183,7 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 ### Ouvert
 
 1. **Le geste central est construit, en essai** : dépôt en ligne ; rangement et point du matin sur la branche
-   `rangement` ; proxy `9ecb6b5` déployé et essayé sur le Mac, version corrigée à redéployer ; iPhone pas essayé.
+   `rangement` ; proxy `2c5e7d6` déployé et essayé sur le Mac, version corrigée à redéployer ; iPhone pas essayé.
 2. **La synchronisation remplace tout l'état d'un coup** (dernière action gagne, `pullFromCloud`) : à remplacer
    par des pensées en ajout seul avant d'ouvrir le dépôt sur deux appareils.
 3. **Santé reste un suivi à curseurs** (check-in, score, série) : les consignes envoyées à Claude ne jouent plus

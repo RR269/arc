@@ -150,7 +150,9 @@ Ce que tu fais :
 4. Moment : seulement si la pensée en contient un (« demain à 9 h », « lundi », « ce soir ») ou une situation
    (« en ouvrant le Mac », « au prochain passage à la poste »). Dans « source », recopie les mots exacts de la
    pensée qui le justifient. Pas de moment par défaut : jamais « demain matin » par habitude. Sans mots de la
-   pensée pour le justifier : type « none ». Une date se calcule à partir de « maintenant » et du fuseau fournis,
+   pensée pour le justifier : type « none ».
+   Le proxy écarte tout moment dont la source n'est pas une expression de temps ou de situation présente dans
+   la pensée ; dans le doute, « none ». Une date se calcule à partir de « maintenant » et du fuseau fournis,
    au format ISO 8601 avec le décalage horaire.
 5. Pour plus tard : les autres choses distinctes contenues dans la pensée, chacune en une phrase courte, 5 au plus.
    Tableau vide s'il n'y en a pas.
@@ -220,6 +222,47 @@ function readFileRequest(body: Record<string, unknown>):
   return { thought: { id: t.id, body: t.body }, spaces, now, tz };
 }
 
+// ── Expressions de temps et de situation, reconnues par le proxy lui-même (sans dépendre du modèle) ──
+// Texte comparé sans casse, sans accents, apostrophes et espaces normalisés ; limites de mots explicites
+// (\b ne suffit pas en français) pour éviter « mare », « mais », « lundis », « 9 modules ».
+function plain(x: string): string {
+  return x.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+    .replace(/[\u2018\u2019\u02BC`´]/g, "'").replace(/\s+/g, " ").trim();
+}
+const W0 = "(?<![a-z0-9])", W1 = "(?![a-z0-9])";
+const NUM = "(?:\\d+|un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|quinze|vingt|trente|quelques)";
+const TIME_PATTERNS = [
+  "aujourd'?hui", "ce matin", "ce midi", "cet apres[- ]?midi", "cet aprem", "ce soir", "cette nuit",
+  "tout a l'heure", "tantot", "demain", "apres[- ]demain",
+  "(?:lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)",
+  "(?:ce|le|en) week[- ]?end",
+  `(?:dans|d'ici) ${NUM} (?:minutes?|mins?|heures?|h|jours?|semaines?|mois|ans?|annees?)`,
+  "la semaine prochaine", "le mois prochain", "l'an(?:nee)? prochaine?", "cette semaine", "ce mois[- ]ci",
+  "(?:en )?fin de (?:journee|matinee|semaine|mois|annee)", "(?:en )?debut de (?:semaine|mois|annee)",
+  "\\d{1,2} ?(?:h|heures?)(?: ?\\d{2})?", "\\d{1,2}:\\d{2}", "a midi", "a minuit",
+  "le \\d{1,2}(?:er)?", "\\d{1,2}/\\d{1,2}(?:/\\d{2,4})?",
+  "(?:janvier|fevrier|mars|avril|mai|juin|juillet|aout|septembre|octobre|novembre|decembre)",
+].map((p) => new RegExp(W0 + p + W1));
+// Les formes élidées (« qu' », « d' ») sont suivies d'une lettre : pas de limite de mot après l'apostrophe
+const SITUATION_PATTERNS = [
+  "quand", "lorsque", "lorsqu'", "des que", "des qu'", "une fois que", "une fois qu'", "au prochain", "a la prochaine",
+  "la prochaine fois", "au retour", "avant de", "avant d'", "apres avoir", "apres etre", "pendant",
+].map((p) => new RegExp(W0 + p + (p.endsWith("'") ? "" : W1)));
+// « en » + participe présent (en ouvrant, en arrivant, en rentrant), sauf les locutions qui n'en sont pas
+const GERUND = new RegExp(W0 + "en ([a-z]{3,}ant)" + W1);
+const NOT_GERUNDS = ["avant", "devant", "cependant", "maintenant", "autant", "tant", "durant"];
+
+export function hasTimeExpression(text: string): boolean {
+  const t = plain(String(text ?? ""));
+  return TIME_PATTERNS.some((r) => r.test(t));
+}
+export function hasSituationTrigger(text: string): boolean {
+  const t = plain(String(text ?? ""));
+  if (SITUATION_PATTERNS.some((r) => r.test(t))) return true;
+  const m = t.match(GERUND);
+  return !!m && !NOT_GERUNDS.includes(m[1]);
+}
+
 // Comparaison tolérante : sans casse, espaces et apostrophes normalisés
 function norm(x: string): string {
   return x.toLowerCase().replace(/[\u2018\u2019\u02BC`´]/g, "'").replace(/\s+/g, " ").trim();
@@ -231,9 +274,10 @@ function sourceFound(source: unknown, thought: string): boolean {
 }
 
 // Valide la sortie du modèle. Renvoie un message d'erreur, ou le rangement propre.
-// Un moment dont la source est introuvable dans la pensée est écarté (« none »), sans rejeter le rangement.
+// Un moment est écarté (« none »), sans rejeter le rangement, si sa source est introuvable dans la pensée, ou si
+// elle ne contient pas d'expression de temps (datetime) ou de déclencheur de situation (situation).
 function readFiling(input: unknown, keys: string[], now: string, thought: string):
-  { error: string } | { filing: Filing; momentDropped: boolean } {
+  { error: string } | { filing: Filing; momentDropped: string } {
   const o = input as Record<string, unknown> | null;
   if (!o || typeof o !== "object") return { error: "rangement absent" };
   if (typeof o.space !== "string" || (o.space !== UNKNOWN_SPACE && !keys.includes(o.space))) return { error: "espace inconnu" };
@@ -242,7 +286,7 @@ function readFiling(input: unknown, keys: string[], now: string, thought: string
   if (step.length > STEP_MAX) return { error: "étape trop longue" };
   const m = o.moment as Record<string, unknown> | undefined;
   let moment: Moment;
-  let momentDropped = false;
+  let momentDropped = "";
   if (!m || m.type === "none") moment = { type: "none" };
   else if (m.type === "datetime") {
     const at = typeof m.at === "string" ? Date.parse(m.at) : NaN;
@@ -255,7 +299,13 @@ function readFiling(input: unknown, keys: string[], now: string, thought: string
     if (text.length === 0 || text.length > SITUATION_MAX) return { error: "situation vide ou trop longue" };
     moment = { type: "situation", text };
   } else return { error: "type de moment invalide" };
-  if (moment.type !== "none" && !sourceFound(m?.source, thought)) { moment = { type: "none" }; momentDropped = true; }
+  if (moment.type !== "none") {
+    const source = typeof m?.source === "string" ? m.source : "";
+    if (!sourceFound(source, thought)) momentDropped = "source introuvable";
+    else if (moment.type === "datetime" && !hasTimeExpression(source)) momentDropped = "source sans expression de temps";
+    else if (moment.type === "situation" && !hasSituationTrigger(source)) momentDropped = "source sans expression de situation";
+    if (momentDropped) moment = { type: "none" };
+  }
   if (!Array.isArray(o.extras)) return { error: "extras invalides" };
   const extras: string[] = [];
   for (const x of o.extras) {
@@ -326,7 +376,7 @@ async function fileThought(req: Request, body: Record<string, unknown>, anthropi
     console.log(`rangement 502 : réponse invalide (${checked.error})`);
     return fail(req, 502, `Rangement invalide : ${checked.error}`);
   }
-  if (checked.momentDropped) console.log("moment écarté : source introuvable");
+  if (checked.momentDropped) console.log(`moment écarté : ${checked.momentDropped}`);
   console.log(`rangement 200 : pensée ${asked.thought.body.length} car., ${keys.length} espaces, ${checked.filing.confidence}, étape ${checked.filing.step ? checked.filing.step.length + " car." : "vide"}, moment ${checked.filing.moment.type}, ${checked.filing.extras.length} extras`);
   return reply(req, 200, { filing: checked.filing, model: typeof out.model === "string" ? out.model : FILE_MODEL });
 }

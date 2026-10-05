@@ -177,6 +177,63 @@ await t('Étape vide acceptée et rendue telle quelle (une note)', async () => {
   return [r.status === 200 && j.filing.step === '' && j.filing.space === 'aryan', `statut ${r.status}, étape « ${j.filing && j.filing.step} »`];
 });
 
+/* Second essai réel : la source doit être une expression de temps (ou de situation), pas des mots quelconques */
+const dt = (at = '2026-10-05T20:00:00+02:00') => source => ({ type: 'datetime', at, source });
+const sit = source => ({ type: 'situation', text: source, source });
+const cases = [
+  ['faire la typo des modules complet', dt()('complet'), 'none'],
+  ['faire la typo des modules complet', dt()('faire la typo'), 'none'],
+  ['faire le design dans aryan', dt()('dans aryan'), 'none'],
+  ['vérifier les 9 modules', dt()('9 modules'), 'none'],
+  ['appeler Karim demain à 9 h', dt('2026-10-06T09:00:00+02:00')('demain à 9 h'), 'datetime'],
+  ['envoyer le devis ce soir', dt()('ce soir'), 'datetime'],
+  ['relancer mardi', dt('2026-10-06T09:00:00+02:00')('mardi'), 'datetime'],
+  ['finir avant le 12 octobre', dt('2026-10-12T09:00:00+02:00')('avant le 12 octobre'), 'datetime'],
+  ['répondre dans 3 jours', dt('2026-10-08T09:00:00+02:00')('dans 3 jours'), 'datetime'],
+  ['le dire à Sami en arrivant au bureau', sit('en arrivant au bureau'), 'situation'],
+  ['faire la typo', sit('faire la typo'), 'none'],
+];
+for (const [thought, moment, want] of cases) {
+  await t(`Moment « ${moment.source} » dans « ${thought} » → ${want}`, async () => {
+    const x = await momentCase(thought, moment);
+    const why = logs.find(l => l.startsWith('moment écarté')) || '';
+    const clean = noThoughtInLogs(thought) && (want !== 'none' || /^moment écarté : (source sans expression de (temps|situation)|source introuvable)$/.test(why));
+    return [x.status === 200 && x.moment.type === want && x.step === 'Faire le design' && clean, `obtenu ${x.moment && x.moment.type}${why ? ', journal « ' + why + ' »' : ''}`];
+  });
+}
+await t('Journal : cause « source sans expression de temps » pour « complet »', async () => {
+  await momentCase('faire la typo des modules complet', dt()('complet'));
+  return [logs.includes('moment écarté : source sans expression de temps'), logs.filter(l => l.startsWith('moment')).join(' | ')];
+});
+
+// hasTimeExpression, appelée directement
+const mod = await import('../supabase/functions/ARC-CLAUDE-PROXY/index.ts');
+const timeYes = ['aujourd\'hui', 'aujourd’hui', 'ce matin', 'ce midi', 'cet après-midi', 'CE SOIR', 'cette nuit', 'tout à l\'heure', 'tantôt',
+  'demain', 'après-demain', 'apres demain', 'mardi', 'jeudi prochain', 'ce week-end', 'dans 10 minutes', 'dans deux heures', 'd\'ici 3 jours',
+  'dans 2 semaines', 'dans 6 mois', 'la semaine prochaine', 'le mois prochain', 'en fin de semaine', 'fin de mois', 'début de mois',
+  '9 h', '9h30', '14:00', 'à midi', 'à minuit', 'le 12', 'le 12 octobre', '12/10', 'en mai', 'avant vendredi', 'après le 3', 'pour lundi', 'Vendredi'];
+const timeNo = ['complet', 'faire la typo', 'dans aryan', '9 modules', 'mare', 'mais', 'hier', 'la mare aux canards', 'demande', 'lundis',
+  'samedistes', 'maison', 'dans le dossier', 'vérifier les 9 modules', 'le design', '', 'h', 'soirée dansante', 'midi-pyrénées'];
+await t(`hasTimeExpression : ${timeYes.length} vrais, ${timeNo.length} faux`, async () => {
+  if (typeof mod.hasTimeExpression !== 'function') return [false, 'hasTimeExpression absente'];
+  const badYes = timeYes.filter(x => !mod.hasTimeExpression(x)), badNo = timeNo.filter(x => mod.hasTimeExpression(x));
+  return [!badYes.length && !badNo.length, `manqués : ${badYes.join(' | ') || 'aucun'} ; faux positifs : ${badNo.join(' | ') || 'aucun'}`];
+});
+const sitYes = ['en ouvrant le Mac', 'en arrivant au bureau', 'quand j\'ouvre le Mac', 'lorsque Sami appelle', 'dès que possible', 'dès qu\'il répond',
+  'une fois que le devis est signé', 'au prochain passage', 'à la prochaine réunion', 'la prochaine fois', 'au retour', 'en rentrant',
+  'avant de partir', 'après avoir mangé', 'pendant la réunion'];
+const sitNo = ['faire la typo', 'en avant', 'en tant que gérant', 'des questions', 'le devis', 'complet', 'en mai'];
+await t(`hasSituationTrigger : ${sitYes.length} vrais, ${sitNo.length} faux`, async () => {
+  if (typeof mod.hasSituationTrigger !== 'function') return [false, 'hasSituationTrigger absente'];
+  const badYes = sitYes.filter(x => !mod.hasSituationTrigger(x)), badNo = sitNo.filter(x => mod.hasSituationTrigger(x));
+  return [!badYes.length && !badNo.length, `manqués : ${badYes.join(' | ') || 'aucun'} ; faux positifs : ${badNo.join(' | ') || 'aucun'}`];
+});
+await t('Consigne : le proxy écarte tout moment sans expression de temps ou de situation ; dans le doute, none', async () => {
+  anthropic = toolAnswer({ space: 'aryan', confidence: 'sure', step: 'x', moment: { type: 'none' }, extras: [] });
+  await call(fileBody('x'));
+  return [/écarte tout moment/.test(sent[0].system) && /dans le doute, « none »/i.test(sent[0].system), ''];
+});
+
 await t('Tâche inconnue → 400', async () => {
   const r = await call({ task: 'autre' });
   return [r.status === 400 && sent.length === 0, `statut ${r.status}`];
