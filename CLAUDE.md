@@ -4,12 +4,13 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 110 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 480 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
 - `tests/` (Playwright, outil de développement seulement ; mode d'emploi en tête de `tests/depot.mjs`) :
-  `depot.mjs` (dépôt), `rangement.mjs` (rangement), `outils.mjs` (serveur local, faux Supabase, faux proxy),
+  `depot.mjs` (dépôt), `rangement.mjs` (rangement), `matin.mjs` (point du matin, horloge contrôlée),
+  `outils.mjs` (serveur local, faux Supabase, faux proxy),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
@@ -29,6 +30,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Rangement (branche `rangement`) : le proxy (task `file`) propose un espace, une étape, un moment et ce qui est
   gardé pour après ; lignes dans `arc_filings_v1`, envoyées dans `thought_filings` (`rangeRun`, `rangePull`) ;
   chaque correction est une nouvelle ligne, la plus récente fait foi. Bloc « Prochaines étapes » sur l'accueil.
+- Point du matin (branche `rangement`) : calculé sur l'appareil à partir des pensées et rangements, sans IA, sans
+  table, sans notification ; réglages et mesure dans `arc_matin_v1` (`matinCheck`, `matinShow`, `matinData`).
 - Claude : `claudeCall` appelle la fonction Supabase `ARC-CLAUDE-PROXY` avec le jeton de session ; le modèle est dans `CLAUDE_MODEL`,
   qui doit figurer dans `ALLOWED_MODELS` du proxy.
 
@@ -38,8 +41,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/depot.mjs` et `tests/rangement.mjs` ; ne jamais toucher au dépôt ni au
-  rangement sans que leurs tests passent.
+  Relancer `tests/proxy.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
 - Ne pas ajouter de bibliothèque sans le dire.
@@ -98,9 +101,21 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
 - Santé et Juridique : consignes de mémoire et d'organisation (noter, dater, retrouver, préparer un rendez-vous,
   règle générale avec source officielle) ; refus poli de tout diagnostic ou avis sur le cas, renvoi vers un médecin
   ou un avocat. Le mot « conseiller » a disparu de la page.
-- Tests : `tests/proxy.mjs` 13 sur 13, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 22 sur 22
+- Tests : `tests/proxy.mjs` 13 sur 13, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 22 sur 22, `tests/matin.mjs` 25 sur 25
   (le faux Supabase applique la règle de `thought_filings` : la pensée doit exister sur le serveur).
 - Pas encore essayé contre la vraie table `thought_filings` ni avec le vrai modèle.
+
+Point du matin (chantier 4, branche `rangement`, à la suite) :
+- Heure choisie dans le menu « ··· » (8 h par défaut), désactivable ; gardée sur l'appareil (`arc_matin_v1`), pas dans `S`.
+- À la première ouverture d'ARC après l'heure (lancement ou retour au premier plan), une fois par jour et par
+  appareil, par-dessus l'accueil ; se rouvre depuis l'accueil (« Point du jour »). La barre de dépôt reste au-dessus.
+- Contenu : la date ; « Aujourd'hui » (étapes du jour, par heure) ; « À replacer » (moment passé, sans rouge ni
+  reproche) ; « Sans moment » (trois plus anciennes, situations comprises) ; « À ranger » (pensées qui attendent un
+  choix) ; état vide « Rien n'attend aujourd'hui. Dépose ce qui te vient. » ; sept lignes au plus, puis « Voir tout ».
+- Actions : « C'est fait », « Fixer un moment », « Demain » (même heure si elle n'est pas passée, sinon 9 h),
+  « Plus tard » (sans moment), chacune par une nouvelle ligne de rangement `origin` user. Fermeture « C'est parti ».
+- Mesure sur l'appareil seulement : par jour, point vu ou non, automatiquement ou à la demande, nombre d'ouvertures.
+- Tests : `tests/matin.mjs` 25 sur 25 ; les autres suites ferment le point s'il s'affiche (elles tournent à l'heure réelle).
 
 ### Décisions de Rayan (5 octobre)
 
@@ -146,8 +161,8 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 
 ### Ouvert
 
-1. **Le geste central n'est pas encore entier** : dépôt en ligne ; rangement sur la branche `rangement`, proxy à
-   déployer ; le retour à heure convenue (chantier 4, point du matin à 8 h) reste à faire.
+1. **Le geste central est construit, pas encore en service** : dépôt en ligne ; rangement et point du matin sur la
+   branche `rangement`, proxy du rangement à déployer par Rayan, rien d'essayé sur ses appareils.
 2. **La synchronisation remplace tout l'état d'un coup** (dernière action gagne, `pullFromCloud`) : à remplacer
    par des pensées en ajout seul avant d'ouvrir le dépôt sur deux appareils.
 3. **Santé reste un suivi à curseurs** (check-in, score, série) : les consignes envoyées à Claude ne jouent plus
@@ -160,6 +175,7 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 
 ### Chantier suivant
 
-Après le déploiement du proxy, l'essai du rangement par Rayan et la fusion de `rangement` : chantier 4 de la
-révision (point du matin à heure convenue, 8 h par défaut). Toute création de table ou toute écriture dans
-Supabase demande son accord.
+Déploiement du proxy par Rayan, essai du rangement et du point du matin sur son iPhone et son Mac, fusion de
+`rangement` : alors commencent les trente jours d'usage mesurés. Ensuite, la suite de la révision de l'ordre
+(tests et modules, modèle version 3, design, interface reconstruite). Toute création de table ou toute écriture
+dans Supabase demande son accord.

@@ -92,15 +92,17 @@ export function sessionScript(uid = UID) {
 }
 
 // Ouvre ARC dans un nouveau contexte (ou un nouvel onglet d'un contexte existant)
-// clock : horloge de Playwright installée avant le chargement (page.clock.fastForward pour avancer le temps)
-export async function openPage(browser, url, { session = true, viewport = { width: 1440, height: 900 }, fk = fakeSupabase(), ctx = null, clock = false } = {}) {
+// clock : horloge de Playwright installée avant le chargement (true, ou une date de départ) ;
+// page.clock.fastForward pour avancer le temps. Fuseau : Europe/Paris, comme les appareils de Rayan.
+// keepMatin : laisser le point du matin ouvert (tests du point) ; sinon, il est fermé s'il s'est affiché
+export async function openPage(browser, url, { session = true, viewport = { width: 1440, height: 900 }, fk = fakeSupabase(), ctx = null, clock = false, keepMatin = false } = {}) {
   const own = !ctx;
   if (own) {
-    ctx = await browser.newContext({ viewport, serviceWorkers: 'block' });
+    ctx = await browser.newContext({ viewport, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR' });
     if (session) await ctx.addInitScript(sessionScript());
   }
   const page = await ctx.newPage();
-  if (clock) await page.clock.install();
+  if (clock) await page.clock.install(clock === true ? undefined : { time: new Date(clock) });
   const sbHits = [];
   await page.route(u => u.href.startsWith(SB), r => { sbHits.push(r.request().url()); return fk.handler(r); });
   const errors = [];
@@ -110,6 +112,8 @@ export async function openPage(browser, url, { session = true, viewport = { widt
   await page.goto(url, { waitUntil: 'load' });
   await page.waitForTimeout(700);
   if (!session && await page.isVisible('#auth-screen')) await page.click('#auth-skip');
+  // Après 8 h, le point du matin s'affiche à l'ouverture : les tests qui ne portent pas sur lui le ferment
+  if (!keepMatin && await page.isVisible('#matin-screen')) await page.click('#matin-close');
   return { ctx, page, fk, sbHits, errors };
 }
 

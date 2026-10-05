@@ -1109,6 +1109,28 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .next-item .rg-acts{margin-top:8px}
 .next-empty{font-size:15px;line-height:1.55;color:var(--t2);padding:14px 16px;border-radius:16px;border:1px dashed var(--b2)}
 .next-empty[hidden]{display:none}
+/* ═══ POINT DU MATIN ═══ z 28 : au-dessus des écrans et de « Déposé » (25), sous la barre de dépôt (30) */
+#matin-screen{position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.72);display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:-apple-system,system-ui,sans-serif}
+#matin-screen.open{display:block}
+/* Ce qui est amené à l'écran (focus au clavier, scrollIntoView) s'arrête au-dessus de la barre de dépôt */
+#matin-screen,#depot-screen{scroll-padding-bottom:calc(var(--depot-space,0px) + 16px)}
+.matin-card{max-width:560px;margin:calc(24px + env(safe-area-inset-top)) auto calc(var(--depot-space,0px) + 24px);padding:24px 20px;border-radius:24px;background:var(--bg1);border:1px solid var(--b2)}
+.matin-date{font-size:28px;font-weight:800;letter-spacing:-.4px;color:var(--t1)}
+.matin-lead{font-size:16px;line-height:1.5;color:var(--t2);margin:6px 0 18px}
+.matin-sec{margin-top:18px}
+.matin-sec-t{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:4px}
+.matin-sec-s{font-size:14px;line-height:1.45;color:var(--t2);margin-bottom:8px}
+.matin-row{padding:12px 14px;border-radius:16px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:8px}
+.matin-when{font-size:14px;font-weight:600;color:#ffb340}
+.matin-sit{font-size:14px;color:var(--t2)}
+.matin-step{font-size:17px;font-weight:600;line-height:1.4;color:var(--t1);margin:4px 0 2px;word-break:break-word}
+.matin-row .rg-acts{margin-top:8px}
+.matin-more{margin-top:4px}
+.matin-empty{font-size:17px;line-height:1.5;color:var(--t1);padding:18px 16px;border-radius:16px;border:1px dashed var(--b2);text-align:center}
+.matin-go{display:block;width:100%;min-height:52px;margin-top:22px;border:none;border-radius:16px;background:#f5f5f7;color:#000;font-family:-apple-system,system-ui,sans-serif;font-size:17px;font-weight:700;cursor:pointer}
+.matin-field{display:flex;align-items:center;gap:12px;min-height:44px;font-size:16px;color:var(--t1);margin-bottom:10px}
+.matin-field input[type=checkbox]{width:24px;height:24px}
+.matin-field input[type=time]{min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--b2);background:var(--bg3);color:var(--t1);font-size:17px;color-scheme:dark}
 /* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
@@ -1130,6 +1152,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <label class="h-menu-item" style="cursor:pointer"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Importer<input type="file" id="file-imp" accept=".json" style="display:none"></label>
         <button class="h-menu-item" id="btn-export"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 14V5M4 9l4-4 4 4M2 3h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Exporter</button>
         <button class="h-menu-item" id="btn-auth"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="5.5" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 14c.8-2.6 2.9-4 5.5-4s4.7 1.4 5.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-auth-lbl">Se connecter</span></button>
+        <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-matin-lbl">Point du matin</span></button>
       </div>
     </div>
   </div></nav>
@@ -1139,6 +1162,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="h-sub" id="h-sub-txt">Rayan &middot; Valence.</div>
     <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span class="h-sub-critical-dot" style="background:var(--red)"></span><span id="h-critical-txt"></span></div>
     <button class="depot-entry" id="depot-open" type="button"><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true">›</span></button>
+    <button class="depot-entry" id="matin-open" type="button"><span class="depot-entry-t">Point du jour</span><span class="depot-entry-n" id="matin-entry-n"></span><span class="depot-entry-go" aria-hidden="true">›</span></button>
     <div class="h-stats">
       <div class="h-stat" style="animation-delay:.1s"><div class="h-stat-v" style="color:#FF9500" id="hs-proj">5</div><div class="h-stat-l">Projets</div></div>
       <div class="h-stat" style="animation-delay:.15s"><div class="h-stat-v" style="color:var(--green)" id="hs-done">0</div><div class="h-stat-l">Accomplies</div></div>
@@ -1740,6 +1764,24 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <div class="depot-empty-t">Rien de déposé pour l'instant</div>
       <div class="depot-empty-s">Écris ou dicte une pensée dans la barre en bas de l'écran. Elle restera ici, telle quelle, sur ce Mac comme sur ton iPhone.</div>
     </div>
+  </div>
+</div>
+<!-- POINT DU MATIN : par-dessus l'accueil, sous la barre de dépôt (qui reste utilisable) -->
+<div id="matin-screen" role="dialog" aria-modal="false" aria-labelledby="matin-date" aria-hidden="true">
+  <div class="matin-card">
+    <div id="matin-view">
+      <div class="matin-date" id="matin-date"></div>
+      <div class="matin-lead" id="matin-lead"></div>
+      <div id="matin-body"></div>
+      <button class="matin-go" id="matin-close" type="button">C'est parti</button>
+    </div>
+    <form id="matin-settings" hidden>
+      <div class="matin-date">Point du matin</div>
+      <div class="matin-lead">ARC prépare un point à l'heure que tu choisis. Il s'affiche à la première ouverture d'ARC après cette heure, une fois par jour sur cet appareil.</div>
+      <label class="matin-field"><input type="checkbox" id="matin-enabled"> <span>Afficher le point du matin</span></label>
+      <label class="matin-field"><span>Heure</span> <input type="time" id="matin-hour" step="300" required></label>
+      <div class="rg-acts"><button class="rg-btn main" type="submit">Enregistrer</button><button class="rg-btn quiet" type="button" id="matin-settings-cancel">Annuler</button></div>
+    </form>
   </div>
 </div>
 <!-- DÉPÔT : barre fixe en bas de l'écran -->
@@ -5101,6 +5143,7 @@ function rangeNextSteps() {
   return rows.slice(0, 5);
 }
 function rangeHomeRender() {
+  if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
   var list = document.getElementById('next-list'); if(!list) return;
   var rows = rangeNextSteps();
   document.getElementById('next-empty').hidden = rows.length > 0;
@@ -5123,6 +5166,236 @@ function rangeHomeRender() {
     it.appendChild(acts);
     list.appendChild(it);
   });
+}
+
+/* ═══ POINT DU MATIN ═══
+   Calculé sur l'appareil, à partir des pensées et des rangements déjà là : aucun appel à l'IA, aucune table,
+   aucune notification. Il s'affiche à la première ouverture d'ARC après l'heure choisie (8 h par défaut),
+   une fois par jour et par appareil, et se rouvre à tout moment depuis l'accueil. Ni compteur de jours,
+   ni retard en rouge : une étape dont le moment est passé est « à replacer ».
+   Réglages et mesure (point vu ou non, par jour) dans arc_matin_v1, sur l'appareil seulement. */
+var MATIN_KEY = 'arc_matin_v1', MATIN_MAX_ROWS = 7;
+var _matin = null, _matinOpen = false, _matinAll = false;
+
+function matinNorm(d) {
+  if(!d || typeof d !== 'object') d = {};
+  if(!d.settings || typeof d.settings !== 'object') d.settings = { enabled: true, hour: '08:00', updatedAt: '' };
+  if(!/^\d{2}:\d{2}$/.test(d.settings.hour || '')) d.settings.hour = '08:00';
+  if(typeof d.settings.enabled !== 'boolean') d.settings.enabled = true;
+  if(!d.days || typeof d.days !== 'object') d.days = {};
+  return d;
+}
+function matinRead() { try { return matinNorm(JSON.parse(localStorage.getItem(MATIN_KEY) || 'null')); } catch(e) { return matinNorm(null); } }
+function matinMerge(a, b) {
+  var out = matinNorm({});
+  out.settings = (b.settings.updatedAt || '') >= (a.settings.updatedAt || '') ? Object.assign({}, b.settings) : Object.assign({}, a.settings);
+  [a, b].forEach(function(src) {
+    Object.keys(src.days).forEach(function(k) {
+      var d = src.days[k], cur = out.days[k];
+      if(!cur) { out.days[k] = Object.assign({}, d); return; }
+      if(d.shownAt && (!cur.shownAt || d.shownAt < cur.shownAt)) cur.shownAt = d.shownAt;
+      cur.auto = !!(cur.auto || d.auto);
+      cur.opens = Math.max(cur.opens || 0, d.opens || 0);
+      cur.launched = !!(cur.launched || d.launched);
+    });
+  });
+  return out;
+}
+function matinSave() {
+  _matin = matinMerge(matinRead(), _matin);
+  try { localStorage.setItem(MATIN_KEY, JSON.stringify(_matin)); } catch(e) {}
+}
+function matinDayKey(d) {
+  var p = function(n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+function matinHourToday() {
+  var hm = _matin.settings.hour.split(':'), at = new Date();
+  at.setHours(+hm[0], +hm[1], 0, 0);
+  return at;
+}
+
+/* Ce que contient le point */
+function matinData() {
+  var idx = rangeIndex(), now = new Date();
+  var startToday = new Date(now); startToday.setHours(0, 0, 0, 0);
+  var endToday = new Date(startToday.getTime() + 864e5);
+  var out = { today: [], replace: [], nomoment: [], toRange: 0 };
+  depotList().forEach(function(t) {
+    if(t.status === 'rejected') return;
+    var f = idx.latest[t.id];
+    if(f && (f.status === 'cancelled' || f.status === 'done')) return;
+    // Attend un choix : pas encore rangée, ARC hésite, ou rangée sans étape ni espace → « À ranger » seulement
+    var manual = f && f.space && f.space !== 'inconnu';
+    if(!f || f.status === 'unsure' || !manual) { out.toRange++; return; }
+    if(!f.step) return;   // rangée à la main dans un espace, sans étape : rien à faire aujourd'hui
+    var m = f.moment || { type: 'none' };
+    if(m.type === 'datetime') {
+      var d = new Date(m.at);
+      if(isNaN(d)) out.nomoment.push({ t: t, f: f });
+      else if(d >= startToday && d < endToday) out.today.push({ t: t, f: f, d: d });
+      else if(d < startToday) out.replace.push({ t: t, f: f, d: d });
+      // Moment des jours suivants : pas dans le point d'aujourd'hui
+    } else out.nomoment.push({ t: t, f: f });   // sans moment, ou une situation (ni due ni en retard)
+  });
+  out.today.sort(function(a, b) { return a.d - b.d; });
+  out.replace.sort(function(a, b) { return a.d - b.d; });
+  out.nomoment.sort(function(a, b) { return a.t.created_at < b.t.created_at ? -1 : 1; });
+  out.nomoment = out.nomoment.slice(0, 3);
+  return out;
+}
+// « Demain » : même heure si le moment n'est pas encore passé, sinon 9 h
+function matinTomorrow(m) {
+  var now = new Date(), at = new Date(now); at.setDate(at.getDate() + 1);
+  var d = m && m.type === 'datetime' ? new Date(m.at) : null;
+  if(d && !isNaN(d) && d >= now) at.setHours(d.getHours(), d.getMinutes(), 0, 0);
+  else at.setHours(9, 0, 0, 0);
+  return { type: 'datetime', at: rangeIsoLocal(at) };
+}
+function matinRowEl(kind, r) {
+  var row = rgEl('div', 'matin-row'); row.setAttribute('data-id', r.t.id); row.setAttribute('data-kind', kind);
+  var top = rgEl('div', 'rg-row');
+  var hh = function(d) { return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); };
+  if(kind === 'today') top.appendChild(rgEl('span', 'matin-when', hh(r.d)));
+  if(kind === 'replace') top.appendChild(rgEl('span', 'matin-sit', 'Prévu ' + r.d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + hh(r.d)));
+  if(r.f.space && r.f.space !== 'inconnu') top.appendChild(rangePill(r.f.space));
+  row.appendChild(top);
+  row.appendChild(rgEl('div', 'matin-step', r.f.step));
+  if(kind === 'nomoment' && r.f.moment && r.f.moment.type === 'situation') row.appendChild(rgEl('div', 'matin-sit', 'Quand : ' + r.f.moment.text));
+  var acts = rgEl('div', 'rg-acts');
+  var act = function(label, changes, cls) { acts.appendChild(rangeBtn(label, function() { rangeAdd(r.t.id, changes, 'user'); matinRender(); }, cls)); };
+  if(kind === 'nomoment') {
+    acts.appendChild(rangeBtn('Fixer un moment', function() {
+      matinClose(); _rangeEdit = { tid: r.t.id, kind: 'moment' }; depotOpen();
+      var target = document.querySelector('#depot-list [data-id="' + r.t.id + '"]'); if(target) target.scrollIntoView({ block: 'center' });
+    }));
+    act('C\'est fait', { status: 'done' }, 'main');
+  } else {
+    act('C\'est fait', { status: 'done' }, 'main');
+    act('Demain', { moment: matinTomorrow(r.f.moment) });
+    act('Plus tard', { moment: { type: 'none' } }, 'quiet');
+  }
+  row.appendChild(acts);
+  return row;
+}
+function matinRender() {
+  var now = new Date();
+  var date = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('matin-date').textContent = date.charAt(0).toUpperCase() + date.slice(1);
+  var data = matinData();
+  var rows = [];
+  data.today.forEach(function(r) { rows.push({ sec: 'today', r: r }); });
+  data.replace.forEach(function(r) { rows.push({ sec: 'replace', r: r }); });
+  data.nomoment.forEach(function(r) { rows.push({ sec: 'nomoment', r: r }); });
+  var body = document.getElementById('matin-body'); body.textContent = '';
+  var lead = document.getElementById('matin-lead');
+  if(!rows.length && !data.toRange) {
+    lead.textContent = '';
+    body.appendChild(rgEl('div', 'matin-empty', 'Rien n\'attend aujourd\'hui. Dépose ce qui te vient.'));
+    return;
+  }
+  lead.textContent = 'Voici ce qui t\'attend, en quelques lignes.';
+  var visible = _matinAll ? rows : rows.slice(0, MATIN_MAX_ROWS);
+  var titles = { today: ['Aujourd\'hui', ''], replace: ['À replacer', 'Leur moment est passé. Choisis-en un autre, ou c\'est peut-être déjà fait.'],
+                 nomoment: ['Sans moment', 'Les plus anciennes. Un moment les rend plus faciles à tenir.'] };
+  var sec = null, box = null;
+  // « Aujourd'hui » est toujours là, même vide, pour que la suite se lise
+  if(!data.today.length) {
+    var s0 = rgEl('section', 'matin-sec'); s0.appendChild(rgEl('div', 'matin-sec-t', 'Aujourd\'hui'));
+    s0.appendChild(rgEl('div', 'matin-sec-s', 'Rien de prévu à heure fixe.')); body.appendChild(s0);
+  }
+  visible.forEach(function(x) {
+    if(x.sec !== sec) {
+      sec = x.sec; box = rgEl('section', 'matin-sec'); box.setAttribute('data-sec', sec);
+      box.appendChild(rgEl('div', 'matin-sec-t', titles[sec][0]));
+      if(titles[sec][1]) box.appendChild(rgEl('div', 'matin-sec-s', titles[sec][1]));
+      body.appendChild(box);
+    }
+    box.appendChild(matinRowEl(x.sec, x.r));
+  });
+  if(rows.length > MATIN_MAX_ROWS) {
+    var more = rgEl('div', 'rg-acts matin-more');
+    more.appendChild(rangeBtn(_matinAll ? 'Voir moins' : 'Voir tout (' + (rows.length - MATIN_MAX_ROWS) + ' de plus)', function() { _matinAll = !_matinAll; matinRender(); }));
+    body.appendChild(more);
+  }
+  if(data.toRange) {
+    var r = rgEl('section', 'matin-sec'); r.setAttribute('data-sec', 'torange');
+    r.appendChild(rgEl('div', 'matin-sec-t', 'À ranger'));
+    r.appendChild(rgEl('div', 'matin-sec-s', data.toRange + (data.toRange > 1 ? ' pensées attendent' : ' pensée attend') + ' un choix.'));
+    var a = rgEl('div', 'rg-acts'); a.appendChild(rangeBtn('Voir dans Déposé', function() { matinClose(); depotOpen(); }));
+    r.appendChild(a); body.appendChild(r);
+  }
+}
+function matinShow(how) {
+  var key = matinDayKey(new Date());
+  var day = _matin.days[key] || {};
+  _matin.days[key] = { shownAt: day.shownAt || new Date().toISOString(), auto: !!(day.auto || how === 'auto'),
+                       opens: (day.opens || 0) + 1, launched: true };
+  matinSave();
+  _matinAll = false;
+  document.getElementById('matin-view').hidden = false;
+  document.getElementById('matin-settings').hidden = true;
+  matinRender();
+  var sc = document.getElementById('matin-screen'); sc.classList.add('open'); sc.setAttribute('aria-hidden', 'false'); sc.scrollTop = 0;
+  _matinOpen = true;
+  matinLabels();
+}
+function matinClose() {
+  var sc = document.getElementById('matin-screen'); sc.classList.remove('open'); sc.setAttribute('aria-hidden', 'true');
+  _matinOpen = false;
+}
+// À l'ouverture d'ARC (lancement ou retour au premier plan) : une fois par jour, après l'heure choisie
+function matinCheck() {
+  _matin = matinMerge(matinRead(), _matin);
+  var key = matinDayKey(new Date());
+  if(!_matin.days[key]) { _matin.days[key] = { launched: true, opens: 0 }; matinSave(); }
+  if(_matin.settings.enabled && new Date() >= matinHourToday() && !_matin.days[key].shownAt) matinShow('auto');
+  matinLabels();
+}
+function matinLabels() {
+  var st = _matin.settings;
+  var lbl = document.getElementById('btn-matin-lbl');
+  if(lbl) lbl.textContent = 'Point du matin · ' + (st.enabled ? st.hour.replace(':', ' h ') : 'désactivé');
+  var n = document.getElementById('matin-entry-n');
+  if(n) {
+    if(!st.enabled) n.textContent = 'Désactivé';
+    else if(new Date() < matinHourToday()) n.textContent = 'Prêt à ' + st.hour.replace(':', ' h ');
+    else { var d = matinData(); var k = d.today.length + d.replace.length; n.textContent = k ? k + ' étape' + (k > 1 ? 's' : '') + ' aujourd\'hui' : 'Prêt'; }
+  }
+}
+function matinSettingsOpen() {
+  document.getElementById('matin-enabled').checked = _matin.settings.enabled;
+  document.getElementById('matin-hour').value = _matin.settings.hour;
+  document.getElementById('matin-view').hidden = true;
+  document.getElementById('matin-settings').hidden = false;
+  var sc = document.getElementById('matin-screen'); sc.classList.add('open'); sc.setAttribute('aria-hidden', 'false');
+  _matinOpen = true;
+}
+function matinInit() {
+  _matin = matinRead();
+  document.getElementById('matin-close').addEventListener('click', matinClose);
+  document.getElementById('matin-open').addEventListener('click', function() { matinShow('manual'); });
+  document.getElementById('btn-matin').addEventListener('click', function() {
+    document.getElementById('h-menu-dd').classList.remove('open'); matinSettingsOpen();
+  });
+  document.getElementById('matin-settings-cancel').addEventListener('click', matinClose);
+  document.getElementById('matin-settings').addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    var h = document.getElementById('matin-hour').value;
+    if(!/^\d{2}:\d{2}$/.test(h)) return;
+    _matin.settings = { enabled: document.getElementById('matin-enabled').checked, hour: h, updatedAt: new Date().toISOString() };
+    matinSave(); matinClose(); matinLabels();
+    toast(_matin.settings.enabled ? 'Point du matin à ' + h.replace(':', ' h ') : 'Point du matin désactivé');
+  });
+  // Un clic sur le fond (hors de la carte) ferme
+  document.getElementById('matin-screen').addEventListener('click', function(ev) { if(ev.target.id === 'matin-screen') matinClose(); });
+  document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && _matinOpen) matinClose(); });
+  document.addEventListener('visibilitychange', function() { if(document.visibilityState === 'visible') matinCheck(); });
+  window.addEventListener('storage', function(ev) {
+    if(ev.key !== MATIN_KEY || ev.storageArea !== localStorage) return;
+    _matin = matinMerge(matinRead(), _matin); matinLabels();
+  });
+  matinCheck();
 }
 
 function depotInit() {
@@ -5176,6 +5449,7 @@ function init(){
   sbInit();
   loadS();
   depotInit();
+  matinInit();
 
   // Onboarding
   if(!S.seen||S.seen==="new"){ document.getElementById("onboarding").classList.add("active"); }
