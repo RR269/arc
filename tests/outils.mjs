@@ -31,8 +31,9 @@ export async function startServer() {
 // Faux Supabase en mémoire. fk.proxy(body) décide de la réponse du proxy : { status, json, delay }.
 export function fakeSupabase() {
   const db = { thoughts: new Map(), events: new Map(), filings: new Map() };
-  const log = { proxyCalls: [], filingPosts: [] };
-  const fk = { mode: 'up', db, log, proxy: null };
+  const log = { proxyCalls: [], filingPosts: [], posts: [] };
+  // reject[table](ligne) → { status, code } pour refuser une ligne ; transient[table] = nombre de 503 à renvoyer
+  const fk = { mode: 'up', db, log, proxy: null, reject: {}, transient: {} };
   const table = { thoughts: db.thoughts, arc_events: db.events, thought_filings: db.filings };
   fk.handler = async route => {
     const req = route.request();
@@ -43,13 +44,25 @@ export function fakeSupabase() {
       const body = JSON.parse(req.postData() || '{}');
       log.proxyCalls.push(body);
       const r = fk.proxy ? await fk.proxy(body) : { status: 500, json: { error: { message: 'pas de faux proxy' } } };
+      if (r.abort) return route.abort('internetdisconnected');   // réseau coupé vers le proxy
       if (r.delay) await new Promise(res => setTimeout(res, r.delay));
       try { return await json(r.status || 200, r.json); } catch { return; } // page fermée pendant l'attente
     }
     const name = url.pathname.replace('/rest/v1/', '');
     if (table[name] && req.method() === 'POST') {
-      const rows = JSON.parse(req.postData() || '[]');
+      const body = JSON.parse(req.postData() || '[]');
+      const rows = Array.isArray(body) ? body : [body];
+      log.posts.push({ table: name, ids: rows.map(r => r.id), thoughtIds: rows.map(r => r.thought_id) });
       if (name === 'thought_filings') log.filingPosts.push(rows);
+      // Panne passagère simulée (5xx) : rien n'est écrit
+      if (fk.transient[name] > 0) { fk.transient[name]--; return json(503, { message: 'service indisponible (simulé)' }); }
+      // Comme Postgres : une seule ligne refusée fait échouer toute la requête, rien n'est écrit
+      for (const r of rows) {
+        if (name === 'thought_filings' && !db.thoughts.has(r.thought_id))
+          return json(409, { code: '23503', message: 'insert or update on table "thought_filings" violates foreign key constraint' });
+        const why = fk.reject[name] && fk.reject[name](r);
+        if (why) return json(why.status, { code: why.code, message: 'ligne refusée (simulé)' });
+      }
       for (const r of rows) if (!table[name].has(r.id)) table[name].set(r.id, { ...r, user_id: UID, received_at: new Date().toISOString() });
       return route.fulfill({ status: 201, body: '' });
     }
@@ -79,13 +92,15 @@ export function sessionScript(uid = UID) {
 }
 
 // Ouvre ARC dans un nouveau contexte (ou un nouvel onglet d'un contexte existant)
-export async function openPage(browser, url, { session = true, viewport = { width: 1440, height: 900 }, fk = fakeSupabase(), ctx = null } = {}) {
+// clock : horloge de Playwright installée avant le chargement (page.clock.fastForward pour avancer le temps)
+export async function openPage(browser, url, { session = true, viewport = { width: 1440, height: 900 }, fk = fakeSupabase(), ctx = null, clock = false } = {}) {
   const own = !ctx;
   if (own) {
     ctx = await browser.newContext({ viewport, serviceWorkers: 'block' });
     if (session) await ctx.addInitScript(sessionScript());
   }
   const page = await ctx.newPage();
+  if (clock) await page.clock.install();
   const sbHits = [];
   await page.route(u => u.href.startsWith(SB), r => { sbHits.push(r.request().url()); return fk.handler(r); });
   const errors = [];

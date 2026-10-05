@@ -25,7 +25,7 @@ const waitFiled = (page, id) => page.waitForFunction(i => !!rangeIndex().ai[i], 
 {
   const fk = fakeSupabase();
   fk.proxy = filingReply(ATLAS, { delay: 5000 });
-  const { ctx, page } = await open({ fk });
+  const { ctx, page } = await open({ fk, clock: true });
   await page.click('#depot-open');
   const measure = text => page.evaluate(t => new Promise(res => {
     const ta = document.getElementById('depot-ta'); ta.value = t; ta.dispatchEvent(new Event('input'));
@@ -41,8 +41,9 @@ const waitFiled = (page, id) => page.waitForFunction(i => !!rangeIndex().ai[i], 
   const idFail = await idOf(page, 'Pensée pendant une panne du proxy');
   await page.waitForFunction(i => !!_rangeFailed[i], idFail, { timeout: 15000 });
   const failTxt = await item(page, idFail).locator('.rg-wait').textContent();
-  // Réseau revenu : nouvel essai, réussi cette fois
+  // Réseau revenu, une minute plus tard (pas deux essais dans la même minute) : nouvel essai, réussi cette fois
   fk.proxy = filingReply(ATLAS);
+  await page.clock.fastForward('01:05');
   await page.evaluate(() => window.dispatchEvent(new Event('online')));
   await waitFiled(page, idFail).catch(() => {});
   const retried = await page.evaluate(i => !!rangeIndex().ai[i], idFail);
@@ -257,6 +258,142 @@ for (const vp of [{ n: 'iPhone 390×844', width: 390, height: 844 }, { n: 'Mac 1
   const poles = await page.evaluate(() => ['sante', 'juridique'].every(p => { enterPole(p); const on = [...document.querySelectorAll('#S3,#S4')].some(s => !s.classList.contains('off')); goHome(); return on; }));
   ok(worlds && poles && listMinBtn >= 44, `${vp.n} : cinq mondes et deux pôles ouverts, boutons de la liste ≥ 44 px`);
   ok(errors.length === 0, `${vp.n} : aucune erreur de console`, errors.join(' | '));
+  await ctx.close();
+}
+
+const fail502 = async () => ({ status: 502, json: { error: { message: 'Rangement invalide : date du moment invalide', source: 'arc-proxy' } } });
+const callsFor = (fk, id) => fk.log.proxyCalls.filter(b => b.task === 'file' && b.thought.id === id).length;
+const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('online')); return rangeRun(); });
+
+/* 13. Essais bornés : 502 à chaque fois → 3 essais au plus, espacés d'une minute, gardés sur l'appareil ;
+       ensuite « À ranger à la main » avec les espaces et « Réessayer » */
+{
+  const fk = fakeSupabase(); fk.proxy = fail502;
+  const { ctx, page } = await open({ fk, clock: true });
+  const T = 'Pensée que le proxy refuse toujours';
+  await deposit(page, T); const id = await idOf(page, T);
+  await page.waitForTimeout(1200);
+  const c1 = callsFor(fk, id);
+  for (let i = 0; i < 4; i++) { await kick(page); await page.waitForTimeout(150); }
+  const sameMinute = callsFor(fk, id);
+  await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(1200);
+  const afterReload = callsFor(fk, id);
+  const counts = [];
+  for (let i = 0; i < 4; i++) { await page.clock.fastForward('01:05'); await kick(page); await page.waitForTimeout(400); counts.push(callsFor(fk, id)); }
+  await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(1200); await kick(page); await page.waitForTimeout(300);
+  const finalCalls = callsFor(fk, id);
+  await page.click('#depot-open');
+  const label = await item(page, id).locator('.rg-wait').textContent().catch(() => null);
+  const chips = await item(page, id).locator('.rg-chip').count();
+  await btn(page, id, 'Réessayer').click({ timeout: 3000 }).catch(() => {}); await page.waitForTimeout(500);
+  const afterRetry = callsFor(fk, id);
+  ok(c1 === 1 && sameMinute === 1 && afterReload === 1 && finalCalls === 3 && label === 'À ranger à la main' && chips === 7 && afterRetry === 4,
+     'Essais bornés : 3 au plus, espacés, gardés après rechargement ; « À ranger à la main » puis « Réessayer »',
+     `appels : ${c1} puis ${sameMinute} (même minute), ${afterReload} (rechargé), ${counts.join(' → ')} (une minute de plus à chaque fois), final ${finalCalls} ; « ${label} », ${chips} espaces ; après « Réessayer » : ${afterRetry}`);
+  await ctx.close();
+}
+
+/* 14. Un 401 ou une coupure réseau ne comptent pas comme essais ; un 400 arrête tout de suite */
+{
+  const fk = fakeSupabase();
+  fk.proxy = async () => ({ status: 401, json: { error: { message: 'Session invalide ou expirée', source: 'arc-proxy' } } });
+  const { ctx, page } = await open({ fk, clock: true });
+  const T = 'Pensée pendant une session expirée';
+  await deposit(page, T); const id = await idOf(page, T); await page.waitForTimeout(800);
+  for (let i = 0; i < 4; i++) { await kick(page); await page.waitForTimeout(200); }
+  const n401 = callsFor(fk, id);
+  fk.proxy = async () => ({ abort: true });
+  for (let i = 0; i < 4; i++) { await kick(page); await page.waitForTimeout(200); }
+  const nNet = callsFor(fk, id) - n401;
+  fk.proxy = filingReply(ATLAS);
+  await kick(page); await waitFiled(page, id).catch(() => {});
+  const filed = await page.evaluate(i => !!rangeIndex().ai[i], id);
+  // 400 : la demande ne passera jamais, arrêt immédiat
+  fk.proxy = async () => ({ status: 400, json: { error: { message: 'Pensée trop longue', source: 'arc-proxy' } } });
+  const T2 = 'Pensée refusée en 400';
+  await deposit(page, T2); const id2 = await idOf(page, T2); await page.waitForTimeout(800);
+  for (let i = 0; i < 3; i++) { await page.clock.fastForward('01:05'); await kick(page); await page.waitForTimeout(200); }
+  const n400 = callsFor(fk, id2);
+  await page.click('#depot-open');
+  const label = await item(page, id2).locator('.rg-wait').textContent().catch(() => null);
+  ok(n401 >= 4 && nNet >= 4 && filed && n400 === 1 && label === 'À ranger à la main',
+     '401 et coupure réseau ne comptent pas ; un 400 arrête tout de suite',
+     `essais en 401 : ${n401}, en coupure : ${nNet}, rangée ensuite : ${filed} ; appels en 400 : ${n400}, « ${label} »`);
+  await ctx.close();
+}
+
+/* 15. Rangements : une ligne refusée ne bloque pas le lot ; refusée = marquée, plus renvoyée, gardée ;
+       une panne passagère se réessaie */
+{
+  const fk = fakeSupabase(); fk.proxy = filingReply(ATLAS);
+  const { ctx, page } = await open({ fk });
+  await deposit(page, 'Première pensée'); await deposit(page, 'Seconde pensée');
+  const a = await idOf(page, 'Première pensée'), b = await idOf(page, 'Seconde pensée');
+  await waitFiled(page, a); await waitFiled(page, b); await page.waitForTimeout(500);
+  fk.transient.thought_filings = 1;   // la première tentative tombe sur un 503
+  const ids = await page.evaluate(([a, b]) => {
+    const ghost = depotUUID();   // pensée absente du serveur
+    const mk = (tid, st) => { const r = { id: depotUUID(), thought_id: tid, origin: 'user', status: st, space: 'aryan', step: 'x', moment: { type: 'none' }, extras: [], model: null, created_at: new Date(Date.now() + 1000).toISOString(), sync: 'pending' }; _range.filings[r.id] = r; return r.id; };
+    const x = mk(ghost, 'done'), y = mk(a, 'done'), z = mk(b, 'done'); rangeSave(); return { x, y, z };
+  }, [a, b]);
+  await page.evaluate(() => rangeRun());
+  const afterTransient = { y: fk.db.filings.has(ids.y), x: await page.evaluate(i => _range.filings[i].sync, ids.x) };
+  await kick(page); await page.waitForTimeout(800);
+  const st = await page.evaluate(i => JSON.parse(localStorage.getItem('arc_filings_v1')).filings[i], ids.x);
+  const postsX = fk.log.posts.filter(p => p.ids.includes(ids.x)).length;
+  await kick(page); await page.waitForTimeout(500);
+  const postsXlater = fk.log.posts.filter(p => p.ids.includes(ids.x)).length;
+  ok(!afterTransient.y && afterTransient.x === 'pending' && fk.db.filings.has(ids.y) && fk.db.filings.has(ids.z) && st && st.sync === 'rejected' && postsXlater === postsX,
+     'Rangements : une ligne refusée ne bloque pas les autres ; marquée, plus renvoyée ; 503 réessayé',
+     `après le 503 : rien de refusé (${afterTransient.x}) ; ensuite : bonnes lignes reçues ${fk.db.filings.has(ids.y) && fk.db.filings.has(ids.z)}, ligne refusée « ${st && st.sync} », renvois après refus : ${postsXlater - postsX}`);
+  await ctx.close();
+}
+
+/* 16. Pensées et événements : une ligne refusée ne bloque pas le lot ; la pensée refusée reste sur l'appareil, lisible */
+{
+  const fk = fakeSupabase(); fk.proxy = filingReply(ATLAS);
+  fk.reject.thoughts = r => r.body.includes('REFUSÉE') ? { status: 400, code: '23514' } : null;
+  fk.reject.arc_events = r => r.kind === 'autre' ? { status: 400, code: '23514' } : null;
+  const { ctx, page } = await open({ fk });
+  fk.mode = 'down';
+  await deposit(page, 'Bonne pensée 1'); await deposit(page, 'Pensée REFUSÉE par une contrainte'); await deposit(page, 'Bonne pensée 2');
+  const evBad = await page.evaluate(() => { const id = depotUUID(); _depot.events[id] = { id, kind: 'autre', at: new Date().toISOString() }; depotSave(); return id; });
+  const bad = await idOf(page, 'Pensée REFUSÉE par une contrainte');
+  fk.mode = 'up';
+  await page.evaluate(() => depotFlush()); await page.waitForTimeout(800);
+  const goods = ['Bonne pensée 1', 'Bonne pensée 2'].every(t => [...fk.db.thoughts.values()].some(r => r.body === t));
+  const deposits = [...fk.db.events.values()].filter(e => e.kind === 'deposit').length;
+  const local = await page.evaluate(([i, e]) => { const d = JSON.parse(localStorage.getItem('arc_thoughts_v1')); return { t: d.thoughts[i], e: d.events[e] }; }, [bad, evBad]);
+  const postsBad = fk.log.posts.filter(p => p.ids.includes(bad)).length;
+  await page.evaluate(() => depotFlush()); await page.waitForTimeout(500);
+  const postsBadLater = fk.log.posts.filter(p => p.ids.includes(bad)).length;
+  await page.click('#depot-open');
+  const shown = await page.evaluate(i => { const it = document.querySelector('#depot-list [data-id="' + i + '"]'); return it ? it.querySelector('.depot-state').textContent + ' | ' + it.querySelector('.depot-body').textContent : null; }, bad);
+  ok(goods && deposits === 3 && local.t && local.t.status === 'rejected' && local.e && local.e.rejected === true && postsBadLater === postsBad && /Refusée/.test(shown || '') && /REFUSÉE/.test(shown || ''),
+     'Pensées et événements : une ligne refusée ne bloque pas le lot ; la pensée refusée reste lisible et n\'est plus renvoyée',
+     `bonnes pensées reçues : ${goods}, dépôts reçus : ${deposits}, pensée refusée : « ${local.t && local.t.status} », événement refusé : ${local.e && local.e.rejected}, renvois : ${postsBadLater - postsBad}, affiché : « ${shown} »`);
+  await ctx.close();
+}
+
+/* 17. Une correction faite sur une pensée « en attente » n'est envoyée qu'après la pensée elle-même */
+{
+  const fk = fakeSupabase(); fk.proxy = filingReply(ATLAS);
+  const { ctx, page } = await open({ fk });
+  fk.mode = 'down';
+  const T = 'Pensée annulée avant d\'être envoyée';
+  await deposit(page, T); const id = await idOf(page, T); await page.waitForTimeout(300);
+  await page.click('#depot-open');
+  await btn(page, id, 'Annuler le dépôt').click(); await page.waitForTimeout(300);
+  const postedWhileDown = fk.log.posts.filter(p => p.table === 'thought_filings' && p.thoughtIds.includes(id)).length;
+  fk.mode = 'up';
+  await page.evaluate(() => depotFlush()); await page.waitForTimeout(1000);
+  const iT = fk.log.posts.findIndex(p => p.table === 'thoughts' && p.ids.includes(id));
+  const iF = fk.log.posts.findIndex(p => p.table === 'thought_filings' && p.thoughtIds.includes(id));
+  const row = [...fk.db.filings.values()].find(f => f.thought_id === id);
+  const askedAI = callsFor(fk, id);
+  ok(postedWhileDown === 0 && iT !== -1 && iF > iT && row && row.status === 'cancelled' && askedAI === 0,
+     'Une correction sur une pensée en attente part après la pensée',
+     `ordre : pensée n° ${iT}, correction n° ${iF} ; ligne reçue : ${row && row.status} ; rangement demandé à l'IA pour une pensée annulée : ${askedAI}`);
   await ctx.close();
 }
 

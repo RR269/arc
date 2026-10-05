@@ -88,10 +88,18 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
   après », « ARC hésite » avec les sept espaces ; actions : changer d'espace, modifier l'étape, fixer le moment,
   « C'est fait », annuler le dépôt (section « Annulées », rétablissable). Bloc « Prochaines étapes » sur l'accueil.
 - Mesures locales (`arc_filings_v1`, champ `stats`) : rangements proposés et corrigés par Rayan.
+- Essais de rangement bornés : 3 au plus par pensée, espacés d'une minute, comptés sur l'appareil (`attempts`) ;
+  un 401 ou une coupure réseau ne comptent pas, un 400 arrête tout de suite ; ensuite « À ranger à la main »
+  (espaces à choisir, « Réessayer » remet à zéro).
+- Envois robustes (`sendRows`) pour `thoughts`, `arc_events` et `thought_filings` : si un lot échoue de façon
+  définitive (42501, 23503, 23514, 22P02, ou 4xx hors 401 et 429), renvoi ligne par ligne ; la ligne refusée est
+  marquée `rejected` sur l'appareil, gardée et plus renvoyée ; réseau, 401, 429 et 5xx se réessaient. Une pensée
+  refusée reste affichée (« Refusée par le serveur »). Un rangement n'est envoyé qu'après sa pensée.
 - Santé et Juridique : consignes de mémoire et d'organisation (noter, dater, retrouver, préparer un rendez-vous,
   règle générale avec source officielle) ; refus poli de tout diagnostic ou avis sur le cas, renvoi vers un médecin
   ou un avocat. Le mot « conseiller » a disparu de la page.
-- Tests le 5 octobre : `tests/proxy.mjs` 13 sur 13, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 17 sur 17.
+- Tests : `tests/proxy.mjs` 13 sur 13, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 22 sur 22
+  (le faux Supabase applique la règle de `thought_filings` : la pensée doit exister sur le serveur).
 - Pas encore essayé contre la vraie table `thought_filings` ni avec le vrai modèle.
 
 ### Décisions de Rayan (5 octobre)
@@ -124,7 +132,8 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 - **`thought_filings`** (créée par Rayan pour le chantier 3) : rangements en ajout seul (`id` fourni par l'appareil,
   `thought_id` → `thoughts`, `origin` ai|user, `status` filed|unsure|done|cancelled, `space` ≤ 40, `step` ≤ 300,
   `moment` et `extras` jsonb, `model`, `created_at`, `received_at`) ; lecture et ajout de ses propres lignes, pour ses
-  propres pensées. SQL exact à verser dans `supabase/schema/` quand Rayan le colle.
+  propres pensées ; `space`, `step`, `moment` et `extras` acceptent null. SQL exact :
+  `supabase/schema/2026-10-05-thought-filings.sql`.
 
 ### Documents à lire avant tout chantier, dans cet ordre
 

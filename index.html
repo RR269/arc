@@ -799,6 +799,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .depot-state.sent{background:rgba(48,209,88,.14);color:#4ade80}
 .depot-state.wait{background:rgba(255,149,0,.14);color:#ffb340}
 .depot-state.local{background:rgba(255,255,255,.08);color:var(--t1)}
+.depot-state.rej{background:rgba(255,69,58,.16);color:#ff8a80}
 .depot-body{font-size:17px;line-height:1.45;color:var(--t1);white-space:pre-wrap;word-break:break-word}
 .depot-empty{text-align:center;padding:48px 12px}
 .depot-empty-t{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:8px}
@@ -4391,8 +4392,13 @@ function depotMerge(a, b) {
       var t = src.thoughts[id], cur = out.thoughts[id];
       if(!cur) out.thoughts[id] = Object.assign({}, t);
       else if(t.status === 'sent' && cur.status !== 'sent') { cur.status = 'sent'; cur.sent_at = t.sent_at || cur.sent_at || null; }
+      else if(t.status === 'rejected' && cur.status !== 'sent' && cur.status !== 'rejected') { cur.status = 'rejected'; cur.reject_reason = t.reject_reason || null; }
     });
-    Object.keys(src.events).forEach(function(id) { if(!out.acked[id]) out.events[id] = src.events[id]; });
+    // Un événement refusé le reste : aucun onglet ne le renvoie
+    Object.keys(src.events).forEach(function(id) {
+      if(out.acked[id]) return;
+      var ex = out.events[id]; out.events[id] = ex && ex.rejected ? ex : src.events[id];
+    });
   });
   // Liste des confirmés : 30 jours, 2 000 au plus
   var limit = new Date(Date.now() - DEPOT_ACK_DAYS * 864e5).toISOString();
@@ -4446,33 +4452,63 @@ function depotSubmit() {
   setTimeout(depotFlush, 0);
 }
 
+/* Envoi des lignes (pensées, événements, rangements), en ajout seul, doublons ignorés sur id.
+   Une seule ligne refusée fait échouer toute la requête (comportement de Postgres) : en cas d'échec définitif du lot,
+   on renvoie ligne par ligne pour isoler la ou les lignes refusées, et les autres partent.
+   Définitif : règle d'accès (42501), pensée absente (23503), contrainte (23514), format (22P02), ou statut 4xx
+   autre que 401 et 429. Réseau, 401, 429 et 5xx : on réessaiera plus tard. */
+var SEND_FINAL_CODES = ['42501', '23503', '23514', '22P02'];
+function sendIsFinal(r) {
+  var code = r.error && r.error.code, st = r.status || 0;
+  if(code && SEND_FINAL_CODES.indexOf(String(code)) !== -1) return true;
+  return st >= 400 && st < 500 && st !== 401 && st !== 429;
+}
+function sendWhy(r) { return String((r.error && r.error.code) || r.status || '?') + ' ' + String((r.error && r.error.message) || '').slice(0, 120); }
+// Résultat : { sent: [id], rejected: [{ id, why }], retry: vrai si une panne passagère a interrompu l'envoi }
+async function sendRows(table, rows) {
+  var r = await _sb.from(table).upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+  if(!r.error) return { sent: rows.map(function(x) { return x.id; }), rejected: [], retry: false };
+  if(!sendIsFinal(r)) return { sent: [], rejected: [], retry: true };
+  if(rows.length === 1) return { sent: [], rejected: [{ id: rows[0].id, why: sendWhy(r) }], retry: false };
+  var out = { sent: [], rejected: [], retry: false };
+  for(var i = 0; i < rows.length; i++) {
+    var one = await sendRows(table, [rows[i]]);
+    out.sent = out.sent.concat(one.sent); out.rejected = out.rejected.concat(one.rejected);
+    if(one.retry) { out.retry = true; break; }
+  }
+  return out;
+}
+
 // Envoi de la file : pensées en attente puis événements. Jamais sans session.
+// Une pensée refusée par le serveur reste sur l'appareil, marquée « rejected », et n'est plus renvoyée.
 async function depotFlush() {
   if(!_sb || !getUID()) return;
   if(_depotBusy) { _depotAgain = true; return; }
   _depotBusy = true;
   try {
-    var pend = depotList().filter(function(t) { return t.status !== 'sent'; });
+    var pend = depotList().filter(function(t) { return t.status !== 'sent' && t.status !== 'rejected'; });
     for(var i = 0; i < pend.length; i += 50) {
       var rows = pend.slice(i, i + 50).map(function(t) {
         return { id: t.id, body: t.body, source: t.source || 'text', device: (t.device || 'web').slice(0, 40), created_at: t.created_at };
       });
-      var r = await _sb.from('thoughts').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
-      if(r.error) throw r.error;
+      var res = await sendRows('thoughts', rows);
       var now = new Date().toISOString();
-      rows.forEach(function(x) { var t = _depot.thoughts[x.id]; if(t) { t.status = 'sent'; t.sent_at = now; } });
+      res.sent.forEach(function(id) { var t = _depot.thoughts[id]; if(t) { t.status = 'sent'; t.sent_at = now; } });
+      res.rejected.forEach(function(x) { var t = _depot.thoughts[x.id]; if(t) { t.status = 'rejected'; t.reject_reason = x.why; t.rejected_at = now; } });
       depotSave();
+      if(res.retry) throw new Error('pensées : panne passagère');
     }
-    var evs = Object.keys(_depot.events).map(function(k) { return _depot.events[k]; });
+    var evs = Object.keys(_depot.events).map(function(k) { return _depot.events[k]; }).filter(function(e) { return !e.rejected; });
     for(var j = 0; j < evs.length; j += 100) {
       var batch = evs.slice(j, j + 100);
-      var re = await _sb.from('arc_events').upsert(batch.map(function(e) { return { id: e.id, kind: e.kind, at: e.at }; }),
-                                                   { onConflict: 'id', ignoreDuplicates: true });
-      if(re.error) throw re.error;
-      // Un événement confirmé quitte l'appareil ; son id rejoint « acked » pour que la fusion ne le fasse pas revenir
+      var re = await sendRows('arc_events', batch.map(function(e) { return { id: e.id, kind: e.kind, at: e.at }; }));
+      // Un événement confirmé quitte l'appareil ; son id rejoint « acked » pour que la fusion ne le fasse pas revenir.
+      // Un événement refusé reste, marqué, et n'est plus renvoyé.
       var ackAt = new Date().toISOString();
-      batch.forEach(function(e) { delete _depot.events[e.id]; _depot.acked[e.id] = ackAt; });
+      re.sent.forEach(function(id) { delete _depot.events[id]; _depot.acked[id] = ackAt; });
+      re.rejected.forEach(function(x) { var e = _depot.events[x.id]; if(e) { e.rejected = true; e.reject_reason = x.why; } });
       depotSave();
+      if(re.retry) throw new Error('événements : panne passagère');
     }
   } catch(e) {
     console.warn('Dépôt : envoi reporté —', e && e.message || e);
@@ -4523,7 +4559,7 @@ function depotRender(force) {
   var everything = depotList();
   var cancelled = everything.filter(function(t) { var f = idx.latest[t.id]; return f && f.status === 'cancelled'; });
   var all = everything.filter(function(t) { return cancelled.indexOf(t) === -1; });
-  var waiting = all.filter(function(t) { return t.status !== 'sent'; }).length;
+  var waiting = all.filter(function(t) { return t.status !== 'sent' && t.status !== 'rejected'; }).length;
   var signed = !!getUID();
   var cnt = document.getElementById('depot-count');
   if(cnt) {
@@ -4548,6 +4584,7 @@ function depotRender(force) {
     var when = document.createElement('span'); when.textContent = depotWhen(t.created_at);
     var st = document.createElement('span');
     if(t.status === 'sent') { st.className = 'depot-state sent'; st.textContent = 'Envoyée'; }
+    else if(t.status === 'rejected') { st.className = 'depot-state rej'; st.textContent = 'Refusée par le serveur'; }
     else if(signed) { st.className = 'depot-state wait'; st.textContent = 'En attente'; }
     else { st.className = 'depot-state local'; st.textContent = 'Sur cet appareil seulement'; }
     meta.appendChild(when); meta.appendChild(st);
@@ -4639,6 +4676,8 @@ function depotLayout() {
    Tout texte de Rayan ou de l'IA s'affiche par textContent. */
 var RANGE_KEY = 'arc_filings_v1';
 var RANGE_PER_RUN = 5, RANGE_TIMEOUT_MS = 30000;
+// Chaque essai de rangement coûte : 3 au plus par pensée, espacés d'une minute au moins. Ensuite, à la main.
+var RANGE_MAX_TRIES = 3, RANGE_GAP_MS = 60000;
 var RANGE_DORMANT = ['fba', 'kitchen', 'teleneuf'];   // décision de Rayan du 5 octobre : endormis, pas archivés
 var _range = null;                 // { filings: { id: {...} }, stats: { proposed, corrected } }
 var _rangeBusy = false, _rangeAgain = false;
@@ -4652,6 +4691,7 @@ function rangeNorm(d) {
   if(!d || typeof d !== 'object') d = {};
   if(!d.filings || typeof d.filings !== 'object') d.filings = {};
   if(!d.stats || typeof d.stats !== 'object') d.stats = { proposed: 0, corrected: 0 };
+  if(!d.attempts || typeof d.attempts !== 'object') d.attempts = {};
   return d;
 }
 function rangeRead() {
@@ -4665,6 +4705,12 @@ function rangeMerge(a, b) {
       var f = src.filings[id], cur = out.filings[id];
       if(!cur) out.filings[id] = Object.assign({}, f);
       else if(f.sync === 'sent') cur.sync = 'sent';
+      else if(f.sync === 'rejected' && cur.sync !== 'sent') { cur.sync = 'rejected'; cur.reject_reason = f.reject_reason || null; }
+    });
+    // Essais de rangement par pensée : la version la plus récente l'emporte (« Réessayer » remet à zéro)
+    Object.keys(src.attempts).forEach(function(tid) {
+      var a = src.attempts[tid], cur = out.attempts[tid];
+      if(!cur || (a.updatedAt || '') > (cur.updatedAt || '')) out.attempts[tid] = Object.assign({}, a);
     });
   });
   out.stats = rangeStats(out.filings);
@@ -4769,20 +4815,23 @@ function rangeAdd(tid, changes, origin, model, atBefore) {
 }
 
 /* Envoi des lignes en attente (seulement pour des pensées déjà reçues par le serveur) */
+// Le serveur n'accepte une ligne que si sa pensée y est déjà : une ligne attend donc que sa pensée soit envoyée.
+// Une ligne refusée est marquée « rejected », gardée sur l'appareil, et n'est plus renvoyée.
 async function rangeFlush() {
   var pend = Object.keys(_range.filings).map(function(k) { return _range.filings[k]; }).filter(function(f) {
     var t = _depot.thoughts[f.thought_id];
-    return f.sync !== 'sent' && (!t || t.status === 'sent');
+    return f.sync !== 'sent' && f.sync !== 'rejected' && (!t || t.status === 'sent');
   });
   for(var i = 0; i < pend.length; i += 50) {
     var rows = pend.slice(i, i + 50).map(function(f) {
       return { id: f.id, thought_id: f.thought_id, origin: f.origin, status: f.status, space: f.space,
                step: f.step, moment: f.moment || null, extras: f.extras || [], model: f.model || null, created_at: f.created_at };
     });
-    var r = await _sb.from('thought_filings').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
-    if(r.error) throw r.error;
-    rows.forEach(function(x) { if(_range.filings[x.id]) _range.filings[x.id].sync = 'sent'; });
+    var res = await sendRows('thought_filings', rows);
+    res.sent.forEach(function(id) { if(_range.filings[id]) _range.filings[id].sync = 'sent'; });
+    res.rejected.forEach(function(x) { var f = _range.filings[x.id]; if(f) { f.sync = 'rejected'; f.reject_reason = x.why; } });
     rangeSave();
+    if(res.retry) throw new Error('rangements : panne passagère');
   }
 }
 
@@ -4790,27 +4839,62 @@ async function rangeFlush() {
 async function rangeRequest(t) {
   var sess = await _sb.auth.getSession();
   var token = sess.data && sess.data.session && sess.data.session.access_token;
-  if(!token) throw new Error('pas de session');
+  var err = function(kind, msg) { var e = new Error(msg); e.kind = kind; return e; };
+  if(!token) throw err('auth', 'pas de session');
   var ctrl = window.AbortController ? new AbortController() : null;
   var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, RANGE_TIMEOUT_MS) : null;
   try {
-    var resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', {
+    var resp;
+    try { resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', {
       method: 'POST', signal: ctrl ? ctrl.signal : undefined,
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
       body: JSON.stringify({ task: 'file', thought: { id: t.id, body: t.body },
         spaces: rangeSpaces().map(function(s) { return { key: s.key, name: s.name, kind: s.kind, note: s.note }; }),
         now: rangeIsoLocal(new Date()), tz: (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Paris') })
-    });
+    }); } catch(e) {
+      // Pas de réseau : ne compte pas comme un essai. Délai dépassé : le proxy a peut-être travaillé, cela compte.
+      throw err(e && e.name === 'AbortError' ? 'fail' : 'net', 'réseau : ' + (e && e.message || e));
+    }
     var data = await resp.json().catch(function() { return {}; });
-    if(!resp.ok || !data.filing) throw new Error('statut ' + resp.status);
+    if(resp.status === 401) throw err('auth', 'statut 401');
+    if(resp.status === 400) throw err('bad', 'statut 400 : ' + String(data.error && data.error.message || ''));
+    if(!resp.ok || !data.filing) throw err('fail', 'statut ' + resp.status);
     return data;
   } finally { if(timer) clearTimeout(timer); }
+}
+// Une pensée attend l'IA si : envoyée, jamais rangée par l'IA, ni annulée ni rangée à la main par Rayan
+function rangeNeedsAI(t, idx) {
+  var l = idx.latest[t.id];
+  if(t.status !== 'sent' || idx.ai[t.id]) return false;
+  return !l || (l.status !== 'cancelled' && !(l.origin === 'user' && l.space && l.space !== 'inconnu'));
+}
+function rangeStopped(tid) {
+  var a = _range.attempts[tid];
+  return !!(a && (a.stop || a.n >= RANGE_MAX_TRIES));
+}
+function rangeMayTry(tid) {
+  var a = _range.attempts[tid];
+  if(!a) return true;
+  if(a.stop || a.n >= RANGE_MAX_TRIES) return false;
+  return !a.lastAt || Date.now() - new Date(a.lastAt).getTime() >= RANGE_GAP_MS;
+}
+// Essai raté qui compte : gardé sur l'appareil (fusionné entre onglets)
+function rangeCountTry(tid, stopNow, why) {
+  var a = _range.attempts[tid] || { n: 0 };
+  var now = new Date().toISOString();
+  var n = (a.n || 0) + 1;
+  _range.attempts[tid] = { n: n, lastAt: now, stop: !!stopNow || n >= RANGE_MAX_TRIES, why: String(why || '').slice(0, 160), updatedAt: now };
+  rangeSave();
+}
+function rangeRetry(tid) {
+  _range.attempts[tid] = { n: 0, lastAt: null, stop: false, why: '', updatedAt: new Date().toISOString() };
+  delete _rangeFailed[tid];
+  rangeSave(); depotRender(); setTimeout(rangeRun, 0);
 }
 async function rangeRequestAll() {
   var idx = rangeIndex();
   var todo = depotList().filter(function(t) {
-    var l = idx.latest[t.id];
-    return t.status === 'sent' && !idx.ai[t.id] && !(l && l.status === 'cancelled') && !_rangeInFlight[t.id];
+    return rangeNeedsAI(t, idx) && !_rangeInFlight[t.id] && rangeMayTry(t.id);
   }).slice(0, RANGE_PER_RUN);
   for(var i = 0; i < todo.length; i++) {
     var t = todo[i];
@@ -4831,6 +4915,9 @@ async function rangeRequestAll() {
       }
     } catch(e) {
       _rangeFailed[t.id] = true;
+      // 401 ou pas de réseau : ne compte pas. 400 : ne passera jamais, arrêt. Le reste compte (3 au plus).
+      if(e && e.kind === 'bad') rangeCountTry(t.id, true, e.message);
+      else if(!e || (e.kind !== 'auth' && e.kind !== 'net')) rangeCountTry(t.id, false, e && e.message);
       console.warn('Rangement : reporté —', e && e.message || e);
     }
     delete _rangeInFlight[t.id];
@@ -4898,12 +4985,23 @@ function rangeBlock(t) {
   var idx = rangeIndex(), f = idx.latest[t.id];
   var box = rgEl('div', 'rg-box');
   var editing = _rangeEdit && _rangeEdit.tid === t.id ? _rangeEdit.kind : null;
-  if(!f || !f.step) {
+  if(t.status === 'rejected') {
+    box.appendChild(rgEl('div', 'rg-wait', 'Refusée par le serveur : elle reste ici, telle quelle, mais ne sera pas rangée.'));
+    return box;
+  }
+  var manual = f && f.space && f.space !== 'inconnu';
+  if(!f || (!f.step && !manual)) {
     // Pas encore de proposition
-    var st = _rangeInFlight[t.id] ? 'ARC range…' : _rangeFailed[t.id] ? 'À ranger plus tard' : 'À ranger';
-    box.appendChild(rgEl('div', 'rg-wait' + (_rangeInFlight[t.id] ? ' busy' : ''), st));
-    if(f && f.space && f.space !== 'inconnu') { var r0 = rgEl('div', 'rg-row'); r0.appendChild(rangePill(f.space)); box.appendChild(r0); }
     var acts0 = rgEl('div', 'rg-acts');
+    if(rangeStopped(t.id) && !_rangeInFlight[t.id]) {
+      box.appendChild(rgEl('div', 'rg-wait', 'À ranger à la main'));
+      box.appendChild(rgEl('div', 'rg-hesite', 'ARC n\'a pas réussi à la ranger. Choisis l\'espace, ou réessaie.'));
+      box.appendChild(rangeSpaceChips(t.id, null));
+      acts0.appendChild(rangeBtn('Réessayer', function() { rangeRetry(t.id); }, 'main'));
+    } else {
+      var st = _rangeInFlight[t.id] ? 'ARC range…' : _rangeFailed[t.id] ? 'À ranger plus tard' : 'À ranger';
+      box.appendChild(rgEl('div', 'rg-wait' + (_rangeInFlight[t.id] ? ' busy' : ''), st));
+    }
     acts0.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
     box.appendChild(acts0);
     return box;
@@ -4931,7 +5029,8 @@ function rangeBlock(t) {
     });
     box.appendChild(form);
     setTimeout(function() { inp.focus(); }, 0);
-  } else box.appendChild(rgEl('div', 'rg-step' + (f.status === 'done' ? ' done' : ''), f.step));
+  } else if(f.step) box.appendChild(rgEl('div', 'rg-step' + (f.status === 'done' ? ' done' : ''), f.step));
+  else box.appendChild(rgEl('div', 'rg-wait', 'Pas encore d\'étape.'));
   // Moment
   var mt = rangeMomentText(f.moment);
   if(mt) box.appendChild(rgEl('div', 'rg-moment', mt));
@@ -4977,7 +5076,7 @@ function rangeBlock(t) {
     var acts = rgEl('div', 'rg-acts');
     acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(t.id, { status: 'done' }, 'user'); }, 'main'));
     acts.appendChild(rangeBtn(mt ? 'Changer le moment' : 'Fixer un moment', function() { rangeEditOpen(t.id, 'moment'); }));
-    acts.appendChild(rangeBtn('Modifier l\'étape', function() { rangeEditOpen(t.id, 'step'); }));
+    acts.appendChild(rangeBtn(f.step ? 'Modifier l\'étape' : 'Ajouter une étape', function() { rangeEditOpen(t.id, 'step'); }));
     if(!unsure) acts.appendChild(rangeBtn('Changer d\'espace', function() { rangeEditOpen(t.id, 'space'); }));
     acts.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
     box.appendChild(acts);
