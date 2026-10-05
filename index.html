@@ -775,8 +775,9 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 #depot-ta::placeholder{color:#8e8e93}
 .depot-send{flex-shrink:0;min-width:44px;min-height:44px;padding:0 18px;border-radius:18px;border:none;background:#f5f5f7;color:#000;font-family:-apple-system,system-ui,sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s}
 .depot-send:disabled{opacity:.35;cursor:default}
-.depot-note{pointer-events:auto;max-width:720px;margin:0 auto 6px;min-height:0;font-family:-apple-system,system-ui,sans-serif;font-size:14px;color:var(--t2);text-align:center;opacity:0;transition:opacity .2s}
-.depot-note.on{opacity:1}
+.depot-note{pointer-events:none;width:fit-content;max-width:min(720px,100%);margin:0 auto 6px;padding:4px 12px;border-radius:14px;background:rgba(28,28,30,.95);border:1px solid var(--b2);font-family:-apple-system,system-ui,sans-serif;font-size:14px;color:var(--t1);text-align:center;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+/* Invisible = ni visible ni cliquable : le message effacé ne doit pas capter les clics du contenu dessous */
+.depot-note.on{opacity:1;visibility:visible;pointer-events:auto}
 .depot-note button{background:none;border:none;color:var(--t1);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer;min-height:32px;padding:0 4px}
 .depot-note.err{color:var(--red)}
 .depot-entry{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;min-height:52px;margin:14px 0 4px;padding:10px 16px;border-radius:16px;border:1px solid var(--b2);background:var(--bg2);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;cursor:pointer;text-align:left}
@@ -798,6 +799,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .depot-state.sent{background:rgba(48,209,88,.14);color:#4ade80}
 .depot-state.wait{background:rgba(255,149,0,.14);color:#ffb340}
 .depot-state.local{background:rgba(255,255,255,.08);color:var(--t1)}
+.depot-state.rej{background:rgba(255,69,58,.16);color:#ff8a80}
 .depot-body{font-size:17px;line-height:1.45;color:var(--t1);white-space:pre-wrap;word-break:break-word}
 .depot-empty{text-align:center;padding:48px 12px}
 .depot-empty-t{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:8px}
@@ -1070,6 +1072,70 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .h-mondes-grid{grid-template-columns:repeat(3,1fr)}
 }
 
+/* ═══ RANGEMENT ═══ */
+.rg-box{margin-top:12px;padding-top:12px;border-top:1px solid var(--b1);font-family:-apple-system,system-ui,sans-serif}
+.rg-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.rg-lbl{font-size:13px;font-weight:600;color:var(--t2)}
+.rg-pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:12px;border:1px solid color-mix(in srgb,var(--rg-c) 55%,transparent);background:color-mix(in srgb,var(--rg-c) 14%,transparent);color:var(--t1);font-size:13px;font-weight:600}
+.rg-dot{width:8px;height:8px;border-radius:50%;background:var(--rg-c);flex-shrink:0}
+.rg-done{font-size:13px;font-weight:600;color:#4ade80}
+.rg-step{font-size:17px;font-weight:600;line-height:1.4;color:var(--t1);white-space:pre-wrap;word-break:break-word}
+.rg-step.done{text-decoration:line-through;color:var(--t2)}
+.rg-moment{font-size:15px;color:#ffb340;margin-top:4px}
+.rg-extras{margin-top:10px}
+.rg-extras ul{margin:4px 0 0 18px;padding:0}
+.rg-extras li{font-size:15px;line-height:1.45;color:var(--t2);white-space:pre-wrap;word-break:break-word}
+.rg-hesite{font-size:15px;color:var(--t1);margin:2px 0 8px}
+.rg-wait{font-size:14px;color:var(--t2)}
+.rg-wait.busy{color:var(--t1)}
+.rg-note{font-size:15px;line-height:1.45;color:var(--t2)}
+.rg-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.rg-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.rg-btn{min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:var(--bg3);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;font-size:15px;font-weight:500;cursor:pointer}
+.rg-btn:hover{border-color:var(--b3)}
+.rg-btn.main{background:#f5f5f7;color:#000;border-color:#f5f5f7;font-weight:600}
+.rg-btn.quiet{background:none;border-color:transparent;color:var(--t2)}
+.rg-btn.rg-chip{padding:0 8px;background:none}
+.rg-btn.rg-chip.on{border-color:var(--t2)}
+.rg-edit{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.rg-input{flex:1 1 220px;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--b2);background:var(--bg3);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;font-size:16px;color-scheme:dark}
+.depot-cancelled{margin-top:20px}
+.depot-cancelled summary{min-height:44px;display:flex;align-items:center;font-size:15px;color:var(--t2);cursor:pointer}
+.depot-item.off{opacity:.7}
+.next-wrap{margin:8px 0 26px;font-family:-apple-system,system-ui,sans-serif}
+.next-title{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:12px}
+.next-item{padding:14px 16px;border-radius:16px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:10px}
+.next-step{font-size:17px;font-weight:600;line-height:1.4;color:var(--t1);word-break:break-word}
+.next-when{font-size:14px;color:#ffb340}
+.next-item .rg-acts{margin-top:8px}
+.next-empty{font-size:15px;line-height:1.55;color:var(--t2);padding:14px 16px;border-radius:16px;border:1px dashed var(--b2)}
+.next-empty[hidden]{display:none}
+.next-torange{display:block;min-height:44px;padding:0 4px;margin:2px 0 6px;border:none;background:none;color:var(--t2);font-family:-apple-system,system-ui,sans-serif;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.next-torange[hidden]{display:none}
+.next-torange:hover{color:var(--t1)}
+.matin-torange{display:block;min-height:44px;margin-top:16px;padding:0 4px;border:none;background:none;color:var(--t2);font-family:-apple-system,system-ui,sans-serif;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+/* ═══ POINT DU MATIN ═══ z 28 : au-dessus des écrans et de « Déposé » (25), sous la barre de dépôt (30) */
+#matin-screen{position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.72);display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:-apple-system,system-ui,sans-serif}
+#matin-screen.open{display:block}
+/* Ce qui est amené à l'écran (focus au clavier, scrollIntoView) s'arrête au-dessus de la barre de dépôt */
+#matin-screen,#depot-screen{scroll-padding-bottom:calc(var(--depot-space,0px) + 16px)}
+.matin-card{max-width:560px;margin:calc(24px + env(safe-area-inset-top)) auto calc(var(--depot-space,0px) + 24px);padding:24px 20px;border-radius:24px;background:var(--bg1);border:1px solid var(--b2)}
+.matin-date{font-size:28px;font-weight:800;letter-spacing:-.4px;color:var(--t1)}
+.matin-lead{font-size:16px;line-height:1.5;color:var(--t2);margin:6px 0 18px}
+.matin-sec{margin-top:18px}
+.matin-sec-t{font-size:15px;font-weight:700;color:var(--t1);margin-bottom:4px}
+.matin-sec-s{font-size:14px;line-height:1.45;color:var(--t2);margin-bottom:8px}
+.matin-row{padding:12px 14px;border-radius:16px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:8px}
+.matin-when{font-size:14px;font-weight:600;color:#ffb340}
+.matin-sit{font-size:14px;color:var(--t2)}
+.matin-step{font-size:17px;font-weight:600;line-height:1.4;color:var(--t1);margin:4px 0 2px;word-break:break-word}
+.matin-row .rg-acts{margin-top:8px}
+.matin-more{margin-top:4px}
+.matin-empty{font-size:17px;line-height:1.5;color:var(--t1);padding:18px 16px;border-radius:16px;border:1px dashed var(--b2);text-align:center}
+.matin-go{display:block;width:100%;min-height:52px;margin-top:22px;border:none;border-radius:16px;background:#f5f5f7;color:#000;font-family:-apple-system,system-ui,sans-serif;font-size:17px;font-weight:700;cursor:pointer}
+.matin-field{display:flex;align-items:center;gap:12px;min-height:44px;font-size:16px;color:var(--t1);margin-bottom:10px}
+.matin-field input[type=checkbox]{width:24px;height:24px}
+.matin-field input[type=time]{min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--b2);background:var(--bg3);color:var(--t1);font-size:17px;color-scheme:dark}
 /* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
@@ -1091,6 +1157,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <label class="h-menu-item" style="cursor:pointer"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Importer<input type="file" id="file-imp" accept=".json" style="display:none"></label>
         <button class="h-menu-item" id="btn-export"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 14V5M4 9l4-4 4 4M2 3h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Exporter</button>
         <button class="h-menu-item" id="btn-auth"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="5.5" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 14c.8-2.6 2.9-4 5.5-4s4.7 1.4 5.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-auth-lbl">Se connecter</span></button>
+        <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-matin-lbl">Point du matin</span></button>
       </div>
     </div>
   </div></nav>
@@ -1100,6 +1167,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="h-sub" id="h-sub-txt">Rayan &middot; Valence.</div>
     <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span class="h-sub-critical-dot" style="background:var(--red)"></span><span id="h-critical-txt"></span></div>
     <button class="depot-entry" id="depot-open" type="button"><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true">›</span></button>
+    <button class="depot-entry" id="matin-open" type="button"><span class="depot-entry-t">Point du jour</span><span class="depot-entry-n" id="matin-entry-n"></span><span class="depot-entry-go" aria-hidden="true">›</span></button>
     <div class="h-stats">
       <div class="h-stat" style="animation-delay:.1s"><div class="h-stat-v" style="color:#FF9500" id="hs-proj">5</div><div class="h-stat-l">Projets</div></div>
       <div class="h-stat" style="animation-delay:.15s"><div class="h-stat-v" style="color:var(--green)" id="hs-done">0</div><div class="h-stat-l">Accomplies</div></div>
@@ -1108,6 +1176,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     </div>
   </div>
   <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
+  <!-- PROCHAINES ÉTAPES : tirées des pensées rangées -->
+  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
+    <div class="next-title" id="next-title">Prochaines étapes</div>
+    <div id="next-list"></div>
+    <button class="next-torange" id="next-torange" type="button" hidden></button>
+    <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
+  </section>
   <!-- SECTION MONDES -->
   <div class="h-section">
     <div class="h-section-head">
@@ -1513,7 +1588,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="pcp">
       <div class="cp-head" style="--wc:#30d158">
         <div class="cp-logo" style="background:#30d158">C</div>
-        <div class="cp-info"><div class="cp-title">Claude Sant&#233;</div><div class="cp-sub" id="sante-cp-sub">Conseiller bien-&#234;tre</div></div>
+        <div class="cp-info"><div class="cp-title">Claude Sant&#233;</div><div class="cp-sub" id="sante-cp-sub">M&#233;moire et organisation</div></div>
         <button class="cp-clr" id="btn-sante-cp-clr">Effacer</button>
       </div>
       <div class="cp-msgs" id="cp-msgs-sante">
@@ -1607,7 +1682,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="pcp">
       <div class="cp-head" style="--wc:#0a84ff">
         <div class="cp-logo" style="background:#0a84ff">C</div>
-        <div class="cp-info"><div class="cp-title">Claude Juridique</div><div class="cp-sub">Conseiller personnel</div></div>
+        <div class="cp-info"><div class="cp-title">Claude Juridique</div><div class="cp-sub">M&#233;moire et organisation</div></div>
         <button class="cp-clr" id="btn-jur-cp-clr">Effacer</button>
       </div>
       <div class="cp-msgs" id="cp-msgs-jur">
@@ -1695,6 +1770,24 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <div class="depot-empty-t">Rien de déposé pour l'instant</div>
       <div class="depot-empty-s">Écris ou dicte une pensée dans la barre en bas de l'écran. Elle restera ici, telle quelle, sur ce Mac comme sur ton iPhone.</div>
     </div>
+  </div>
+</div>
+<!-- POINT DU MATIN : par-dessus l'accueil, sous la barre de dépôt (qui reste utilisable) -->
+<div id="matin-screen" role="dialog" aria-modal="false" aria-labelledby="matin-date" aria-hidden="true">
+  <div class="matin-card">
+    <div id="matin-view">
+      <div class="matin-date" id="matin-date"></div>
+      <div class="matin-lead" id="matin-lead"></div>
+      <div id="matin-body"></div>
+      <button class="matin-go" id="matin-close" type="button">C'est parti</button>
+    </div>
+    <form id="matin-settings" hidden>
+      <div class="matin-date">Point du matin</div>
+      <div class="matin-lead">ARC prépare un point à l'heure que tu choisis. Il s'affiche à la première ouverture d'ARC après cette heure, une fois par jour sur cet appareil.</div>
+      <label class="matin-field"><input type="checkbox" id="matin-enabled"> <span>Afficher le point du matin</span></label>
+      <label class="matin-field"><span>Heure</span> <input type="time" id="matin-hour" step="300" required></label>
+      <div class="rg-acts"><button class="rg-btn main" type="submit">Enregistrer</button><button class="rg-btn quiet" type="button" id="matin-settings-cancel">Annuler</button></div>
+    </form>
   </div>
 </div>
 <!-- DÉPÔT : barre fixe en bas de l'écran -->
@@ -2380,7 +2473,7 @@ var POLES = [
   },
   {
     id:"juridique",icon:"⚖️",name:"Juridique",color:"#0a84ff",wbg:"#000305",
-    desc:"Ton conseiller juridique personnel. Droits, contrats, démarches.",
+    desc:"Tes démarches, contrats et échéances, rangés et datés.",
     jurSections:[
       {id:"statut",icon:"🏢",title:"Mon entreprise & statut",badge:"ARYAN"},
       {id:"contrats",icon:"📄",title:"Contrats & documents",badge:""},
@@ -3211,13 +3304,9 @@ function santeCpSend(textOverride){
   var today = new Date().toDateString();
   var ci = S.poles.sante.find(function(c){ return new Date(c.date).toDateString() === today; });
   var ciTxt = ci ? 'Check-in aujourd\'hui : Sommeil='+ci.sommeil+'h, Energie='+ci.energie+'/10, Sport='+ci.sport+'min, Mental='+ci.mental+'/10, Score='+calcSanteScore(ci)+'/100' : 'Pas encore de check-in aujourd\'hui.';
-  var streak = getSanteStreak();
-  var avgScore = getAvgScore(7);
-  var hab = S.poles.habitudes || [];
-  var key = 'hab_' + today;
-  var doneHab = (S.poles.habDone && S.poles.habDone[key]) || [];
-  var habTxt = hab.length ? hab.map(function(h){ return h.name + (doneHab.indexOf(h.id)!==-1 ? ' (fait)' : ' (pas encore)'); }).join(', ') : 'Pas d\'habitudes configurees.';
-  var sys = 'Tu es le conseiller sante et bien-etre personnel de Rayan, entrepreneur a Valence (France). Il a plusieurs projets actifs (ARYAN app livraison, Atlas formation FBA, FBA, Dark Kitchen, TELENEUF) et doit performer mentalement et physiquement.\n\nDonnees: '+ciTxt+'\nStreak check-in: '+streak+' jour(s) de suite\nScore moyen 7j: '+avgScore+'/100\nHabitudes: '+habTxt+'\n\nSois direct, pratique, scientifiquement fonde. 3-4 phrases max sauf si demande plus. Reponds en francais.';
+  // Mémoire et organisation seulement : les notes datées de Rayan, jamais un score ni une série à interpréter
+  var jou = (S.poles.sante_journal || []).slice(-10).map(function(n){ return '- ' + new Date(n.ts).toLocaleDateString('fr-FR') + ' : ' + n.t; }).join('\n');
+  var sys = 'Tu aides Rayan a tenir la memoire et l\'organisation de sa sante. Ton role : noter et dater ce qu\'il dit, retrouver et resumer fidelement ses notes, preparer un rendez-vous (questions a poser au medecin, elements et documents a apporter), lister les pieces a reunir, lui rappeler les rendez-vous et echeances qu\'il a lui-meme fixes, et donner une regle generale avec le lien de la source officielle (ameli.fr, service-public.fr, has-sante.fr).\n\nTu ne poses aucun diagnostic, tu n\'interpretes ni symptome ni mesure ni tendance, tu ne dis pas si une situation est urgente, tu ne proposes ni traitement ni dose. Si on te le demande, refuse poliment en une phrase et oriente vers un medecin ou un pharmacien ; en cas de doute sur une urgence, rappelle simplement que le 15 ou le 112 repondent a toute heure.\n\n'+ciTxt.replace(/, Score=[^,]*$/, '')+'\nSes notes sante recentes :\n'+(jou || 'Aucune note.')+'\n\nReponds en francais, en 3 a 5 phrases, de facon concrete.';
   claudeCall(txt, 'sante', 'sante', sys);
 }
 
@@ -3440,7 +3529,7 @@ function jurCpSend(textOverride){
   var items = [];
   JUR_SECTIONS.forEach(function(sec){ (S.poles.juridique[sec.id]||[]).forEach(function(it){ if(it.status !== 'done') items.push('['+sec.title+'] '+it.t); }); });
   var itemsTxt = items.length ? items.slice(0,10).join('; ') : 'Aucun element enregistre.';
-  var sys = 'Tu es le conseiller juridique et administratif personnel de Rayan. Rayan est entrepreneur a Valence (Drome, France). Ses projets: ARYAN (app livraison halal, recherche statut juridique), FBA Amazon (private label), Dark Kitchen halal, TELENEUF (box streaming HDMI), Atlas (formation Amazon FBA vendue en ligne).\n\nSon dossier juridique actuel: '+itemsTxt+'\n\nREGLE ABSOLUE: Usage personnel uniquement, pas d\'acte juridique reel. Fournis des infos pratiques claires. Recommande toujours de consulter un avocat ou expert-comptable pour tout acte reel. Reponds en francais, sois concret et precis.';
+  var sys = 'Tu aides Rayan a tenir la memoire et l\'organisation de ses demarches juridiques et administratives. Rayan est entrepreneur a Valence (Drome, France). Ton role : noter et dater, retrouver et resumer fidelement son dossier, lister les pieces a reunir, preparer un rendez-vous (questions pour l\'avocat, le notaire, l\'expert-comptable ou l\'administration), lui rappeler les echeances qu\'il a lui-meme fixees, et donner une regle generale avec le lien de la source officielle (service-public.fr, legifrance.gouv.fr, urssaf.fr, impots.gouv.fr).\n\nTu ne donnes aucun avis sur son cas : pas de « dans votre cas, vous avez droit a… », pas de calcul de delai de recours, pas de montant ni de taux tire de memoire, pas d\'acte redige sur mesure. Si on te le demande, refuse poliment en une phrase et oriente vers un avocat, un notaire, un expert-comptable ou le service public concerne.\n\nSon dossier actuel : '+itemsTxt+'\n\nReponds en francais, de facon concrete et breve.';
   claudeCall(txt, 'juridique', 'juridique', sys);
 }
 
@@ -4351,8 +4440,13 @@ function depotMerge(a, b) {
       var t = src.thoughts[id], cur = out.thoughts[id];
       if(!cur) out.thoughts[id] = Object.assign({}, t);
       else if(t.status === 'sent' && cur.status !== 'sent') { cur.status = 'sent'; cur.sent_at = t.sent_at || cur.sent_at || null; }
+      else if(t.status === 'rejected' && cur.status !== 'sent' && cur.status !== 'rejected') { cur.status = 'rejected'; cur.reject_reason = t.reject_reason || null; }
     });
-    Object.keys(src.events).forEach(function(id) { if(!out.acked[id]) out.events[id] = src.events[id]; });
+    // Un événement refusé le reste : aucun onglet ne le renvoie
+    Object.keys(src.events).forEach(function(id) {
+      if(out.acked[id]) return;
+      var ex = out.events[id]; out.events[id] = ex && ex.rejected ? ex : src.events[id];
+    });
   });
   // Liste des confirmés : 30 jours, 2 000 au plus
   var limit = new Date(Date.now() - DEPOT_ACK_DAYS * 864e5).toISOString();
@@ -4401,37 +4495,68 @@ function depotSubmit() {
   depotEvent('deposit');
   ta.value = ''; depotAutoGrow(); depotSendState();
   depotRender();
-  depotNote(getUID() ? 'Déposé.' : 'Déposé sur cet appareil seulement.', false, true);
+  _rangeLastDeposit = { id: id, at: Date.now() };
+  depotNote(getUID() ? 'Déposé · à ranger' : 'Déposé sur cet appareil seulement.', false, true);
   setTimeout(depotFlush, 0);
 }
 
+/* Envoi des lignes (pensées, événements, rangements), en ajout seul, doublons ignorés sur id.
+   Une seule ligne refusée fait échouer toute la requête (comportement de Postgres) : en cas d'échec définitif du lot,
+   on renvoie ligne par ligne pour isoler la ou les lignes refusées, et les autres partent.
+   Définitif : règle d'accès (42501), pensée absente (23503), contrainte (23514), format (22P02), ou statut 4xx
+   autre que 401 et 429. Réseau, 401, 429 et 5xx : on réessaiera plus tard. */
+var SEND_FINAL_CODES = ['42501', '23503', '23514', '22P02'];
+function sendIsFinal(r) {
+  var code = r.error && r.error.code, st = r.status || 0;
+  if(code && SEND_FINAL_CODES.indexOf(String(code)) !== -1) return true;
+  return st >= 400 && st < 500 && st !== 401 && st !== 429;
+}
+function sendWhy(r) { return String((r.error && r.error.code) || r.status || '?') + ' ' + String((r.error && r.error.message) || '').slice(0, 120); }
+// Résultat : { sent: [id], rejected: [{ id, why }], retry: vrai si une panne passagère a interrompu l'envoi }
+async function sendRows(table, rows) {
+  var r = await _sb.from(table).upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
+  if(!r.error) return { sent: rows.map(function(x) { return x.id; }), rejected: [], retry: false };
+  if(!sendIsFinal(r)) return { sent: [], rejected: [], retry: true };
+  if(rows.length === 1) return { sent: [], rejected: [{ id: rows[0].id, why: sendWhy(r) }], retry: false };
+  var out = { sent: [], rejected: [], retry: false };
+  for(var i = 0; i < rows.length; i++) {
+    var one = await sendRows(table, [rows[i]]);
+    out.sent = out.sent.concat(one.sent); out.rejected = out.rejected.concat(one.rejected);
+    if(one.retry) { out.retry = true; break; }
+  }
+  return out;
+}
+
 // Envoi de la file : pensées en attente puis événements. Jamais sans session.
+// Une pensée refusée par le serveur reste sur l'appareil, marquée « rejected », et n'est plus renvoyée.
 async function depotFlush() {
   if(!_sb || !getUID()) return;
   if(_depotBusy) { _depotAgain = true; return; }
   _depotBusy = true;
   try {
-    var pend = depotList().filter(function(t) { return t.status !== 'sent'; });
+    var pend = depotList().filter(function(t) { return t.status !== 'sent' && t.status !== 'rejected'; });
     for(var i = 0; i < pend.length; i += 50) {
       var rows = pend.slice(i, i + 50).map(function(t) {
         return { id: t.id, body: t.body, source: t.source || 'text', device: (t.device || 'web').slice(0, 40), created_at: t.created_at };
       });
-      var r = await _sb.from('thoughts').upsert(rows, { onConflict: 'id', ignoreDuplicates: true });
-      if(r.error) throw r.error;
+      var res = await sendRows('thoughts', rows);
       var now = new Date().toISOString();
-      rows.forEach(function(x) { var t = _depot.thoughts[x.id]; if(t) { t.status = 'sent'; t.sent_at = now; } });
+      res.sent.forEach(function(id) { var t = _depot.thoughts[id]; if(t) { t.status = 'sent'; t.sent_at = now; } });
+      res.rejected.forEach(function(x) { var t = _depot.thoughts[x.id]; if(t) { t.status = 'rejected'; t.reject_reason = x.why; t.rejected_at = now; } });
       depotSave();
+      if(res.retry) throw new Error('pensées : panne passagère');
     }
-    var evs = Object.keys(_depot.events).map(function(k) { return _depot.events[k]; });
+    var evs = Object.keys(_depot.events).map(function(k) { return _depot.events[k]; }).filter(function(e) { return !e.rejected; });
     for(var j = 0; j < evs.length; j += 100) {
       var batch = evs.slice(j, j + 100);
-      var re = await _sb.from('arc_events').upsert(batch.map(function(e) { return { id: e.id, kind: e.kind, at: e.at }; }),
-                                                   { onConflict: 'id', ignoreDuplicates: true });
-      if(re.error) throw re.error;
-      // Un événement confirmé quitte l'appareil ; son id rejoint « acked » pour que la fusion ne le fasse pas revenir
+      var re = await sendRows('arc_events', batch.map(function(e) { return { id: e.id, kind: e.kind, at: e.at }; }));
+      // Un événement confirmé quitte l'appareil ; son id rejoint « acked » pour que la fusion ne le fasse pas revenir.
+      // Un événement refusé reste, marqué, et n'est plus renvoyé.
       var ackAt = new Date().toISOString();
-      batch.forEach(function(e) { delete _depot.events[e.id]; _depot.acked[e.id] = ackAt; });
+      re.sent.forEach(function(id) { delete _depot.events[id]; _depot.acked[id] = ackAt; });
+      re.rejected.forEach(function(x) { var e = _depot.events[x.id]; if(e) { e.rejected = true; e.reject_reason = x.why; } });
       depotSave();
+      if(re.retry) throw new Error('événements : panne passagère');
     }
   } catch(e) {
     console.warn('Dépôt : envoi reporté —', e && e.message || e);
@@ -4439,6 +4564,7 @@ async function depotFlush() {
   _depotBusy = false;
   depotRender();
   if(_depotAgain) { _depotAgain = false; setTimeout(depotFlush, 0); }
+  else setTimeout(rangeRun, 0);   // les pensées envoyées peuvent être rangées
 }
 
 // Lecture des 200 dernières pensées du compte, fusionnées par id avec celles de l'appareil
@@ -4458,7 +4584,7 @@ async function depotPull() {
     depotRender();
   } catch(e) { console.warn('Dépôt : lecture reportée —', e && e.message || e); }
 }
-function depotSync() { depotFlush().then(depotPull); }
+function depotSync() { depotFlush().then(depotPull).then(rangePull); }
 
 /* Affichage */
 function depotWhen(iso) {
@@ -4470,9 +4596,18 @@ function depotWhen(iso) {
   return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short',
     year: d.getFullYear() === today.getFullYear() ? undefined : 'numeric' }) + ' · ' + h;
 }
-function depotRender() {
-  var all = depotList();
-  var waiting = all.filter(function(t) { return t.status !== 'sent'; }).length;
+// force : rendu demandé par un éditeur de la liste (sinon, on ne détruit pas un champ en cours de saisie)
+function depotRender(force) {
+  var ae = document.activeElement;
+  if(force !== true && ae && ae.closest && ae.closest('#depot-list') && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) {
+    _renderDeferred = true; rangeHomeRender(); return;
+  }
+  _renderDeferred = false;
+  var idx = _range ? rangeIndex() : { latest: {} };
+  var everything = depotList();
+  var cancelled = everything.filter(function(t) { var f = idx.latest[t.id]; return f && f.status === 'cancelled'; });
+  var all = everything.filter(function(t) { return cancelled.indexOf(t) === -1; });
+  var waiting = all.filter(function(t) { return t.status !== 'sent' && t.status !== 'rejected'; }).length;
   var signed = !!getUID();
   var cnt = document.getElementById('depot-count');
   if(cnt) {
@@ -4480,6 +4615,7 @@ function depotRender() {
     if(waiting) txt += ' · ' + waiting + (signed ? ' en attente' : ' sur cet appareil');
     cnt.textContent = txt;
   }
+  if(_range) rangeHomeRender();
   var list = document.getElementById('depot-list'); if(!list) return;
   var pend = document.getElementById('depot-pending');
   if(waiting) {
@@ -4496,13 +4632,34 @@ function depotRender() {
     var when = document.createElement('span'); when.textContent = depotWhen(t.created_at);
     var st = document.createElement('span');
     if(t.status === 'sent') { st.className = 'depot-state sent'; st.textContent = 'Envoyée'; }
+    else if(t.status === 'rejected') { st.className = 'depot-state rej'; st.textContent = 'Refusée par le serveur'; }
     else if(signed) { st.className = 'depot-state wait'; st.textContent = 'En attente'; }
     else { st.className = 'depot-state local'; st.textContent = 'Sur cet appareil seulement'; }
     meta.appendChild(when); meta.appendChild(st);
     var body = document.createElement('div'); body.className = 'depot-body'; body.textContent = t.body;
     item.appendChild(meta); item.appendChild(body);
+    if(_range) item.appendChild(rangeBlock(t));
     list.appendChild(item);
   });
+  // Annulées : repliées, rien n'est effacé, on peut rétablir
+  if(cancelled.length) {
+    var det = document.createElement('details'); det.className = 'depot-cancelled'; det.open = _rangeCancelOpen;
+    det.addEventListener('toggle', function() { _rangeCancelOpen = det.open; });
+    det.appendChild(rgEl('summary', null, 'Annulées (' + cancelled.length + ')'));
+    cancelled.forEach(function(t) {
+      var item = rgEl('article', 'depot-item off'); item.setAttribute('data-id', t.id);
+      item.appendChild(rgEl('div', 'depot-meta', depotWhen(t.created_at)));
+      item.appendChild(rgEl('div', 'depot-body', t.body));
+      var acts = rgEl('div', 'rg-acts');
+      acts.appendChild(rangeBtn('Rétablir', function() {
+        var f = rangeIndex().latest[t.id];
+        rangeAdd(t.id, { status: f && f.step && f.space !== 'inconnu' ? 'filed' : 'unsure' }, 'user');
+      }));
+      item.appendChild(acts);
+      det.appendChild(item);
+    });
+    list.appendChild(det);
+  }
 }
 function depotNote(msg, isErr, withLink) {
   var n = document.getElementById('depot-note'); if(!n) return;
@@ -4558,8 +4715,731 @@ function depotLayout() {
   root.style.setProperty('--depot-space', bar.offsetHeight + 'px');
 }
 
+/* ═══ RANGEMENT ═══
+   Après l'envoi d'une pensée, ARC demande au proxy (task "file") où la ranger : un espace, une prochaine étape,
+   un moment, ce qui est gardé pour après. Chaque rangement est une ligne, jamais modifiée : une correction de
+   Rayan est une nouvelle ligne (origin "user"). Pour une pensée, la ligne la plus récente (created_at) fait foi.
+   Les lignes vivent dans arc_filings_v1 (même mécanique que les pensées : écriture locale, fusion par id entre
+   onglets), puis partent dans thought_filings (ajout seul, doublons ignorés). Le dépôt n'attend jamais le rangement.
+   Tout texte de Rayan ou de l'IA s'affiche par textContent. */
+var RANGE_KEY = 'arc_filings_v1';
+var RANGE_PER_RUN = 5, RANGE_TIMEOUT_MS = 30000;
+// Chaque essai de rangement coûte : 3 au plus par pensée, espacés d'une minute au moins. Ensuite, à la main.
+var RANGE_MAX_TRIES = 3, RANGE_GAP_MS = 60000;
+var RANGE_DORMANT = ['fba', 'kitchen', 'teleneuf'];   // décision de Rayan du 5 octobre : endormis, pas archivés
+var _range = null;                 // { filings: { id: {...} }, stats: { proposed, corrected } }
+var _rangeBusy = false, _rangeAgain = false;
+var _rangeInFlight = {};           // pensée → rangement demandé en ce moment
+var _rangeFailed = {};             // pensée → dernier essai échoué (pendant ce lancement)
+var _rangeEdit = null;             // { tid, kind } : éditeur ouvert dans la liste
+var _rangeLastDeposit = null;      // { id, at } : pour le message sous la barre
+var _rangeCancelOpen = false, _renderDeferred = false;
+// Les rangements déjà faits (sur cet appareil ou un autre) doivent être lus avant toute demande à l'IA :
+// sinon une pensée rangée ailleurs serait redemandée (appel payé pour rien, proposition en double)
+var _rangePulled = false;
+
+function rangeNorm(d) {
+  if(!d || typeof d !== 'object') d = {};
+  if(!d.filings || typeof d.filings !== 'object') d.filings = {};
+  if(!d.stats || typeof d.stats !== 'object') d.stats = { proposed: 0, corrected: 0 };
+  if(!d.attempts || typeof d.attempts !== 'object') d.attempts = {};
+  return d;
+}
+function rangeRead() {
+  try { return rangeNorm(JSON.parse(localStorage.getItem(RANGE_KEY) || 'null')); } catch(e) { return rangeNorm(null); }
+}
+// Union par id ; une ligne envoyée le reste. Les lignes ne sont jamais retirées.
+function rangeMerge(a, b) {
+  var out = rangeNorm({});
+  [a, b].forEach(function(src) {
+    Object.keys(src.filings).forEach(function(id) {
+      var f = src.filings[id], cur = out.filings[id];
+      if(!cur) out.filings[id] = Object.assign({}, f);
+      else if(f.sync === 'sent') cur.sync = 'sent';
+      else if(f.sync === 'rejected' && cur.sync !== 'sent') { cur.sync = 'rejected'; cur.reject_reason = f.reject_reason || null; }
+    });
+    // Essais de rangement par pensée : la version la plus récente l'emporte (« Réessayer » remet à zéro)
+    Object.keys(src.attempts).forEach(function(tid) {
+      var a = src.attempts[tid], cur = out.attempts[tid];
+      if(!cur || (a.updatedAt || '') > (cur.updatedAt || '')) out.attempts[tid] = Object.assign({}, a);
+    });
+  });
+  out.stats = rangeStats(out.filings);
+  return out;
+}
+function rangeLoad() { _range = rangeRead(); }
+function rangeSave() {
+  _range = rangeMerge(rangeRead(), _range);
+  try { localStorage.setItem(RANGE_KEY, JSON.stringify(_range)); return true; } catch(e) { return false; }
+}
+function rangeNewer(a, b) { return a.created_at > b.created_at || (a.created_at === b.created_at && a.id > b.id); }
+// Pour chaque pensée : la ligne la plus récente, et la première proposition de l'IA
+function rangeIndex(filings) {
+  var latest = {}, ai = {};
+  Object.keys(filings || _range.filings).forEach(function(id) {
+    var f = (filings || _range.filings)[id];
+    if(!latest[f.thought_id] || rangeNewer(f, latest[f.thought_id])) latest[f.thought_id] = f;
+    if(f.origin === 'ai' && (!ai[f.thought_id] || rangeNewer(ai[f.thought_id], f))) ai[f.thought_id] = f;
+  });
+  return { latest: latest, ai: ai };
+}
+// Mesures locales : pensées rangées par l'IA, et celles dont Rayan a changé l'espace, l'étape ou le moment
+function rangeStats(filings) {
+  var idx = rangeIndex(filings), proposed = 0, corrected = 0;
+  Object.keys(idx.ai).forEach(function(tid) {
+    proposed++;
+    var a = idx.ai[tid];
+    var changed = Object.keys(filings).some(function(id) {
+      var f = filings[id];
+      return f.thought_id === tid && f.origin === 'user' && (f.space !== a.space || f.step !== a.step ||
+        JSON.stringify(f.moment || null) !== JSON.stringify(a.moment || null));
+    });
+    if(changed) corrected++;
+  });
+  return { proposed: proposed, corrected: corrected, updatedAt: new Date().toISOString() };
+}
+
+/* Espaces envoyés au proxy : les cinq mondes et les deux pôles, avec une clé stable */
+function rangeSpaces() {
+  var list = WORLDS.map(function(w) {
+    var key = String(w.name).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
+    var note = (RANGE_DORMANT.indexOf(key) !== -1 ? 'Endormi. ' : '') + String(w.cat || '') + '. ' + String(w.mission || '');
+    return { key: key, name: w.name, kind: 'project', note: note.slice(0, 200), color: w.color };
+  });
+  list.push({ key: 'sante', name: 'Santé', kind: 'life', color: '#30d158',
+    note: 'Santé de Rayan : rendez-vous, notes, documents, questions pour le médecin. Organisation seulement.' });
+  list.push({ key: 'juridique', name: 'Juridique', kind: 'life', color: '#0a84ff',
+    note: 'Démarches administratives et juridiques, contrats, échéances. Organisation seulement.' });
+  return list;
+}
+function rangeSpaceInfo(key) {
+  var s = rangeSpaces().filter(function(x) { return x.key === key; })[0];
+  return s || { key: 'inconnu', name: 'Sans espace', color: '#8e8e93' };
+}
+
+/* Moments */
+function rangeIsoLocal(d) {
+  var p = function(n) { return (n < 10 ? '0' : '') + n; };
+  var off = -d.getTimezoneOffset(), sign = off >= 0 ? '+' : '-'; off = Math.abs(off);
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes()) + ':00' +
+         sign + p(Math.floor(off / 60)) + ':' + p(off % 60);
+}
+function rangeTonight() {
+  var d = new Date(), at = new Date(); at.setHours(20, 0, 0, 0);
+  if(d >= at) { at = new Date(d.getTime() + 3600e3); at.setMinutes(0, 0, 0); }
+  return { type: 'datetime', at: rangeIsoLocal(at) };
+}
+function rangeTomorrowMorning() {
+  var at = new Date(); at.setDate(at.getDate() + 1); at.setHours(8, 0, 0, 0);
+  return { type: 'datetime', at: rangeIsoLocal(at) };
+}
+function rangeMomentText(m) {
+  if(!m || m.type === 'none') return '';
+  if(m.type === 'situation') return m.text || '';
+  if(m.type === 'datetime') {
+    var d = new Date(m.at); if(isNaN(d)) return '';
+    var h = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    var today = new Date(), tom = new Date(); tom.setDate(today.getDate() + 1);
+    if(d.toDateString() === today.toDateString()) return (d.getHours() >= 18 ? 'Ce soir · ' : 'Aujourd\'hui · ') + h;
+    if(d.toDateString() === tom.toDateString()) return 'Demain · ' + h;
+    return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + h;
+  }
+  return '';
+}
+
+/* Une nouvelle ligne : proposition de l'IA, ou correction de Rayan */
+// atBefore : date d'insertion imposée (proposition de l'IA arrivée après une correction de Rayan)
+function rangeAdd(tid, changes, origin, model, atBefore) {
+  var cur = rangeIndex().latest[tid];
+  var base = cur && !atBefore ? { status: cur.status, space: cur.space, step: cur.step, moment: cur.moment, extras: cur.extras }
+                              : { status: 'unsure', space: 'inconnu', step: null, moment: { type: 'none' }, extras: [] };
+  var now = atBefore || new Date().toISOString();
+  // Horloges d'appareils différentes : la nouvelle ligne doit rester la plus récente
+  if(cur && !atBefore && now <= cur.created_at) now = new Date(new Date(cur.created_at).getTime() + 1).toISOString();
+  var row = Object.assign(base, changes, { id: depotUUID(), thought_id: tid, origin: origin,
+    model: model || null, created_at: now, sync: 'pending' });
+  _range.filings[row.id] = row;
+  rangeSave();
+  depotRender();
+  setTimeout(rangeRun, 0);
+  return row;
+}
+
+/* Envoi des lignes en attente (seulement pour des pensées déjà reçues par le serveur) */
+// Le serveur n'accepte une ligne que si sa pensée y est déjà : une ligne attend donc que sa pensée soit envoyée.
+// Une ligne refusée est marquée « rejected », gardée sur l'appareil, et n'est plus renvoyée.
+async function rangeFlush() {
+  var pend = Object.keys(_range.filings).map(function(k) { return _range.filings[k]; }).filter(function(f) {
+    var t = _depot.thoughts[f.thought_id];
+    return f.sync !== 'sent' && f.sync !== 'rejected' && (!t || t.status === 'sent');
+  });
+  for(var i = 0; i < pend.length; i += 50) {
+    var rows = pend.slice(i, i + 50).map(function(f) {
+      return { id: f.id, thought_id: f.thought_id, origin: f.origin, status: f.status, space: f.space,
+               step: f.step, moment: f.moment || null, extras: f.extras || [], model: f.model || null, created_at: f.created_at };
+    });
+    var res = await sendRows('thought_filings', rows);
+    res.sent.forEach(function(id) { if(_range.filings[id]) _range.filings[id].sync = 'sent'; });
+    res.rejected.forEach(function(x) { var f = _range.filings[x.id]; if(f) { f.sync = 'rejected'; f.reject_reason = x.why; } });
+    rangeSave();
+    if(res.retry) throw new Error('rangements : panne passagère');
+  }
+}
+
+/* Demande de rangement au proxy, pour les pensées envoyées qui n'en ont pas encore reçu */
+async function rangeRequest(t) {
+  var sess = await _sb.auth.getSession();
+  var token = sess.data && sess.data.session && sess.data.session.access_token;
+  var err = function(kind, msg) { var e = new Error(msg); e.kind = kind; return e; };
+  if(!token) throw err('auth', 'pas de session');
+  var ctrl = window.AbortController ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, RANGE_TIMEOUT_MS) : null;
+  try {
+    var resp;
+    try { resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', {
+      method: 'POST', signal: ctrl ? ctrl.signal : undefined,
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ task: 'file', thought: { id: t.id, body: t.body },
+        spaces: rangeSpaces().map(function(s) { return { key: s.key, name: s.name, kind: s.kind, note: s.note }; }),
+        now: rangeIsoLocal(new Date()), tz: (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Paris') })
+    }); } catch(e) {
+      // Pas de réseau : ne compte pas comme un essai. Délai dépassé : le proxy a peut-être travaillé, cela compte.
+      throw err(e && e.name === 'AbortError' ? 'fail' : 'net', 'réseau : ' + (e && e.message || e));
+    }
+    var data = await resp.json().catch(function() { return {}; });
+    if(resp.status === 401) throw err('auth', 'statut 401');
+    if(resp.status === 400) throw err('bad', 'statut 400 : ' + String(data.error && data.error.message || ''));
+    if(!resp.ok || !data.filing) throw err('fail', 'statut ' + resp.status);
+    return data;
+  } finally { if(timer) clearTimeout(timer); }
+}
+// Une pensée attend l'IA si : envoyée, jamais rangée par l'IA, ni annulée ni rangée à la main par Rayan
+function rangeNeedsAI(t, idx) {
+  var l = idx.latest[t.id];
+  if(t.status !== 'sent' || idx.ai[t.id]) return false;
+  return !l || (l.status !== 'cancelled' && !(l.origin === 'user' && l.space && l.space !== 'inconnu'));
+}
+function rangeStopped(tid) {
+  var a = _range.attempts[tid];
+  return !!(a && (a.stop || a.n >= RANGE_MAX_TRIES));
+}
+function rangeMayTry(tid) {
+  var a = _range.attempts[tid];
+  if(!a) return true;
+  if(a.stop || a.n >= RANGE_MAX_TRIES) return false;
+  return !a.lastAt || Date.now() - new Date(a.lastAt).getTime() >= RANGE_GAP_MS;
+}
+// Essai raté qui compte : gardé sur l'appareil (fusionné entre onglets)
+function rangeCountTry(tid, stopNow, why) {
+  var a = _range.attempts[tid] || { n: 0 };
+  var now = new Date().toISOString();
+  var n = (a.n || 0) + 1;
+  _range.attempts[tid] = { n: n, lastAt: now, stop: !!stopNow || n >= RANGE_MAX_TRIES, why: String(why || '').slice(0, 160), updatedAt: now };
+  rangeSave();
+}
+function rangeRetry(tid) {
+  _range.attempts[tid] = { n: 0, lastAt: null, stop: false, why: '', updatedAt: new Date().toISOString() };
+  delete _rangeFailed[tid];
+  rangeSave(); depotRender(); setTimeout(rangeRun, 0);
+}
+async function rangeRequestAll() {
+  if(!_rangePulled) return;
+  var idx = rangeIndex();
+  var todo = depotList().filter(function(t) {
+    return rangeNeedsAI(t, idx) && !_rangeInFlight[t.id] && rangeMayTry(t.id);
+  }).slice(0, RANGE_PER_RUN);
+  for(var i = 0; i < todo.length; i++) {
+    var t = todo[i];
+    _rangeInFlight[t.id] = true; delete _rangeFailed[t.id]; depotRender();
+    try {
+      var data = await rangeRequest(t);
+      var f = data.filing;
+      var unsure = f.confidence === 'unsure' || f.space === 'inconnu';
+      // Si Rayan a agi pendant l'attente (annulation…), sa ligne doit rester la plus récente :
+      // la proposition est datée juste avant sa première ligne.
+      var mine = Object.keys(_range.filings).map(function(k) { return _range.filings[k]; })
+        .filter(function(x) { return x.thought_id === t.id && x.origin === 'user'; })
+        .sort(function(a, b) { return a.created_at < b.created_at ? -1 : 1; })[0];
+      var before = mine ? new Date(new Date(mine.created_at).getTime() - 1).toISOString() : null;
+      rangeAdd(t.id, { status: unsure ? 'unsure' : 'filed', space: f.space, step: f.step, moment: f.moment, extras: f.extras || [] }, 'ai', data.model, before);
+      if(_rangeLastDeposit && _rangeLastDeposit.id === t.id && Date.now() - _rangeLastDeposit.at < 60000) {
+        depotNote(unsure ? 'Déposé · ARC hésite' : 'Rangé dans ' + rangeSpaceInfo(f.space).name, false, true);
+      }
+    } catch(e) {
+      _rangeFailed[t.id] = true;
+      // 401 ou pas de réseau : ne compte pas. 400 : ne passera jamais, arrêt. Le reste compte (3 au plus).
+      if(e && e.kind === 'bad') rangeCountTry(t.id, true, e.message);
+      else if(!e || (e.kind !== 'auth' && e.kind !== 'net')) rangeCountTry(t.id, false, e && e.message);
+      console.warn('Rangement : reporté —', e && e.message || e);
+    }
+    delete _rangeInFlight[t.id];
+    depotRender();
+  }
+}
+// Un tour complet : envoyer les corrections, demander les rangements manquants, envoyer leurs lignes
+async function rangeRun() {
+  if(!_sb || !getUID()) return;
+  if(_rangeBusy) { _rangeAgain = true; return; }
+  _rangeBusy = true;
+  try { await rangeFlush(); await rangeRequestAll(); await rangeFlush(); }
+  catch(e) { console.warn('Rangement : envoi reporté —', e && e.message || e); }
+  _rangeBusy = false;
+  depotRender();
+  if(_rangeAgain) { _rangeAgain = false; setTimeout(rangeRun, 0); }
+}
+// Lecture des 500 derniers rangements du compte, fusionnés par id
+async function rangePull() {
+  if(!_sb || !getUID()) return;
+  try {
+    var r = await _sb.from('thought_filings').select('id,thought_id,origin,status,space,step,moment,extras,model,created_at')
+      .order('created_at', { ascending: false }).limit(500);
+    if(r.error) throw r.error;
+    (r.data || []).forEach(function(row) {
+      var f = _range.filings[row.id];
+      if(f) f.sync = 'sent';
+      else _range.filings[row.id] = Object.assign({}, row, { extras: row.extras || [], sync: 'sent' });
+    });
+    rangeSave();
+    _rangePulled = true;
+    depotRender();
+    setTimeout(rangeRun, 0);
+  } catch(e) { console.warn('Rangement : lecture reportée —', e && e.message || e); }
+}
+
+/* Affichage : sous chaque pensée, ce qu'ARC propose */
+function rgEl(tag, cls, text) {
+  var e = document.createElement(tag); if(cls) e.className = cls;
+  if(text !== undefined && text !== null) e.textContent = text;
+  return e;
+}
+function rangeBtn(label, onClick, cls) {
+  var b = rgEl('button', 'rg-btn' + (cls ? ' ' + cls : ''), label); b.type = 'button';
+  b.addEventListener('click', function(ev) { ev.stopPropagation(); onClick(); });
+  return b;
+}
+// Origine d'un rangement : « ARC propose » tant que la ligne la plus récente vient de l'IA ; dès que Rayan a
+// modifié quelque chose (espace, étape, moment…), « Rangé » : ce qu'il a fixé n'est jamais présenté comme une
+// proposition d'ARC.
+function rangeOriginLabel(f) { return f && f.origin === 'ai' ? 'ARC propose' : 'Rangé'; }
+function rangePill(key) {
+  var s = rangeSpaceInfo(key);
+  var p = rgEl('span', 'rg-pill'); p.style.setProperty('--rg-c', s.color);
+  p.appendChild(rgEl('span', 'rg-dot')); p.appendChild(rgEl('span', null, s.name));
+  return p;
+}
+function rangeEditOpen(tid, kind) { _rangeEdit = { tid: tid, kind: kind }; depotRender(true); }
+function rangeEditClose() { _rangeEdit = null; depotRender(true); }
+function rangeSpaceChips(tid, current) {
+  var box = rgEl('div', 'rg-chips');
+  rangeSpaces().forEach(function(s) {
+    var b = rangeBtn('', function() { _rangeEdit = null; rangeAdd(tid, { space: s.key, status: 'filed' }, 'user'); }, 'rg-chip' + (s.key === current ? ' on' : ''));
+    b.appendChild(rangePill(s.key)); b.setAttribute('aria-label', 'Ranger dans ' + s.name);
+    box.appendChild(b);
+  });
+  return box;
+}
+function rangeBlock(t) {
+  var idx = rangeIndex(), f = idx.latest[t.id];
+  var box = rgEl('div', 'rg-box');
+  var editing = _rangeEdit && _rangeEdit.tid === t.id ? _rangeEdit.kind : null;
+  if(t.status === 'rejected') {
+    box.appendChild(rgEl('div', 'rg-wait', 'Refusée par le serveur : elle reste ici, telle quelle, mais ne sera pas rangée.'));
+    return box;
+  }
+  var manual = f && f.space && f.space !== 'inconnu';
+  var hasAI = !!idx.ai[t.id];
+  if(!f || (!f.step && !manual && !hasAI && f.status !== 'unsure')) {
+    // Pas encore de proposition
+    var acts0 = rgEl('div', 'rg-acts');
+    if(rangeStopped(t.id) && !_rangeInFlight[t.id]) {
+      box.appendChild(rgEl('div', 'rg-wait', 'À ranger à la main'));
+      box.appendChild(rgEl('div', 'rg-hesite', 'ARC n\'a pas réussi à la ranger. Choisis l\'espace, ou réessaie.'));
+      box.appendChild(rangeSpaceChips(t.id, null));
+      acts0.appendChild(rangeBtn('Réessayer', function() { rangeRetry(t.id); }, 'main'));
+    } else {
+      var st = _rangeInFlight[t.id] ? 'ARC range…' : _rangeFailed[t.id] ? 'À ranger plus tard' : 'À ranger';
+      box.appendChild(rgEl('div', 'rg-wait' + (_rangeInFlight[t.id] ? ' busy' : ''), st));
+    }
+    acts0.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
+    box.appendChild(acts0);
+    return box;
+  }
+  var unsure = f.status === 'unsure' || f.space === 'inconnu';
+  var head = rgEl('div', 'rg-row');
+  head.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(f)));
+  if(!unsure) head.appendChild(rangePill(f.space));
+  if(f.status === 'done') head.appendChild(rgEl('span', 'rg-done', 'Fait'));
+  box.appendChild(head);
+  if(unsure && f.status !== 'done') {
+    box.appendChild(rgEl('div', 'rg-hesite', 'ARC hésite : choisis l\'espace.'));
+    box.appendChild(rangeSpaceChips(t.id, null));
+  }
+  // Étape
+  if(editing === 'step') {
+    var form = rgEl('form', 'rg-edit');
+    var inp = rgEl('input', 'rg-input'); inp.type = 'text'; inp.maxLength = 300; inp.value = f.step || ''; inp.setAttribute('aria-label', 'Prochaine étape');
+    form.appendChild(inp);
+    form.appendChild(rangeBtn('Enregistrer', function() { form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit')); }));
+    form.appendChild(rangeBtn('Annuler', rangeEditClose, 'quiet'));
+    form.addEventListener('submit', function(ev) {
+      ev.preventDefault(); var v = inp.value.trim();
+      if(v && v !== f.step) { _rangeEdit = null; rangeAdd(t.id, { step: v.slice(0, 300) }, 'user'); } else rangeEditClose();
+    });
+    box.appendChild(form);
+    setTimeout(function() { inp.focus(); }, 0);
+  } else if(f.step) box.appendChild(rgEl('div', 'rg-step' + (f.status === 'done' ? ' done' : ''), f.step));
+  else if(!unsure) box.appendChild(rgEl('div', 'rg-note', 'Note : rien à faire pour l\'instant. Elle reste rangée ici.'));
+  // Moment
+  var mt = rangeMomentText(f.moment);
+  if(mt) box.appendChild(rgEl('div', 'rg-moment', mt));
+  // Gardé pour après
+  if(f.extras && f.extras.length) {
+    var ex = rgEl('div', 'rg-extras'); ex.appendChild(rgEl('div', 'rg-lbl', 'Gardé pour après'));
+    var ul = rgEl('ul'); f.extras.forEach(function(x) { ul.appendChild(rgEl('li', null, x)); }); ex.appendChild(ul);
+    box.appendChild(ex);
+  }
+  if(f.status === 'done') return box;
+  // Éditeurs du moment
+  if(editing === 'moment') {
+    var mm = rgEl('div', 'rg-acts');
+    mm.appendChild(rangeBtn('Ce soir', function() { _rangeEdit = null; rangeAdd(t.id, { moment: rangeTonight() }, 'user'); }));
+    mm.appendChild(rangeBtn('Demain matin', function() { _rangeEdit = null; rangeAdd(t.id, { moment: rangeTomorrowMorning() }, 'user'); }));
+    mm.appendChild(rangeBtn('Choisir…', function() { rangeEditOpen(t.id, 'when'); }));
+    mm.appendChild(rangeBtn('Une situation…', function() { rangeEditOpen(t.id, 'situation'); }));
+    if(f.moment && f.moment.type !== 'none') mm.appendChild(rangeBtn('Sans moment', function() { _rangeEdit = null; rangeAdd(t.id, { moment: { type: 'none' } }, 'user'); }, 'quiet'));
+    mm.appendChild(rangeBtn('Fermer', rangeEditClose, 'quiet'));
+    box.appendChild(mm);
+  } else if(editing === 'when' || editing === 'situation') {
+    var fm = rgEl('form', 'rg-edit');
+    var i2 = rgEl('input', 'rg-input');
+    if(editing === 'when') { i2.type = 'datetime-local'; i2.setAttribute('aria-label', 'Date et heure'); i2.value = rangeTomorrowMorning().at.slice(0, 16); }
+    else { i2.type = 'text'; i2.maxLength = 160; i2.placeholder = 'en ouvrant le Mac'; i2.setAttribute('aria-label', 'Situation'); }
+    fm.appendChild(i2);
+    fm.appendChild(rangeBtn('Valider', function() { fm.requestSubmit ? fm.requestSubmit() : fm.dispatchEvent(new Event('submit')); }));
+    fm.appendChild(rangeBtn('Annuler', rangeEditClose, 'quiet'));
+    fm.addEventListener('submit', function(ev) {
+      ev.preventDefault(); var v = i2.value.trim(); if(!v) return;
+      var m = editing === 'when' ? { type: 'datetime', at: rangeIsoLocal(new Date(v)) } : { type: 'situation', text: v.slice(0, 160) };
+      if(m.type === 'datetime' && isNaN(new Date(v))) return;
+      _rangeEdit = null; rangeAdd(t.id, { moment: m }, 'user');
+    });
+    box.appendChild(fm);
+    setTimeout(function() { i2.focus(); }, 0);
+  } else if(editing === 'space') {
+    box.appendChild(rangeSpaceChips(t.id, f.space));
+    var cl = rgEl('div', 'rg-acts'); cl.appendChild(rangeBtn('Fermer', rangeEditClose, 'quiet')); box.appendChild(cl);
+  }
+  // Actions
+  if(!editing) {
+    var acts = rgEl('div', 'rg-acts');
+    acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(t.id, { status: 'done' }, 'user'); }, 'main'));
+    acts.appendChild(rangeBtn(mt ? 'Changer le moment' : 'Fixer un moment', function() { rangeEditOpen(t.id, 'moment'); }));
+    acts.appendChild(rangeBtn(f.step ? 'Modifier l\'étape' : 'Ajouter une étape', function() { rangeEditOpen(t.id, 'step'); }));
+    if(!unsure) acts.appendChild(rangeBtn('Changer d\'espace', function() { rangeEditOpen(t.id, 'space'); }));
+    acts.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
+    box.appendChild(acts);
+  }
+  return box;
+}
+
+/* Accueil : prochaines étapes (non faites, non annulées), celles qui ont un moment d'abord */
+function rangeNextSteps() {
+  var idx = rangeIndex(), rows = [];
+  depotList().forEach(function(t) {
+    var f = idx.latest[t.id];
+    // Une action réelle : une étape, un espace connu, ni hésitation, ni faite, ni annulée
+    if(f && f.step && f.status !== 'done' && f.status !== 'cancelled' && f.status !== 'unsure' && f.space && f.space !== 'inconnu') rows.push({ t: t, f: f });
+  });
+  var rank = function(m) { return !m || m.type === 'none' ? 2 : m.type === 'datetime' ? 0 : 1; };
+  rows.sort(function(a, b) {
+    var ra = rank(a.f.moment), rb = rank(b.f.moment);
+    if(ra !== rb) return ra - rb;
+    if(ra === 0) return a.f.moment.at < b.f.moment.at ? -1 : 1;
+    return a.t.created_at < b.t.created_at ? 1 : -1;
+  });
+  return rows.slice(0, 5);
+}
+// Pensées qui attendent un choix de Rayan : pas encore rangées, ARC hésite, ou espace inconnu (hors notes, faites,
+// annulées, refusées)
+function rangeToSortCount() {
+  var idx = rangeIndex(), n = 0;
+  depotList().forEach(function(t) {
+    if(t.status === 'rejected') return;
+    var f = idx.latest[t.id];
+    if(f && (f.status === 'cancelled' || f.status === 'done')) return;
+    if(!f || f.status === 'unsure' || !f.space || f.space === 'inconnu') n++;
+  });
+  return n;
+}
+function rangeHomeRender() {
+  if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
+  var list = document.getElementById('next-list'); if(!list) return;
+  var n = rangeToSortCount(), tr = document.getElementById('next-torange');
+  tr.hidden = n === 0;
+  tr.textContent = n + (n > 1 ? ' pensées à ranger' : ' pensée à ranger');
+  var rows = rangeNextSteps();
+  document.getElementById('next-empty').hidden = rows.length > 0;
+  list.textContent = '';
+  rows.forEach(function(r) {
+    var it = rgEl('div', 'next-item'); it.setAttribute('data-id', r.t.id);
+    var top = rgEl('div', 'rg-row');
+    top.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(r.f)));
+    top.appendChild(rangePill(r.f.space));
+    var mt = rangeMomentText(r.f.moment);
+    if(mt) top.appendChild(rgEl('span', 'next-when', mt));
+    it.appendChild(top);
+    it.appendChild(rgEl('div', 'next-step', r.f.step));
+    var acts = rgEl('div', 'rg-acts');
+    acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(r.t.id, { status: 'done' }, 'user'); }, 'main'));
+    if(!mt) acts.appendChild(rangeBtn('Fixer un moment', function() {
+      _rangeEdit = { tid: r.t.id, kind: 'moment' }; depotOpen();
+      var target = document.querySelector('#depot-list [data-id="' + r.t.id + '"]'); if(target) target.scrollIntoView({ block: 'center' });
+    }));
+    it.appendChild(acts);
+    list.appendChild(it);
+  });
+}
+
+/* ═══ POINT DU MATIN ═══
+   Calculé sur l'appareil, à partir des pensées et des rangements déjà là : aucun appel à l'IA, aucune table,
+   aucune notification. Il s'affiche à la première ouverture d'ARC après l'heure choisie (8 h par défaut),
+   une fois par jour et par appareil, et se rouvre à tout moment depuis l'accueil. Ni compteur de jours,
+   ni retard en rouge : une étape dont le moment est passé est « à replacer ».
+   Réglages et mesure (point vu ou non, par jour) dans arc_matin_v1, sur l'appareil seulement. */
+var MATIN_KEY = 'arc_matin_v1', MATIN_MAX_ROWS = 7;
+var _matin = null, _matinOpen = false, _matinAll = false;
+
+function matinNorm(d) {
+  if(!d || typeof d !== 'object') d = {};
+  if(!d.settings || typeof d.settings !== 'object') d.settings = { enabled: true, hour: '08:00', updatedAt: '' };
+  if(!/^\d{2}:\d{2}$/.test(d.settings.hour || '')) d.settings.hour = '08:00';
+  if(typeof d.settings.enabled !== 'boolean') d.settings.enabled = true;
+  if(!d.days || typeof d.days !== 'object') d.days = {};
+  return d;
+}
+function matinRead() { try { return matinNorm(JSON.parse(localStorage.getItem(MATIN_KEY) || 'null')); } catch(e) { return matinNorm(null); } }
+function matinMerge(a, b) {
+  var out = matinNorm({});
+  out.settings = (b.settings.updatedAt || '') >= (a.settings.updatedAt || '') ? Object.assign({}, b.settings) : Object.assign({}, a.settings);
+  [a, b].forEach(function(src) {
+    Object.keys(src.days).forEach(function(k) {
+      var d = src.days[k], cur = out.days[k];
+      if(!cur) { out.days[k] = Object.assign({}, d); return; }
+      if(d.shownAt && (!cur.shownAt || d.shownAt < cur.shownAt)) cur.shownAt = d.shownAt;
+      cur.auto = !!(cur.auto || d.auto);
+      cur.opens = Math.max(cur.opens || 0, d.opens || 0);
+      cur.launched = !!(cur.launched || d.launched);
+    });
+  });
+  return out;
+}
+function matinSave() {
+  _matin = matinMerge(matinRead(), _matin);
+  try { localStorage.setItem(MATIN_KEY, JSON.stringify(_matin)); } catch(e) {}
+}
+function matinDayKey(d) {
+  var p = function(n) { return (n < 10 ? '0' : '') + n; };
+  return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+}
+function matinHourToday() {
+  var hm = _matin.settings.hour.split(':'), at = new Date();
+  at.setHours(+hm[0], +hm[1], 0, 0);
+  return at;
+}
+
+/* Ce que contient le point */
+function matinData() {
+  var idx = rangeIndex(), now = new Date();
+  var startToday = new Date(now); startToday.setHours(0, 0, 0, 0);
+  var endToday = new Date(startToday.getTime() + 864e5);
+  var out = { today: [], replace: [], nomoment: [], toRange: 0 };
+  depotList().forEach(function(t) {
+    if(t.status === 'rejected') return;
+    var f = idx.latest[t.id];
+    if(f && (f.status === 'cancelled' || f.status === 'done')) return;
+    // Attend un choix : pas encore rangée, ARC hésite, ou espace inconnu → seulement compté dans « à ranger »
+    if(!f || f.status === 'unsure' || !f.space || f.space === 'inconnu') { out.toRange++; return; }
+    if(!f.step) return;   // une note (rangée sans étape) : rien à faire aujourd'hui
+    var m = f.moment || { type: 'none' };
+    if(m.type === 'datetime') {
+      var d = new Date(m.at);
+      if(isNaN(d)) out.nomoment.push({ t: t, f: f });
+      else if(d >= startToday && d < endToday) out.today.push({ t: t, f: f, d: d });
+      else if(d < startToday) out.replace.push({ t: t, f: f, d: d });
+      // Moment des jours suivants : pas dans le point d'aujourd'hui
+    } else out.nomoment.push({ t: t, f: f });   // sans moment, ou une situation (ni due ni en retard)
+  });
+  out.today.sort(function(a, b) { return a.d - b.d; });
+  out.replace.sort(function(a, b) { return a.d - b.d; });
+  out.nomoment.sort(function(a, b) { return a.t.created_at < b.t.created_at ? -1 : 1; });
+  out.nomoment = out.nomoment.slice(0, 3);
+  return out;
+}
+// « Demain » : même heure si le moment n'est pas encore passé, sinon 9 h
+function matinTomorrow(m) {
+  var now = new Date(), at = new Date(now); at.setDate(at.getDate() + 1);
+  var d = m && m.type === 'datetime' ? new Date(m.at) : null;
+  if(d && !isNaN(d) && d >= now) at.setHours(d.getHours(), d.getMinutes(), 0, 0);
+  else at.setHours(9, 0, 0, 0);
+  return { type: 'datetime', at: rangeIsoLocal(at) };
+}
+function matinRowEl(kind, r) {
+  var row = rgEl('div', 'matin-row'); row.setAttribute('data-id', r.t.id); row.setAttribute('data-kind', kind);
+  var top = rgEl('div', 'rg-row');
+  top.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(r.f)));
+  var hh = function(d) { return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); };
+  if(kind === 'today') top.appendChild(rgEl('span', 'matin-when', hh(r.d)));
+  if(kind === 'replace') top.appendChild(rgEl('span', 'matin-sit', 'Prévu ' + r.d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' + hh(r.d)));
+  if(r.f.space && r.f.space !== 'inconnu') top.appendChild(rangePill(r.f.space));
+  row.appendChild(top);
+  row.appendChild(rgEl('div', 'matin-step', r.f.step));
+  if(kind === 'nomoment' && r.f.moment && r.f.moment.type === 'situation') row.appendChild(rgEl('div', 'matin-sit', 'Quand : ' + r.f.moment.text));
+  var acts = rgEl('div', 'rg-acts');
+  var act = function(label, changes, cls) { acts.appendChild(rangeBtn(label, function() { rangeAdd(r.t.id, changes, 'user'); matinRender(); }, cls)); };
+  if(kind === 'nomoment') {
+    acts.appendChild(rangeBtn('Fixer un moment', function() {
+      matinClose(); _rangeEdit = { tid: r.t.id, kind: 'moment' }; depotOpen();
+      var target = document.querySelector('#depot-list [data-id="' + r.t.id + '"]'); if(target) target.scrollIntoView({ block: 'center' });
+    }));
+    act('C\'est fait', { status: 'done' }, 'main');
+  } else {
+    act('C\'est fait', { status: 'done' }, 'main');
+    act('Demain', { moment: matinTomorrow(r.f.moment) });
+    act('Plus tard', { moment: { type: 'none' } }, 'quiet');
+  }
+  row.appendChild(acts);
+  return row;
+}
+function matinRender() {
+  var now = new Date();
+  var date = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('matin-date').textContent = date.charAt(0).toUpperCase() + date.slice(1);
+  var data = matinData();
+  var rows = [];
+  data.today.forEach(function(r) { rows.push({ sec: 'today', r: r }); });
+  data.replace.forEach(function(r) { rows.push({ sec: 'replace', r: r }); });
+  data.nomoment.forEach(function(r) { rows.push({ sec: 'nomoment', r: r }); });
+  var body = document.getElementById('matin-body'); body.textContent = '';
+  var lead = document.getElementById('matin-lead');
+  if(!rows.length && !data.toRange) {
+    lead.textContent = '';
+    body.appendChild(rgEl('div', 'matin-empty', 'Rien n\'attend aujourd\'hui. Dépose ce qui te vient.'));
+    return;
+  }
+  lead.textContent = 'Voici ce qui t\'attend, en quelques lignes.';
+  var visible = _matinAll ? rows : rows.slice(0, MATIN_MAX_ROWS);
+  var titles = { today: ['Aujourd\'hui', ''], replace: ['À replacer', 'Leur moment est passé. Choisis-en un autre, ou c\'est peut-être déjà fait.'],
+                 nomoment: ['Sans moment', 'Les plus anciennes. Un moment les rend plus faciles à tenir.'] };
+  var sec = null, box = null;
+  // « Aujourd'hui » est toujours là, même vide, pour que la suite se lise
+  if(!data.today.length) {
+    var s0 = rgEl('section', 'matin-sec'); s0.appendChild(rgEl('div', 'matin-sec-t', 'Aujourd\'hui'));
+    s0.appendChild(rgEl('div', 'matin-sec-s', 'Rien de prévu à heure fixe.')); body.appendChild(s0);
+  }
+  visible.forEach(function(x) {
+    if(x.sec !== sec) {
+      sec = x.sec; box = rgEl('section', 'matin-sec'); box.setAttribute('data-sec', sec);
+      box.appendChild(rgEl('div', 'matin-sec-t', titles[sec][0]));
+      if(titles[sec][1]) box.appendChild(rgEl('div', 'matin-sec-s', titles[sec][1]));
+      body.appendChild(box);
+    }
+    box.appendChild(matinRowEl(x.sec, x.r));
+  });
+  if(rows.length > MATIN_MAX_ROWS) {
+    var more = rgEl('div', 'rg-acts matin-more');
+    more.appendChild(rangeBtn(_matinAll ? 'Voir moins' : 'Voir tout (' + (rows.length - MATIN_MAX_ROWS) + ' de plus)', function() { _matinAll = !_matinAll; matinRender(); }));
+    body.appendChild(more);
+  }
+  if(data.toRange) {
+    // Une seule ligne discrète : ce qui attend un choix se règle dans « Déposé »
+    var tr = rangeBtn(data.toRange + (data.toRange > 1 ? ' pensées à ranger' : ' pensée à ranger'), function() { matinClose(); depotOpen(); }, 'matin-torange');
+    tr.className = 'matin-torange';
+    body.appendChild(tr);
+  }
+}
+function matinShow(how) {
+  var key = matinDayKey(new Date());
+  var day = _matin.days[key] || {};
+  _matin.days[key] = { shownAt: day.shownAt || new Date().toISOString(), auto: !!(day.auto || how === 'auto'),
+                       opens: (day.opens || 0) + 1, launched: true };
+  matinSave();
+  _matinAll = false;
+  document.getElementById('matin-view').hidden = false;
+  document.getElementById('matin-settings').hidden = true;
+  matinRender();
+  var sc = document.getElementById('matin-screen'); sc.classList.add('open'); sc.setAttribute('aria-hidden', 'false'); sc.scrollTop = 0;
+  _matinOpen = true;
+  matinLabels();
+}
+function matinClose() {
+  var sc = document.getElementById('matin-screen'); sc.classList.remove('open'); sc.setAttribute('aria-hidden', 'true');
+  _matinOpen = false;
+}
+// À l'ouverture d'ARC (lancement ou retour au premier plan) : une fois par jour, après l'heure choisie
+function matinCheck() {
+  _matin = matinMerge(matinRead(), _matin);
+  var key = matinDayKey(new Date());
+  if(!_matin.days[key]) { _matin.days[key] = { launched: true, opens: 0 }; matinSave(); }
+  if(_matin.settings.enabled && new Date() >= matinHourToday() && !_matin.days[key].shownAt) matinShow('auto');
+  matinLabels();
+}
+function matinLabels() {
+  var st = _matin.settings;
+  var lbl = document.getElementById('btn-matin-lbl');
+  if(lbl) lbl.textContent = 'Point du matin · ' + (st.enabled ? st.hour.replace(':', ' h ') : 'désactivé');
+  var n = document.getElementById('matin-entry-n');
+  if(n) {
+    if(!st.enabled) n.textContent = 'Désactivé';
+    else if(new Date() < matinHourToday()) n.textContent = 'Prêt à ' + st.hour.replace(':', ' h ');
+    else { var d = matinData(); var k = d.today.length + d.replace.length; n.textContent = k ? k + ' étape' + (k > 1 ? 's' : '') + ' aujourd\'hui' : 'Prêt'; }
+  }
+}
+function matinSettingsOpen() {
+  document.getElementById('matin-enabled').checked = _matin.settings.enabled;
+  document.getElementById('matin-hour').value = _matin.settings.hour;
+  document.getElementById('matin-view').hidden = true;
+  document.getElementById('matin-settings').hidden = false;
+  var sc = document.getElementById('matin-screen'); sc.classList.add('open'); sc.setAttribute('aria-hidden', 'false');
+  _matinOpen = true;
+}
+function matinInit() {
+  _matin = matinRead();
+  document.getElementById('matin-close').addEventListener('click', matinClose);
+  document.getElementById('matin-open').addEventListener('click', function() { matinShow('manual'); });
+  document.getElementById('btn-matin').addEventListener('click', function() {
+    document.getElementById('h-menu-dd').classList.remove('open'); matinSettingsOpen();
+  });
+  document.getElementById('matin-settings-cancel').addEventListener('click', matinClose);
+  document.getElementById('matin-settings').addEventListener('submit', function(ev) {
+    ev.preventDefault();
+    var h = document.getElementById('matin-hour').value;
+    if(!/^\d{2}:\d{2}$/.test(h)) return;
+    _matin.settings = { enabled: document.getElementById('matin-enabled').checked, hour: h, updatedAt: new Date().toISOString() };
+    matinSave(); matinClose(); matinLabels();
+    toast(_matin.settings.enabled ? 'Point du matin à ' + h.replace(':', ' h ') : 'Point du matin désactivé');
+  });
+  // Un clic sur le fond (hors de la carte) ferme
+  document.getElementById('matin-screen').addEventListener('click', function(ev) { if(ev.target.id === 'matin-screen') matinClose(); });
+  document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && _matinOpen) matinClose(); });
+  document.addEventListener('visibilitychange', function() { if(document.visibilityState === 'visible') matinCheck(); });
+  // ARC laissé ouvert au premier plan : une vérification légère par minute, qui ne fait rien tant que l'heure
+  // n'est pas passée ou que le point du jour a déjà été vu
+  setInterval(function() {
+    if(!_matin.settings.enabled || document.visibilityState === 'hidden') return;
+    var day = _matin.days[matinDayKey(new Date())];
+    if((day && day.shownAt) || new Date() < matinHourToday()) return;
+    matinCheck();
+  }, 60000);
+  window.addEventListener('storage', function(ev) {
+    if(ev.key !== MATIN_KEY || ev.storageArea !== localStorage) return;
+    _matin = matinMerge(matinRead(), _matin); matinLabels();
+  });
+  matinCheck();
+}
+
 function depotInit() {
   depotLoad();
+  rangeLoad();
   depotEvent('open');
   var ta = document.getElementById('depot-ta');
   document.getElementById('depot-form').addEventListener('submit', function(ev) { ev.preventDefault(); depotSubmit(); });
@@ -4571,6 +5451,7 @@ function depotInit() {
     }
   });
   document.getElementById('depot-open').addEventListener('click', depotOpen);
+  document.getElementById('next-torange').addEventListener('click', depotOpen);
   document.getElementById('depot-back').addEventListener('click', depotClose);
   window.addEventListener('resize', depotLayout);
   if(window.visualViewport) { visualViewport.addEventListener('resize', depotLayout); visualViewport.addEventListener('scroll', depotLayout); }
@@ -4590,6 +5471,15 @@ function depotInit() {
     _depot = depotMerge(depotRead(), _depot);
     depotRender();
   });
+  window.addEventListener('storage', function(ev) {
+    if(ev.key !== RANGE_KEY || ev.storageArea !== localStorage) return;
+    _range = rangeMerge(rangeRead(), _range);
+    depotRender();
+  });
+  // Un rendu reporté pendant une saisie dans la liste reprend quand la saisie se termine
+  document.getElementById('depot-list').addEventListener('focusout', function() {
+    setTimeout(function() { if(_renderDeferred) depotRender(); }, 0);
+  });
   document.addEventListener('visibilitychange', function() { if(document.visibilityState === 'visible') depotSync(); });
   depotRender();
   depotLayout();
@@ -4599,6 +5489,7 @@ function init(){
   sbInit();
   loadS();
   depotInit();
+  matinInit();
 
   // Onboarding
   if(!S.seen||S.seen==="new"){ document.getElementById("onboarding").classList.add("active"); }
