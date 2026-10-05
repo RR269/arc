@@ -113,7 +113,7 @@ export async function openPage(browser, url, { session = true, viewport = { widt
   await page.waitForTimeout(700);
   if (!session && await page.isVisible('#auth-screen')) await page.click('#auth-skip');
   // Après 8 h, le point du matin s'affiche à l'ouverture : les tests qui ne portent pas sur lui le ferment
-  if (!keepMatin && await page.isVisible('#matin-screen')) await page.click('#matin-close');
+  if (!keepMatin) await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   return { ctx, page, fk, sbHits, errors };
 }
 

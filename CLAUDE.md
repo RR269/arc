@@ -85,7 +85,13 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
 - Proxy : task `file`, consigne écrite par le proxy, sortie par un outil unique forcé (`ranger_pensee`), validation
   (espace connu, longueurs, date plausible), 502 si invalide ; modèle `FILE_MODEL` (`claude-haiku-4-5-20251001`) ;
   journaux sans le texte des pensées. La discussion (corps sans `task`) est inchangée.
-  **Pas encore déployé** : Rayan le déploie lui-même ; tant qu'il ne l'a pas fait, les pensées restent « À ranger ».
+  **Déployé par Rayan le 5 octobre (version du commit `9ecb6b5`)** ; le rangement marche en réel sur son Mac (vrai
+  modèle, vraie table). Premier essai réel : trois défauts (moment inventé, étape fabriquée pour « dg »,
+  reformulation inutile), corrigés ensuite dans le dépôt.
+- Proxy, corrections après l'essai réel (**à redéployer par Rayan**) : un moment doit citer les mots de la pensée
+  (champ `source` de l'outil, vérifié sans casse ni apostrophes typographiques, 2 caractères au moins), sinon il
+  est ramené à « none » et le journal note « moment écarté : source introuvable » ; étape vide permise (une note) ;
+  consigne : pas de moment par défaut, une action déjà formulée gardée presque telle quelle, trois exemples.
 - Page : rangement demandé après l'envoi de la pensée, sans jamais bloquer le dépôt ; nouvel essai aux mêmes moments
   que la file ; une pensée n'est rangée par l'IA qu'une fois. Sous chaque pensée : espace, étape, moment, « gardé pour
   après », « ARC hésite » avec les sept espaces ; actions : changer d'espace, modifier l'étape, fixer le moment,
@@ -101,9 +107,13 @@ Branche `rangement` (non fusionnée, partie de `main` à `c563e8c`) : chantier 3
 - Santé et Juridique : consignes de mémoire et d'organisation (noter, dater, retrouver, préparer un rendez-vous,
   règle générale avec source officielle) ; refus poli de tout diagnostic ou avis sur le cas, renvoi vers un médecin
   ou un avocat. Le mot « conseiller » a disparu de la page.
-- Tests : `tests/proxy.mjs` 13 sur 13, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 22 sur 22, `tests/matin.mjs` 25 sur 25
+- Page, après l'essai réel : une pensée rangée sans étape s'affiche comme une note dans son espace (« Ajouter une
+  étape ») ; « Prochaines étapes » et le point du matin ne montrent que des actions réelles (ni hésitation, ni espace
+  inconnu, ni note) et une seule ligne « N pensées à ranger » qui ouvre « Déposé » ; aucune demande à l'IA avant la
+  lecture des rangements déjà faits (sinon une pensée rangée sur un autre appareil était redemandée).
+- Tests : `tests/proxy.mjs` 19 sur 19, `tests/depot.mjs` 19 sur 19, `tests/rangement.mjs` 24 sur 24, `tests/matin.mjs` 27 sur 27
   (le faux Supabase applique la règle de `thought_filings` : la pensée doit exister sur le serveur).
-- Pas encore essayé contre la vraie table `thought_filings` ni avec le vrai modèle.
+- Essayé en réel sur le Mac de Rayan (5 octobre) avec le proxy `9ecb6b5`. Pas encore sur l'iPhone.
 
 Point du matin (chantier 4, branche `rangement`, à la suite) :
 - Heure choisie dans le menu « ··· » (8 h par défaut), désactivable ; gardée sur l'appareil (`arc_matin_v1`), pas dans `S`.
@@ -115,7 +125,9 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - Actions : « C'est fait », « Fixer un moment », « Demain » (même heure si elle n'est pas passée, sinon 9 h),
   « Plus tard » (sans moment), chacune par une nouvelle ligne de rangement `origin` user. Fermeture « C'est parti ».
 - Mesure sur l'appareil seulement : par jour, point vu ou non, automatiquement ou à la demande, nombre d'ouvertures.
-- Tests : `tests/matin.mjs` 25 sur 25 ; les autres suites ferment le point s'il s'affiche (elles tournent à l'heure réelle).
+- ARC laissé ouvert au premier plan : vérification légère chaque minute (rien tant que l'heure n'est pas passée ou
+  que le point du jour a été vu).
+- Tests : `tests/matin.mjs` 27 sur 27 ; les autres suites ferment le point s'il s'affiche (elles tournent à l'heure réelle).
 
 ### Décisions de Rayan (5 octobre)
 
@@ -161,8 +173,8 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 
 ### Ouvert
 
-1. **Le geste central est construit, pas encore en service** : dépôt en ligne ; rangement et point du matin sur la
-   branche `rangement`, proxy du rangement à déployer par Rayan, rien d'essayé sur ses appareils.
+1. **Le geste central est construit, en essai** : dépôt en ligne ; rangement et point du matin sur la branche
+   `rangement` ; proxy `9ecb6b5` déployé et essayé sur le Mac, version corrigée à redéployer ; iPhone pas essayé.
 2. **La synchronisation remplace tout l'état d'un coup** (dernière action gagne, `pullFromCloud`) : à remplacer
    par des pensées en ajout seul avant d'ouvrir le dépôt sur deux appareils.
 3. **Santé reste un suivi à curseurs** (check-in, score, série) : les consignes envoyées à Claude ne jouent plus

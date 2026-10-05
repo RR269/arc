@@ -1088,6 +1088,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .rg-hesite{font-size:15px;color:var(--t1);margin:2px 0 8px}
 .rg-wait{font-size:14px;color:var(--t2)}
 .rg-wait.busy{color:var(--t1)}
+.rg-note{font-size:15px;line-height:1.45;color:var(--t2)}
 .rg-acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .rg-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
 .rg-btn{min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:var(--bg3);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;font-size:15px;font-weight:500;cursor:pointer}
@@ -1109,6 +1110,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .next-item .rg-acts{margin-top:8px}
 .next-empty{font-size:15px;line-height:1.55;color:var(--t2);padding:14px 16px;border-radius:16px;border:1px dashed var(--b2)}
 .next-empty[hidden]{display:none}
+.next-torange{display:block;min-height:44px;padding:0 4px;margin:2px 0 6px;border:none;background:none;color:var(--t2);font-family:-apple-system,system-ui,sans-serif;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.next-torange[hidden]{display:none}
+.next-torange:hover{color:var(--t1)}
+.matin-torange{display:block;min-height:44px;margin-top:16px;padding:0 4px;border:none;background:none;color:var(--t2);font-family:-apple-system,system-ui,sans-serif;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 /* ═══ POINT DU MATIN ═══ z 28 : au-dessus des écrans et de « Déposé » (25), sous la barre de dépôt (30) */
 #matin-screen{position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.72);display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:-apple-system,system-ui,sans-serif}
 #matin-screen.open{display:block}
@@ -1175,6 +1180,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
     <div class="next-title" id="next-title">Prochaines étapes</div>
     <div id="next-list"></div>
+    <button class="next-torange" id="next-torange" type="button" hidden></button>
     <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
   </section>
   <!-- SECTION MONDES -->
@@ -4728,6 +4734,9 @@ var _rangeFailed = {};             // pensée → dernier essai échoué (pendan
 var _rangeEdit = null;             // { tid, kind } : éditeur ouvert dans la liste
 var _rangeLastDeposit = null;      // { id, at } : pour le message sous la barre
 var _rangeCancelOpen = false, _renderDeferred = false;
+// Les rangements déjà faits (sur cet appareil ou un autre) doivent être lus avant toute demande à l'IA :
+// sinon une pensée rangée ailleurs serait redemandée (appel payé pour rien, proposition en double)
+var _rangePulled = false;
 
 function rangeNorm(d) {
   if(!d || typeof d !== 'object') d = {};
@@ -4934,6 +4943,7 @@ function rangeRetry(tid) {
   rangeSave(); depotRender(); setTimeout(rangeRun, 0);
 }
 async function rangeRequestAll() {
+  if(!_rangePulled) return;
   var idx = rangeIndex();
   var todo = depotList().filter(function(t) {
     return rangeNeedsAI(t, idx) && !_rangeInFlight[t.id] && rangeMayTry(t.id);
@@ -4990,6 +5000,7 @@ async function rangePull() {
       else _range.filings[row.id] = Object.assign({}, row, { extras: row.extras || [], sync: 'sent' });
     });
     rangeSave();
+    _rangePulled = true;
     depotRender();
     setTimeout(rangeRun, 0);
   } catch(e) { console.warn('Rangement : lecture reportée —', e && e.message || e); }
@@ -5032,7 +5043,8 @@ function rangeBlock(t) {
     return box;
   }
   var manual = f && f.space && f.space !== 'inconnu';
-  if(!f || (!f.step && !manual)) {
+  var hasAI = !!idx.ai[t.id];
+  if(!f || (!f.step && !manual && !hasAI && f.status !== 'unsure')) {
     // Pas encore de proposition
     var acts0 = rgEl('div', 'rg-acts');
     if(rangeStopped(t.id) && !_rangeInFlight[t.id]) {
@@ -5050,7 +5062,7 @@ function rangeBlock(t) {
   }
   var unsure = f.status === 'unsure' || f.space === 'inconnu';
   var head = rgEl('div', 'rg-row');
-  head.appendChild(rgEl('span', 'rg-lbl', 'ARC propose'));
+  head.appendChild(rgEl('span', 'rg-lbl', f.step || unsure ? 'ARC propose' : 'Note'));
   if(!unsure) head.appendChild(rangePill(f.space));
   if(f.status === 'done') head.appendChild(rgEl('span', 'rg-done', 'Fait'));
   box.appendChild(head);
@@ -5072,7 +5084,7 @@ function rangeBlock(t) {
     box.appendChild(form);
     setTimeout(function() { inp.focus(); }, 0);
   } else if(f.step) box.appendChild(rgEl('div', 'rg-step' + (f.status === 'done' ? ' done' : ''), f.step));
-  else box.appendChild(rgEl('div', 'rg-wait', 'Pas encore d\'étape.'));
+  else if(!unsure) box.appendChild(rgEl('div', 'rg-note', 'Note : rien à faire pour l\'instant. Elle reste rangée ici.'));
   // Moment
   var mt = rangeMomentText(f.moment);
   if(mt) box.appendChild(rgEl('div', 'rg-moment', mt));
@@ -5131,7 +5143,8 @@ function rangeNextSteps() {
   var idx = rangeIndex(), rows = [];
   depotList().forEach(function(t) {
     var f = idx.latest[t.id];
-    if(f && f.step && f.status !== 'done' && f.status !== 'cancelled') rows.push({ t: t, f: f });
+    // Une action réelle : une étape, un espace connu, ni hésitation, ni faite, ni annulée
+    if(f && f.step && f.status !== 'done' && f.status !== 'cancelled' && f.status !== 'unsure' && f.space && f.space !== 'inconnu') rows.push({ t: t, f: f });
   });
   var rank = function(m) { return !m || m.type === 'none' ? 2 : m.type === 'datetime' ? 0 : 1; };
   rows.sort(function(a, b) {
@@ -5142,9 +5155,24 @@ function rangeNextSteps() {
   });
   return rows.slice(0, 5);
 }
+// Pensées qui attendent un choix de Rayan : pas encore rangées, ARC hésite, ou espace inconnu (hors notes, faites,
+// annulées, refusées)
+function rangeToSortCount() {
+  var idx = rangeIndex(), n = 0;
+  depotList().forEach(function(t) {
+    if(t.status === 'rejected') return;
+    var f = idx.latest[t.id];
+    if(f && (f.status === 'cancelled' || f.status === 'done')) return;
+    if(!f || f.status === 'unsure' || !f.space || f.space === 'inconnu') n++;
+  });
+  return n;
+}
 function rangeHomeRender() {
   if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
   var list = document.getElementById('next-list'); if(!list) return;
+  var n = rangeToSortCount(), tr = document.getElementById('next-torange');
+  tr.hidden = n === 0;
+  tr.textContent = n + (n > 1 ? ' pensées à ranger' : ' pensée à ranger');
   var rows = rangeNextSteps();
   document.getElementById('next-empty').hidden = rows.length > 0;
   list.textContent = '';
@@ -5225,10 +5253,9 @@ function matinData() {
     if(t.status === 'rejected') return;
     var f = idx.latest[t.id];
     if(f && (f.status === 'cancelled' || f.status === 'done')) return;
-    // Attend un choix : pas encore rangée, ARC hésite, ou rangée sans étape ni espace → « À ranger » seulement
-    var manual = f && f.space && f.space !== 'inconnu';
-    if(!f || f.status === 'unsure' || !manual) { out.toRange++; return; }
-    if(!f.step) return;   // rangée à la main dans un espace, sans étape : rien à faire aujourd'hui
+    // Attend un choix : pas encore rangée, ARC hésite, ou espace inconnu → seulement compté dans « à ranger »
+    if(!f || f.status === 'unsure' || !f.space || f.space === 'inconnu') { out.toRange++; return; }
+    if(!f.step) return;   // une note (rangée sans étape) : rien à faire aujourd'hui
     var m = f.moment || { type: 'none' };
     if(m.type === 'datetime') {
       var d = new Date(m.at);
@@ -5319,11 +5346,10 @@ function matinRender() {
     body.appendChild(more);
   }
   if(data.toRange) {
-    var r = rgEl('section', 'matin-sec'); r.setAttribute('data-sec', 'torange');
-    r.appendChild(rgEl('div', 'matin-sec-t', 'À ranger'));
-    r.appendChild(rgEl('div', 'matin-sec-s', data.toRange + (data.toRange > 1 ? ' pensées attendent' : ' pensée attend') + ' un choix.'));
-    var a = rgEl('div', 'rg-acts'); a.appendChild(rangeBtn('Voir dans Déposé', function() { matinClose(); depotOpen(); }));
-    r.appendChild(a); body.appendChild(r);
+    // Une seule ligne discrète : ce qui attend un choix se règle dans « Déposé »
+    var tr = rangeBtn(data.toRange + (data.toRange > 1 ? ' pensées à ranger' : ' pensée à ranger'), function() { matinClose(); depotOpen(); }, 'matin-torange');
+    tr.className = 'matin-torange';
+    body.appendChild(tr);
   }
 }
 function matinShow(how) {
@@ -5391,6 +5417,14 @@ function matinInit() {
   document.getElementById('matin-screen').addEventListener('click', function(ev) { if(ev.target.id === 'matin-screen') matinClose(); });
   document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && _matinOpen) matinClose(); });
   document.addEventListener('visibilitychange', function() { if(document.visibilityState === 'visible') matinCheck(); });
+  // ARC laissé ouvert au premier plan : une vérification légère par minute, qui ne fait rien tant que l'heure
+  // n'est pas passée ou que le point du jour a déjà été vu
+  setInterval(function() {
+    if(!_matin.settings.enabled || document.visibilityState === 'hidden') return;
+    var day = _matin.days[matinDayKey(new Date())];
+    if((day && day.shownAt) || new Date() < matinHourToday()) return;
+    matinCheck();
+  }, 60000);
   window.addEventListener('storage', function(ev) {
     if(ev.key !== MATIN_KEY || ev.storageArea !== localStorage) return;
     _matin = matinMerge(matinRead(), _matin); matinLabels();
@@ -5412,6 +5446,7 @@ function depotInit() {
     }
   });
   document.getElementById('depot-open').addEventListener('click', depotOpen);
+  document.getElementById('next-torange').addEventListener('click', depotOpen);
   document.getElementById('depot-back').addEventListener('click', depotClose);
   window.addEventListener('resize', depotLayout);
   if(window.visualViewport) { visualViewport.addEventListener('resize', depotLayout); visualViewport.addEventListener('scroll', depotLayout); }

@@ -102,7 +102,7 @@ async function open({ session = true, viewport = { width: 1440, height: 900 }, f
   await page.waitForTimeout(700);
   if (!session && await page.isVisible('#auth-screen')) await page.click('#auth-skip');
   // Après 8 h, le point du matin s'affiche à l'ouverture : ces tests ne portent pas sur lui, on le ferme
-  if (await page.isVisible('#matin-screen')) await page.click('#matin-close');
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   return { ctx, page, fk, sbHits, errors };
 }
 const deposit = async (page, text) => { await page.fill('#depot-ta', text); await page.click('#depot-send'); };

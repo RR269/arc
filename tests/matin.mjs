@@ -15,6 +15,13 @@ const ok = (cond, name, detail = '') => results.push({ ok: !!cond, name, detail 
 const DAY = '2026-10-06', T0 = `${DAY}T07:30:00+02:00`;
 const open = (opts = {}) => openPage(browser, URL0, { session: false, clock: T0, keepMatin: true, ...opts });
 const isOpen = page => page.evaluate(() => document.getElementById('matin-screen').classList.contains('open'));
+// Avancer le temps ARC fermé (page vide), puis rouvrir ARC : c'est une « ouverture après l'heure »,
+// pas la vérification de chaque minute d'un ARC resté ouvert
+const leapClosed = async (page, ms) => {
+  await page.goto('about:blank'); await page.clock.fastForward(ms);
+  await page.goto(URL0, { waitUntil: 'load' }); await page.waitForTimeout(600);
+  if (await page.isVisible('#auth-screen')) await page.click('#auth-skip');
+};
 const reload = async page => {
   await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(600);
   if (await page.isVisible('#auth-screen')) await page.click('#auth-skip');
@@ -47,18 +54,19 @@ let ids;
     { body: 'Plus tard dans la semaine', step: 'Préparer le pilote', space: 'aryan', moment: { type: 'datetime', at: '2026-10-08T10:00:00+02:00' } },
     { body: 'Idée floue', step: 'Noter l\'idée', space: 'inconnu', status: 'unsure' },
     { body: 'Pas encore rangée' },
+    { body: 'Une note', step: '', space: 'aryan' },
   ]);
   await reload(page);
   const stillBefore = await isOpen(page);
-  await page.clock.fastForward(35 * 60e3);   // 8 h 05
-  await reload(page);
+  await leapClosed(page, 35 * 60e3);   // ARC rouvert à 8 h 05
   const after = await isOpen(page);
   const view = await page.evaluate(() => {
     const t = s => [...document.querySelectorAll('#matin-body [data-sec="' + s + '"] .matin-step')].map(e => e.textContent);
     return { date: document.getElementById('matin-date').textContent, today: t('today'), replace: t('replace'), nomoment: t('nomoment'),
              todayWhen: [...document.querySelectorAll('#matin-body [data-sec="today"] .matin-when')].map(e => e.textContent),
              sit: [...document.querySelectorAll('#matin-body .matin-sit')].map(e => e.textContent),
-             torange: (document.querySelector('#matin-body [data-sec="torange"] .matin-sec-s') || {}).textContent,
+             torange: (document.querySelector('#matin-body .matin-torange') || {}).textContent,
+             torangeSections: document.querySelectorAll('#matin-body [data-sec="torange"]').length,
              all: document.getElementById('matin-view').textContent };
   });
   await page.click('#matin-close');
@@ -77,7 +85,9 @@ let ids;
   ok(view.nomoment.includes('Relire les CGV d\'Atlas') && view.nomoment.includes('Lancer la sauvegarde du disque') && view.sit.includes('Quand : en ouvrant le Mac')
      && !view.today.includes('Préparer le pilote') && !view.replace.includes('Préparer le pilote') && !view.nomoment.includes('Préparer le pilote'),
      'Sans moment et situation (ni due ni en retard) ; un moment des jours suivants n\'y est pas', `sans moment : ${view.nomoment.join(' | ')}`);
-  ok(/2 pensées attendent un choix/.test(view.torange || ''), '« À ranger » compte les pensées qui attendent un choix', `« ${view.torange} »`);
+  ok(/^2 pensées à ranger$/.test((view.torange || '').trim()) && view.torangeSections === 0,
+     '« À ranger » : une seule ligne discrète « N pensées à ranger »', `« ${view.torange} »`);
+  ok(!/Une note/.test(view.all) && view.nomoment.length === 2, 'Une pensée rangée sans étape (une note) n\'est pas dans le point', `sans moment : ${view.nomoment.length}`);
   ok(/^Mardi 6 octobre$/.test(view.date) && !/\d+ jours?|série|bravo|félicit/i.test(view.all), 'Date, sans compteur de jours ni félicitation', `« ${view.date} »`);
   ok(day && day.shownAt && day.auto === true && day.opens === 2, 'Mesure sur l\'appareil : point vu, automatiquement, ouvert deux fois', JSON.stringify(day));
 
@@ -107,10 +117,27 @@ let ids;
 
   /* 4. Le lendemain, il revient */
   await page.click('#matin-close');
-  await page.clock.fastForward(24 * 3600e3);
-  await reload(page);
+  await leapClosed(page, 24 * 3600e3);
   ok(await isOpen(page), 'Le lendemain après l\'heure, le point revient');
   ok(errors.length === 0, 'Aucune erreur de console pendant ces essais', errors.join(' | '));
+  await ctx.close();
+}
+
+/* 4 bis. ARC laissé ouvert au premier plan à 7 h 30, sans y toucher : le point s'affiche après 8 h */
+{
+  const { ctx, page } = await open();
+  const at730 = await isOpen(page);
+  await page.clock.fastForward(29 * 60e3);   // 7 h 59
+  const at759 = await isOpen(page);
+  await page.clock.fastForward(2 * 60e3);    // 8 h 01
+  await page.waitForTimeout(200);
+  const at801 = await isOpen(page);
+  if (at801) await page.click('#matin-close');
+  await page.clock.fastForward(5 * 60e3);
+  await page.waitForTimeout(200);
+  const again = await isOpen(page);
+  ok(!at730 && !at759 && at801 && !again, 'ARC laissé ouvert : point affiché après 8 h sans rien toucher, une seule fois',
+     `7 h 30 : ${at730}, 7 h 59 : ${at759}, 8 h 01 : ${at801}, après fermeture : ${again}`);
   await ctx.close();
 }
 
@@ -139,17 +166,14 @@ let ids;
     await page.locator('#matin-settings button[type=submit]').click();
   };
   await setHour('09:00');
-  await page.clock.fastForward(60 * 60e3);   // 8 h 30
-  await reload(page);
+  await leapClosed(page, 60 * 60e3);   // ARC rouvert à 8 h 30
   const at830 = await isOpen(page);
-  await page.clock.fastForward(35 * 60e3);   // 9 h 05
-  await reload(page);
+  await leapClosed(page, 35 * 60e3);   // ARC rouvert à 9 h 05
   const at905 = await isOpen(page);
   await page.click('#matin-close');
   const label = await page.textContent('#btn-matin-lbl');
   await setHour('09:00', false);
-  await page.clock.fastForward(24 * 3600e3);
-  await reload(page);
+  await leapClosed(page, 24 * 3600e3);
   const disabledNextDay = await isOpen(page);
   const entry = await page.textContent('#matin-entry-n');
   ok(!at830 && at905 && label === 'Point du matin · 09 h 00', 'Heure modifiée à 9 h : rien à 8 h 30, affiché à 9 h 05', `8 h 30 : ${at830}, 9 h 05 : ${at905}, menu : « ${label} »`);

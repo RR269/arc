@@ -32,7 +32,7 @@ const THOUGHT_MAX = 8000;
 const SPACES_MAX = 12;
 const NOTE_MAX = 200;
 // Plafonds de la réponse du modèle. La consigne demande 140 caractères pour l'étape ; la validation tolère
-// jusqu'à 300, la limite de la colonne thought_filings.step. Au-delà : 502.
+// jusqu'à 300, la limite de la colonne thought_filings.step. Au-delà : 502. Une étape vide est permise (une note).
 const STEP_MAX = 300;
 const SITUATION_MAX = 160;
 const EXTRA_MAX = 300;
@@ -123,6 +123,8 @@ async function chat(req: Request, body: ChatBody, anthropicKey: string): Promise
 
 type Space = { key: string; name: string; kind: "project" | "life"; note: string };
 type Moment = { type: "none" } | { type: "datetime"; at: string } | { type: "situation"; text: string };
+// Le modèle doit citer les mots de la pensée qui justifient un moment (« source ») ; sans eux, pas de moment.
+const SOURCE_MIN = 2;
 type Filing = { space: string; confidence: "sure" | "unsure"; step: string; moment: Moment; extras: string[] };
 
 // La consigne est écrite ici, jamais par la page.
@@ -139,13 +141,27 @@ Ce que tu fais :
 2. Confiance : « sure » si l'espace va de soi ; « unsure » si tu hésites entre plusieurs espaces, ou si tu as répondu
    « ${UNKNOWN_SPACE} ».
 3. Étape : UNE prochaine étape concrète, qui commence par un verbe à l'infinitif, faisable en une fois,
-   140 caractères au plus, avec les mots de la personne autant que possible.
-4. Moment : seulement si la pensée en contient un (« demain à 9 h », « lundi », « ce soir ») ou si une situation
-   évidente s'y prête (« en ouvrant le Mac », « au prochain passage à la poste »). Une date se calcule à partir de
-   « maintenant » et du fuseau fournis, au format ISO 8601 avec le décalage horaire. Sinon : type « none ».
+   140 caractères au plus, avec les mots de la personne.
+   Si la pensée est déjà une action, garde-la presque telle quelle : ne la gonfle pas, ne la paraphrase pas,
+   ajoute au plus le nom de l'espace s'il manque.
+   Si la pensée n'est pas compréhensible, ou ne contient rien à faire (une note, un constat, une idée à garder),
+   tu ne fabriques pas d'étape : tu laisses « step » vide. Une pensée peut être rangée dans un espace sans étape :
+   c'est une note.
+4. Moment : seulement si la pensée en contient un (« demain à 9 h », « lundi », « ce soir ») ou une situation
+   (« en ouvrant le Mac », « au prochain passage à la poste »). Dans « source », recopie les mots exacts de la
+   pensée qui le justifient. Pas de moment par défaut : jamais « demain matin » par habitude. Sans mots de la
+   pensée pour le justifier : type « none ». Une date se calcule à partir de « maintenant » et du fuseau fournis,
+   au format ISO 8601 avec le décalage horaire.
 5. Pour plus tard : les autres choses distinctes contenues dans la pensée, chacune en une phrase courte, 5 au plus.
    Tableau vide s'il n'y en a pas.
 6. Tu n'inventes rien qui ne soit pas dans la pensée : ni personne, ni date, ni montant, ni lieu.
+
+Exemples (espaces ARYAN et ATLAS) :
+- « faire le design dans aryan » → espace aryan, étape « Faire le design d'ARYAN », moment none (aucun moment
+  dans la pensée).
+- « appeler Karim demain à 9 h pour la maquette » → espace atlas si la maquette en relève, étape « Appeler Karim
+  pour la maquette », moment datetime demain 9 h, source « demain à 9 h ».
+- « dg » → espace inconnu, confiance unsure, étape vide, moment none.
 
 Santé et démarches juridiques ou administratives : jamais d'interprétation, de diagnostic, d'avis sur un droit,
 de délai légal ni de montant. L'étape est toujours une étape d'organisation : noter, prendre rendez-vous,
@@ -160,13 +176,14 @@ function fileTool(keys: string[]) {
       properties: {
         space: { type: "string", enum: [...keys, UNKNOWN_SPACE], description: "Clé d'un espace fourni, ou « inconnu »." },
         confidence: { type: "string", enum: ["sure", "unsure"] },
-        step: { type: "string", description: "Une prochaine étape concrète, commençant par un verbe, 140 caractères au plus." },
+        step: { type: "string", description: "Une prochaine étape concrète, commençant par un verbe, 140 caractères au plus ; vide si la pensée ne contient rien à faire." },
         moment: {
           type: "object",
           properties: {
             type: { type: "string", enum: ["none", "datetime", "situation"] },
             at: { type: "string", description: "Date et heure ISO 8601 avec décalage, si type = datetime." },
             text: { type: "string", description: "La situation, si type = situation." },
+            source: { type: "string", description: "Les mots exacts de la pensée qui justifient ce moment. Obligatoire si type = datetime ou situation." },
           },
           required: ["type"],
         },
@@ -203,16 +220,29 @@ function readFileRequest(body: Record<string, unknown>):
   return { thought: { id: t.id, body: t.body }, spaces, now, tz };
 }
 
+// Comparaison tolérante : sans casse, espaces et apostrophes normalisés
+function norm(x: string): string {
+  return x.toLowerCase().replace(/[\u2018\u2019\u02BC`´]/g, "'").replace(/\s+/g, " ").trim();
+}
+function sourceFound(source: unknown, thought: string): boolean {
+  if (typeof source !== "string") return false;
+  const s = norm(source);
+  return s.length >= SOURCE_MIN && norm(thought).includes(s);
+}
+
 // Valide la sortie du modèle. Renvoie un message d'erreur, ou le rangement propre.
-function readFiling(input: unknown, keys: string[], now: string): { error: string } | { filing: Filing } {
+// Un moment dont la source est introuvable dans la pensée est écarté (« none »), sans rejeter le rangement.
+function readFiling(input: unknown, keys: string[], now: string, thought: string):
+  { error: string } | { filing: Filing; momentDropped: boolean } {
   const o = input as Record<string, unknown> | null;
   if (!o || typeof o !== "object") return { error: "rangement absent" };
   if (typeof o.space !== "string" || (o.space !== UNKNOWN_SPACE && !keys.includes(o.space))) return { error: "espace inconnu" };
   if (o.confidence !== "sure" && o.confidence !== "unsure") return { error: "confiance invalide" };
   const step = typeof o.step === "string" ? o.step.trim() : "";
-  if (step.length === 0 || step.length > STEP_MAX) return { error: "étape vide ou trop longue" };
+  if (step.length > STEP_MAX) return { error: "étape trop longue" };
   const m = o.moment as Record<string, unknown> | undefined;
   let moment: Moment;
+  let momentDropped = false;
   if (!m || m.type === "none") moment = { type: "none" };
   else if (m.type === "datetime") {
     const at = typeof m.at === "string" ? Date.parse(m.at) : NaN;
@@ -225,6 +255,7 @@ function readFiling(input: unknown, keys: string[], now: string): { error: strin
     if (text.length === 0 || text.length > SITUATION_MAX) return { error: "situation vide ou trop longue" };
     moment = { type: "situation", text };
   } else return { error: "type de moment invalide" };
+  if (moment.type !== "none" && !sourceFound(m?.source, thought)) { moment = { type: "none" }; momentDropped = true; }
   if (!Array.isArray(o.extras)) return { error: "extras invalides" };
   const extras: string[] = [];
   for (const x of o.extras) {
@@ -235,7 +266,7 @@ function readFiling(input: unknown, keys: string[], now: string): { error: strin
   }
   // Au-delà de 5, les suivants sont laissés de côté (sans conséquence : la pensée d'origine reste entière)
   const confidence = o.space === UNKNOWN_SPACE ? "unsure" : o.confidence;
-  return { filing: { space: o.space, confidence, step, moment, extras: extras.slice(0, EXTRAS_MAX) } };
+  return { filing: { space: o.space, confidence, step, moment, extras: extras.slice(0, EXTRAS_MAX) }, momentDropped };
 }
 
 async function fileThought(req: Request, body: Record<string, unknown>, anthropicKey: string): Promise<Response> {
@@ -290,12 +321,13 @@ async function fileThought(req: Request, body: Record<string, unknown>, anthropi
     console.log(`rangement 502 : réponse sans outil (stop_reason ${String(out.stop_reason)}, blocs ${blocks.map((b) => b?.type).join(",") || "aucun"})`);
     return fail(req, 502, "Le modèle n'a pas rendu de rangement");
   }
-  const checked = readFiling(use.input, keys, asked.now);
+  const checked = readFiling(use.input, keys, asked.now, asked.thought.body);
   if ("error" in checked) {
     console.log(`rangement 502 : réponse invalide (${checked.error})`);
     return fail(req, 502, `Rangement invalide : ${checked.error}`);
   }
-  console.log(`rangement 200 : pensée ${asked.thought.body.length} car., ${keys.length} espaces, ${checked.filing.confidence}, moment ${checked.filing.moment.type}, ${checked.filing.extras.length} extras`);
+  if (checked.momentDropped) console.log("moment écarté : source introuvable");
+  console.log(`rangement 200 : pensée ${asked.thought.body.length} car., ${keys.length} espaces, ${checked.filing.confidence}, étape ${checked.filing.step ? checked.filing.step.length + " car." : "vide"}, moment ${checked.filing.moment.type}, ${checked.filing.extras.length} extras`);
   return reply(req, 200, { filing: checked.filing, model: typeof out.model === "string" ? out.model : FILE_MODEL });
 }
 

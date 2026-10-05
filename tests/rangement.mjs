@@ -245,7 +245,7 @@ for (const vp of [{ n: 'iPhone 390×844', width: 390, height: 844 }, { n: 'Mac 1
     const box = document.getElementById('next-steps'); const r = box.getBoundingClientRect();
     const texts = [...box.querySelectorAll('*')].filter(e => e.childNodes.length && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()));
     const minFont = Math.min(...texts.map(e => parseFloat(getComputedStyle(e).fontSize)));
-    const minBtn = Math.min(...[...box.querySelectorAll('button')].map(b => Math.min(b.getBoundingClientRect().height, b.getBoundingClientRect().width)));
+    const minBtn = Math.min(...[...box.querySelectorAll('button')].filter(b => b.offsetParent).map(b => Math.min(b.getBoundingClientRect().height, b.getBoundingClientRect().width)));
     const mondes = document.getElementById('hgrid').getBoundingClientRect().top;
     return { shown: r.height > 0 && r.width > 0 && r.right <= innerWidth + 1, minFont, minBtn, above: r.bottom <= mondes };
   });
@@ -394,6 +394,43 @@ const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('onlin
   ok(postedWhileDown === 0 && iT !== -1 && iF > iT && row && row.status === 'cancelled' && askedAI === 0,
      'Une correction sur une pensée en attente part après la pensée',
      `ordre : pensée n° ${iT}, correction n° ${iF} ; ligne reçue : ${row && row.status} ; rangement demandé à l'IA pour une pensée annulée : ${askedAI}`);
+  await ctx.close();
+}
+
+/* 18. Rangée sans étape : une note dans son espace, avec « Ajouter une étape » ; rien dans « Prochaines étapes » */
+{
+  const fk = fakeSupabase();
+  fk.proxy = filingReply({ space: 'aryan', confidence: 'sure', step: '', moment: { type: 'none' }, extras: [] });
+  const { ctx, page } = await open({ fk });
+  await deposit(page, 'dg'); const id = await idOf(page, 'dg'); await waitFiled(page, id);
+  const inNext = await page.locator(`#next-list [data-id="${id}"]`).count();
+  await page.click('#depot-open');
+  const box = await item(page, id).locator('.rg-box').textContent();
+  const add = await btn(page, id, 'Ajouter une étape').count();
+  const pill = await item(page, id).locator('.rg-pill').first().textContent().catch(() => null);
+  ok(inNext === 0 && /Note/.test(box) && add === 1 && pill === 'ARYAN' && !/Pas encore d'étape|À ranger/.test(box),
+     'Rangée sans étape : une note dans son espace, « Ajouter une étape », absente des prochaines étapes',
+     `dans « Prochaines étapes » : ${inNext}, espace : ${pill}, bloc : « ${box.replace(/\s+/g, ' ').slice(0, 80)} »`);
+  await ctx.close();
+}
+
+/* 19. « Prochaines étapes » : seulement des actions réelles ; une ligne discrète « N pensées à ranger » ouvre « Déposé » */
+{
+  const fk = fakeSupabase();
+  let k = 0;
+  const answers = [ATLAS, { space: 'inconnu', confidence: 'unsure', step: 'Noter l\'idée', moment: { type: 'none' }, extras: [] },
+                   { space: 'aryan', confidence: 'unsure', step: 'Voir avec la boulangerie', moment: { type: 'none' }, extras: [] }];
+  fk.proxy = async () => ({ status: 200, json: { filing: answers[k++], model: 'm' } });
+  const { ctx, page } = await open({ fk });
+  for (const T of ['Action claire', 'Idée floue', 'Hésitation']) { await deposit(page, T); await waitFiled(page, await idOf(page, T)); }
+  const steps = await page.locator('#next-list .next-step').allTextContents();
+  const line = await page.textContent('#next-torange').catch(() => null);
+  const visible = await page.isVisible('#next-torange');
+  await page.click('#next-torange', { timeout: 3000 }).catch(() => {});
+  const opened = await page.evaluate(() => document.getElementById('depot-screen').classList.contains('open'));
+  ok(steps.length === 1 && steps[0] === ATLAS.step && visible && /^2 pensées à ranger$/.test((line || '').trim()) && opened,
+     '« Prochaines étapes » : actions réelles seulement, une ligne « N pensées à ranger » qui ouvre « Déposé »',
+     `étapes : ${steps.join(' | ')} ; ligne : « ${line && line.trim()} » ; ouvre « Déposé » : ${opened}`);
   await ctx.close();
 }
 
