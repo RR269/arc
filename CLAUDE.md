@@ -11,6 +11,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - `tests/` (Playwright, outil de développement seulement ; mode d'emploi en tête de `tests/depot.mjs`) :
   `depot.mjs` (dépôt), `rangement.mjs` (rangement), `matin.mjs` (point du matin, horloge contrôlée),
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
+  `charte.mjs` (contrôles de la charte de design : contrastes, cibles, tailles, emoji, variables),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
@@ -41,7 +42,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/charte.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -156,6 +157,40 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
   que le point du jour a été vu).
 - Tests : `tests/matin.mjs` 27 sur 27 ; les autres suites ferment le point s'il s'affiche (elles tournent à l'heure réelle).
 
+Charte et accueil modèle (branche `charte`, 7 octobre, partie de `main` à `09b9196`) :
+- Rayan a remis sa charte de design le 6 octobre au soir : `docs/CHARTE-DESIGN.md`, qui fait foi avec la vision. Une
+  précision orale : pas une seule couleur principale, « un puits vivant de couleur » ; donc une teinte franche par
+  espace, déclinée selon les règles de la charte. Décisions prises faute de réponse : mode clair d'abord ; la
+  question Santé/Juridique (curseurs ou mémoire) reste ouverte jusqu'à ces écrans.
+- `docs/ETAT-DES-LIEUX-CHARTE.md` : état des lieux mesuré du site en ligne, écran par écran, sans modification.
+- Les six essais de design du 6 octobre (branches `design`, `design-v2`, `accueil`, trois directions de Claude Code)
+  sont abandonnés : Rayan n'en a aimé aucun. Ils restent sur leurs branches, rien n'en est repris.
+- Socle (`:root`) : `--ink`, `--paper`, `--line`, `--err`, `--ok`, `--warn` ; une couleur par espace `--c-aryan`,
+  `--c-atlas`, `--c-fba`, `--c-kitchen`, `--c-teleneuf`, `--c-sante`, `--c-juridique`, `--c-arc` ; cinq tailles
+  `--fs-ecran` 28, `--fs-bloc` 20, `--fs-corps` 17, `--fs-libelle` 15, `--fs-mention` 13 ; police système `--fsys` ;
+  arrondis et espacements `--r-*`, `--e1` à `--e6`. La classe `esp` (avec `--c`) donne `--pale`, `--pale-2`, `--encre`,
+  `--filet` par `color-mix`. `rangeSpaces()` renvoie désormais `var(--c-…)` comme couleur d'espace.
+- Accueil (`#S1`), écran modèle : « Maintenant » en titre d'écran ; la première étape en case blanche à filet,
+  en-tête dans la teinte pâle de son espace, bouton principal dans l'encre de l'espace (contraste ≥ 4,5 avec le
+  blanc) ; « Ensuite » ; Déposé et Point du jour en cases avec pictogramme au trait dans un carré pâle ; Projets
+  (cases blanches, en-tête teinté, prochaine tâche, compte ; endormis en lignes) ; Ma vie (teinte pâle, plus calme).
+  Menu « ··· » : Recherche, War Room, Importer, Exporter, connexion, Point du matin, pictogrammes au trait. Aucun
+  emoji sur l'accueil. Compteurs, progression, ajout rapide, veille gardés dans `#home-legacy` (caché) parce que
+  `renderHome`, `renderQA`, `renderIntel` s'y branchent. Changer d'écran remet le défilement en haut (règle 8).
+- Déposé, point du matin et barre de dépôt passent au clair avec les mêmes variables ; pastilles d'espace en
+  encre sur blanc (contraste), « Envoyée » en vert foncé.
+- Mondes, Santé, Juridique et l'écran d'entrée restent dans l'ancien style sombre : prochains écrans, dans
+  l'ordre de l'état des lieux, chacun validé par Rayan sur son iPhone avant le suivant.
+- `tests/charte.mjs` (nouveau, 135 contrôles) : sur accueil, Déposé, point du matin et barre, en 375, 390, 430 et
+  1440 px : contraste ≥ 4,5 (3 pour ≥ 24 px, `color(srgb …)` lu), cibles ≥ 44 px, texte ≥ 12 px, champs ≥ 16 px,
+  aucun emoji, six tailles au plus, police système, aucun débordement, aucune erreur ; dans le fichier : aucun emoji
+  dans le balisage de l'accueil, couleurs par variables, aucun `!important` dans ses styles. On y ajoute un écran
+  quand il passe à la charte.
+- Correction au passage : le clic sur l'icône du menu « ··· » n'ouvrait plus le menu (`t.id` lu sur le `<svg>`) ;
+  `closest("#btn-menu")` et `closest("#btn-export")`.
+- Tests le 7 octobre : charte 135/135, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 531 `<div` /
+  531 `</div>` ; cinq mondes et deux pôles s'ouvrent. Pas encore vu par Rayan sur son iPhone.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
@@ -192,6 +227,7 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 ### Documents à lire avant tout chantier, dans cet ordre
 
 1. `docs/VISION.md` : la vision de Rayan et ses décisions du 5 octobre. Fait foi.
+   `docs/CHARTE-DESIGN.md` : ses règles de design (6 octobre). Fait foi pour toute interface.
 2. `docs/ETUDE-COMPLETE.md` : ce qui a été fait, l'écart avec la vision, ce qu'il faut apporter, les priorités,
    la première version à construire et l'ordre des chantiers.
 3. `docs/ETUDE-BESOIN.md` : le besoin, sourcé ; la ligne à ne pas franchir en santé et en droit.

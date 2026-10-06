@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ARC">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' d='M18 5 L4 30'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' d='M18 5 L32 30'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' d='M9 20 Q18 13 27 20'/%3E%3Ccircle fill='%23fff' cx='18' cy='5' r='2'/%3E%3C/svg%3E">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#F5F5F7" id="theme-color">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -18,6 +18,21 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Azeret+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
+/* ═══ SOCLE DE LA CHARTE (docs/CHARTE-DESIGN.md), 7 octobre ═══
+   Couleurs : un puits de couleur, une teinte franche par espace, déclinée en pâle (fond), en encre (texte sur pâle)
+   et en vive (repère). Tout passe par ces variables ; aucune valeur recopiée dans un écran.
+   Écriture : police système, cinq tailles seulement, corps 17 px, interligne 1,47, encre presque noire. */
+:root{
+  --ink:#1C1C1E;--ink-2:#5C5C62;--ink-3:#8A8A90;--paper:#FFFFFF;--paper-2:#F5F5F7;--line:#E3E3E8;--line-2:#CFCFD6;
+  --err:#C8321E;--err-pale:#FDECEA;--ok:#17733D;--ok-pale:#E6F6EC;--warn:#8A4B00;--warn-pale:#FFF4E0;--paper-3:#ECECF1;--line-3:#A8A8B3;
+  --c-aryan:#E8590C;--c-atlas:#0E8F9A;--c-fba:#D08700;--c-kitchen:#D6336C;--c-teleneuf:#6F42E0;--c-sante:#1F9D55;--c-juridique:#2563EB;--c-arc:#5B3DF5;
+  --fs-ecran:28px;--fs-bloc:20px;--fs-corps:17px;--fs-libelle:15px;--fs-mention:13px;
+  --fsys:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;
+  --r-carte:16px;--r-bouton:12px;--e1:4px;--e2:8px;--e3:12px;--e4:16px;--e5:24px;--e6:32px;
+}
+/* Déclinaisons d'une couleur d'espace (définir --c sur l'élément) */
+.esp{--pale:color-mix(in srgb,var(--c) 10%,#FFFFFF);--pale-2:color-mix(in srgb,var(--c) 18%,#FFFFFF);--encre:color-mix(in srgb,var(--c) 70%,#000000);--filet:color-mix(in srgb,var(--c) 45%,#FFFFFF)}
+
 /* === RESET === */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#f5f5f7;font-family:'Plus Jakarta Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
@@ -1139,74 +1154,166 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
+
+/* ═══ ACCUEIL selon la charte ═══ */
+#S1,#depot-screen,#matin-screen,#depot-bar{--bg:var(--paper-2);--bg1:var(--paper);--bg2:var(--paper);--bg3:var(--paper-2);--bg4:var(--paper-3);--bg5:var(--paper-3);--b1:var(--line);--b2:var(--line-2);--b3:var(--line-3);--t1:var(--ink);--t2:var(--ink-2);--t3:var(--ink-2);--green:var(--ok);--red:var(--err);--orange:var(--warn);--f:var(--fsys);--fm:var(--fsys);color:var(--ink);font-family:var(--fsys);font-size:var(--fs-corps);line-height:1.47;letter-spacing:-.01em}
+body.home-on{background:var(--paper-2)}
+#S1{background:var(--paper-2)}
+.ah{max-width:720px;padding-left:var(--e4);padding-right:var(--e4)}
+.ah-top{display:flex;align-items:center;justify-content:space-between;gap:var(--e3);min-height:44px;padding-top:calc(var(--e3) + env(safe-area-inset-top))}
+.ah-brand{display:flex;align-items:center;gap:10px;font-size:var(--fs-corps);font-weight:600;letter-spacing:.02em}
+.ah-ring{transform:rotate(-90deg);flex-shrink:0}
+.ah-right{display:flex;align-items:center;gap:var(--e2)}
+.ah-date{font-size:var(--fs-libelle);color:var(--ink-2);white-space:nowrap}
+#S1 #sync-pill{min-height:32px;padding:0 var(--e3);border:1px solid var(--line);background:var(--paper);border-radius:16px}
+#S1 #sync-dot{width:8px;height:8px}
+#S1 #sync-lbl{font-family:var(--fsys);font-size:var(--fs-mention);letter-spacing:0;color:var(--ink-2)}
+#S1 .h-menu-btn{width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:10px}
+#S1 .h-menu-btn svg{width:22px;height:22px}
+#S1 .h-menu-btn:active{background:var(--paper-2);transform:scale(.97)}
+#S1 .h-menu-dropdown{top:50px;min-width:250px;padding:var(--e2);border-radius:var(--r-carte);border:1px solid var(--line);background:var(--paper);box-shadow:0 12px 32px rgba(28,28,30,.12)}
+#S1 .h-menu-item{display:flex;align-items:center;gap:var(--e3);min-height:44px;padding:0 var(--e3);border-radius:var(--r-bouton);font-family:var(--fsys);font-size:var(--fs-corps);font-weight:400;color:var(--ink)}
+#S1 .h-menu-item svg{width:20px;height:20px;flex-shrink:0;color:var(--ink-2)}
+#S1 .h-menu-item:hover,#S1 .h-menu-item:active{background:var(--paper-2)}
+.ah-h1{margin:var(--e5) 0 var(--e3);font-size:var(--fs-ecran);line-height:1.2;font-weight:600;letter-spacing:-.02em}
+.ah-h2{margin:0 0 var(--e3);font-size:var(--fs-bloc);line-height:1.3;font-weight:600;letter-spacing:-.015em}
+/* Maintenant : la première étape, une case blanche avec son en-tête dans la teinte pâle de l'espace */
+#S1 .next-wrap{margin:0 0 var(--e5)}
+#S1 .next-item{--c:var(--c-arc);padding:var(--e4);border-radius:var(--r-carte);background:var(--paper);border:1px solid var(--line);margin-bottom:var(--e3);font-family:var(--fsys)}
+#S1 .next-item:first-child{padding:0;border-color:var(--filet);overflow:hidden}
+#S1 .next-item:first-child .rg-row{margin:0;padding:var(--e3) var(--e4);background:var(--pale);border-bottom:1px solid var(--filet)}
+#S1 .next-item:first-child .next-step{padding:var(--e4) var(--e4) 0;font-size:var(--fs-bloc);line-height:1.3;font-weight:600;letter-spacing:-.015em}
+#S1 .next-item:first-child .rg-acts{padding:var(--e3) var(--e4) var(--e4);margin:0}
+#S1 .next-step{font-size:var(--fs-corps);font-weight:600;line-height:1.35}
+#S1 .next-when{font-size:var(--fs-libelle);font-weight:600;color:var(--encre)}
+#S1 .rg-lbl{font-size:var(--fs-mention);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--encre)}
+#S1 .rg-pill{font-size:var(--fs-mention);font-weight:600;border-color:var(--filet);background:var(--paper);color:var(--encre)}
+#S1 .rg-btn{min-height:44px;border-radius:var(--r-bouton);border:1px solid var(--line-2);background:var(--paper);color:var(--ink);font-family:var(--fsys);font-size:var(--fs-corps);font-weight:400}
+#S1 .rg-btn:active{background:var(--paper-2);transform:scale(.98)}
+#S1 .rg-btn.main{background:var(--encre);border-color:var(--encre);color:#FFFFFF;font-weight:600}
+#S1 .next-item:first-child .rg-btn.main{flex:1 1 160px}
+.next-sep{margin:var(--e4) 0 var(--e2);font-size:var(--fs-mention);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+#S1 .next-empty{padding:var(--e4);border-radius:var(--r-carte);background:var(--paper);border:1px solid var(--line);font-size:var(--fs-corps);line-height:1.47;color:var(--ink-2)}
+#S1 .next-empty b{display:block;color:var(--ink);font-weight:600}
+#S1 .next-torange{color:var(--ink);font-family:var(--fsys);font-size:var(--fs-libelle)}
+/* Déposé, Point du jour : deux cases avec pictogramme au trait dans un carré pâle */
+.ah-entries{display:grid;grid-template-columns:1fr 1fr;gap:var(--e3);margin:0 0 var(--e6)}
+#S1 .depot-entry{max-width:none;min-height:64px;margin:0;padding:var(--e3);border:1px solid var(--line);border-radius:var(--r-carte);background:var(--paper);display:grid;grid-template-columns:40px 1fr 20px;grid-template-rows:auto auto;column-gap:var(--e3);row-gap:2px;align-items:center;text-align:left;font-family:var(--fsys)}
+#S1 .depot-entry:active{background:var(--paper-2);transform:scale(.99)}
+.ah-ico{grid-row:1/3;width:40px;height:40px;border-radius:10px;background:var(--pale);color:var(--encre);display:flex;align-items:center;justify-content:center}
+.ah-ico svg{width:22px;height:22px}
+#S1 .depot-entry-t{font-size:var(--fs-corps);font-weight:600;line-height:1.25}
+#S1 .depot-entry-n{grid-column:2;font-size:var(--fs-mention);color:var(--ink-2);line-height:1.3}
+#S1 .depot-entry-go{grid-row:1/3;grid-column:3;color:var(--ink-3)}
+#S1 .depot-entry-go svg{width:20px;height:20px}
+/* Projets : une case par projet, en-tête dans sa teinte, nom, prochaine étape, compte */
+.ah-sec{margin:0 0 var(--e6)}
+.wc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--e3)}
+.wc{display:flex;flex-direction:column;border-radius:var(--r-carte);background:var(--paper);border:1px solid var(--line);overflow:hidden;cursor:pointer;text-align:left;font-family:var(--fsys)}
+.wc:active{background:var(--paper-2)}
+.wc:focus-visible,.wc-s:focus-visible,.lc:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.wc-head{display:flex;align-items:center;gap:var(--e2);padding:var(--e3) var(--e4);background:var(--pale);border-bottom:1px solid var(--filet)}
+.wc-dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex-shrink:0}
+.wc-name{font-size:var(--fs-bloc);font-weight:600;letter-spacing:-.015em;color:var(--encre)}
+.wc-body{padding:var(--e3) var(--e4) var(--e4);display:flex;flex-direction:column;gap:var(--e1)}
+.wc-next{font-size:var(--fs-corps);line-height:1.4;color:var(--ink)}
+.wc-foot{font-size:var(--fs-mention);color:var(--ink-2)}
+.wc-sleep{display:flex;flex-direction:column;margin-top:var(--e3);border-radius:var(--r-carte);background:var(--paper);border:1px solid var(--line);padding:0 var(--e4)}
+.wc-s{display:flex;align-items:center;gap:var(--e3);min-height:56px;cursor:pointer;border-bottom:1px solid var(--line);font-family:var(--fsys)}
+.wc-s:last-child{border-bottom:none}
+.wc-s-dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex-shrink:0}
+.wc-s-name{font-size:var(--fs-corps);font-weight:600}
+.wc-s-cat{flex:1;min-width:0;font-size:var(--fs-libelle);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-s-tag{font-size:var(--fs-mention);font-weight:600;color:var(--ink-2);padding:4px 10px;border-radius:10px;background:var(--paper-2);white-space:nowrap}
+/* Ma vie : à part, plus calme */
+.lc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--e3)}
+.lc{display:flex;flex-direction:column;gap:var(--e1);min-height:88px;padding:var(--e4);border-radius:var(--r-carte);background:var(--pale);border:1px solid var(--filet);cursor:pointer;font-family:var(--fsys)}
+.lc:active{background:var(--pale-2)}
+.lc-name{display:flex;align-items:center;gap:var(--e2);font-size:var(--fs-bloc);font-weight:600;letter-spacing:-.015em;color:var(--encre)}
+.lc-name::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--c)}
+.lc-sub{font-size:var(--fs-libelle);line-height:1.4;color:var(--ink-2)}
+@media(max-width:560px){.wc-grid{grid-template-columns:1fr}.ah-entries{grid-template-columns:1fr}.ah-date{display:none}}
+@media(prefers-reduced-motion:reduce){#S1 .rg-btn,#S1 .depot-entry,#S1 .wc,#S1 .lc,#S1 .h-menu-btn{transition:none}}
+/* Déposé, point du matin, barre : mêmes variables, fond clair */
+#depot-screen{background:var(--paper-2)}
+#depot-screen .depot-title{font-size:var(--fs-ecran);font-weight:600;letter-spacing:-.02em}
+#depot-screen .depot-item,#matin-screen .matin-row,#matin-screen .matin-card{background:var(--paper);border:1px solid var(--line)}
+#depot-screen .rg-pill,#matin-screen .rg-pill{background:var(--paper);border-color:color-mix(in srgb,var(--rg-c) 45%,#FFFFFF);color:color-mix(in srgb,var(--rg-c) 70%,#000000)}
+#depot-screen .rg-lbl,#matin-screen .rg-lbl{color:var(--ink-2)}
+#depot-screen .rg-btn,#matin-screen .rg-btn{background:var(--paper);border-color:var(--line-2);color:var(--ink);font-family:var(--fsys)}
+#depot-screen .rg-btn.main,#matin-screen .rg-btn.main,#matin-screen .matin-go,#depot-bar .depot-send{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+#depot-screen .rg-btn.quiet,#matin-screen .rg-btn.quiet,#depot-screen .rg-btn.rg-chip{background:none;border-color:transparent}
+#depot-screen .rg-btn.rg-chip{border-color:var(--line-2)}
+#matin-screen{background:rgba(28,28,30,.4)}
+#depot-screen .depot-state.sent{background:var(--ok-pale);color:var(--ok)}
+#depot-screen .depot-state.wait{background:var(--warn-pale);color:var(--warn)}
+#depot-screen .depot-state.local{background:var(--paper-2);color:var(--ink)}
+#depot-screen .depot-state.rej{background:var(--err-pale);color:var(--err)}
+#depot-screen .rg-done,#matin-screen .rg-done{color:var(--ok)}
+#depot-screen .rg-moment,#matin-screen .matin-when{color:var(--warn)}
+#depot-screen .rg-input,#matin-screen .rg-input,#matin-screen .matin-field input[type=time]{color-scheme:light;background:var(--paper);border-color:var(--line-2);color:var(--ink);font-size:16px}
+#depot-bar .depot-pill{background:var(--paper);border:1px solid var(--line-2);box-shadow:0 8px 24px rgba(28,28,30,.12)}
+#depot-bar .depot-note{background:var(--paper);border-color:var(--line-2);color:var(--ink)}
+#depot-bar .depot-note button{min-height:44px}
+#depot-bar .depot-input{color:var(--ink);color-scheme:light}
+#depot-bar .depot-input::placeholder{color:var(--ink-2)}
 </style>
 </head>
-<body>
+<body class="home-on">
 <!-- S1 HOME -->
-<div class="scr" id="S1"><div class="hw">
-  <nav class="hn"><div class="hn-left">
-    <div class="h-logo-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><path class="arc-shimmer" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div>
-    <div><div class="h-logo-name">ARC</div><div class="h-logo-sub">RAYAN &middot; VALENCE</div></div>
-  </div>
-  <div class="hn-right">
-    <div id="sync-pill"><div id="sync-dot"></div><span id="sync-lbl">ARC</span></div>
-    <button class="h-search-btn" id="btn-search"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Recherche<span class="h-search-kbd">K</span></button>
-    <button class="h-warroom-btn" id="btn-warroom"><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M7 1L9 5l4 .5-3 2.8.7 4L7 10 3.3 12.3 4 8.3 1 5.5 5 5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>War Room</button>
-    <div style="position:relative"><button class="h-menu-btn" id="btn-menu">&#183;&#183;&#183;</button>
-      <div class="h-menu-dropdown" id="h-menu-dd">
-        <label class="h-menu-item" style="cursor:pointer"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Importer<input type="file" id="file-imp" accept=".json" style="display:none"></label>
-        <button class="h-menu-item" id="btn-export"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 14V5M4 9l4-4 4 4M2 3h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Exporter</button>
-        <button class="h-menu-item" id="btn-auth"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="5.5" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 14c.8-2.6 2.9-4 5.5-4s4.7 1.4 5.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-auth-lbl">Se connecter</span></button>
-        <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-matin-lbl">Point du matin</span></button>
+<div class="scr" id="S1"><div class="hw ah">
+  <nav class="ah-top">
+    <div class="ah-brand"><svg class="ah-ring" width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="6.9 62.2"><circle cx="14" cy="14" r="11" stroke="#E8590C"/><circle cx="14" cy="14" r="11" stroke="#0E8F9A" stroke-dashoffset="-9.87"/><circle cx="14" cy="14" r="11" stroke="#D08700" stroke-dashoffset="-19.74"/><circle cx="14" cy="14" r="11" stroke="#D6336C" stroke-dashoffset="-29.61"/><circle cx="14" cy="14" r="11" stroke="#6F42E0" stroke-dashoffset="-39.48"/><circle cx="14" cy="14" r="11" stroke="#1F9D55" stroke-dashoffset="-49.35"/><circle cx="14" cy="14" r="11" stroke="#2563EB" stroke-dashoffset="-59.22"/></g></svg><span>ARC</span></div>
+    <div class="ah-right">
+      <span class="ah-date" id="h-context-txt"></span>
+      <div id="sync-pill"><div id="sync-dot"></div><span id="sync-lbl">ARC</span></div>
+      <div style="position:relative"><button class="h-menu-btn" id="btn-menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></button>
+        <div class="h-menu-dropdown" id="h-menu-dd">
+          <button class="h-menu-item" id="btn-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>Recherche</button>
+          <button class="h-menu-item" id="btn-warroom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>War Room</button>
+        <label style="cursor:pointer" class="h-menu-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"/></svg>Importer<input type="file" id="file-imp" accept=".json" style="display:none"></label>
+        <button class="h-menu-item" id="btn-export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V8M6 14l6-6 6 6M4 4h16"/></svg>Exporter</button>
+        <button class="h-menu-item" id="btn-auth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg><span id="btn-auth-lbl">Se connecter</span></button>
+        <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span id="btn-matin-lbl">Point du matin</span></button>
+        </div>
       </div>
     </div>
-  </div></nav>
-  <div class="h-hero">
-    <div class="h-context-badge"><div class="h-context-dot" style="background:var(--green)"></div><span id="h-context-txt">Chargement...</span></div>
-    <div class="h-h1"><span class="h-h1-gradient">Un cerveau.</span><span class="h-h1-light">Sept espaces.</span></div>
-    <div class="h-sub" id="h-sub-txt">Rayan &middot; Valence.</div>
-    <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span class="h-sub-critical-dot" style="background:var(--red)"></span><span id="h-critical-txt"></span></div>
-    <button class="depot-entry" id="depot-open" type="button"><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true">›</span></button>
-    <button class="depot-entry" id="matin-open" type="button"><span class="depot-entry-t">Point du jour</span><span class="depot-entry-n" id="matin-entry-n"></span><span class="depot-entry-go" aria-hidden="true">›</span></button>
+  </nav>
+  <h1 class="ah-h1" id="ah-h1">Maintenant</h1>
+  <section class="next-wrap" id="next-steps" aria-labelledby="ah-h1">
+    <div id="next-list"></div>
+    <button class="next-torange" id="next-torange" type="button" hidden></button>
+    <div class="next-empty" id="next-empty"><b>Rien en cours.</b> Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
+  </section>
+  <div class="ah-entries">
+    <button class="depot-entry" id="depot-open" type="button"><span class="ah-ico esp" style="--c:var(--c-arc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4l10-10-4-4L4 16v4z"/><path d="M12.5 7.5l4 4"/></svg></span><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+    <button class="depot-entry" id="matin-open" type="button"><span class="ah-ico esp" style="--c:var(--c-fba)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><span class="depot-entry-t">Point du jour</span><span class="depot-entry-n" id="matin-entry-n"></span><span class="depot-entry-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></span></button>
+  </div>
+  <section class="ah-sec" aria-labelledby="ah-proj">
+    <h2 class="ah-h2" id="ah-proj">Projets</h2>
+    <div id="hgrid"></div>
+  </section>
+  <section class="ah-sec" aria-labelledby="ah-vie">
+    <h2 class="ah-h2" id="ah-vie">Ma vie</h2>
+    <div class="lc-grid" id="poles-grid"></div>
+  </section>
+  <!-- Ancien accueil, hors écran : compteurs, progression, ajout rapide, veille. renderHome, renderQA et renderIntel
+       s'y branchent encore ; à retirer avec leur code. -->
+  <div id="home-legacy" hidden>
+    <div class="h-sub" id="h-sub-txt"></div>
+    <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span id="h-critical-txt"></span></div>
     <div class="h-stats">
       <div class="h-stat" style="animation-delay:.1s"><div class="h-stat-v" style="color:#FF9500" id="hs-proj">5</div><div class="h-stat-l">Projets</div></div>
       <div class="h-stat" style="animation-delay:.15s"><div class="h-stat-v" style="color:var(--green)" id="hs-done">0</div><div class="h-stat-l">Accomplies</div></div>
       <div class="h-stat" id="hs-blk-card" style="animation-delay:.2s"><div class="h-stat-v" style="color:#FF2D55" id="hs-blk">0</div><div class="h-stat-l">Bloquants</div></div>
       <div class="h-stat" style="animation-delay:.25s"><div class="h-stat-v" style="color:var(--teal)" id="hs-jou">0</div><div class="h-stat-l">Journal</div></div>
     </div>
-  </div>
-  <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
-  <!-- PROCHAINES ÉTAPES : tirées des pensées rangées -->
-  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
-    <div class="next-title" id="next-title">Prochaines étapes</div>
-    <div id="next-list"></div>
-    <button class="next-torange" id="next-torange" type="button" hidden></button>
-    <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
-  </section>
-  <!-- SECTION MONDES -->
-  <div class="h-section">
-    <div class="h-section-head">
-      <div class="h-section-lbl">&#127759; Mondes</div>
-      <div class="h-section-sub" id="h-mondes-sub"><span id="h-mondes-pct">0%</span> progression globale</div>
-    </div>
-    <div class="h-mondes-grid" id="hgrid"></div>
-  </div>
-
-  <!-- SECTION POLES -->
-  <div class="h-section">
-    <div class="h-section-head">
-      <div class="h-section-lbl">&#9889; P&#244;les personnels</div>
-    </div>
-    <div class="poles-grid" id="poles-grid"></div>
-  </div>
-
-  <!-- QUICK ADD -->
-  <div id="quick-add-bar"><div id="qa-top"><span id="qa-icon">+</span><input id="qa-inp" placeholder="Ajoute une t&#226;che..." autocomplete="off"></div><div id="qa-projects"></div></div>
-  <div class="h-intel-head"><div style="display:flex;align-items:center;gap:10px"><div class="h-sec-label">Veille &amp; Sources</div><span class="intel-count" id="intel-count">6 sources</span></div><button class="intel-refresh" id="btn-intel">&#8635; Actualiser</button></div>
+    <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
+    <span id="h-mondes-pct">0%</span>
+    <div id="quick-add-bar"><div id="qa-top"><span id="qa-icon">+</span><input id="qa-inp" placeholder="Ajoute une t&#226;che..." autocomplete="off"></div><div id="qa-projects"></div></div>
+    <div class="h-intel-head"><div style="display:flex;align-items:center;gap:10px"><div class="h-sec-label">Veille &amp; Sources</div><span class="intel-count" id="intel-count">6 sources</span></div><button class="intel-refresh" id="btn-intel">&#8635; Actualiser</button></div>
   <div class="intel-grid" id="intel-grid"></div>
-  <div class="h-sec-label">Tes 5 projets</div>
-  <div class="hgrid" id="hgrid"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 0;border-top:1px solid var(--b1);font-size:11px;color:var(--t3);font-family:var(--fm)"><span>ARC v2</span><span><kbd style="background:var(--bg3);border:1px solid var(--b2);border-radius:5px;padding:2px 7px;font-family:var(--fm);font-size:10px">K</kbd> recherche</span></div>
+  </div>
 </div></div>
 
 <!-- S2 WORLD -->
@@ -2640,9 +2747,8 @@ function renderHome(){
   var cb=document.getElementById("h-context-badge");
   var ct=document.getElementById("h-context-txt");
   var d=new Date(); var h=d.getHours();
-  var slot=h<6?"🌙 Nuit":h<12?"☀️ Matin":h<18?"💼 Après-midi":"🌆 Soirée";
   var dayStr=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-  if(ct) ct.textContent=slot+" — "+dayStr;
+  if(ct) ct.textContent=dayStr.charAt(0).toUpperCase()+dayStr.slice(1);
 
   var blkCard=document.getElementById("hs-blk-card");
   if(blkCard) blkCard.className="h-stat"+(allBlk>0?" stat-alert":"");
@@ -2658,66 +2764,44 @@ function renderHome(){
   renderIntel();
 }
 
+/* Couleur d'un espace : la variable du socle (voir :root) */
+function homeKey(name){ return String(name).toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g,''); }
+function homeColor(key){ return 'var(--c-'+key+',var(--c-arc))'; }
+
 function renderPoles(){
   var grid=document.getElementById("poles-grid"); if(!grid) return;
-  var today=new Date().toDateString();
-  var santeCI=S.poles.sante.find(function(ci){ return new Date(ci.date).toDateString()===today; });
+  var subs={sante:"Rendez-vous, notes, documents, questions à poser.",juridique:"Démarches, contrats, échéances."};
   var html="";
   POLES.forEach(function(p){
-    var dot='<div class="pole-status-dot" style="background:'+p.color+';"></div>';
-    var sub="";
-    if(p.id==="sante"){
-      if(santeCI) sub='<div class="pole-checkin-done">Check-in fait aujourd\'hui</div>';
-      else sub='<div class="pole-checkin-pending">Check-in du jour manquant</div>';
-    } else if(p.id==="juridique"){
-      var jurObj=S.poles.juridique||{}; var total=Object.values(jurObj).reduce(function(a,b){ return a+(Array.isArray(b)?b.length:0); },0);
-      sub='<div class="pole-checkin-pending">'+total+' élément'+(total>1?"s":"")+' enregistré'+(total>1?"s":"")+'</div>';
-    }
-    html+='<div class="pole-card" style="--pc:'+p.color+';cursor:pointer" data-action="enter-pole" data-pole="'+p.id+'">' +dot+'<span class="pole-icon">'+p.icon+'</span><div class="pole-name" style="color:'+p.color+'">'+p.name+'</div><div class="pole-desc">'+p.desc+'</div>'+sub+'</div>';
+    html+='<div class="lc esp" role="button" tabindex="0" style="--c:'+homeColor(p.id)+'" data-action="enter-pole" data-pole="'+p.id+'"><div class="lc-name">'+esc(p.name)+'</div><div class="lc-sub">'+esc(subs[p.id]||"")+'</div></div>';
   });
   grid.innerHTML=html;
 }
 
 function renderCards(){
   var g=document.getElementById("hgrid"); if(!g) return;
-  var html="";
+  var awake="",asleep="";
   WORLDS.forEach(function(wd){
+    var key=homeKey(wd.name);
     var allT=wd.tasks_done.concat(wd.tasks_todo);
     var done=allT.filter(function(t){ return S.tasks[wd.id]&&S.tasks[wd.id][t.id]; }).length;
-    var pct=allT.length>0?Math.round(done/allT.length*100):0;
-    var blk=(S.blkCustom[wd.id]||[]).length+wd.blockers.length;
-    var focusId=S.focus[wd.id];
-    var focusTxt="";
-    if(focusId){
-      var ft=allT.find(function(t){ return t.id===focusId&&!(S.tasks[wd.id]&&S.tasks[wd.id][t.id]); });
-      if(ft) focusTxt=ft.t;
+    var cat=esc(String(wd.cat||"").split(" · ").slice(0,2).join(" · "));
+    if(typeof RANGE_DORMANT!=="undefined"&&RANGE_DORMANT.indexOf(key)!==-1){
+      asleep+='<div class="wc-s esp" role="button" tabindex="0" style="--c:'+homeColor(key)+'" data-action="enter-world" data-wid="'+wd.id+'"><span class="wc-s-dot"></span><span class="wc-s-name">'+esc(wd.name)+'</span><span class="wc-s-cat">'+cat+'</span><span class="wc-s-tag">Endormi</span></div>';
+      return;
     }
-    if(!focusTxt){
-      var nt=wd.tasks_todo.find(function(t){ return !S.tasks[wd.id]||!S.tasks[wd.id][t.id]; });
-      if(nt) focusTxt=nt.t;
-    }
-    var prioMap={critical:"prio-critical",high:"prio-high",medium:"prio-medium",low:"prio-low"};
-    var prio=blk>2?"critical":blk>0?"high":pct>60?"medium":"low";
-    var prioLabel={critical:"🔴 CRITIQUE",high:"🟠 URGENCE",medium:"🔵 ACTIF",low:"⚪ NORMAL"};
-    html+='<div class="pc-monde" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'">';
-    html+='<div class="pc-monde-header">';
-    html+='<div class="pc-monde-top"><span class="pc-monde-icon">'+wd.icon+'</span><div class="pc-monde-badges">';
-    if(blk>0) html+='<div class="pc-monde-blk">⚡ '+blk+' bloquant'+(blk>1?"s":"")+'</div>';
-    html+='<span class="pc-monde-prio '+prioMap[prio]+'">'+prioLabel[prio]+'</span>';
-    html+='</div></div>';
-    html+='<div class="pc-monde-name">'+esc(wd.name)+'</div>';
-    html+='<div class="pc-monde-desc">'+esc(wd.desc)+'</div>';
-    html+='</div>';
-    html+='<div class="pc-monde-prog">';
-    html+='<div class="pc-monde-prog-row"><div class="pc-monde-track"><div class="pc-monde-fill" style="width:'+pct+'%;background:'+wd.color+'"></div></div><span class="pc-monde-pct">'+pct+'%</span></div>';
-    if(focusTxt) html+='<div class="pc-monde-focus">▶ '+esc(focusTxt.slice(0,70))+(focusTxt.length>70?"…":"")+'</div>';
-    html+='</div>';
-    html+='<div class="pc-monde-footer">';
-    wd.tags.forEach(function(tag){ html+='<span class="pc-monde-tag">'+esc(tag)+'</span>'; });
-    html+='</div>';
-    html+='</div>';
+    var focusId=S.focus[wd.id], focusTxt="";
+    if(focusId){ var ft=allT.find(function(t){ return t.id===focusId&&!(S.tasks[wd.id]&&S.tasks[wd.id][t.id]); }); if(ft) focusTxt=ft.t; }
+    if(!focusTxt){ var nt=wd.tasks_todo.find(function(t){ return !S.tasks[wd.id]||!S.tasks[wd.id][t.id]; }); if(nt) focusTxt=nt.t; }
+    var left=allT.length-done;
+    awake+='<div class="wc esp" role="button" tabindex="0" style="--c:'+homeColor(key)+'" data-action="enter-world" data-wid="'+wd.id+'">';
+    awake+='<div class="wc-head"><span class="wc-dot"></span><span class="wc-name">'+esc(wd.name)+'</span></div>';
+    awake+='<div class="wc-body">';
+    if(focusTxt) awake+='<div class="wc-next">'+esc(focusTxt.slice(0,90))+(focusTxt.length>90?"…":"")+'</div>';
+    awake+='<div class="wc-foot">'+done+' faite'+(done>1?"s":"")+' · '+left+' à faire</div>';
+    awake+='</div></div>';
   });
-  g.innerHTML=html;
+  g.innerHTML='<div class="wc-grid">'+awake+'</div>'+(asleep?'<div class="wc-sleep">'+asleep+'</div>':'');
 }
 
 
@@ -3583,8 +3667,8 @@ document.addEventListener("click",function(ev){
   if(t.id==="btn-search"||t.closest("#btn-search")){ openSearch(); return; }
   if(t.id==="search-modal"){ closeSearch(); return; }
   // Menu
-  if(t.id==="btn-menu"){ var dd=document.getElementById("h-menu-dd"); dd.classList.toggle("open"); return; }
-  if(t.id==="btn-export"){ exportData(); document.getElementById("h-menu-dd").classList.remove("open"); return; }
+  if(t.id==="btn-menu"||t.closest("#btn-menu")){ var dd=document.getElementById("h-menu-dd"); dd.classList.toggle("open"); return; }
+  if(t.id==="btn-export"||t.closest("#btn-export")){ exportData(); document.getElementById("h-menu-dd").classList.remove("open"); return; }
   // Connexion
   if(t.closest&&(t.closest("#btn-auth")||t.closest("#sync-pill"))){
     document.getElementById("h-menu-dd").classList.remove("open");
@@ -3900,11 +3984,19 @@ function deleteTool(widOrPoleId,toolId){
 
 var _screens=['S1','S2','S3','S4'];
 
+document.addEventListener("keydown",function(e){
+  if(e.key!=="Enter"&&e.key!==" ") return;
+  var t=e.target; if(!t||!t.matches||!t.matches('[role="button"][data-action]')) return;
+  e.preventDefault(); t.click();
+});
 function showScreen(id){
   _screens.forEach(function(s){
     var el=document.getElementById(s);
     if(el){ el.classList.toggle("off",s!==id); }
   });
+  document.body.classList.toggle("home-on",id==="S1");
+  var tc=document.getElementById("theme-color"); if(tc) tc.setAttribute("content",id==="S1"?"#F5F5F7":"#000000");
+  var sc=document.getElementById(id); if(sc) sc.scrollTop=0;
 }
 
 
@@ -4804,17 +4896,17 @@ function rangeSpaces() {
   var list = WORLDS.map(function(w) {
     var key = String(w.name).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
     var note = (RANGE_DORMANT.indexOf(key) !== -1 ? 'Endormi. ' : '') + String(w.cat || '') + '. ' + String(w.mission || '');
-    return { key: key, name: w.name, kind: 'project', note: note.slice(0, 200), color: w.color };
+    return { key: key, name: w.name, kind: 'project', note: note.slice(0, 200), color: 'var(--c-' + key + ',' + w.color + ')' };
   });
-  list.push({ key: 'sante', name: 'Santé', kind: 'life', color: '#30d158',
+  list.push({ key: 'sante', name: 'Santé', kind: 'life', color: 'var(--c-sante)',
     note: 'Santé de Rayan : rendez-vous, notes, documents, questions pour le médecin. Organisation seulement.' });
-  list.push({ key: 'juridique', name: 'Juridique', kind: 'life', color: '#0a84ff',
+  list.push({ key: 'juridique', name: 'Juridique', kind: 'life', color: 'var(--c-juridique)',
     note: 'Démarches administratives et juridiques, contrats, échéances. Organisation seulement.' });
   return list;
 }
 function rangeSpaceInfo(key) {
   var s = rangeSpaces().filter(function(x) { return x.key === key; })[0];
-  return s || { key: 'inconnu', name: 'Sans espace', color: '#8e8e93' };
+  return s || { key: 'inconnu', name: 'Sans espace', color: 'var(--ink-3)' };
 }
 
 /* Moments */
@@ -5181,7 +5273,8 @@ function rangeHomeRender() {
   document.getElementById('next-empty').hidden = rows.length > 0;
   list.textContent = '';
   rows.forEach(function(r) {
-    var it = rgEl('div', 'next-item'); it.setAttribute('data-id', r.t.id);
+    var it = rgEl('div', 'next-item esp'); it.setAttribute('data-id', r.t.id);
+    it.style.setProperty('--c', homeColor(r.f.space));
     var top = rgEl('div', 'rg-row');
     top.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(r.f)));
     top.appendChild(rangePill(r.f.space));
@@ -5197,6 +5290,7 @@ function rangeHomeRender() {
     }));
     it.appendChild(acts);
     list.appendChild(it);
+    if(list.children.length === 1 && rows.length > 1) list.appendChild(rgEl('div', 'next-sep', 'Ensuite'));
   });
 }
 
