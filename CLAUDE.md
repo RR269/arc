@@ -182,18 +182,23 @@ Nouvel accueil et nouvelle connexion (branche `design`, 6 octobre, partie de `ma
   **Côté Supabase, rien n'a changé** : les inscriptions sont fermées (« Créer un compte » répond « pas encore
   ouverte »), le compte de Rayan n'a pas encore de mot de passe, et le proxy Claude refuse tout autre compte que
   `ARC_OWNER_ID`. Ouvrir les inscriptions est une décision de Rayan (réglage Auth, e-mails de confirmation limités).
-- Écran d'entrée, 6 octobre au matin, deux retours de Rayan. Le premier : pas de phrase en haut, de la couleur, le
-  logo, le nom. Le second, après un essai en dégradé sombre avec un exemple « appeler le comptable » : « ça manque de
-  couleur vivante, de jaune, d'envie » ; l'exemple « n'a rien à faire là » et « déposer » n'est pas la chose
-  principale ; il veut du relief, de la 3D, que ça bouge, « le design d'aujourd'hui ». Version actuelle : côté
-  jaune soleil et encre `#1B0B3A`, le nom ARC en grand, une scène vivante (logo en anneau en volume aux couleurs
-  qui tournent, sept sphères en relief — Projets, Idées, Objectifs, À faire, Santé, Démarches, Envies — chacune sur
-  son plan d'orbite), la phrase « Tout ce que tu portes dans la tête, enfin à sa place. ». La scène suit le
-  pointeur, se fait tourner au glisser, réagit au toucher d'une sphère et à l'inclinaison du téléphone quand le
-  navigateur la donne sans autorisation (`authSceneRun`, `authSceneDraw`) ; posée et immobile si « moins de
-  mouvement » ; arrêtée quand l'écran se ferme. Aucune bibliothèque ajoutée. Pas encore validé par Rayan.
+- Écran d'entrée, 6 octobre au matin, trois retours de Rayan, dans l'ordre : (1) pas de phrase en haut, de la
+  couleur, le logo, le nom ; (2) après un essai en dégradé avec un exemple « appeler le comptable » : couleurs pas
+  assez vivantes, l'exemple « n'a rien à faire là », « déposer » n'est pas la chose principale, il veut du relief,
+  de la 3D, que ça bouge, « le design d'aujourd'hui » ; (3) après un essai tout jaune avec des sphères en orbite :
+  le jaune doit rester une **touche**, pas un fond, et il voit ARC comme « un monde connecté, avec plein de
+  branchements, la maison mère au milieu, de la luminosité et de l'interactivité ».
+  Version actuelle : côté nuit violette, le nom ARC en grand, et le monde connecté — la maison mère (logo en anneau
+  en volume, couleurs qui tournent, halo) au centre, sept branches lumineuses qui ondulent vers des sphères en
+  relief (Projets, Idées, Objectifs, À faire, Santé, Démarches, Envies), leurs petites ramifications qui
+  scintillent, des liens entre voisins, des impulsions de lumière jaune qui partent du centre. Le pointeur attire
+  les points proches et incline le logo ; survoler ou toucher un point envoie une salve de lumière ; l'inclinaison
+  du téléphone joue quand le navigateur la donne sans autorisation. Dessin sur `<canvas id="auth-net">`
+  (`SCENE_NODES`, `authSceneDraw`, `authSceneRun`) ; une image posée si « moins de mouvement » ; arrêtée quand
+  l'écran se ferme. Phrase : « Tout ce que tu portes dans la tête, relié en un seul endroit. ». Touches de jaune :
+  la lumière qui voyage, le bouton, l'onglet actif. Aucune bibliothèque ajoutée. Pas encore validé par Rayan.
 - Tests le 6 octobre (bac à sable, bibliothèques servies en local) : connexion 13/13 (`tests/connexion.mjs`), dépôt
-  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 543 `<div` / 543 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
+  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 542 `<div` / 542 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
   iPhone 390×844 et Mac 1440×900. Pas encore vu par Rayan sur ses appareils.
 
 ### Décisions de Rayan (5 octobre)

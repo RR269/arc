@@ -1244,27 +1244,25 @@ body.home-on{background:#F5F5F7}
 /* Connexion */
 #auth-screen{display:none;background:#F5F5F7;font-family:var(--fs);padding:0;align-items:stretch;justify-content:flex-start}
 #auth-screen.active{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(380px,.85fr)}
-/* Le côté vivant : jaune soleil, encre profonde, et tout ce qu'une tête porte, en sphères qui tournent autour
-   du logo. La scène réagit au pointeur, au doigt et à l'inclinaison du téléphone (authSceneRun). */
-.auth-hero{--ink:#1B0B3A;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:100%;padding:clamp(24px,4vw,52px) clamp(24px,4.6vw,64px);color:var(--ink);background:radial-gradient(70% 55% at 50% 46%,#FFF3A0 0%,rgba(255,243,160,0) 70%),linear-gradient(160deg,#FFE23D 0%,#FFD60A 45%,#FFB703 100%);touch-action:pan-y}
+/* Le côté vivant : un monde connecté. La maison mère (le logo) au centre, des branches lumineuses qui en partent
+   vers tout ce qu'une tête porte, des impulsions de lumière qui y circulent. Le jaune reste une touche : la
+   lumière qui voyage, le bouton, l'onglet actif. Dessin et mouvement : authSceneRun. */
+.auth-hero{--ink:#120727;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:100%;padding:clamp(24px,4vw,52px) clamp(24px,4.6vw,64px);color:#FFFFFF;background:radial-gradient(60% 50% at 50% 46%,#3A1A86 0%,rgba(58,26,134,0) 72%),radial-gradient(40% 36% at 12% 96%,rgba(255,45,135,.30),rgba(255,45,135,0) 70%),radial-gradient(42% 38% at 92% 8%,rgba(0,184,217,.26),rgba(0,184,217,0) 70%),linear-gradient(160deg,#1D0C45 0%,#120727 55%,#0A0418 100%);touch-action:pan-y}
 .auth-hero>*{position:relative}
 .auth-name{font-family:var(--fd);font-size:clamp(64px,7.4vw,112px);line-height:.8;font-weight:800;letter-spacing:-.06em}
-.auth-scene{position:relative;perspective:900px;flex:1 1 auto;min-height:clamp(300px,46vh,520px);margin:8px 0;cursor:grab;-webkit-user-select:none;user-select:none}
-.auth-scene.drag{cursor:grabbing}
-.auth-floor{position:absolute;left:50%;top:50%;width:62%;height:16%;transform:translate(-50%,170%);border-radius:50%;background:radial-gradient(closest-side,rgba(120,60,0,.34),rgba(120,60,0,0));filter:blur(6px)}
-/* Le logo : un anneau en volume, sept couleurs vives qui tournent, un reflet fixe */
-.auth-logo{position:absolute;left:50%;top:50%;width:var(--lg,200px);height:var(--lg,200px);margin:calc(var(--lg,200px)/-2) 0 0 calc(var(--lg,200px)/-2);border-radius:50%;z-index:500;filter:drop-shadow(0 26px 30px rgba(110,40,0,.38));will-change:transform}
+.auth-scene{position:relative;perspective:900px;flex:1 1 auto;min-height:clamp(320px,50vh,560px);margin:8px calc(clamp(24px,4.6vw,64px)*-1);-webkit-user-select:none;user-select:none}
+.auth-scene canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* La maison mère : un anneau en volume, sept couleurs vives qui tournent, un reflet fixe, un halo */
+.auth-logo{position:absolute;left:50%;top:50%;width:var(--lg,160px);height:var(--lg,160px);margin:calc(var(--lg,160px)/-2) 0 0 calc(var(--lg,160px)/-2);border-radius:50%;z-index:20;filter:drop-shadow(0 0 26px rgba(255,214,10,.45)) drop-shadow(0 0 60px rgba(139,61,255,.55));will-change:transform}
 .auth-logo i{position:absolute;inset:0;border-radius:50%;-webkit-mask:radial-gradient(closest-side,transparent 0 47%,#000 48.5% 98.5%,transparent 100%);mask:radial-gradient(closest-side,transparent 0 47%,#000 48.5% 98.5%,transparent 100%)}
 .auth-logo .lg-c{background:conic-gradient(from 0deg,#FF3D2E,#FF8A00,#FFD60A,#22C55E,#00B8D9,#2F6BFF,#8B3DFF,#FF2D87,#FF3D2E);animation:authSpin 14s linear infinite}
-.auth-logo .lg-s{background:radial-gradient(closest-side,transparent 0 47%,rgba(20,0,60,.42) 49%,rgba(20,0,60,0) 60%,rgba(255,255,255,.0) 66%,rgba(255,255,255,.62) 76%,rgba(255,255,255,0) 86%,rgba(20,0,60,.38) 99%),radial-gradient(60% 42% at 34% 20%,rgba(255,255,255,.7),rgba(255,255,255,0) 70%)}
+.auth-logo .lg-s{background:radial-gradient(closest-side,transparent 0 47%,rgba(20,0,60,.42) 49%,rgba(20,0,60,0) 60%,rgba(255,255,255,0) 66%,rgba(255,255,255,.62) 76%,rgba(255,255,255,0) 86%,rgba(20,0,60,.38) 99%),radial-gradient(60% 42% at 34% 20%,rgba(255,255,255,.7),rgba(255,255,255,0) 70%)}
 @keyframes authSpin{to{transform:rotate(360deg)}}
-/* Ce que la tête porte : des sphères en relief, chacune sa couleur */
-.auth-orb{position:absolute;left:50%;top:50%;width:var(--d,96px);height:var(--d,96px);margin:calc(var(--d,96px)/-2) 0 0 calc(var(--d,96px)/-2);border:none;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:calc(var(--d,96px)*.18);font-weight:700;letter-spacing:-.01em;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,.35);cursor:pointer;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.95) 0,rgba(255,255,255,.35) 9%,rgba(255,255,255,0) 30%),radial-gradient(circle at 36% 30%,var(--c1) 0,var(--c2) 58%,var(--c3) 100%);box-shadow:inset -10px -14px 26px rgba(0,0,0,.26),inset 6px 8px 14px rgba(255,255,255,.22),0 26px 30px -12px var(--c3);will-change:transform;-webkit-tap-highlight-color:transparent}
-.auth-orb:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
-.auth-orb.pop{animation:authPop .5s cubic-bezier(.2,1.6,.4,1)}
-@keyframes authPop{40%{filter:brightness(1.25)}}
-.auth-pitch{max-width:15em;margin:0;font-family:var(--fd);font-size:clamp(26px,3.1vw,46px);line-height:1.02;font-weight:800;letter-spacing:-.035em}
-.auth-sub{max-width:30em;margin:12px 0 0;font-size:clamp(16px,1.25vw,19px);line-height:1.45;font-weight:500;color:#3B2466}
+/* Les points reliés : des sphères en relief, chacune sa couleur et sa lueur */
+.auth-orb{position:absolute;left:50%;top:50%;z-index:30;width:var(--d,84px);height:var(--d,84px);margin:calc(var(--d,84px)/-2) 0 0 calc(var(--d,84px)/-2);border:none;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:max(12px,calc(var(--d,84px)*.18));font-weight:700;letter-spacing:-.01em;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,.4);cursor:pointer;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.95) 0,rgba(255,255,255,.35) 9%,rgba(255,255,255,0) 30%),radial-gradient(circle at 36% 30%,var(--c1) 0,var(--c2) 58%,var(--c3) 100%);box-shadow:inset -8px -12px 22px rgba(0,0,0,.28),inset 5px 7px 12px rgba(255,255,255,.22),0 0 26px 2px var(--c2),0 0 70px 6px color-mix(in srgb,var(--c2) 45%,transparent);will-change:transform;-webkit-tap-highlight-color:transparent}
+.auth-orb:focus-visible{outline:3px solid #FFD60A;outline-offset:4px}
+.auth-pitch{max-width:16em;margin:0;font-family:var(--fd);font-size:clamp(26px,3.1vw,46px);line-height:1.02;font-weight:800;letter-spacing:-.035em}
+.auth-sub{max-width:30em;margin:12px 0 0;font-size:clamp(16px,1.25vw,19px);line-height:1.45;font-weight:500;color:#D5CCF2}
 .auth-side{display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,4vw,56px);overflow-y:auto}
 #auth-screen .auth-box{position:relative;width:100%;max-width:420px;margin:0 auto;text-align:left}
 .auth-card{padding:0}
@@ -1272,19 +1270,19 @@ body.home-on{background:#F5F5F7}
   #auth-screen.active{display:block;overflow-y:auto}
   .auth-hero{min-height:0;padding:calc(20px + env(safe-area-inset-top)) 20px 52px}
   .auth-name{font-size:64px}
-  .auth-scene{min-height:300px;flex:none;height:300px}
+  .auth-scene{min-height:330px;flex:none;height:330px;margin:4px -20px}
   .auth-pitch{font-size:29px}
   .auth-sub{font-size:16px}
   .auth-side{position:relative;margin-top:-28px;padding:24px 20px calc(28px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:#F5F5F7}
 }
-@media(prefers-reduced-motion:reduce){.auth-logo .lg-c{animation:none}.auth-orb.pop{animation:none}}
+@media(prefers-reduced-motion:reduce){.auth-logo .lg-c{animation:none}}
 #auth-screen .auth-title{font-family:var(--fd);font-size:clamp(32px,8vw,40px);line-height:1;font-weight:800;letter-spacing:-.035em;margin-bottom:12px}
 #auth-screen .auth-title span{color:var(--t2)}
 #auth-screen .auth-text{font-size:16px;line-height:1.5;margin-bottom:20px}
 #auth-screen .auth-input{min-height:56px;border-radius:16px;border:1.5px solid rgba(0,0,0,.14);background:#F5F5F7;font-family:var(--fs);text-align:left;padding:0 16px;color-scheme:light}
 #auth-screen .auth-input:focus{border-color:#1D1D1F;background:#FFFFFF}
 #auth-screen .auth-input.code{text-align:center;font-family:var(--fd);font-size:30px;font-weight:700;letter-spacing:10px}
-#auth-screen .auth-btn{min-height:56px;border-radius:16px;background:#1B0B3A;color:#FFE23D;font-family:var(--fs);font-size:17px;box-shadow:0 12px 26px rgba(27,11,58,.30)}
+#auth-screen .auth-btn{min-height:56px;border-radius:16px;background:#120727;color:#FFD60A;font-family:var(--fs);font-size:17px;box-shadow:0 12px 26px rgba(18,7,39,.30)}
 #auth-screen .auth-link{min-height:48px;font-family:var(--fs);font-size:16px;font-weight:500;color:var(--t1)}
 #auth-screen .auth-link.soft{color:var(--t2)}
 #auth-screen .auth-link:disabled{color:var(--t2);cursor:default}
@@ -1292,7 +1290,7 @@ body.home-on{background:#F5F5F7}
 .h-menu-item[hidden],#auth-screen .auth-link[hidden],#auth-screen .auth-note[hidden]{display:none}
 .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:16px;background:#EDEDF0;margin:6px 0 18px}
 .auth-tab{min-height:44px;border:none;border-radius:12px;background:none;font-family:var(--fs);font-size:16px;font-weight:600;color:var(--t2);cursor:pointer}
-.auth-tab.on{background:#FFD60A;color:#1B0B3A;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.auth-tab.on{background:#FFD60A;color:#120727;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .auth-lbl{display:block;font-size:14px;font-weight:600;color:var(--t1);margin:0 0 6px 4px}
 .auth-passrow{position:relative}
 .auth-passrow .auth-input{padding-right:76px}
@@ -1954,19 +1952,19 @@ body.home-on{background:#F5F5F7}
   <div class="auth-hero" id="auth-hero">
     <div class="auth-name">ARC</div>
     <div class="auth-scene" id="auth-scene" aria-hidden="true">
-      <div class="auth-floor"></div>
+      <canvas id="auth-net"></canvas>
       <div class="auth-logo" id="auth-logo"><i class="lg-c"></i><i class="lg-s"></i></div>
-      <button class="auth-orb" type="button" tabindex="-1" data-d="108" data-ring="0" style="--c1:#FF8A5C;--c2:#FF3D2E;--c3:#B3160B">Projets</button>
-      <button class="auth-orb" type="button" tabindex="-1" data-d="92" data-ring="1" style="--c1:#FF7DB8;--c2:#FF2D87;--c3:#A30F52">Idées</button>
-      <button class="auth-orb" type="button" tabindex="-1" data-d="104" data-ring="0" style="--c1:#B48BFF;--c2:#8B3DFF;--c3:#4A14B0">Objectifs</button>
-      <button class="auth-orb" type="button" tabindex="-1" data-d="86" data-ring="1" style="--c1:#7FA8FF;--c2:#2F6BFF;--c3:#0E36B8">À faire</button>
-      <button class="auth-orb" type="button" tabindex="-1" data-d="90" data-ring="0" style="--c1:#5FE3A1;--c2:#16B356;--c3:#07702F">Santé</button>
-      <button class="auth-orb" type="button" tabindex="-1" data-d="98" data-ring="1" style="--c1:#5FE0F0;--c2:#00A6C7;--c3:#005F78">Démarches</button>
-      <button class="auth-orb" type="button" tabindex="-1" data-d="84" data-ring="0" style="--c1:#FFB15C;--c2:#FF7A00;--c3:#B34A00">Envies</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-c="#FF3D2E" style="--c1:#FF8A5C;--c2:#FF3D2E;--c3:#B3160B">Projets</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-c="#FF2D87" style="--c1:#FF7DB8;--c2:#FF2D87;--c3:#A30F52">Idées</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-c="#8B3DFF" style="--c1:#B48BFF;--c2:#8B3DFF;--c3:#4A14B0">Objectifs</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-c="#2F6BFF" style="--c1:#7FA8FF;--c2:#2F6BFF;--c3:#0E36B8">À faire</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-c="#16B356" style="--c1:#5FE3A1;--c2:#16B356;--c3:#07702F">Santé</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-c="#00A6C7" style="--c1:#5FE0F0;--c2:#00A6C7;--c3:#005F78">Démarches</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-c="#FF7A00" style="--c1:#FFB15C;--c2:#FF7A00;--c3:#B34A00">Envies</button>
     </div>
     <div>
-      <p class="auth-pitch">Tout ce que tu portes dans la tête, enfin à sa place.</p>
-      <p class="auth-sub">Projets, idées, objectifs, démarches. ARC les garde, les range et te dit quoi faire ensuite.</p>
+      <p class="auth-pitch">Tout ce que tu portes dans la tête, relié en un seul endroit.</p>
+      <p class="auth-sub">Projets, idées, objectifs, démarches. ARC les relie, les range et te dit quoi faire ensuite.</p>
     </div>
   </div>
   <div class="auth-side">
@@ -2114,57 +2112,132 @@ function authSkipped() {
   try { return sessionStorage.getItem('arc_auth_skip') === '1'; } catch(e) { return false; }
 }
 
-/* Écran d'entrée : la scène vivante. Sept sphères (ce qu'une tête porte) tournent autour du logo, sur deux orbites
-   inclinées. Le pointeur incline la scène, un glisser la fait tourner, toucher une sphère la fait réagir ; sur
-   téléphone l'inclinaison de l'appareil joue aussi quand le navigateur la donne sans demander. Rien n'est lu ni
-   envoyé. Avec « moins de mouvement », la scène est posée, immobile. Arrêtée dès que l'écran se ferme. */
-var SCENE_INCL = [0.62, -0.42, 0.24, -0.66, 0.46, -0.2, 0.7];
-var _scene = { raf: 0, t0: 0, spin: 0, vel: 0.34, tiltX: 0.42, tiltY: 0, tx: 0.42, ty: 0, drag: null, bound: false };
+/* Écran d'entrée : le monde connecté. La maison mère (le logo) est au centre ; sept branches lumineuses en partent
+   vers ce qu'une tête porte, chacune avec ses petites ramifications, et les points voisins sont reliés entre eux.
+   Des impulsions de lumière jaune circulent du centre vers les points. Les branches ondulent, les points flottent ;
+   le pointeur attire les points proches et incline le logo ; toucher un point envoie une salve de lumière ; sur
+   téléphone l'inclinaison joue aussi quand le navigateur la donne sans demander. Rien n'est lu ni envoyé.
+   Avec « moins de mouvement », une seule image posée. Arrêtée dès que l'écran se ferme. */
+var SCENE_NODES = [ // angle (degrés), distance au centre, diamètre, ramifications [angle relatif, longueur]
+  { a: -152, r: 232, d: 92, subs: [[-40, 62], [10, 78], [55, 54]] },
+  { a: -96,  r: 168, d: 76, subs: [[-30, 58], [28, 70]] },
+  { a: -38,  r: 238, d: 88, subs: [[-48, 56], [0, 80], [44, 60]] },
+  { a: 12,   r: 178, d: 72, subs: [[-26, 64], [34, 52]] },
+  { a: 64,   r: 226, d: 80, subs: [[-36, 58], [8, 74], [50, 50]] },
+  { a: 122,  r: 176, d: 84, subs: [[-30, 66], [30, 56]] },
+  { a: 180,  r: 250, d: 70, subs: [[-34, 52], [24, 68]] }
+];
+var _scene = { raf: 0, t0: 0, t: 0, px: null, py: null, tiltX: 0, tiltY: 0, tx: 0, ty: 0, bound: false, pulses: [], next: 0, off: [], flash: [] };
+function sceneBez(p0, c1, c2, p1, u) {
+  var v = 1 - u, a = v * v * v, b = 3 * v * v * u, c = 3 * v * u * u, d = u * u * u;
+  return [a * p0[0] + b * c1[0] + c * c2[0] + d * p1[0], a * p0[1] + b * c1[1] + c * c2[1] + d * p1[1]];
+}
 function authSceneDraw(now) {
-  var sc = document.getElementById('auth-scene'); if(!sc) return;
-  var w = sc.clientWidth, h = sc.clientHeight, k = Math.min(w / 520, h / 400, 1.3);
-  var dt = _scene.t0 ? Math.min(0.05, (now - _scene.t0) / 1000) : 0; _scene.t0 = now;
-  if(!_scene.drag) { _scene.vel += (0.34 - _scene.vel) * Math.min(1, dt * 0.9); _scene.spin += _scene.vel * dt; }
+  var sc = document.getElementById('auth-scene'), cv = document.getElementById('auth-net'); if(!sc || !cv) return;
+  var w = sc.clientWidth, h = sc.clientHeight; if(!w || !h) return;
+  var dpr = Math.min(2, window.devicePixelRatio || 1);
+  if(cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+  var g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  var dt = _scene.t0 ? Math.min(0.05, (now - _scene.t0) / 1000) : 0; _scene.t0 = now; _scene.t += dt;
+  var t = _scene.t, cx = w / 2, cy = h / 2;
+  var ko = Math.max(0.74, Math.min(1.2, w / 620));                       // taille des points
+  var kx = Math.min(1.5, (w / 2 - 46 * ko - 8) / 250), ky = Math.min(1.25, (h / 2 - 46 * ko - 8) / 215);
   _scene.tiltX += (_scene.tx - _scene.tiltX) * Math.min(1, dt * 5); _scene.tiltY += (_scene.ty - _scene.tiltY) * Math.min(1, dt * 5);
-  var logo = document.getElementById('auth-logo');
-  logo.style.setProperty('--lg', Math.round(190 * k) + 'px');
-  logo.style.transform = 'rotateX(' + (_scene.tiltX * 40 - 17).toFixed(2) + 'deg) rotateY(' + (_scene.tiltY * 26).toFixed(2) + 'deg)';
-  var orbs = sc.querySelectorAll('.auth-orb'), n = orbs.length;
-  for(var i = 0; i < n; i++) {
-    var o = orbs[i], ring = o.getAttribute('data-ring') === '1';
-    // Chaque sphère a son plan d'orbite, comme autour d'un noyau : elles ne s'entassent jamais sur une ligne
-    var R = (ring ? 232 : 186) * k, a = _scene.spin + i * 6.283 / n, incl = SCENE_INCL[i % SCENE_INCL.length];
-    var x = Math.cos(a) * R, z = Math.sin(a) * R;
-    var y = z * incl * (_scene.tiltX / 0.42) + Math.sin(now / 900 + i * 1.7) * 6 * k + x * _scene.tiltY * 0.35;
-    var depth = (z / R + 1) / 2, sca = 0.72 + 0.36 * depth;
-    o.style.setProperty('--d', Math.round(Number(o.getAttribute('data-d')) * k) + 'px');
-    o.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + sca.toFixed(3) + ')';
-    o.style.zIndex = String(z >= 0 ? 600 + Math.round(depth * 100) : 100 + Math.round(depth * 100));
-    o.style.filter = z < 0 ? 'brightness(' + (0.86 + 0.14 * depth * 2).toFixed(2) + ')' : '';
+  var logo = document.getElementById('auth-logo'), lg = Math.round(Math.max(96, Math.min(170, 150 * Math.min(kx, ky))));
+  logo.style.setProperty('--lg', lg + 'px');
+  logo.style.transform = 'rotateX(' + (18 - _scene.tiltX * 26).toFixed(2) + 'deg) rotateY(' + (_scene.tiltY * 26).toFixed(2) + 'deg)';
+  var orbs = sc.querySelectorAll('.auth-orb'), pts = [], i, n = SCENE_NODES.length;
+  // Positions : place de repos + flottement + attirance vers le pointeur
+  for(i = 0; i < n; i++) {
+    var nd = SCENE_NODES[i], ar = nd.a * Math.PI / 180;
+    var x = cx + Math.cos(ar) * nd.r * kx + Math.sin(t * 0.55 + i * 1.3) * 9, y = cy + Math.sin(ar) * nd.r * ky * 0.9 + Math.cos(t * 0.47 + i * 2.1) * 9;
+    var off = _scene.off[i] || (_scene.off[i] = [0, 0]), ax = 0, ay = 0;
+    if(_scene.px != null) { var dx = _scene.px - x, dy = _scene.py - y, dist = Math.sqrt(dx * dx + dy * dy); if(dist < 190 && dist > 1) { var f = (1 - dist / 190) * 26; ax = dx / dist * f; ay = dy / dist * f; } }
+    off[0] += (ax - off[0]) * Math.min(1, dt * 6); off[1] += (ay - off[1]) * Math.min(1, dt * 6);
+    pts.push([x + off[0], y + off[1]]);
+  }
+  // Halo de la maison mère
+  var halo = g.createRadialGradient(cx, cy, lg * 0.3, cx, cy, lg * 1.5);
+  halo.addColorStop(0, 'rgba(255,214,10,' + (0.16 + 0.05 * Math.sin(t * 1.6)).toFixed(3) + ')'); halo.addColorStop(0.5, 'rgba(139,61,255,.16)'); halo.addColorStop(1, 'rgba(139,61,255,0)');
+  g.fillStyle = halo; g.beginPath(); g.arc(cx, cy, lg * 1.5, 0, 6.283); g.fill();
+  g.lineCap = 'round';
+  // Liens entre points voisins : le monde est relié, pas seulement au centre
+  for(i = 0; i < n; i++) {
+    var p = pts[i], q = pts[(i + 1) % n], mx = (p[0] + q[0]) / 2 + (cx - (p[0] + q[0]) / 2) * -0.18, my = (p[1] + q[1]) / 2 + (cy - (p[1] + q[1]) / 2) * -0.18;
+    g.strokeStyle = 'rgba(255,255,255,' + (0.10 + 0.05 * Math.sin(t * 0.9 + i)).toFixed(3) + ')'; g.lineWidth = 1.2;
+    g.beginPath(); g.moveTo(p[0], p[1]); g.quadraticCurveTo(mx, my, q[0], q[1]); g.stroke();
+  }
+  // Branches : du centre vers chaque point, qui ondulent comme des bras
+  var curves = [];
+  for(i = 0; i < n; i++) {
+    var e = pts[i], col = orbs[i] ? orbs[i].getAttribute('data-c') : '#FFFFFF';
+    var vx = e[0] - cx, vy = e[1] - cy, L = Math.sqrt(vx * vx + vy * vy) || 1, ux = vx / L, uy = vy / L, nx = -uy, ny = ux;
+    var s0 = [cx + ux * lg * 0.5, cy + uy * lg * 0.5], sw1 = Math.sin(t * 0.8 + i * 1.9) * L * 0.16, sw2 = Math.sin(t * 0.65 + i * 2.7 + 1) * L * 0.12;
+    var c1 = [cx + ux * L * 0.38 + nx * sw1, cy + uy * L * 0.38 + ny * sw1], c2 = [cx + ux * L * 0.72 - nx * sw2, cy + uy * L * 0.72 - ny * sw2];
+    curves.push([s0, c1, c2, e]);
+    var hot = _scene.flash[i] || 0;
+    g.shadowColor = col; g.shadowBlur = 22 + hot * 26;
+    g.strokeStyle = col; g.globalAlpha = 0.30 + hot * 0.35; g.lineWidth = 9;
+    g.beginPath(); g.moveTo(s0[0], s0[1]); g.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], e[0], e[1]); g.stroke();
+    var grad = g.createLinearGradient(s0[0], s0[1], e[0], e[1]); grad.addColorStop(0, '#FFFFFF'); grad.addColorStop(0.35, col); grad.addColorStop(1, col);
+    g.strokeStyle = grad; g.globalAlpha = 1; g.lineWidth = 2.6; g.shadowBlur = 10;
+    g.beginPath(); g.moveTo(s0[0], s0[1]); g.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], e[0], e[1]); g.stroke();
+    // Ramifications : de petits points qui scintillent autour de chaque point
+    var base = Math.atan2(uy, ux), d0 = SCENE_NODES[i].d * ko / 2, subs = SCENE_NODES[i].subs;
+    for(var m = 0; m < subs.length; m++) {
+      var sa = base + subs[m][0] * Math.PI / 180 + Math.sin(t * 0.7 + i + m * 2) * 0.12, sl = d0 + subs[m][1] * Math.min(1, ko);
+      var bx = e[0] + Math.cos(sa) * d0 * 0.9, by = e[1] + Math.sin(sa) * d0 * 0.9, tx2 = e[0] + Math.cos(sa) * sl, ty2 = e[1] + Math.sin(sa) * sl;
+      var tw = 0.55 + 0.45 * Math.sin(t * 2.1 + i * 3 + m * 1.7);
+      g.shadowBlur = 8; g.globalAlpha = 0.5; g.lineWidth = 1.4; g.strokeStyle = col;
+      g.beginPath(); g.moveTo(bx, by); g.lineTo(tx2, ty2); g.stroke();
+      g.globalAlpha = 0.55 + 0.45 * tw; g.shadowBlur = 12; g.fillStyle = m % 2 ? '#FFFFFF' : col;
+      g.beginPath(); g.arc(tx2, ty2, 3 + 1.6 * tw, 0, 6.283); g.fill();
+    }
+    g.globalAlpha = 1; g.shadowBlur = 0;
+    _scene.flash[i] = Math.max(0, hot - dt * 1.6);
+  }
+  // Impulsions : la lumière part de la maison mère et arrive aux points
+  if(dt && t > _scene.next) { _scene.pulses.push({ i: Math.floor(Math.random() * n), u: 0, v: 0.55 + Math.random() * 0.35 }); _scene.next = t + 0.35 + Math.random() * 0.5; }
+  for(var z = _scene.pulses.length - 1; z >= 0; z--) {
+    var pu = _scene.pulses[z]; pu.u += pu.v * dt;
+    if(pu.u >= 1) { _scene.flash[pu.i] = 1; _scene.pulses.splice(z, 1); continue; }
+    var cu = curves[pu.i], pos = sceneBez(cu[0], cu[1], cu[2], cu[3], pu.u);
+    g.shadowColor = '#FFD60A'; g.shadowBlur = 18; g.fillStyle = '#FFE566';
+    g.beginPath(); g.arc(pos[0], pos[1], 4.2, 0, 6.283); g.fill();
+    g.shadowBlur = 0; g.fillStyle = '#FFFFFF'; g.beginPath(); g.arc(pos[0], pos[1], 1.8, 0, 6.283); g.fill();
+  }
+  // Les points eux-mêmes (sphères en relief), posés sur le dessin
+  for(i = 0; i < n && i < orbs.length; i++) {
+    var o = orbs[i], fl = _scene.flash[i] || 0;
+    o.style.setProperty('--d', Math.round(SCENE_NODES[i].d * ko) + 'px');
+    o.style.transform = 'translate3d(' + (pts[i][0] - cx).toFixed(1) + 'px,' + (pts[i][1] - cy).toFixed(1) + 'px,0) scale(' + (1 + fl * 0.12).toFixed(3) + ')';
+    o.style.filter = fl > 0.02 ? 'brightness(' + (1 + fl * 0.3).toFixed(2) + ')' : '';
   }
 }
 function authSceneLoop(now) { authSceneDraw(now); _scene.raf = requestAnimationFrame(authSceneLoop); }
+function authSceneBurst(i) { for(var b = 0; b < 4; b++) _scene.pulses.push({ i: i, u: -b * 0.14, v: 1.5 }); }
 function authSceneBind() {
   if(_scene.bound) return; _scene.bound = true;
   var hero = document.getElementById('auth-hero'), sc = document.getElementById('auth-scene');
   hero.addEventListener('pointermove', function(e) {
-    var r = hero.getBoundingClientRect();
-    _scene.ty = ((e.clientX - r.left) / r.width - 0.5) * 1.2; _scene.tx = 0.42 + ((e.clientY - r.top) / r.height - 0.5) * 0.5;
-    if(_scene.drag) { var dx = e.clientX - _scene.drag.x; _scene.drag.x = e.clientX; _scene.spin += dx * 0.007; _scene.vel = Math.max(-4, Math.min(4, dx * 0.45)); }
+    var r = sc.getBoundingClientRect(), hr = hero.getBoundingClientRect();
+    _scene.px = e.clientX - r.left; _scene.py = e.clientY - r.top;
+    _scene.ty = ((e.clientX - hr.left) / hr.width - 0.5) * 1.2; _scene.tx = ((e.clientY - hr.top) / hr.height - 0.5) * 1.2;
   });
-  hero.addEventListener('pointerleave', function() { _scene.tx = 0.42; _scene.ty = 0; });
-  sc.addEventListener('pointerdown', function(e) { _scene.drag = { x: e.clientX }; sc.classList.add('drag'); });
-  window.addEventListener('pointerup', function() { _scene.drag = null; sc.classList.remove('drag'); });
-  window.addEventListener('pointercancel', function() { _scene.drag = null; sc.classList.remove('drag'); });
+  hero.addEventListener('pointerleave', function() { _scene.px = _scene.py = null; _scene.tx = _scene.ty = 0; });
+  sc.addEventListener('pointerover', function(e) {
+    var o = e.target.closest && e.target.closest('.auth-orb'); if(!o || e.pointerType === 'touch') return;
+    authSceneBurst([].indexOf.call(sc.querySelectorAll('.auth-orb'), o));
+  });
   sc.addEventListener('click', function(e) {
     var o = e.target.closest && e.target.closest('.auth-orb'); if(!o) return;
-    o.classList.remove('pop'); void o.offsetWidth; o.classList.add('pop'); _scene.vel = 2.4;
+    authSceneBurst([].indexOf.call(sc.querySelectorAll('.auth-orb'), o));
   });
   // Inclinaison du téléphone : seulement si le navigateur la donne sans autorisation à demander
   if(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission !== 'function') {
     window.addEventListener('deviceorientation', function(e) {
       if(e.gamma == null || e.beta == null || !_scene.raf) return;
-      _scene.ty = Math.max(-0.6, Math.min(0.6, e.gamma / 50)); _scene.tx = 0.42 + Math.max(-0.25, Math.min(0.25, (e.beta - 45) / 120));
+      _scene.ty = Math.max(-0.6, Math.min(0.6, e.gamma / 50)); _scene.tx = Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 60));
     });
   }
 }
