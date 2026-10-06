@@ -182,13 +182,18 @@ Nouvel accueil et nouvelle connexion (branche `design`, 6 octobre, partie de `ma
   **Côté Supabase, rien n'a changé** : les inscriptions sont fermées (« Créer un compte » répond « pas encore
   ouverte »), le compte de Rayan n'a pas encore de mot de passe, et le proxy Claude refuse tout autre compte que
   `ARC_OWNER_ID`. Ouvrir les inscriptions est une décision de Rayan (réglage Auth, e-mails de confirmation limités).
-- Écran d'entrée refait le 6 octobre au matin (Rayan : « pas de phrase en haut, de la couleur, le logo, le nom,
-  du design qui donne envie ») : à gauche (en haut sur iPhone) un côté couleur avec le logo, le nom ARC en grand,
-  une ligne (« Dépose ce que tu as en tête. ARC le range et te dit quoi faire. ») et le geste montré sur trois
-  exemples fixes qui se suivent (`AUTH_DEMO`, `authDemoRun` ; aucun appel, arrêt si « moins de mouvement ») ; à
-  droite (en dessous sur iPhone) les identifiants. Bouton principal en couleur.
+- Écran d'entrée, 6 octobre au matin, deux retours de Rayan. Le premier : pas de phrase en haut, de la couleur, le
+  logo, le nom. Le second, après un essai en dégradé sombre avec un exemple « appeler le comptable » : « ça manque de
+  couleur vivante, de jaune, d'envie » ; l'exemple « n'a rien à faire là » et « déposer » n'est pas la chose
+  principale ; il veut du relief, de la 3D, que ça bouge, « le design d'aujourd'hui ». Version actuelle : côté
+  jaune soleil et encre `#1B0B3A`, le nom ARC en grand, une scène vivante (logo en anneau en volume aux couleurs
+  qui tournent, sept sphères en relief — Projets, Idées, Objectifs, À faire, Santé, Démarches, Envies — chacune sur
+  son plan d'orbite), la phrase « Tout ce que tu portes dans la tête, enfin à sa place. ». La scène suit le
+  pointeur, se fait tourner au glisser, réagit au toucher d'une sphère et à l'inclinaison du téléphone quand le
+  navigateur la donne sans autorisation (`authSceneRun`, `authSceneDraw`) ; posée et immobile si « moins de
+  mouvement » ; arrêtée quand l'écran se ferme. Aucune bibliothèque ajoutée. Pas encore validé par Rayan.
 - Tests le 6 octobre (bac à sable, bibliothèques servies en local) : connexion 13/13 (`tests/connexion.mjs`), dépôt
-  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 549 `<div` / 549 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
+  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 543 `<div` / 543 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
   iPhone 390×844 et Mac 1440×900. Pas encore vu par Rayan sur ses appareils.
 
 ### Décisions de Rayan (5 octobre)

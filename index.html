@@ -1244,48 +1244,47 @@ body.home-on{background:#F5F5F7}
 /* Connexion */
 #auth-screen{display:none;background:#F5F5F7;font-family:var(--fs);padding:0;align-items:stretch;justify-content:flex-start}
 #auth-screen.active{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(380px,.85fr)}
-/* Le côté couleur : le logo, le nom, et le geste d'ARC montré en vrai (une pensée déposée devient une étape rangée) */
-.auth-hero{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:100%;padding:clamp(28px,5vw,64px);color:#FFFFFF;background:radial-gradient(90% 70% at 0% 0%,#F76707 0%,rgba(247,103,7,0) 60%),radial-gradient(80% 80% at 100% 0%,#D6336C 0%,rgba(214,51,108,0) 62%),radial-gradient(90% 90% at 100% 100%,#0B8A8F 0%,rgba(11,138,143,0) 60%),linear-gradient(140deg,#C2410C 0%,#B02A63 42%,#5B34C9 74%,#1B6E8A 100%)}
-.auth-hero::before{content:"";position:absolute;right:-240px;bottom:-240px;width:720px;height:720px;background:radial-gradient(circle at center,transparent 0 119px,rgba(255,255,255,.22) 119px 121px,transparent 121px 199px,rgba(255,255,255,.16) 199px 201px,transparent 201px 279px,rgba(255,255,255,.11) 279px 281px,transparent 281px 358px,rgba(255,255,255,.07) 358px 360px,transparent 360px);pointer-events:none}
+/* Le côté vivant : jaune soleil, encre profonde, et tout ce qu'une tête porte, en sphères qui tournent autour
+   du logo. La scène réagit au pointeur, au doigt et à l'inclinaison du téléphone (authSceneRun). */
+.auth-hero{--ink:#1B0B3A;position:relative;overflow:hidden;display:flex;flex-direction:column;min-height:100%;padding:clamp(24px,4vw,52px) clamp(24px,4.6vw,64px);color:var(--ink);background:radial-gradient(70% 55% at 50% 46%,#FFF3A0 0%,rgba(255,243,160,0) 70%),linear-gradient(160deg,#FFE23D 0%,#FFD60A 45%,#FFB703 100%);touch-action:pan-y}
 .auth-hero>*{position:relative}
-.auth-mark{display:flex;align-items:center;gap:clamp(14px,2vw,22px)}
-.auth-logo{flex-shrink:0;width:clamp(64px,8vw,104px);height:clamp(64px,8vw,104px);border-radius:50%;background:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px rgba(40,8,60,.35)}
-.auth-logo svg{width:68%;height:68%;transform:rotate(-90deg)}
-.auth-name{font-family:var(--fd);font-size:clamp(72px,11vw,168px);line-height:.82;font-weight:800;letter-spacing:-.06em}
-.auth-pitch{max-width:15em;font-family:var(--fd);font-size:clamp(22px,2.5vw,34px);line-height:1.12;font-weight:600;letter-spacing:-.02em;margin-top:clamp(16px,2.4vw,28px)}
-.auth-demo{display:flex;flex-direction:column;gap:12px;max-width:440px}
-.auth-thought{align-self:flex-start;max-width:100%;padding:12px 18px;border-radius:22px 22px 22px 6px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.38);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:17px;line-height:1.35}
-.auth-filed{padding:18px 20px;border-radius:24px;background:#FFFFFF;color:#1D1D1F;box-shadow:0 24px 50px rgba(30,6,50,.38)}
-.auth-filed-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:600;color:#6E6E73}
-.auth-filed-space{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:14px;color:#FFFFFF;font-weight:700;background:var(--dc,#A8300A)}
-.auth-filed-step{font-family:var(--fd);font-size:clamp(22px,2.3vw,28px);line-height:1.12;font-weight:700;letter-spacing:-.02em;margin-top:8px}
-.auth-filed-when{font-size:15px;font-weight:600;color:var(--dc,#A8300A);margin-top:6px}
-.auth-demo.swap .auth-thought,.auth-demo.swap .auth-filed{opacity:0;transform:translateY(10px)}
-.auth-thought,.auth-filed{transition:opacity .35s ease,transform .35s ease}
-.auth-filed{transition-delay:.12s}
+.auth-name{font-family:var(--fd);font-size:clamp(64px,7.4vw,112px);line-height:.8;font-weight:800;letter-spacing:-.06em}
+.auth-scene{position:relative;perspective:900px;flex:1 1 auto;min-height:clamp(300px,46vh,520px);margin:8px 0;cursor:grab;-webkit-user-select:none;user-select:none}
+.auth-scene.drag{cursor:grabbing}
+.auth-floor{position:absolute;left:50%;top:50%;width:62%;height:16%;transform:translate(-50%,170%);border-radius:50%;background:radial-gradient(closest-side,rgba(120,60,0,.34),rgba(120,60,0,0));filter:blur(6px)}
+/* Le logo : un anneau en volume, sept couleurs vives qui tournent, un reflet fixe */
+.auth-logo{position:absolute;left:50%;top:50%;width:var(--lg,200px);height:var(--lg,200px);margin:calc(var(--lg,200px)/-2) 0 0 calc(var(--lg,200px)/-2);border-radius:50%;z-index:500;filter:drop-shadow(0 26px 30px rgba(110,40,0,.38));will-change:transform}
+.auth-logo i{position:absolute;inset:0;border-radius:50%;-webkit-mask:radial-gradient(closest-side,transparent 0 47%,#000 48.5% 98.5%,transparent 100%);mask:radial-gradient(closest-side,transparent 0 47%,#000 48.5% 98.5%,transparent 100%)}
+.auth-logo .lg-c{background:conic-gradient(from 0deg,#FF3D2E,#FF8A00,#FFD60A,#22C55E,#00B8D9,#2F6BFF,#8B3DFF,#FF2D87,#FF3D2E);animation:authSpin 14s linear infinite}
+.auth-logo .lg-s{background:radial-gradient(closest-side,transparent 0 47%,rgba(20,0,60,.42) 49%,rgba(20,0,60,0) 60%,rgba(255,255,255,.0) 66%,rgba(255,255,255,.62) 76%,rgba(255,255,255,0) 86%,rgba(20,0,60,.38) 99%),radial-gradient(60% 42% at 34% 20%,rgba(255,255,255,.7),rgba(255,255,255,0) 70%)}
+@keyframes authSpin{to{transform:rotate(360deg)}}
+/* Ce que la tête porte : des sphères en relief, chacune sa couleur */
+.auth-orb{position:absolute;left:50%;top:50%;width:var(--d,96px);height:var(--d,96px);margin:calc(var(--d,96px)/-2) 0 0 calc(var(--d,96px)/-2);border:none;border-radius:50%;padding:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:calc(var(--d,96px)*.18);font-weight:700;letter-spacing:-.01em;color:#FFFFFF;text-shadow:0 1px 3px rgba(0,0,0,.35);cursor:pointer;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.95) 0,rgba(255,255,255,.35) 9%,rgba(255,255,255,0) 30%),radial-gradient(circle at 36% 30%,var(--c1) 0,var(--c2) 58%,var(--c3) 100%);box-shadow:inset -10px -14px 26px rgba(0,0,0,.26),inset 6px 8px 14px rgba(255,255,255,.22),0 26px 30px -12px var(--c3);will-change:transform;-webkit-tap-highlight-color:transparent}
+.auth-orb:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+.auth-orb.pop{animation:authPop .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes authPop{40%{filter:brightness(1.25)}}
+.auth-pitch{max-width:15em;margin:0;font-family:var(--fd);font-size:clamp(26px,3.1vw,46px);line-height:1.02;font-weight:800;letter-spacing:-.035em}
+.auth-sub{max-width:30em;margin:12px 0 0;font-size:clamp(16px,1.25vw,19px);line-height:1.45;font-weight:500;color:#3B2466}
 .auth-side{display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,4vw,56px);overflow-y:auto}
 #auth-screen .auth-box{position:relative;width:100%;max-width:420px;margin:0 auto;text-align:left}
 .auth-card{padding:0}
 @media(max-width:860px){
   #auth-screen.active{display:block;overflow-y:auto}
-  .auth-hero{min-height:0;padding:calc(22px + env(safe-area-inset-top)) 20px 56px;gap:20px}
-  .auth-hero::before{right:-380px;bottom:-420px}
-  .auth-name{font-size:76px}
-  .auth-logo{width:60px;height:60px}
-  .auth-pitch{font-size:21px;margin-top:14px}
-  .auth-thought{font-size:15px;padding:10px 14px}
-  .auth-filed{padding:14px 16px}
-  .auth-filed-step{font-size:20px}
+  .auth-hero{min-height:0;padding:calc(20px + env(safe-area-inset-top)) 20px 52px}
+  .auth-name{font-size:64px}
+  .auth-scene{min-height:300px;flex:none;height:300px}
+  .auth-pitch{font-size:29px}
+  .auth-sub{font-size:16px}
   .auth-side{position:relative;margin-top:-28px;padding:24px 20px calc(28px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:#F5F5F7}
 }
-@media(prefers-reduced-motion:reduce){.auth-thought,.auth-filed{transition:none}}
+@media(prefers-reduced-motion:reduce){.auth-logo .lg-c{animation:none}.auth-orb.pop{animation:none}}
 #auth-screen .auth-title{font-family:var(--fd);font-size:clamp(32px,8vw,40px);line-height:1;font-weight:800;letter-spacing:-.035em;margin-bottom:12px}
 #auth-screen .auth-title span{color:var(--t2)}
 #auth-screen .auth-text{font-size:16px;line-height:1.5;margin-bottom:20px}
 #auth-screen .auth-input{min-height:56px;border-radius:16px;border:1.5px solid rgba(0,0,0,.14);background:#F5F5F7;font-family:var(--fs);text-align:left;padding:0 16px;color-scheme:light}
 #auth-screen .auth-input:focus{border-color:#1D1D1F;background:#FFFFFF}
 #auth-screen .auth-input.code{text-align:center;font-family:var(--fd);font-size:30px;font-weight:700;letter-spacing:10px}
-#auth-screen .auth-btn{min-height:56px;border-radius:16px;background:linear-gradient(95deg,#D9480F 0%,#C2255C 100%);color:#FFFFFF;font-family:var(--fs);font-size:17px;box-shadow:0 12px 26px rgba(194,37,92,.32)}
+#auth-screen .auth-btn{min-height:56px;border-radius:16px;background:#1B0B3A;color:#FFE23D;font-family:var(--fs);font-size:17px;box-shadow:0 12px 26px rgba(27,11,58,.30)}
 #auth-screen .auth-link{min-height:48px;font-family:var(--fs);font-size:16px;font-weight:500;color:var(--t1)}
 #auth-screen .auth-link.soft{color:var(--t2)}
 #auth-screen .auth-link:disabled{color:var(--t2);cursor:default}
@@ -1293,7 +1292,7 @@ body.home-on{background:#F5F5F7}
 .h-menu-item[hidden],#auth-screen .auth-link[hidden],#auth-screen .auth-note[hidden]{display:none}
 .auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:16px;background:#EDEDF0;margin:6px 0 18px}
 .auth-tab{min-height:44px;border:none;border-radius:12px;background:none;font-family:var(--fs);font-size:16px;font-weight:600;color:var(--t2);cursor:pointer}
-.auth-tab.on{background:#FFFFFF;color:var(--t1);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.auth-tab.on{background:#FFD60A;color:#1B0B3A;box-shadow:0 1px 3px rgba(0,0,0,.12)}
 .auth-lbl{display:block;font-size:14px;font-weight:600;color:var(--t1);margin:0 0 6px 4px}
 .auth-passrow{position:relative}
 .auth-passrow .auth-input{padding-right:76px}
@@ -1952,18 +1951,22 @@ body.home-on{background:#F5F5F7}
   </form>
 </div>
 <div id="auth-screen">
-  <div class="auth-hero">
-    <div>
-      <div class="auth-mark"><div class="auth-logo"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke-width="4.4" stroke-linecap="round" stroke-dasharray="6.9 62.2"><circle cx="14" cy="14" r="11" stroke="#E8590C"/><circle cx="14" cy="14" r="11" stroke="#0B8A8F" stroke-dashoffset="-9.87"/><circle cx="14" cy="14" r="11" stroke="#C27803" stroke-dashoffset="-19.74"/><circle cx="14" cy="14" r="11" stroke="#D6336C" stroke-dashoffset="-29.61"/><circle cx="14" cy="14" r="11" stroke="#6741D9" stroke-dashoffset="-39.48"/><circle cx="14" cy="14" r="11" stroke="#2B8A3E" stroke-dashoffset="-49.35"/><circle cx="14" cy="14" r="11" stroke="#1C5FD4" stroke-dashoffset="-59.22"/></g></svg></div><div class="auth-name">ARC</div></div>
-      <div class="auth-pitch">Dépose ce que tu as en tête. ARC le range et te dit quoi faire.</div>
+  <div class="auth-hero" id="auth-hero">
+    <div class="auth-name">ARC</div>
+    <div class="auth-scene" id="auth-scene" aria-hidden="true">
+      <div class="auth-floor"></div>
+      <div class="auth-logo" id="auth-logo"><i class="lg-c"></i><i class="lg-s"></i></div>
+      <button class="auth-orb" type="button" tabindex="-1" data-d="108" data-ring="0" style="--c1:#FF8A5C;--c2:#FF3D2E;--c3:#B3160B">Projets</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-d="92" data-ring="1" style="--c1:#FF7DB8;--c2:#FF2D87;--c3:#A30F52">Idées</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-d="104" data-ring="0" style="--c1:#B48BFF;--c2:#8B3DFF;--c3:#4A14B0">Objectifs</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-d="86" data-ring="1" style="--c1:#7FA8FF;--c2:#2F6BFF;--c3:#0E36B8">À faire</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-d="90" data-ring="0" style="--c1:#5FE3A1;--c2:#16B356;--c3:#07702F">Santé</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-d="98" data-ring="1" style="--c1:#5FE0F0;--c2:#00A6C7;--c3:#005F78">Démarches</button>
+      <button class="auth-orb" type="button" tabindex="-1" data-d="84" data-ring="0" style="--c1:#FFB15C;--c2:#FF7A00;--c3:#B34A00">Envies</button>
     </div>
-    <div class="auth-demo" id="auth-demo" aria-hidden="true">
-      <div class="auth-thought" id="auth-demo-t">appeler le comptable demain à 10 h</div>
-      <div class="auth-filed" id="auth-demo-f" style="--dc:#A8300A">
-        <div class="auth-filed-top"><span>Rangé dans</span><span class="auth-filed-space" id="auth-demo-s">ARYAN</span></div>
-        <div class="auth-filed-step" id="auth-demo-e">Appeler le comptable</div>
-        <div class="auth-filed-when" id="auth-demo-w">Demain · 10:00</div>
-      </div>
+    <div>
+      <p class="auth-pitch">Tout ce que tu portes dans la tête, enfin à sa place.</p>
+      <p class="auth-sub">Projets, idées, objectifs, démarches. ARC les garde, les range et te dit quoi faire ensuite.</p>
     </div>
   </div>
   <div class="auth-side">
@@ -2111,36 +2114,73 @@ function authSkipped() {
   try { return sessionStorage.getItem('arc_auth_skip') === '1'; } catch(e) { return false; }
 }
 
-/* Écran d'entrée : le geste d'ARC montré sur trois exemples qui se suivent. Rien n'est lu ni envoyé : ce sont des
-   textes fixes. Sans animation si l'appareil demande moins de mouvement. */
-var AUTH_DEMO = [
-  { t: 'appeler le comptable demain à 10 h', s: 'ARYAN', c: '#A8300A', e: 'Appeler le comptable', w: 'Demain · 10:00' },
-  { t: 'idée : un module bonus sur les fournisseurs', s: 'ATLAS', c: '#075C63', e: 'Écrire le module bonus fournisseurs', w: 'Sans moment, gardé pour toi' },
-  { t: 'penser à renouveler ma carte Vitale', s: 'Santé', c: '#1E6B2E', e: 'Renouveler la carte Vitale', w: 'Lundi · 9:00' }
-];
-var _authDemoIv = null, _authDemoI = 0;
-function authDemoSet(i) {
-  var d = AUTH_DEMO[i % AUTH_DEMO.length];
-  document.getElementById('auth-demo-t').textContent = d.t;
-  document.getElementById('auth-demo-s').textContent = d.s;
-  document.getElementById('auth-demo-e').textContent = d.e;
-  document.getElementById('auth-demo-w').textContent = d.w;
-  document.getElementById('auth-demo-f').style.setProperty('--dc', d.c);
+/* Écran d'entrée : la scène vivante. Sept sphères (ce qu'une tête porte) tournent autour du logo, sur deux orbites
+   inclinées. Le pointeur incline la scène, un glisser la fait tourner, toucher une sphère la fait réagir ; sur
+   téléphone l'inclinaison de l'appareil joue aussi quand le navigateur la donne sans demander. Rien n'est lu ni
+   envoyé. Avec « moins de mouvement », la scène est posée, immobile. Arrêtée dès que l'écran se ferme. */
+var SCENE_INCL = [0.62, -0.42, 0.24, -0.66, 0.46, -0.2, 0.7];
+var _scene = { raf: 0, t0: 0, spin: 0, vel: 0.34, tiltX: 0.42, tiltY: 0, tx: 0.42, ty: 0, drag: null, bound: false };
+function authSceneDraw(now) {
+  var sc = document.getElementById('auth-scene'); if(!sc) return;
+  var w = sc.clientWidth, h = sc.clientHeight, k = Math.min(w / 520, h / 400, 1.3);
+  var dt = _scene.t0 ? Math.min(0.05, (now - _scene.t0) / 1000) : 0; _scene.t0 = now;
+  if(!_scene.drag) { _scene.vel += (0.34 - _scene.vel) * Math.min(1, dt * 0.9); _scene.spin += _scene.vel * dt; }
+  _scene.tiltX += (_scene.tx - _scene.tiltX) * Math.min(1, dt * 5); _scene.tiltY += (_scene.ty - _scene.tiltY) * Math.min(1, dt * 5);
+  var logo = document.getElementById('auth-logo');
+  logo.style.setProperty('--lg', Math.round(190 * k) + 'px');
+  logo.style.transform = 'rotateX(' + (_scene.tiltX * 40 - 17).toFixed(2) + 'deg) rotateY(' + (_scene.tiltY * 26).toFixed(2) + 'deg)';
+  var orbs = sc.querySelectorAll('.auth-orb'), n = orbs.length;
+  for(var i = 0; i < n; i++) {
+    var o = orbs[i], ring = o.getAttribute('data-ring') === '1';
+    // Chaque sphère a son plan d'orbite, comme autour d'un noyau : elles ne s'entassent jamais sur une ligne
+    var R = (ring ? 232 : 186) * k, a = _scene.spin + i * 6.283 / n, incl = SCENE_INCL[i % SCENE_INCL.length];
+    var x = Math.cos(a) * R, z = Math.sin(a) * R;
+    var y = z * incl * (_scene.tiltX / 0.42) + Math.sin(now / 900 + i * 1.7) * 6 * k + x * _scene.tiltY * 0.35;
+    var depth = (z / R + 1) / 2, sca = 0.72 + 0.36 * depth;
+    o.style.setProperty('--d', Math.round(Number(o.getAttribute('data-d')) * k) + 'px');
+    o.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0) scale(' + sca.toFixed(3) + ')';
+    o.style.zIndex = String(z >= 0 ? 600 + Math.round(depth * 100) : 100 + Math.round(depth * 100));
+    o.style.filter = z < 0 ? 'brightness(' + (0.86 + 0.14 * depth * 2).toFixed(2) + ')' : '';
+  }
 }
-function authDemoRun(on) {
-  if(_authDemoIv) { clearInterval(_authDemoIv); _authDemoIv = null; }
-  var box = document.getElementById('auth-demo'); if(!box || !on) return;
-  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  _authDemoIv = setInterval(function() {
-    box.classList.add('swap');
-    setTimeout(function() { _authDemoI++; authDemoSet(_authDemoI); box.classList.remove('swap'); }, 480);
-  }, 4200);
+function authSceneLoop(now) { authSceneDraw(now); _scene.raf = requestAnimationFrame(authSceneLoop); }
+function authSceneBind() {
+  if(_scene.bound) return; _scene.bound = true;
+  var hero = document.getElementById('auth-hero'), sc = document.getElementById('auth-scene');
+  hero.addEventListener('pointermove', function(e) {
+    var r = hero.getBoundingClientRect();
+    _scene.ty = ((e.clientX - r.left) / r.width - 0.5) * 1.2; _scene.tx = 0.42 + ((e.clientY - r.top) / r.height - 0.5) * 0.5;
+    if(_scene.drag) { var dx = e.clientX - _scene.drag.x; _scene.drag.x = e.clientX; _scene.spin += dx * 0.007; _scene.vel = Math.max(-4, Math.min(4, dx * 0.45)); }
+  });
+  hero.addEventListener('pointerleave', function() { _scene.tx = 0.42; _scene.ty = 0; });
+  sc.addEventListener('pointerdown', function(e) { _scene.drag = { x: e.clientX }; sc.classList.add('drag'); });
+  window.addEventListener('pointerup', function() { _scene.drag = null; sc.classList.remove('drag'); });
+  window.addEventListener('pointercancel', function() { _scene.drag = null; sc.classList.remove('drag'); });
+  sc.addEventListener('click', function(e) {
+    var o = e.target.closest && e.target.closest('.auth-orb'); if(!o) return;
+    o.classList.remove('pop'); void o.offsetWidth; o.classList.add('pop'); _scene.vel = 2.4;
+  });
+  // Inclinaison du téléphone : seulement si le navigateur la donne sans autorisation à demander
+  if(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission !== 'function') {
+    window.addEventListener('deviceorientation', function(e) {
+      if(e.gamma == null || e.beta == null || !_scene.raf) return;
+      _scene.ty = Math.max(-0.6, Math.min(0.6, e.gamma / 50)); _scene.tx = 0.42 + Math.max(-0.25, Math.min(0.25, (e.beta - 45) / 120));
+    });
+  }
+}
+function authSceneRun(on) {
+  if(_scene.raf) { cancelAnimationFrame(_scene.raf); _scene.raf = 0; }
+  if(!on || !document.getElementById('auth-scene')) return;
+  _scene.t0 = 0;
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) { requestAnimationFrame(authSceneDraw); return; }
+  authSceneBind();
+  _scene.raf = requestAnimationFrame(authSceneLoop);
 }
 function showAuthScreen(step) {
   var scr = document.getElementById('auth-screen'); if(!scr) return;
   document.querySelectorAll('.auth-step').forEach(function(el) { el.classList.toggle('active', el.id === step); });
   scr.classList.add('active');
-  authDemoRun(true);
+  authSceneRun(true);
   if(step === 'auth-email') {
     var inp = document.getElementById('auth-email-inp');
     try { if(!inp.value) inp.value = localStorage.getItem('arc_auth_email') || ''; } catch(e) {}
@@ -2152,7 +2192,7 @@ function showAuthScreen(step) {
 }
 function hideAuthScreen() {
   var scr = document.getElementById('auth-screen'); if(scr) scr.classList.remove('active');
-  authDemoRun(false);
+  authSceneRun(false);
 }
 function authErr(id, msg) { var el = document.getElementById(id); if(el) el.textContent = msg || ''; }
 
