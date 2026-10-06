@@ -746,23 +746,48 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .ob-dot.active{background:var(--t1);width:18px}
 .ob-skip{font-size:11px;color:var(--t3);margin-top:14px;cursor:pointer;background:none;border:none}
 /* Écran de connexion : au-dessus de l'accueil et de l'onboarding */
-#auth-screen{position:fixed;inset:0;z-index:600;background:#000;display:none;align-items:center;justify-content:center;padding:24px 16px;overflow-y:auto}
+/* ═══ ÉCRAN D'ENTRÉE (branche entree, 7 octobre) : les couleurs d'ARC — noir, orange, rose, violet ═══ */
+#auth-screen{position:fixed;inset:0;z-index:600;background:#070709;display:none;align-items:flex-start;justify-content:center;padding:calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;color:var(--t1)}
 #auth-screen.active{display:flex}
-.auth-box{width:100%;max-width:380px;text-align:center}
+.auth-glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(55% 40% at 20% 0%,rgba(255,149,0,.22),transparent 70%),radial-gradient(45% 38% at 85% 10%,rgba(175,82,222,.20),transparent 70%),radial-gradient(40% 30% at 50% 100%,rgba(255,45,85,.10),transparent 70%)}
+.auth-box{position:relative;width:100%;max-width:420px;margin:auto;text-align:left}
+.auth-brand{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.auth-mark{width:40px;height:40px;display:flex;align-items:center;justify-content:center;animation:arcBreath 4s ease-in-out infinite}
+.auth-mark svg{width:40px;height:40px;overflow:visible}
+.auth-brand-name{font-family:'Big Shoulders Display',sans-serif;font-size:24px;font-weight:900;letter-spacing:1.5px;line-height:1}
+.auth-brand-sub{font-size:11px;color:#9A9AA2;font-family:var(--fm);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+.auth-h1{font-size:clamp(40px,10vw,52px);font-weight:800;letter-spacing:-1.8px;line-height:1.05;margin-bottom:24px}
+.auth-h1-gradient{display:block;background:linear-gradient(135deg,#FF9500,#FF2D55,#AF52DE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:h1Word .7s cubic-bezier(.16,1,.3,1) .05s both}
+.auth-h1-light{display:block;color:#F5F5F7;-webkit-text-fill-color:#F5F5F7;font-weight:300;letter-spacing:-1.4px;animation:h1Word .7s cubic-bezier(.16,1,.3,1) .25s both}
+.auth-card{padding:22px 20px 16px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02)),#0E0E11;border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 30px 80px -30px rgba(0,0,0,.9)}
 .auth-step{display:none}
 .auth-step.active{display:block;animation:slideUp .35s ease}
-.auth-title{font-size:24px;font-weight:800;letter-spacing:-.4px;color:var(--t1);margin-bottom:10px}
-.auth-text{font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:22px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.06);margin-bottom:22px}
+.auth-tab{min-height:46px;border:none;border-radius:11px;background:none;font-family:inherit;font-size:15px;font-weight:600;color:#9A9AA2;cursor:pointer}
+.auth-tab.on{background:rgba(255,255,255,.12);color:#F5F5F7;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.auth-title{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
+.auth-text{font-size:15px;color:#B8B8BF;line-height:1.55;margin-bottom:18px}
 .auth-text b{color:var(--t1);font-weight:600}
-.auth-input{width:100%;min-height:48px;padding:12px 14px;border-radius:12px;border:1px solid var(--b2);background:var(--bg2);color:var(--t1);font-size:17px;font-family:var(--f);outline:none;margin-bottom:12px;text-align:center}
-.auth-input:focus{border-color:var(--b3);background:var(--bg3)}
-.auth-input.code{font-family:var(--fm);font-size:24px;letter-spacing:8px}
-.auth-btn{width:100%;min-height:48px;padding:12px 20px;border-radius:12px;font-size:16px;font-weight:700;background:#f5f5f7;color:#000;border:none;cursor:pointer;transition:opacity .2s}
+.auth-lbl{display:block;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9A9AA2;font-family:var(--fm);margin:0 0 8px 2px}
+.auth-input{width:100%;min-height:52px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.4);color:var(--t1);font-size:17px;font-family:inherit;outline:none;margin-bottom:16px;color-scheme:dark}
+.auth-input::placeholder{color:#6E6E76}
+.auth-input:focus{border-color:rgba(255,149,0,.7);box-shadow:0 0 0 3px rgba(255,149,0,.18)}
+.auth-input.code{text-align:center;font-family:var(--fm);font-size:28px;font-weight:700;letter-spacing:10px}
+.auth-passrow{position:relative}
+.auth-passrow .auth-input{padding-right:76px}
+.auth-eye{position:absolute;right:3px;top:3px;min-width:60px;height:46px;border:none;border-radius:11px;background:none;font-family:inherit;font-size:14px;font-weight:600;color:#C9C9CF;cursor:pointer}
+.auth-btn{width:100%;min-height:52px;padding:0 20px;border-radius:14px;font-size:16px;font-weight:700;font-family:inherit;color:#fff;border:none;cursor:pointer;background:linear-gradient(135deg,#FF9500,#FF2D55 60%,#AF52DE);box-shadow:0 12px 30px -10px rgba(255,45,85,.6);transition:transform .15s,opacity .2s;margin-top:4px}
+.auth-btn:active{transform:scale(.985)}
 .auth-btn:disabled{opacity:.5;cursor:default}
-.auth-link{display:block;width:100%;min-height:44px;margin-top:8px;font-size:14px;color:var(--t2);background:none;border:none;cursor:pointer}
+.auth-link{display:block;width:100%;min-height:46px;margin-top:4px;font-size:15px;font-weight:500;font-family:inherit;color:#D0D0D6;background:none;border:none;cursor:pointer}
+.auth-link.soft{color:#9A9AA2}
 .auth-link:hover{color:var(--t1)}
-.auth-err{min-height:20px;font-size:14px;color:var(--red);margin:4px 0 10px;line-height:1.5}
-.auth-note{font-size:13px;color:var(--t2);line-height:1.6;margin-top:18px}
+.auth-link:disabled{color:#6E6E76;cursor:default}
+.auth-link[hidden],.auth-note[hidden],.h-menu-item[hidden]{display:none}
+.auth-err{min-height:20px;font-size:14px;color:#FF6B81;margin:0 0 10px 2px;line-height:1.5}
+.auth-note{font-size:13px;color:#9A9AA2;line-height:1.55;margin:14px 4px 0}
+@media(min-width:861px){#auth-screen{align-items:center}.auth-box{max-width:440px}.auth-card{padding:28px 26px 20px}}
+@media(prefers-reduced-motion:reduce){.auth-mark,.auth-h1-gradient,.auth-h1-light,.auth-step.active{animation:none}}
 #sync-pill{cursor:pointer}
 /* ═══ DÉPÔT ═══ Barre fixe en bas (z 30 : au-dessus des écrans, sous le tiroir, le cockpit, la War Room,
    la recherche, l'accueil et la connexion). --depot-right : largeur du panneau Claude visible à droite (Mac).
@@ -1157,6 +1182,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <label class="h-menu-item" style="cursor:pointer"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Importer<input type="file" id="file-imp" accept=".json" style="display:none"></label>
         <button class="h-menu-item" id="btn-export"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 14V5M4 9l4-4 4 4M2 3h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Exporter</button>
         <button class="h-menu-item" id="btn-auth"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="5.5" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 14c.8-2.6 2.9-4 5.5-4s4.7 1.4 5.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-auth-lbl">Se connecter</span></button>
+        <button class="h-menu-item" id="btn-pass" hidden><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><rect x="3" y="7" width="10" height="7" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Mon mot de passe</button>
         <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-matin-lbl">Point du matin</span></button>
       </div>
     </div>
@@ -1799,33 +1825,59 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   </form>
 </div>
 <div id="auth-screen">
+  <div class="auth-glow" aria-hidden="true"></div>
   <div class="auth-box">
+    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><path class="arc-shimmer" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Un cerveau &middot; Sept espaces</div></div></div>
+    <div class="auth-h1"><span class="auth-h1-gradient">Bienvenue.</span><span class="auth-h1-light">Entre dans ARC.</span></div>
+    <div class="auth-card">
     <div class="auth-step active" id="auth-email">
-      <div class="auth-title">Connexion à ARC</div>
-      <div class="auth-text">Tes données sont privées et suivent ton compte sur le Mac, l'iPad et l'iPhone. Un code arrive par <span style="white-space:nowrap">e-mail</span>.</div>
-      <input class="auth-input" id="auth-email-inp" type="email" inputmode="email" autocomplete="email" placeholder="ton@e-mail.fr" aria-label="Adresse e-mail">
+      <div class="auth-tabs" role="tablist" aria-label="Connexion ou création de compte">
+        <button class="auth-tab on" id="auth-tab-in" type="button" role="tab" aria-selected="true">Se connecter</button>
+        <button class="auth-tab" id="auth-tab-up" type="button" role="tab" aria-selected="false">Créer un compte</button>
+      </div>
+      <label class="auth-lbl" for="auth-email-inp">Adresse e-mail</label>
+      <input class="auth-input" id="auth-email-inp" type="email" inputmode="email" autocomplete="email" placeholder="ton@e-mail.fr">
+      <label class="auth-lbl" for="auth-pass-inp">Mot de passe</label>
+      <div class="auth-passrow">
+        <input class="auth-input" id="auth-pass-inp" type="password" autocomplete="current-password" placeholder="8 caractères au moins">
+        <button class="auth-eye" id="auth-eye" type="button" aria-pressed="false">Voir</button>
+      </div>
       <div class="auth-err" id="auth-email-err" role="alert"></div>
-      <button class="auth-btn" id="auth-send">Recevoir le code</button>
-      <button class="auth-link" id="auth-skip">Continuer sans connexion</button>
-      <div class="auth-note">Sans connexion, ARC fonctionne sur cet appareil seulement, sans synchronisation ni Claude.</div>
+      <button class="auth-btn" id="auth-go">Se connecter</button>
+      <button class="auth-link" id="auth-send">Mot de passe oublié ? Recevoir un code</button>
+      <button class="auth-link soft" id="auth-have">J'ai déjà un code</button>
+      <button class="auth-link soft" id="auth-skip">Continuer sans connexion</button>
+    </div>
+    <div class="auth-step" id="auth-pass">
+      <div class="auth-title">Ton mot de passe</div>
+      <div class="auth-text">Choisis-le une fois : tu te connecteras ensuite avec ton adresse et ce mot de passe, sans attendre de code.</div>
+      <label class="auth-lbl" for="auth-newpass-inp">Nouveau mot de passe</label>
+      <div class="auth-passrow">
+        <input class="auth-input" id="auth-newpass-inp" type="password" autocomplete="new-password" placeholder="8 caractères au moins">
+        <button class="auth-eye" id="auth-eye2" type="button" aria-pressed="false">Voir</button>
+      </div>
+      <div class="auth-err" id="auth-pass-err" role="alert"></div>
+      <button class="auth-btn" id="auth-pass-save">Enregistrer le mot de passe</button>
+      <button class="auth-link soft" id="auth-pass-later">Plus tard</button>
     </div>
     <div class="auth-step" id="auth-code">
-      <div class="auth-title">Vérifie tes e-mails</div>
-      <div class="auth-text">Un code est parti à <b id="auth-code-to"></b>. Tape-le ici, ou touche le lien de l'e-mail sur cet appareil.</div>
+      <div class="auth-title">Ton code</div>
+      <div class="auth-text">Il est parti à <b id="auth-code-to"></b>. Tape le dernier code reçu, ou touche le lien de l'e-mail sur cet appareil.</div>
       <input class="auth-input code" id="auth-code-inp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="000000" aria-label="Code reçu par e-mail">
       <div class="auth-err" id="auth-code-err" role="alert"></div>
-      <button class="auth-btn" id="auth-verify">Valider</button>
+      <button class="auth-btn" id="auth-verify">Entrer dans ARC</button>
       <button class="auth-link" id="auth-resend">Renvoyer un code</button>
-      <button class="auth-link" id="auth-back">Changer d'adresse</button>
+      <button class="auth-link soft" id="auth-back">Changer d'adresse</button>
     </div>
     <div class="auth-step" id="auth-ref">
-      <div class="auth-title">Aucune donnée sur ton compte</div>
-      <div class="auth-text">Cet appareil devient la référence : son contenu sera envoyé sur ton compte, et tes autres appareils le récupéreront.<br><b id="auth-ref-sum"></b></div>
+      <div class="auth-title">Premier appareil</div>
+      <div class="auth-text">Ton compte ne contient encore rien. Cet appareil devient la référence : son contenu sera envoyé sur ton compte, et tes autres appareils le récupéreront.<br><b id="auth-ref-sum"></b></div>
       <div class="auth-err" id="auth-ref-err" role="alert"></div>
       <button class="auth-btn" id="auth-ref-yes">Oui, cet appareil fait foi</button>
-      <button class="auth-link" id="auth-ref-no">Pas maintenant</button>
-      <div class="auth-note">« Pas maintenant » : rien n'est envoyé ; la question reviendra au prochain lancement.</div>
+      <button class="auth-link soft" id="auth-ref-no">Pas maintenant</button>
     </div>
+    </div>
+    <div class="auth-note" id="auth-note">Sans connexion, ARC marche sur cet appareil seulement, sans synchronisation ni Claude.</div>
   </div>
 </div>
 <div id="war-room">
@@ -1928,6 +1980,8 @@ function showAuthScreen(step) {
     try { if(!inp.value) inp.value = localStorage.getItem('arc_auth_email') || ''; } catch(e) {}
     setTimeout(function() { inp.focus(); }, 50);
   }
+  var note = document.getElementById('auth-note'); if(note) note.hidden = step !== 'auth-email';
+  if(step === 'auth-pass') { document.getElementById('auth-newpass-inp').value = ''; setTimeout(function() { document.getElementById('auth-newpass-inp').focus(); }, 50); }
   if(step === 'auth-code') setTimeout(function() { document.getElementById('auth-code-inp').focus(); }, 50);
 }
 function hideAuthScreen() {
@@ -1938,6 +1992,7 @@ function authErr(id, msg) { var el = document.getElementById(id); if(el) el.text
 function renderAuthUI() {
   var lbl = document.getElementById('btn-auth-lbl');
   if(lbl) lbl.textContent = _session ? 'Se déconnecter (' + (_session.user.email || 'compte') + ')' : 'Se connecter';
+  var pb = document.getElementById('btn-pass'); if(pb) pb.hidden = !_session;
   if(!_sb) setSyncUI('err', 'Hors ligne');
   else if(!_session) setSyncUI('', 'Non connecté');
   else if(_syncPaused) setSyncUI('', 'En pause');
@@ -1945,30 +2000,120 @@ function renderAuthUI() {
 
 function authErrorText(e) {
   var m = (e && e.message) || String(e);
-  if(/rate limit|too many|security purposes/i.test(m)) return 'Trop de demandes : attends quelques minutes avant de redemander un code.';
-  if(/signups not allowed|user not found|not allowed for otp/i.test(m)) return 'Cette adresse n\'a pas de compte ARC.';
+  if(/security purposes|only request this after/i.test(m)) return 'Un code vient de partir : attends une minute avant d\'en redemander un.';
+  if(/rate limit|too many/i.test(m)) return 'Trop de codes demandés : l\'envoi d\'e-mails est limité. Utilise le dernier code reçu (« J\'ai déjà un code »), ou réessaie dans une heure.';
+  if(/invalid login credentials/i.test(m)) return 'Adresse ou mot de passe incorrect. Pas encore de mot de passe ? Reçois un code par e-mail, puis crée-le dans le menu « ··· ».';
+  if(/signups not allowed|signup is disabled|signups are disabled/i.test(m)) return 'La création de compte n\'est pas encore ouverte.';
+  if(/email not confirmed/i.test(m)) return 'Adresse pas encore confirmée : reçois un code par e-mail pour la confirmer.';
+  if(/password should be|weak password|at least \d+ characters/i.test(m)) return 'Mot de passe trop faible : 8 caractères au moins, pas un mot courant.';
+  if(/different from the old/i.test(m)) return 'C\'est déjà ton mot de passe actuel.';
+  if(/reauthentication|recently/i.test(m)) return 'Par sécurité, déconnecte-toi puis reconnecte-toi avant de changer le mot de passe.';
+  if(/user not found|not allowed for otp/i.test(m)) return 'Cette adresse n\'a pas de compte ARC.';
   if(/expired|invalid/i.test(m)) return 'Code invalide ou expiré : redemande un code.';
   if(/fetch|network/i.test(m)) return 'Réseau indisponible : réessaie dans un instant.';
   return m;
 }
 
-async function authSendCode() {
+var AUTH_GAP_MS = 60000, _authTick = null, _authMode = 'in', AUTH_PASS_MIN = 8;
+function authSentAt() { try { return Number(localStorage.getItem('arc_auth_sent_at')) || 0; } catch(e) { return 0; } }
+/* Après un envoi, « Renvoyer un code » attend une minute : chaque code demandé annule le précédent et l'envoi
+   d'e-mails est limité par heure côté Supabase. */
+function authCooldown() {
+  var btn = document.getElementById('auth-resend'); if(!btn) return;
+  var left = Math.ceil((authSentAt() + AUTH_GAP_MS - Date.now()) / 1000);
+  if(left > 0) { btn.disabled = true; btn.textContent = 'Renvoyer un code (dans ' + left + ' s)'; if(!_authTick) _authTick = setInterval(authCooldown, 1000); }
+  else { btn.disabled = false; btn.textContent = 'Renvoyer un code'; if(_authTick) { clearInterval(_authTick); _authTick = null; } }
+}
+function authShowCodeStep(email) {
+  document.getElementById('auth-code-to').textContent = email;
+  document.getElementById('auth-code-inp').value = '';
+  authErr('auth-code-err', '');
+  showAuthScreen('auth-code'); authCooldown();
+}
+function authReadEmail() {
   var email = document.getElementById('auth-email-inp').value.trim().toLowerCase();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { authErr('auth-email-err', 'Adresse e-mail invalide.'); return; }
-  if(!_sb) { authErr('auth-email-err', 'Service de connexion injoignable.'); return; }
-  var btn = document.getElementById('auth-send'); btn.disabled = true; authErr('auth-email-err', '');
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
+}
+// « J'ai déjà un code » : aucun e-mail n'est demandé, on passe à la saisie du dernier code reçu
+function authHaveCode() {
+  var email = authReadEmail();
+  if(!email) { authErr('auth-email-err', 'Entre d\'abord ton adresse e-mail.'); return; }
+  try { localStorage.setItem('arc_auth_email', email); } catch(e) {}
+  authErr('auth-email-err', ''); authShowCodeStep(email);
+}
+async function authSendCode() {
+  var onCode = document.getElementById('auth-code').classList.contains('active');
+  var errId = onCode ? 'auth-code-err' : 'auth-email-err';
+  var email = onCode ? document.getElementById('auth-code-to').textContent : authReadEmail();
+  if(!email) { authErr(errId, 'Adresse e-mail invalide.'); return; }
+  if(!_sb) { authErr(errId, 'Service de connexion injoignable.'); return; }
+  if(authSentAt() + AUTH_GAP_MS > Date.now()) {
+    if(!onCode) authShowCodeStep(email); else authErr(errId, 'Un code vient de partir : regarde tes e-mails.');
+    return;
+  }
+  var btn = document.getElementById(onCode ? 'auth-resend' : 'auth-send'); btn.disabled = true; authErr(errId, '');
   try {
     var res = await _sb.auth.signInWithOtp({ email: email, options: {
       shouldCreateUser: false, // un seul compte, créé par Rayan dans Supabase
       emailRedirectTo: location.origin + location.pathname
     }});
     if(res.error) throw res.error;
+    try { localStorage.setItem('arc_auth_email', email); localStorage.setItem('arc_auth_sent_at', String(Date.now())); } catch(e) {}
+    authShowCodeStep(email);
+  } catch(e) { authErr(errId, authErrorText(e)); btn.disabled = false; }
+  if(!onCode) btn.disabled = false;
+  authCooldown();
+}
+/* Identifiants : « Se connecter » (adresse + mot de passe, aucun e-mail envoyé) et « Créer un compte » (signUp,
+   n'aboutit que si Rayan a ouvert les inscriptions dans Supabase). Le code par e-mail reste le secours. */
+function authSetMode(mode) {
+  _authMode = mode === 'up' ? 'up' : 'in';
+  var up = _authMode === 'up';
+  ['in', 'up'].forEach(function(k) { var b = document.getElementById('auth-tab-' + k); b.classList.toggle('on', k === _authMode); b.setAttribute('aria-selected', k === _authMode ? 'true' : 'false'); });
+  document.getElementById('auth-go').textContent = up ? 'Créer mon compte' : 'Se connecter';
+  document.getElementById('auth-pass-inp').setAttribute('autocomplete', up ? 'new-password' : 'current-password');
+  document.getElementById('auth-send').hidden = up; document.getElementById('auth-have').hidden = up;
+  authErr('auth-email-err', '');
+}
+function authTogglePass(btnId, inpId) {
+  var b = document.getElementById(btnId), i = document.getElementById(inpId), show = i.type === 'password';
+  i.type = show ? 'text' : 'password'; b.textContent = show ? 'Cacher' : 'Voir'; b.setAttribute('aria-pressed', show ? 'true' : 'false');
+}
+async function authGo() {
+  var email = authReadEmail(), pass = document.getElementById('auth-pass-inp').value;
+  if(!email) { authErr('auth-email-err', 'Adresse e-mail invalide.'); return; }
+  if(pass.length < AUTH_PASS_MIN) { authErr('auth-email-err', 'Le mot de passe fait au moins ' + AUTH_PASS_MIN + ' caractères.'); return; }
+  if(!_sb) { authErr('auth-email-err', 'Service de connexion injoignable.'); return; }
+  var btn = document.getElementById('auth-go'); btn.disabled = true; authErr('auth-email-err', '');
+  try {
     try { localStorage.setItem('arc_auth_email', email); } catch(e) {}
-    document.getElementById('auth-code-to').textContent = email;
-    document.getElementById('auth-code-inp').value = '';
-    authErr('auth-code-err', '');
-    showAuthScreen('auth-code');
+    if(_authMode === 'in') {
+      var res = await _sb.auth.signInWithPassword({ email: email, password: pass });
+      if(res.error) throw res.error;
+      // La suite passe par onAuthStateChange → SIGNED_IN
+    } else {
+      var up = await _sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: location.origin + location.pathname } });
+      if(up.error) throw up.error;
+      var u = up.data && up.data.user;
+      if(u && Array.isArray(u.identities) && u.identities.length === 0) { authSetMode('in'); authErr('auth-email-err', 'Cette adresse a déjà un compte : connecte-toi.'); }
+      else if(!(up.data && up.data.session)) { try { localStorage.setItem('arc_auth_sent_at', String(Date.now())); } catch(e) {} authShowCodeStep(email); }
+    }
+    document.getElementById('auth-pass-inp').value = '';
   } catch(e) { authErr('auth-email-err', authErrorText(e)); }
+  btn.disabled = false;
+}
+// Une fois connecté : créer ou changer son mot de passe (menu « ··· » › Mon mot de passe)
+async function authSavePass() {
+  var pass = document.getElementById('auth-newpass-inp').value;
+  if(pass.length < AUTH_PASS_MIN) { authErr('auth-pass-err', 'Le mot de passe fait au moins ' + AUTH_PASS_MIN + ' caractères.'); return; }
+  if(!_sb || !_session) { authErr('auth-pass-err', 'Connecte-toi d\'abord.'); return; }
+  var btn = document.getElementById('auth-pass-save'); btn.disabled = true; authErr('auth-pass-err', '');
+  try {
+    var res = await _sb.auth.updateUser({ password: pass });
+    if(res.error) throw res.error;
+    document.getElementById('auth-newpass-inp').value = '';
+    hideAuthScreen(); toast('Mot de passe enregistré');
+  } catch(e) { authErr('auth-pass-err', authErrorText(e)); }
   btn.disabled = false;
 }
 
@@ -3595,6 +3740,15 @@ document.addEventListener("click",function(ev){
   if(t.id==="auth-send"){ authSendCode(); return; }
   if(t.id==="auth-verify"){ authVerifyCode(); return; }
   if(t.id==="auth-resend"){ authSendCode(); return; }
+  if(t.id==="auth-have"){ authHaveCode(); return; }
+  if(t.id==="auth-go"){ authGo(); return; }
+  if(t.id==="auth-tab-in"){ authSetMode("in"); return; }
+  if(t.id==="auth-tab-up"){ authSetMode("up"); return; }
+  if(t.id==="auth-eye"){ authTogglePass("auth-eye","auth-pass-inp"); return; }
+  if(t.id==="auth-eye2"){ authTogglePass("auth-eye2","auth-newpass-inp"); return; }
+  if(t.id==="auth-pass-save"){ authSavePass(); return; }
+  if(t.id==="auth-pass-later"){ hideAuthScreen(); return; }
+  if(t.closest&&t.closest("#btn-pass")){ var dd=document.getElementById("h-menu-dd"); if(dd) dd.classList.remove("open"); if(_session){ authErr("auth-pass-err",""); showAuthScreen("auth-pass"); } return; }
   if(t.id==="auth-back"){ authErr("auth-email-err",""); showAuthScreen("auth-email"); return; }
   if(t.id==="auth-skip"){ try{ sessionStorage.setItem("arc_auth_skip","1"); }catch(e){} hideAuthScreen(); renderAuthUI(); return; }
   if(t.id==="auth-ref-yes"){ authMakeReference(); return; }
@@ -5503,7 +5657,9 @@ function init(){
 // Entrée valide l'étape en cours de l'écran de connexion
 document.addEventListener("keydown",function(ev){
   if(ev.key!=="Enter") return;
-  if(ev.target.id==="auth-email-inp"){ ev.preventDefault(); authSendCode(); }
+  if(ev.target.id==="auth-email-inp"){ ev.preventDefault(); document.getElementById("auth-pass-inp").focus(); }
+  else if(ev.target.id==="auth-pass-inp"){ ev.preventDefault(); authGo(); }
+  else if(ev.target.id==="auth-newpass-inp"){ ev.preventDefault(); authSavePass(); }
   else if(ev.target.id==="auth-code-inp"){ ev.preventDefault(); authVerifyCode(); }
 });
 

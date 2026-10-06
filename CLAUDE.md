@@ -11,6 +11,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - `tests/` (Playwright, outil de développement seulement ; mode d'emploi en tête de `tests/depot.mjs`) :
   `depot.mjs` (dépôt), `rangement.mjs` (rangement), `matin.mjs` (point du matin, horloge contrôlée),
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
+  `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
@@ -22,7 +23,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Deux pôles personnels : Santé et Juridique.
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
-- Connexion par e-mail (code à 6 chiffres ou lien) : `showAuthScreen`, `authSendCode`, `authVerifyCode` ; `getUID` = identifiant du compte.
+- Connexion : adresse + mot de passe (`authGo`), ou code à 6 chiffres / lien par e-mail (`authSendCode`, `authVerifyCode`) ; `showAuthScreen` ; `getUID` = identifiant du compte.
 - Synchronisation Supabase : table `arc_data`, une ligne par compte (`pushToCloud`, `pullFromCloud`). Sans session, rien n'est lu ni écrit.
 - Dépôt de pensées : barre fixe en bas de l'écran, liste « Déposé » ; pensées dans `localStorage` sous
   `arc_thoughts_v1` (jamais dans `S`), envoyées dans la table `thoughts` (`depotFlush`, `depotPull`), mesures
@@ -155,6 +156,24 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - ARC laissé ouvert au premier plan : vérification légère chaque minute (rien tant que l'heure n'est pas passée ou
   que le point du jour a été vu).
 - Tests : `tests/matin.mjs` 27 sur 27 ; les autres suites ferment le point s'il s'affiche (elles tournent à l'heure réelle).
+
+Écran d'entrée (branche `entree`, 7 octobre, partie de `main` à `09b9196`) :
+- Demande de Rayan (7 octobre, 1 h) : refaire l'écran vu avant d'être connecté, dans les couleurs actuelles d'ARC, avec
+  adresse + mot de passe et création de compte. Les essais de design du 6 octobre (branches `design`, `design-v2`,
+  `accueil`, `charte`, `accueil-v2`) ne sont pas repris ; `accueil-v2` (passe de design sur l'accueil existant) attend
+  son avis.
+- Écran : fond `#070709` avec lueurs orange, rose et violette ; logo ARC et nom en Big Shoulders ; titre
+  « Bienvenue. » en dégradé et « Entre dans ARC. » ; carte sombre à filet avec deux onglets, « Se connecter »
+  (adresse + mot de passe, `signInWithPassword`, aucun e-mail envoyé) et « Créer un compte » (`signUp`) ; bouton
+  principal en dégradé ; « Mot de passe oublié ? Recevoir un code », « J'ai déjà un code », « Continuer sans
+  connexion ». Étapes code, premier appareil, et « Ton mot de passe » (menu « ··· » › « Mon mot de passe »,
+  `updateUser`, visible seulement connecté). « Renvoyer un code » attend une minute (`arc_auth_sent_at`). Le mot de
+  passe n'est jamais gardé sur l'appareil. Fonctions : `authGo`, `authSetMode`, `authSavePass`, `authHaveCode`,
+  `authCooldown`.
+- **Côté Supabase, rien n'a changé** : inscriptions fermées (« Créer un compte » répond « pas encore ouverte »), le
+  compte de Rayan n'a pas encore de mot de passe (à créer une fois connecté par code), proxy réservé à `ARC_OWNER_ID`.
+- `tests/connexion.mjs` (13 contrôles, fausses réponses d'Auth). Tests : connexion 13/13, dépôt 19/19, rangement
+  25/25, matin 27/27, proxy 41/41 ; 569 `<div` / 569 `</div>`. Pas encore vu par Rayan sur son iPhone.
 
 ### Décisions de Rayan (5 octobre)
 
