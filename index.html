@@ -783,7 +783,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .auth-link.soft{color:#9A9AA2}
 .auth-link:hover{color:var(--t1)}
 .auth-link:disabled{color:#6E6E76;cursor:default}
-.auth-link[hidden],.auth-note[hidden],.h-menu-item[hidden]{display:none}
+.auth-link[hidden],.auth-alt-btn[hidden],.auth-note[hidden],.h-menu-item[hidden]{display:none}
 .auth-err{min-height:20px;font-size:14px;color:#FF6B81;margin:0 0 10px 2px;line-height:1.5}
 .auth-note{font-size:13px;color:#9A9AA2;line-height:1.55;margin:14px 4px 0}
 @media(min-width:861px){#auth-screen{align-items:center}.auth-box{max-width:440px}.auth-card{padding:28px 26px 20px}}
@@ -1164,6 +1164,24 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
+
+/* Le message et le bas de l'écran (retours de Rayan, 7 octobre 1 h 20) */
+#auth-screen{font-family:var(--f)}
+.auth-h1{margin-bottom:14px}
+.auth-pitch{font-size:16px;line-height:1.55;color:#C9C9CF;margin:0 0 16px;max-width:30em;letter-spacing:-.1px}
+.auth-proof{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:8px}
+.auth-proof li{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#E8E8EC;letter-spacing:-.1px}
+.auth-proof li i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);flex-shrink:0}
+.auth-alt{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.auth-alt-btn{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;min-height:56px;padding:9px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:var(--t1);font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.auth-alt-btn:hover{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.06)}
+.auth-alt-btn:active{transform:scale(.99)}
+.auth-alt-k{font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#9A9AA2}
+.auth-alt-v{font-size:15px;font-weight:600;color:#F5F5F7;letter-spacing:-.1px}
+.auth-alt-go{grid-row:1/3;grid-column:2;font-size:24px;line-height:1;color:#9A9AA2}
+.auth-note{display:flex;align-items:center;gap:8px;font-family:var(--fm);font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#8E8E95;margin:16px 4px 0;line-height:1.5}
+.auth-note-dot{width:6px;height:6px;border-radius:50%;background:#30d158;flex-shrink:0;animation:pulse 2s infinite}
+@media(max-width:400px){.auth-note{font-size:10.5px;letter-spacing:.5px}}
 </style>
 </head>
 <body>
@@ -1827,8 +1845,14 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 <div id="auth-screen">
   <div class="auth-glow" aria-hidden="true"></div>
   <div class="auth-box">
-    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><path class="arc-shimmer" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Un cerveau &middot; Sept espaces</div></div></div>
-    <div class="auth-h1"><span class="auth-h1-gradient">Bienvenue.</span><span class="auth-h1-light">Entre dans ARC.</span></div>
+    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><path class="arc-shimmer" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">De la pens&eacute;e au monde</div></div></div>
+    <div class="auth-h1"><span class="auth-h1-gradient">Une pens&eacute;e.</span><span class="auth-h1-light">Un monde entier.</span></div>
+    <p class="auth-pitch">Vide ta t&ecirc;te. Chaque pens&eacute;e que tu d&eacute;poses devient un espace &agrave; toi, o&ugrave; tu la fais grandir jour apr&egrave;s jour, avec ce qu'il faut pour entreprendre.</p>
+    <ul class="auth-proof" aria-label="Ce qu'ARC fait">
+      <li><i style="--c:#FF9500"></i>D&eacute;pose, &agrave; la voix ou au clavier</li>
+      <li><i style="--c:#FF2D55"></i>ARC range et relie au bon monde</li>
+      <li><i style="--c:#AF52DE"></i>Chaque matin, la prochaine &eacute;tape</li>
+    </ul>
     <div class="auth-card">
     <div class="auth-step active" id="auth-email">
       <div class="auth-tabs" role="tablist" aria-label="Connexion ou création de compte">
@@ -1844,9 +1868,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
       <div class="auth-err" id="auth-email-err" role="alert"></div>
       <button class="auth-btn" id="auth-go">Se connecter</button>
-      <button class="auth-link" id="auth-send">Mot de passe oublié ? Recevoir un code</button>
-      <button class="auth-link soft" id="auth-have">J'ai déjà un code</button>
-      <button class="auth-link soft" id="auth-skip">Continuer sans connexion</button>
+      <div class="auth-alt">
+        <button class="auth-alt-btn" id="auth-send"><span class="auth-alt-k">Mot de passe oubli&eacute; ?</span><span class="auth-alt-v">Recevoir un code par e-mail</span><span class="auth-alt-go" aria-hidden="true">&rsaquo;</span></button>
+        <button class="auth-alt-btn" id="auth-skip"><span class="auth-alt-k">Juste regarder ?</span><span class="auth-alt-v">Continuer sans connexion</span><span class="auth-alt-go" aria-hidden="true">&rsaquo;</span></button>
+      </div>
     </div>
     <div class="auth-step" id="auth-pass">
       <div class="auth-title">Ton mot de passe</div>
@@ -1877,7 +1902,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <button class="auth-link soft" id="auth-ref-no">Pas maintenant</button>
     </div>
     </div>
-    <div class="auth-note" id="auth-note">Sans connexion, ARC marche sur cet appareil seulement, sans synchronisation ni Claude.</div>
+    <div class="auth-note" id="auth-note"><span class="auth-note-dot"></span>Sans connexion &middot; cet appareil seulement &middot; sans synchronisation ni Claude</div>
   </div>
 </div>
 <div id="war-room">
@@ -2034,13 +2059,6 @@ function authReadEmail() {
   var email = document.getElementById('auth-email-inp').value.trim().toLowerCase();
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
 }
-// « J'ai déjà un code » : aucun e-mail n'est demandé, on passe à la saisie du dernier code reçu
-function authHaveCode() {
-  var email = authReadEmail();
-  if(!email) { authErr('auth-email-err', 'Entre d\'abord ton adresse e-mail.'); return; }
-  try { localStorage.setItem('arc_auth_email', email); } catch(e) {}
-  authErr('auth-email-err', ''); authShowCodeStep(email);
-}
 async function authSendCode() {
   var onCode = document.getElementById('auth-code').classList.contains('active');
   var errId = onCode ? 'auth-code-err' : 'auth-email-err';
@@ -2072,7 +2090,7 @@ function authSetMode(mode) {
   ['in', 'up'].forEach(function(k) { var b = document.getElementById('auth-tab-' + k); b.classList.toggle('on', k === _authMode); b.setAttribute('aria-selected', k === _authMode ? 'true' : 'false'); });
   document.getElementById('auth-go').textContent = up ? 'Créer mon compte' : 'Se connecter';
   document.getElementById('auth-pass-inp').setAttribute('autocomplete', up ? 'new-password' : 'current-password');
-  document.getElementById('auth-send').hidden = up; document.getElementById('auth-have').hidden = up;
+  document.getElementById('auth-send').hidden = up;
   authErr('auth-email-err', '');
 }
 function authTogglePass(btnId, inpId) {
@@ -3737,10 +3755,9 @@ document.addEventListener("click",function(ev){
     if(_session&&t.closest("#btn-auth")) authSignOut(); else if(!_session) showAuthScreen("auth-email");
     return;
   }
-  if(t.id==="auth-send"){ authSendCode(); return; }
+  if(t.id==="auth-send"||t.closest("#auth-send")){ authSendCode(); return; }
   if(t.id==="auth-verify"){ authVerifyCode(); return; }
   if(t.id==="auth-resend"){ authSendCode(); return; }
-  if(t.id==="auth-have"){ authHaveCode(); return; }
   if(t.id==="auth-go"){ authGo(); return; }
   if(t.id==="auth-tab-in"){ authSetMode("in"); return; }
   if(t.id==="auth-tab-up"){ authSetMode("up"); return; }
@@ -3750,7 +3767,7 @@ document.addEventListener("click",function(ev){
   if(t.id==="auth-pass-later"){ hideAuthScreen(); return; }
   if(t.closest&&t.closest("#btn-pass")){ var dd=document.getElementById("h-menu-dd"); if(dd) dd.classList.remove("open"); if(_session){ authErr("auth-pass-err",""); showAuthScreen("auth-pass"); } return; }
   if(t.id==="auth-back"){ authErr("auth-email-err",""); showAuthScreen("auth-email"); return; }
-  if(t.id==="auth-skip"){ try{ sessionStorage.setItem("arc_auth_skip","1"); }catch(e){} hideAuthScreen(); renderAuthUI(); return; }
+  if(t.id==="auth-skip"||t.closest("#auth-skip")){ try{ sessionStorage.setItem("arc_auth_skip","1"); }catch(e){} hideAuthScreen(); renderAuthUI(); return; }
   if(t.id==="auth-ref-yes"){ authMakeReference(); return; }
   if(t.id==="auth-ref-no"){ _syncPaused=true; hideAuthScreen(); renderAuthUI(); toast("Rien n'a été envoyé · question au prochain lancement"); return; }
   if(t.id==="sante-export-btn"){ exportSante(); return; }
