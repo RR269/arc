@@ -1242,18 +1242,50 @@ body.home-on{background:#F5F5F7}
 #depot-bar .depot-input{color:#1D1D1F;color-scheme:light}
 #depot-bar .depot-input::placeholder{color:#6E6E73}
 /* Connexion */
-#auth-screen{background:#F5F5F7;font-family:var(--fs);align-items:flex-start}
-#auth-screen::before{content:"";position:fixed;left:0;right:0;top:0;height:460px;background:radial-gradient(440px 320px at 26% 0%,rgba(103,65,217,.18),transparent 70%),radial-gradient(480px 340px at 54% -8%,rgba(232,89,12,.24),transparent 70%),radial-gradient(440px 320px at 80% 4%,rgba(11,138,143,.20),transparent 70%);pointer-events:none}
-#auth-screen .auth-box{position:relative;max-width:420px;margin:max(6vh,calc(24px + env(safe-area-inset-top))) auto 24px;text-align:left}
-.auth-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;letter-spacing:.5px;margin-bottom:28px}
-.auth-card{padding:26px 22px 22px;border-radius:28px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.05),0 24px 60px rgba(0,0,0,.10)}
+#auth-screen{display:none;background:#F5F5F7;font-family:var(--fs);padding:0;align-items:stretch;justify-content:flex-start}
+#auth-screen.active{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(380px,.85fr)}
+/* Le côté couleur : le logo, le nom, et le geste d'ARC montré en vrai (une pensée déposée devient une étape rangée) */
+.auth-hero{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:100%;padding:clamp(28px,5vw,64px);color:#FFFFFF;background:radial-gradient(90% 70% at 0% 0%,#F76707 0%,rgba(247,103,7,0) 60%),radial-gradient(80% 80% at 100% 0%,#D6336C 0%,rgba(214,51,108,0) 62%),radial-gradient(90% 90% at 100% 100%,#0B8A8F 0%,rgba(11,138,143,0) 60%),linear-gradient(140deg,#C2410C 0%,#B02A63 42%,#5B34C9 74%,#1B6E8A 100%)}
+.auth-hero::before{content:"";position:absolute;right:-240px;bottom:-240px;width:720px;height:720px;background:radial-gradient(circle at center,transparent 0 119px,rgba(255,255,255,.22) 119px 121px,transparent 121px 199px,rgba(255,255,255,.16) 199px 201px,transparent 201px 279px,rgba(255,255,255,.11) 279px 281px,transparent 281px 358px,rgba(255,255,255,.07) 358px 360px,transparent 360px);pointer-events:none}
+.auth-hero>*{position:relative}
+.auth-mark{display:flex;align-items:center;gap:clamp(14px,2vw,22px)}
+.auth-logo{flex-shrink:0;width:clamp(64px,8vw,104px);height:clamp(64px,8vw,104px);border-radius:50%;background:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px rgba(40,8,60,.35)}
+.auth-logo svg{width:68%;height:68%;transform:rotate(-90deg)}
+.auth-name{font-family:var(--fd);font-size:clamp(72px,11vw,168px);line-height:.82;font-weight:800;letter-spacing:-.06em}
+.auth-pitch{max-width:15em;font-family:var(--fd);font-size:clamp(22px,2.5vw,34px);line-height:1.12;font-weight:600;letter-spacing:-.02em;margin-top:clamp(16px,2.4vw,28px)}
+.auth-demo{display:flex;flex-direction:column;gap:12px;max-width:440px}
+.auth-thought{align-self:flex-start;max-width:100%;padding:12px 18px;border-radius:22px 22px 22px 6px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.38);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:17px;line-height:1.35}
+.auth-filed{padding:18px 20px;border-radius:24px;background:#FFFFFF;color:#1D1D1F;box-shadow:0 24px 50px rgba(30,6,50,.38)}
+.auth-filed-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;font-weight:600;color:#6E6E73}
+.auth-filed-space{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:14px;color:#FFFFFF;font-weight:700;background:var(--dc,#A8300A)}
+.auth-filed-step{font-family:var(--fd);font-size:clamp(22px,2.3vw,28px);line-height:1.12;font-weight:700;letter-spacing:-.02em;margin-top:8px}
+.auth-filed-when{font-size:15px;font-weight:600;color:var(--dc,#A8300A);margin-top:6px}
+.auth-demo.swap .auth-thought,.auth-demo.swap .auth-filed{opacity:0;transform:translateY(10px)}
+.auth-thought,.auth-filed{transition:opacity .35s ease,transform .35s ease}
+.auth-filed{transition-delay:.12s}
+.auth-side{display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,4vw,56px);overflow-y:auto}
+#auth-screen .auth-box{position:relative;width:100%;max-width:420px;margin:0 auto;text-align:left}
+.auth-card{padding:0}
+@media(max-width:860px){
+  #auth-screen.active{display:block;overflow-y:auto}
+  .auth-hero{min-height:0;padding:calc(22px + env(safe-area-inset-top)) 20px 56px;gap:20px}
+  .auth-hero::before{right:-380px;bottom:-420px}
+  .auth-name{font-size:76px}
+  .auth-logo{width:60px;height:60px}
+  .auth-pitch{font-size:21px;margin-top:14px}
+  .auth-thought{font-size:15px;padding:10px 14px}
+  .auth-filed{padding:14px 16px}
+  .auth-filed-step{font-size:20px}
+  .auth-side{position:relative;margin-top:-28px;padding:24px 20px calc(28px + env(safe-area-inset-bottom));border-radius:28px 28px 0 0;background:#F5F5F7}
+}
+@media(prefers-reduced-motion:reduce){.auth-thought,.auth-filed{transition:none}}
 #auth-screen .auth-title{font-family:var(--fd);font-size:clamp(32px,8vw,40px);line-height:1;font-weight:800;letter-spacing:-.035em;margin-bottom:12px}
 #auth-screen .auth-title span{color:var(--t2)}
 #auth-screen .auth-text{font-size:16px;line-height:1.5;margin-bottom:20px}
 #auth-screen .auth-input{min-height:56px;border-radius:16px;border:1.5px solid rgba(0,0,0,.14);background:#F5F5F7;font-family:var(--fs);text-align:left;padding:0 16px;color-scheme:light}
 #auth-screen .auth-input:focus{border-color:#1D1D1F;background:#FFFFFF}
 #auth-screen .auth-input.code{text-align:center;font-family:var(--fd);font-size:30px;font-weight:700;letter-spacing:10px}
-#auth-screen .auth-btn{min-height:56px;border-radius:16px;background:#1D1D1F;color:#FFFFFF;font-family:var(--fs);font-size:17px;box-shadow:0 10px 22px rgba(0,0,0,.18)}
+#auth-screen .auth-btn{min-height:56px;border-radius:16px;background:linear-gradient(95deg,#D9480F 0%,#C2255C 100%);color:#FFFFFF;font-family:var(--fs);font-size:17px;box-shadow:0 12px 26px rgba(194,37,92,.32)}
 #auth-screen .auth-link{min-height:48px;font-family:var(--fs);font-size:16px;font-weight:500;color:var(--t1)}
 #auth-screen .auth-link.soft{color:var(--t2)}
 #auth-screen .auth-link:disabled{color:var(--t2);cursor:default}
@@ -1920,11 +1952,24 @@ body.home-on{background:#F5F5F7}
   </form>
 </div>
 <div id="auth-screen">
+  <div class="auth-hero">
+    <div>
+      <div class="auth-mark"><div class="auth-logo"><svg viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke-width="4.4" stroke-linecap="round" stroke-dasharray="6.9 62.2"><circle cx="14" cy="14" r="11" stroke="#E8590C"/><circle cx="14" cy="14" r="11" stroke="#0B8A8F" stroke-dashoffset="-9.87"/><circle cx="14" cy="14" r="11" stroke="#C27803" stroke-dashoffset="-19.74"/><circle cx="14" cy="14" r="11" stroke="#D6336C" stroke-dashoffset="-29.61"/><circle cx="14" cy="14" r="11" stroke="#6741D9" stroke-dashoffset="-39.48"/><circle cx="14" cy="14" r="11" stroke="#2B8A3E" stroke-dashoffset="-49.35"/><circle cx="14" cy="14" r="11" stroke="#1C5FD4" stroke-dashoffset="-59.22"/></g></svg></div><div class="auth-name">ARC</div></div>
+      <div class="auth-pitch">Dépose ce que tu as en tête. ARC le range et te dit quoi faire.</div>
+    </div>
+    <div class="auth-demo" id="auth-demo" aria-hidden="true">
+      <div class="auth-thought" id="auth-demo-t">appeler le comptable demain à 10 h</div>
+      <div class="auth-filed" id="auth-demo-f" style="--dc:#A8300A">
+        <div class="auth-filed-top"><span>Rangé dans</span><span class="auth-filed-space" id="auth-demo-s">ARYAN</span></div>
+        <div class="auth-filed-step" id="auth-demo-e">Appeler le comptable</div>
+        <div class="auth-filed-when" id="auth-demo-w">Demain · 10:00</div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-side">
   <div class="auth-box">
-    <div class="auth-brand"><svg class="nh-ring" width="30" height="30" viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="6.9 62.2"><circle cx="14" cy="14" r="11" stroke="#E8590C"/><circle cx="14" cy="14" r="11" stroke="#0B8A8F" stroke-dashoffset="-9.87"/><circle cx="14" cy="14" r="11" stroke="#C27803" stroke-dashoffset="-19.74"/><circle cx="14" cy="14" r="11" stroke="#D6336C" stroke-dashoffset="-29.61"/><circle cx="14" cy="14" r="11" stroke="#6741D9" stroke-dashoffset="-39.48"/><circle cx="14" cy="14" r="11" stroke="#2B8A3E" stroke-dashoffset="-49.35"/><circle cx="14" cy="14" r="11" stroke="#1C5FD4" stroke-dashoffset="-59.22"/></g></svg><span>ARC</span></div>
     <div class="auth-card">
     <div class="auth-step active" id="auth-email">
-      <div class="auth-title">Un cerveau.<br><span>Un seul endroit.</span></div>
       <div class="auth-tabs" role="tablist" aria-label="Connexion ou création de compte">
         <button class="auth-tab on" id="auth-tab-in" type="button" role="tab" aria-selected="true">Se connecter</button>
         <button class="auth-tab" id="auth-tab-up" type="button" role="tab" aria-selected="false">Créer un compte</button>
@@ -1972,6 +2017,7 @@ body.home-on{background:#F5F5F7}
     </div>
     </div>
     <div class="auth-note" id="auth-note">Sans connexion, ARC marche sur cet appareil seulement, sans synchronisation ni Claude.</div>
+  </div>
   </div>
 </div>
 <div id="war-room">
@@ -2065,10 +2111,36 @@ function authSkipped() {
   try { return sessionStorage.getItem('arc_auth_skip') === '1'; } catch(e) { return false; }
 }
 
+/* Écran d'entrée : le geste d'ARC montré sur trois exemples qui se suivent. Rien n'est lu ni envoyé : ce sont des
+   textes fixes. Sans animation si l'appareil demande moins de mouvement. */
+var AUTH_DEMO = [
+  { t: 'appeler le comptable demain à 10 h', s: 'ARYAN', c: '#A8300A', e: 'Appeler le comptable', w: 'Demain · 10:00' },
+  { t: 'idée : un module bonus sur les fournisseurs', s: 'ATLAS', c: '#075C63', e: 'Écrire le module bonus fournisseurs', w: 'Sans moment, gardé pour toi' },
+  { t: 'penser à renouveler ma carte Vitale', s: 'Santé', c: '#1E6B2E', e: 'Renouveler la carte Vitale', w: 'Lundi · 9:00' }
+];
+var _authDemoIv = null, _authDemoI = 0;
+function authDemoSet(i) {
+  var d = AUTH_DEMO[i % AUTH_DEMO.length];
+  document.getElementById('auth-demo-t').textContent = d.t;
+  document.getElementById('auth-demo-s').textContent = d.s;
+  document.getElementById('auth-demo-e').textContent = d.e;
+  document.getElementById('auth-demo-w').textContent = d.w;
+  document.getElementById('auth-demo-f').style.setProperty('--dc', d.c);
+}
+function authDemoRun(on) {
+  if(_authDemoIv) { clearInterval(_authDemoIv); _authDemoIv = null; }
+  var box = document.getElementById('auth-demo'); if(!box || !on) return;
+  if(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  _authDemoIv = setInterval(function() {
+    box.classList.add('swap');
+    setTimeout(function() { _authDemoI++; authDemoSet(_authDemoI); box.classList.remove('swap'); }, 480);
+  }, 4200);
+}
 function showAuthScreen(step) {
   var scr = document.getElementById('auth-screen'); if(!scr) return;
   document.querySelectorAll('.auth-step').forEach(function(el) { el.classList.toggle('active', el.id === step); });
   scr.classList.add('active');
+  authDemoRun(true);
   if(step === 'auth-email') {
     var inp = document.getElementById('auth-email-inp');
     try { if(!inp.value) inp.value = localStorage.getItem('arc_auth_email') || ''; } catch(e) {}
@@ -2080,6 +2152,7 @@ function showAuthScreen(step) {
 }
 function hideAuthScreen() {
   var scr = document.getElementById('auth-screen'); if(scr) scr.classList.remove('active');
+  authDemoRun(false);
 }
 function authErr(id, msg) { var el = document.getElementById(id); if(el) el.textContent = msg || ''; }
 

@@ -182,8 +182,13 @@ Nouvel accueil et nouvelle connexion (branche `design`, 6 octobre, partie de `ma
   **Côté Supabase, rien n'a changé** : les inscriptions sont fermées (« Créer un compte » répond « pas encore
   ouverte »), le compte de Rayan n'a pas encore de mot de passe, et le proxy Claude refuse tout autre compte que
   `ARC_OWNER_ID`. Ouvrir les inscriptions est une décision de Rayan (réglage Auth, e-mails de confirmation limités).
+- Écran d'entrée refait le 6 octobre au matin (Rayan : « pas de phrase en haut, de la couleur, le logo, le nom,
+  du design qui donne envie ») : à gauche (en haut sur iPhone) un côté couleur avec le logo, le nom ARC en grand,
+  une ligne (« Dépose ce que tu as en tête. ARC le range et te dit quoi faire. ») et le geste montré sur trois
+  exemples fixes qui se suivent (`AUTH_DEMO`, `authDemoRun` ; aucun appel, arrêt si « moins de mouvement ») ; à
+  droite (en dessous sur iPhone) les identifiants. Bouton principal en couleur.
 - Tests le 6 octobre (bac à sable, bibliothèques servies en local) : connexion 13/13 (`tests/connexion.mjs`), dépôt
-  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 538 `<div` / 538 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
+  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 549 `<div` / 549 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
   iPhone 390×844 et Mac 1440×900. Pas encore vu par Rayan sur ses appareils.
 
 ### Décisions de Rayan (5 octobre)
