@@ -4,13 +4,14 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 480 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 670 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
 - `tests/` (Playwright, outil de développement seulement ; mode d'emploi en tête de `tests/depot.mjs`) :
   `depot.mjs` (dépôt), `rangement.mjs` (rangement), `matin.mjs` (point du matin, horloge contrôlée),
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
+  `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
@@ -22,7 +23,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Deux pôles personnels : Santé et Juridique.
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
-- Connexion par e-mail (code à 6 chiffres ou lien) : `showAuthScreen`, `authSendCode`, `authVerifyCode` ; `getUID` = identifiant du compte.
+- Connexion : adresse + mot de passe (`authGo`), ou code à 6 chiffres / lien par e-mail (`authSendCode`, `authVerifyCode`) ; `showAuthScreen` ; `getUID` = identifiant du compte.
 - Synchronisation Supabase : table `arc_data`, une ligne par compte (`pushToCloud`, `pullFromCloud`). Sans session, rien n'est lu ni écrit.
 - Dépôt de pensées : barre fixe en bas de l'écran, liste « Déposé » ; pensées dans `localStorage` sous
   `arc_thoughts_v1` (jamais dans `S`), envoyées dans la table `thoughts` (`depotFlush`, `depotPull`), mesures
@@ -41,7 +42,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -155,6 +156,50 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - ARC laissé ouvert au premier plan : vérification légère chaque minute (rien tant que l'heure n'est pas passée ou
   que le point du jour a été vu).
 - Tests : `tests/matin.mjs` 27 sur 27 ; les autres suites ferment le point s'il s'affiche (elles tournent à l'heure réelle).
+
+Nouvel accueil et nouvelle connexion (branche `design`, 6 octobre, partie de `main` à `09b9196` ; PR #4 `rangement` fusionnée) :
+- Demande de Rayan le 6 octobre : changer tout de suite l'accueil et l'écran de connexion, pour voir la direction.
+- Direction des maquettes (`docs/maquettes/Main.dc.html`) : fond clair `#F5F5F7`, titres en Bricolage Grotesque
+  (police Google Fonts ajoutée dans `<head>`), texte en police système, trois tons par espace (`HOME_PAL`).
+- Accueil (`#S1`) : en-tête (anneau, date, état de synchronisation, menu « ··· » qui contient maintenant Recherche
+  et War Room), « Maintenant » (la première des prochaines étapes, dans la couleur de son espace), « Ensuite »,
+  Déposé et Point du jour, « Projets » (ARYAN et ATLAS en grandes cartes, FBA, KITCHEN et TELENEUF en lignes
+  « Endormi »), « Ma vie » (Santé, Juridique, à part et plus calme).
+- Retiré de l'écran : compteurs, progression globale, alerte « bloquants », ajout rapide de tâche, veille. Leur
+  balisage est gardé dans `#home-legacy` (attribut `hidden`) parce que `renderHome`, `renderQA` et `renderIntel`
+  s'y branchent encore ; à supprimer avec ce code au chantier « interface reconstruite ».
+- Les variables de couleur sont redéfinies sur `#S1`, `#auth-screen`, `#depot-screen`, `#matin-screen` et
+  `#depot-bar` : « Déposé », le point du matin et la barre de dépôt sont clairs aussi. Les mondes et les pôles
+  gardent leur écran sombre (la barre de dépôt y reste claire).
+- Connexion : même direction ; « J'ai déjà un code » passe à la saisie sans demander d'e-mail ; « Renvoyer un
+  code » attend une minute après un envoi (`arc_auth_sent_at`) ; l'erreur d'un renvoi s'affiche sur l'étape du
+  code (elle s'écrivait sur l'étape de l'adresse, invisible). Le blocage rencontré par Rayan sur l'iPhone
+  (« trop de demandes ») vient de la limite d'envoi d'e-mails de Supabase : aucun changement de la page ne la lève.
+- Identifiants (demande de Rayan, 6 octobre) : l'écran d'entrée a deux onglets, « Se connecter » (adresse + mot de
+  passe, `signInWithPassword`, aucun e-mail envoyé) et « Créer un compte » (`signUp`). Une fois connecté, « ··· » ›
+  « Mon mot de passe » le crée ou le change (`updateUser`). Le code par e-mail reste le secours (« Mot de passe
+  oublié ? »). Le mot de passe n'est jamais gardé sur l'appareil. Fonctions : `authGo`, `authSetMode`, `authSavePass`.
+  **Côté Supabase, rien n'a changé** : les inscriptions sont fermées (« Créer un compte » répond « pas encore
+  ouverte »), le compte de Rayan n'a pas encore de mot de passe, et le proxy Claude refuse tout autre compte que
+  `ARC_OWNER_ID`. Ouvrir les inscriptions est une décision de Rayan (réglage Auth, e-mails de confirmation limités).
+- Écran d'entrée, 6 octobre au matin, trois retours de Rayan, dans l'ordre : (1) pas de phrase en haut, de la
+  couleur, le logo, le nom ; (2) après un essai en dégradé avec un exemple « appeler le comptable » : couleurs pas
+  assez vivantes, l'exemple « n'a rien à faire là », « déposer » n'est pas la chose principale, il veut du relief,
+  de la 3D, que ça bouge, « le design d'aujourd'hui » ; (3) après un essai tout jaune avec des sphères en orbite :
+  le jaune doit rester une **touche**, pas un fond, et il voit ARC comme « un monde connecté, avec plein de
+  branchements, la maison mère au milieu, de la luminosité et de l'interactivité ».
+  Version actuelle : côté nuit violette, le nom ARC en grand, et le monde connecté — la maison mère (logo en anneau
+  en volume, couleurs qui tournent, halo) au centre, sept branches lumineuses qui ondulent vers des sphères en
+  relief (Projets, Idées, Objectifs, À faire, Santé, Démarches, Envies), leurs petites ramifications qui
+  scintillent, des liens entre voisins, des impulsions de lumière jaune qui partent du centre. Le pointeur attire
+  les points proches et incline le logo ; survoler ou toucher un point envoie une salve de lumière ; l'inclinaison
+  du téléphone joue quand le navigateur la donne sans autorisation. Dessin sur `<canvas id="auth-net">`
+  (`SCENE_NODES`, `authSceneDraw`, `authSceneRun`) ; une image posée si « moins de mouvement » ; arrêtée quand
+  l'écran se ferme. Phrase : « Tout ce que tu portes dans la tête, relié en un seul endroit. ». Touches de jaune :
+  la lumière qui voyage, le bouton, l'onglet actif. Aucune bibliothèque ajoutée. Pas encore validé par Rayan.
+- Tests le 6 octobre (bac à sable, bibliothèques servies en local) : connexion 13/13 (`tests/connexion.mjs`), dépôt
+  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 542 `<div` / 542 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
+  iPhone 390×844 et Mac 1440×900. Pas encore vu par Rayan sur ses appareils.
 
 ### Décisions de Rayan (5 octobre)
 
