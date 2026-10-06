@@ -1139,6 +1139,30 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
+
+/* ═══ ACCUEIL : « Maintenant » au cœur (branche accueil, 6 octobre) ═══
+   Même style sombre qu'ARC ; la première étape devient la carte principale, dans la couleur de son espace. */
+.h-hero{margin-bottom:22px}
+.h-hero-stats{padding-top:0;margin-bottom:28px}
+.h-hero-stats .h-stats{margin-top:0}
+.next-wrap{margin:0 0 18px}
+.next-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);font-family:var(--fm);margin-bottom:12px}
+.next-item{position:relative;overflow:hidden;--sc:#FF9500;padding:16px 18px;border-radius:20px;background:var(--bg1);border:1px solid var(--b1)}
+.next-item:first-child{padding:24px 22px 22px;background:linear-gradient(135deg,color-mix(in srgb,var(--sc) 22%,var(--bg1)) 0%,var(--bg1) 60%);border-color:color-mix(in srgb,var(--sc) 40%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--sc) 12%,transparent),0 24px 60px -30px var(--sc)}
+.next-item:first-child::before{content:"";position:absolute;left:-60px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--sc) 30%,transparent),transparent);pointer-events:none}
+.next-item:first-child>*{position:relative}
+.next-item:first-child .next-step{font-size:clamp(22px,3.2vw,30px);font-weight:800;letter-spacing:-.6px;line-height:1.15;margin:8px 0 4px}
+.next-item:first-child .rg-lbl{font-family:var(--fm);font-size:11px;letter-spacing:1.5px;text-transform:uppercase}
+.next-item:first-child .rg-acts{margin-top:14px}
+.next-item:first-child .rg-btn.main{background:var(--sc);border-color:var(--sc);color:#000}
+.next-sep{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);font-family:var(--fm);margin:18px 0 10px}
+.next-empty{font-size:17px;font-weight:600;line-height:1.45;color:var(--t1);padding:22px;border-radius:20px;background:var(--bg1);border:1px solid var(--b1)}
+.next-empty small{display:block;margin-top:6px;font-size:14px;font-weight:400;color:var(--t2)}
+.h-entries{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 22px}
+.h-entries .depot-entry{max-width:none;margin:0;flex-wrap:wrap;row-gap:0;min-height:60px}
+.h-entries .depot-entry-t{flex:1 1 100%}
+.h-entries .depot-entry-go{display:none}
+@media(max-width:560px){.next-item:first-child{padding:20px 18px 18px}}
 </style>
 </head>
 <body>
@@ -1166,8 +1190,19 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="h-h1"><span class="h-h1-gradient">Un cerveau.</span><span class="h-h1-light">Sept espaces.</span></div>
     <div class="h-sub" id="h-sub-txt">Rayan &middot; Valence.</div>
     <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span class="h-sub-critical-dot" style="background:var(--red)"></span><span id="h-critical-txt"></span></div>
+  </div>
+  <!-- PROCHAINES ÉTAPES : tirées des pensées rangées -->
+  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
+    <div class="next-title" id="next-title">Maintenant</div>
+    <div id="next-list"></div>
+    <button class="next-torange" id="next-torange" type="button" hidden></button>
+    <div class="next-empty" id="next-empty">Rien en cours.<small>Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</small></div>
+  </section>
+  <div class="h-entries">
     <button class="depot-entry" id="depot-open" type="button"><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true">›</span></button>
     <button class="depot-entry" id="matin-open" type="button"><span class="depot-entry-t">Point du jour</span><span class="depot-entry-n" id="matin-entry-n"></span><span class="depot-entry-go" aria-hidden="true">›</span></button>
+  </div>
+  <div class="h-hero h-hero-stats">
     <div class="h-stats">
       <div class="h-stat" style="animation-delay:.1s"><div class="h-stat-v" style="color:#FF9500" id="hs-proj">5</div><div class="h-stat-l">Projets</div></div>
       <div class="h-stat" style="animation-delay:.15s"><div class="h-stat-v" style="color:var(--green)" id="hs-done">0</div><div class="h-stat-l">Accomplies</div></div>
@@ -1176,13 +1211,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     </div>
   </div>
   <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
-  <!-- PROCHAINES ÉTAPES : tirées des pensées rangées -->
-  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
-    <div class="next-title" id="next-title">Prochaines étapes</div>
-    <div id="next-list"></div>
-    <button class="next-torange" id="next-torange" type="button" hidden></button>
-    <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
-  </section>
   <!-- SECTION MONDES -->
   <div class="h-section">
     <div class="h-section-head">
@@ -5182,6 +5210,7 @@ function rangeHomeRender() {
   list.textContent = '';
   rows.forEach(function(r) {
     var it = rgEl('div', 'next-item'); it.setAttribute('data-id', r.t.id);
+    it.style.setProperty('--sc', rangeSpaceInfo(r.f.space).color);
     var top = rgEl('div', 'rg-row');
     top.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(r.f)));
     top.appendChild(rangePill(r.f.space));
@@ -5197,6 +5226,7 @@ function rangeHomeRender() {
     }));
     it.appendChild(acts);
     list.appendChild(it);
+    if(list.children.length === 1 && rows.length > 1) list.appendChild(rgEl('div', 'next-sep', 'Ensuite'));
   });
 }
 
