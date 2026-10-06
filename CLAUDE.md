@@ -11,6 +11,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - `tests/` (Playwright, outil de développement seulement ; mode d'emploi en tête de `tests/depot.mjs`) :
   `depot.mjs` (dépôt), `rangement.mjs` (rangement), `matin.mjs` (point du matin, horloge contrôlée),
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
+  `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
@@ -22,7 +23,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Deux pôles personnels : Santé et Juridique.
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
-- Connexion par e-mail (code à 6 chiffres ou lien) : `showAuthScreen`, `authSendCode`, `authVerifyCode` ; `getUID` = identifiant du compte.
+- Connexion : adresse + mot de passe (`authGo`), ou code à 6 chiffres / lien par e-mail (`authSendCode`, `authVerifyCode`) ; `showAuthScreen` ; `getUID` = identifiant du compte.
 - Synchronisation Supabase : table `arc_data`, une ligne par compte (`pushToCloud`, `pullFromCloud`). Sans session, rien n'est lu ni écrit.
 - Dépôt de pensées : barre fixe en bas de l'écran, liste « Déposé » ; pensées dans `localStorage` sous
   `arc_thoughts_v1` (jamais dans `S`), envoyées dans la table `thoughts` (`depotFlush`, `depotPull`), mesures
@@ -41,7 +42,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -174,8 +175,15 @@ Nouvel accueil et nouvelle connexion (branche `design`, 6 octobre, partie de `ma
   code » attend une minute après un envoi (`arc_auth_sent_at`) ; l'erreur d'un renvoi s'affiche sur l'étape du
   code (elle s'écrivait sur l'étape de l'adresse, invisible). Le blocage rencontré par Rayan sur l'iPhone
   (« trop de demandes ») vient de la limite d'envoi d'e-mails de Supabase : aucun changement de la page ne la lève.
-- Tests le 6 octobre (bac à sable, bibliothèques servies en local) : dépôt 19/19, rangement 25/25, matin 27/27,
-  proxy 41/41 ; 532 `<div` / 532 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
+- Identifiants (demande de Rayan, 6 octobre) : l'écran d'entrée a deux onglets, « Se connecter » (adresse + mot de
+  passe, `signInWithPassword`, aucun e-mail envoyé) et « Créer un compte » (`signUp`). Une fois connecté, « ··· » ›
+  « Mon mot de passe » le crée ou le change (`updateUser`). Le code par e-mail reste le secours (« Mot de passe
+  oublié ? »). Le mot de passe n'est jamais gardé sur l'appareil. Fonctions : `authGo`, `authSetMode`, `authSavePass`.
+  **Côté Supabase, rien n'a changé** : les inscriptions sont fermées (« Créer un compte » répond « pas encore
+  ouverte »), le compte de Rayan n'a pas encore de mot de passe, et le proxy Claude refuse tout autre compte que
+  `ARC_OWNER_ID`. Ouvrir les inscriptions est une décision de Rayan (réglage Auth, e-mails de confirmation limités).
+- Tests le 6 octobre (bac à sable, bibliothèques servies en local) : connexion 13/13 (`tests/connexion.mjs`), dépôt
+  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 538 `<div` / 538 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
   iPhone 390×844 et Mac 1440×900. Pas encore vu par Rayan sur ses appareils.
 
 ### Décisions de Rayan (5 octobre)
