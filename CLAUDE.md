@@ -4,7 +4,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 480 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 670 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
@@ -155,6 +155,28 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - ARC laissé ouvert au premier plan : vérification légère chaque minute (rien tant que l'heure n'est pas passée ou
   que le point du jour a été vu).
 - Tests : `tests/matin.mjs` 27 sur 27 ; les autres suites ferment le point s'il s'affiche (elles tournent à l'heure réelle).
+
+Nouvel accueil et nouvelle connexion (branche `design`, 6 octobre, partie de `main` à `09b9196` ; PR #4 `rangement` fusionnée) :
+- Demande de Rayan le 6 octobre : changer tout de suite l'accueil et l'écran de connexion, pour voir la direction.
+- Direction des maquettes (`docs/maquettes/Main.dc.html`) : fond clair `#F5F5F7`, titres en Bricolage Grotesque
+  (police Google Fonts ajoutée dans `<head>`), texte en police système, trois tons par espace (`HOME_PAL`).
+- Accueil (`#S1`) : en-tête (anneau, date, état de synchronisation, menu « ··· » qui contient maintenant Recherche
+  et War Room), « Maintenant » (la première des prochaines étapes, dans la couleur de son espace), « Ensuite »,
+  Déposé et Point du jour, « Projets » (ARYAN et ATLAS en grandes cartes, FBA, KITCHEN et TELENEUF en lignes
+  « Endormi »), « Ma vie » (Santé, Juridique, à part et plus calme).
+- Retiré de l'écran : compteurs, progression globale, alerte « bloquants », ajout rapide de tâche, veille. Leur
+  balisage est gardé dans `#home-legacy` (attribut `hidden`) parce que `renderHome`, `renderQA` et `renderIntel`
+  s'y branchent encore ; à supprimer avec ce code au chantier « interface reconstruite ».
+- Les variables de couleur sont redéfinies sur `#S1`, `#auth-screen`, `#depot-screen`, `#matin-screen` et
+  `#depot-bar` : « Déposé », le point du matin et la barre de dépôt sont clairs aussi. Les mondes et les pôles
+  gardent leur écran sombre (la barre de dépôt y reste claire).
+- Connexion : même direction ; « J'ai déjà un code » passe à la saisie sans demander d'e-mail ; « Renvoyer un
+  code » attend une minute après un envoi (`arc_auth_sent_at`) ; l'erreur d'un renvoi s'affiche sur l'étape du
+  code (elle s'écrivait sur l'étape de l'adresse, invisible). Le blocage rencontré par Rayan sur l'iPhone
+  (« trop de demandes ») vient de la limite d'envoi d'e-mails de Supabase : aucun changement de la page ne la lève.
+- Tests le 6 octobre (bac à sable, bibliothèques servies en local) : dépôt 19/19, rangement 25/25, matin 27/27,
+  proxy 41/41 ; 532 `<div` / 532 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
+  iPhone 390×844 et Mac 1440×900. Pas encore vu par Rayan sur ses appareils.
 
 ### Décisions de Rayan (5 octobre)
 

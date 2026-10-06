@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ARC">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' d='M18 5 L4 30'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' d='M18 5 L32 30'/%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' d='M9 20 Q18 13 27 20'/%3E%3Ccircle fill='%23fff' cx='18' cy='5' r='2'/%3E%3C/svg%3E">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#F5F5F7" id="theme-color">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Azeret+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&display=swap" rel="stylesheet">
 <style>
 /* === RESET === */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1139,74 +1140,185 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* DÉPÔT : place réservée sous le contenu (après les règles par taille d'écran, pour l'emporter) */
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
+
+/* ═══ NOUVEL ACCUEIL ET CONNEXION (6 octobre) : direction claire des maquettes ═══
+   Fond clair, titres en Bricolage Grotesque, une couleur par projet, relief par ombres et dégradés.
+   Les mondes et les pôles gardent pour l'instant leur écran sombre : ils seront repris au chantier « interface ».
+   Les variables sont redéfinies sur les écrans clairs ; tout ce qui les utilise suit. */
+#S1,#auth-screen,#depot-screen,#matin-screen,#depot-bar{--bg:#F5F5F7;--bg1:#FFFFFF;--bg2:#FFFFFF;--bg3:#F0F0F3;--bg4:#E8E8ED;--bg5:#DCDCE2;--b1:rgba(0,0,0,.06);--b2:rgba(0,0,0,.13);--b3:rgba(0,0,0,.28);--t1:#1D1D1F;--t2:#6E6E73;--t3:#6E6E73;--green:#1E7B34;--red:#B3261E;--orange:#8A4B00;--fd:'Bricolage Grotesque',-apple-system,system-ui,sans-serif;--fs:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',system-ui,sans-serif;color:var(--t1)}
+body.home-on{background:#F5F5F7}
+#S1{background:#F5F5F7;font-family:var(--fs)}
+.nh{max-width:760px;padding-left:20px;padding-right:20px}
+.nh-top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;padding-top:calc(14px + env(safe-area-inset-top))}
+.nh-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;letter-spacing:.5px}
+.nh-ring{transform:rotate(-90deg);flex-shrink:0}
+.nh-right{display:flex;align-items:center;gap:10px}
+.nh-date{font-size:15px;color:var(--t2);white-space:nowrap}
+#S1 #sync-pill{min-height:32px;padding:0 12px;border:none;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+#S1 #sync-dot{width:8px;height:8px}
+#S1 #sync-lbl{font-family:var(--fs);font-size:13px;letter-spacing:0;color:var(--t2)}
+#S1 .h-menu-btn{width:44px;height:44px;border-radius:22px;border:none;background:#FFFFFF;color:var(--t1);font-size:18px;font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+#S1 .h-menu-dropdown{top:50px;min-width:250px;padding:8px;border-radius:18px;border:1px solid var(--b1);background:#FFFFFF;box-shadow:0 18px 40px rgba(0,0,0,.16)}
+#S1 .h-menu-item{min-height:44px;padding:0 12px;border-radius:12px;font-family:var(--fs);font-size:15px;font-weight:500;color:var(--t1)}
+#S1 .h-menu-item:hover{background:var(--bg3)}
+.nh-h1{margin:22px 0 22px;font-family:var(--fd);font-size:clamp(34px,6vw,52px);line-height:1;font-weight:800;letter-spacing:-.035em;color:var(--t1)}
+.nh-h1 span{color:var(--t2)}
+.nh-lbl{font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--t2);padding:0 4px;margin:0 0 10px}
+/* Maintenant : la première étape, dans la couleur de son espace */
+#S1 .next-wrap{margin:0 0 22px}
+#S1 .next-title{font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--t2);padding:0 4px;margin:0 0 10px}
+#S1 .next-item{position:relative;padding:16px;border:none;border-radius:20px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05);margin-bottom:10px}
+#S1 .next-step{font-size:17px;font-weight:600;line-height:1.35}
+#S1 .next-when{font-size:14px;font-weight:600;color:#8A4B00}
+#S1 .next-item:first-child{overflow:hidden;padding:22px 20px 20px;border-radius:28px;color:#FFFFFF;background:linear-gradient(150deg,var(--sa,#3A3A3C) 0%,var(--sb,#2C2C2E) 50%,var(--sc,#1D1D1F) 100%);box-shadow:0 18px 36px color-mix(in srgb,var(--sb,#1D1D1F) 38%,transparent);margin-bottom:18px}
+#S1 .next-item:first-child::before{content:"";position:absolute;right:-80px;top:-90px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 68%);pointer-events:none}
+#S1 .next-item:first-child::after{content:"";position:absolute;right:-135px;top:-135px;width:270px;height:270px;background:radial-gradient(circle at center,rgba(255,255,255,.9) 0 6px,transparent 6px 43px,rgba(255,255,255,.30) 43px 44.5px,transparent 44.5px 85px,rgba(255,255,255,.18) 85px 86.5px,transparent 86.5px 129px,rgba(255,255,255,.10) 129px 130.5px,transparent 130.5px);pointer-events:none}
+#S1 .next-item:first-child>*{position:relative;z-index:1}
+#S1 .next-item:first-child .rg-lbl{color:rgba(255,255,255,.86);font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}
+#S1 .next-item:first-child .rg-pill{border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.18);color:#FFFFFF}
+#S1 .next-item:first-child .rg-dot{background:#FFFFFF}
+#S1 .next-item:first-child .next-when{color:#FFFFFF}
+#S1 .next-item:first-child .next-step{color:#FFFFFF;font-family:var(--fd);font-size:clamp(24px,4.2vw,30px);line-height:1.12;font-weight:700;letter-spacing:-.02em;margin:6px 0 4px;max-width:520px}
+#S1 .next-item:first-child .rg-acts{margin-top:14px;gap:10px}
+#S1 .next-item:first-child .rg-btn{min-height:48px;padding:0 18px;border-radius:16px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.16);color:#FFFFFF;font-size:16px;font-weight:600}
+#S1 .next-item:first-child .rg-btn.main{flex:0 1 240px;border-color:#FFFFFF;background:#FFFFFF;color:var(--sc,#1D1D1F);font-weight:700;box-shadow:0 6px 14px rgba(0,0,0,.22)}
+.next-sep{font-size:13px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--t2);padding:0 4px;margin:0 0 10px}
+#S1 .next-empty{position:relative;overflow:hidden;padding:24px 120px 24px 20px;border:none;border-radius:28px;color:#FFFFFF;font-family:var(--fd);font-size:22px;line-height:1.2;font-weight:700;letter-spacing:-.01em;background:linear-gradient(150deg,#3A3A3C 0%,#2C2C2E 50%,#1D1D1F 100%);box-shadow:0 18px 36px rgba(0,0,0,.2)}
+#S1 .next-empty::after{content:"";position:absolute;right:-100px;top:-100px;width:270px;height:270px;background:radial-gradient(circle at center,rgba(255,255,255,.9) 0 6px,transparent 6px 43px,rgba(255,255,255,.30) 43px 44.5px,transparent 44.5px 85px,rgba(255,255,255,.18) 85px 86.5px,transparent 86.5px 129px,rgba(255,255,255,.10) 129px 130.5px,transparent 130.5px);pointer-events:none}
+#S1 .next-torange{color:var(--t1);font-family:var(--fs)}
+/* Entrées : Déposé, Point du jour */
+.nh-entries{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 28px}
+#S1 .depot-entry{max-width:none;min-height:64px;margin:0;padding:10px 16px;border:none;border-radius:20px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05);flex-wrap:wrap;row-gap:0}
+#S1 .depot-entry-t{flex:1 1 100%;font-size:16px;font-weight:600}
+#S1 .depot-entry-n{font-size:14px}
+#S1 .depot-entry-go{display:none}
+/* Projets */
+.nh-sec{margin:0 0 28px}
+.wc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.wc{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:6px;min-height:176px;padding:18px;border-radius:26px;color:#FFFFFF;cursor:pointer;background:linear-gradient(155deg,var(--sa) 0%,var(--sb) 48%,var(--sc) 100%);box-shadow:0 16px 32px color-mix(in srgb,var(--sb) 34%,transparent);transition:transform .2s ease,box-shadow .2s ease}
+.wc::before{content:"";position:absolute;right:-70px;top:-80px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.32) 0%,rgba(255,255,255,0) 68%);pointer-events:none}
+.wc::after{content:"";position:absolute;right:-100px;top:-100px;width:270px;height:270px;background:radial-gradient(circle at center,rgba(255,255,255,.9) 0 6px,transparent 6px 43px,rgba(255,255,255,.30) 43px 44.5px,transparent 44.5px 85px,rgba(255,255,255,.18) 85px 86.5px,transparent 86.5px 129px,rgba(255,255,255,.10) 129px 130.5px,transparent 130.5px);pointer-events:none}
+.wc>*{position:relative;z-index:1}
+.wc:hover{transform:translateY(-2px)}
+.wc:focus-visible,.wc-s:focus-visible,.lc:focus-visible{outline:3px solid #1D1D1F;outline-offset:3px}
+.wc-cat{font-size:12px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:rgba(255,255,255,.88);max-width:78%}
+.wc-name{font-family:var(--fd);font-size:clamp(34px,6.4vw,48px);line-height:.95;font-weight:800;letter-spacing:-.04em}
+.wc-next{margin-top:auto;font-size:15px;line-height:1.35;font-weight:500}
+.wc-foot{font-size:13px;color:rgba(255,255,255,.88)}
+.wc-sleep{display:flex;flex-direction:column;margin-top:12px;border-radius:20px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05);padding:0 16px}
+.wc-s{display:flex;align-items:center;gap:12px;min-height:60px;cursor:pointer;border-bottom:1px solid #E5E5EA}
+.wc-s:last-child{border-bottom:none}
+.wc-s-dot{width:12px;height:12px;border-radius:50%;background:var(--sa);flex-shrink:0}
+.wc-s-name{font-family:var(--fd);font-size:18px;font-weight:700;letter-spacing:-.01em}
+.wc-s-cat{flex:1;min-width:0;font-size:14px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wc-s-tag{font-size:13px;font-weight:600;color:var(--t2);padding:4px 10px;border-radius:12px;background:var(--bg3);white-space:nowrap}
+/* Ma vie : à part, plus calme */
+.lc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.lc{display:flex;flex-direction:column;gap:4px;min-height:96px;padding:16px;border-radius:22px;background:color-mix(in srgb,var(--sa) 9%,#FFFFFF);border:1px solid color-mix(in srgb,var(--sa) 22%,transparent);cursor:pointer}
+.lc-name{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--sb)}
+.lc-name::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--sa)}
+.lc-sub{font-size:14px;line-height:1.4;color:var(--t2)}
+.nh-foot{padding:8px 4px 0;font-size:13px;color:var(--t2)}
+@media(max-width:560px){.wc-grid{grid-template-columns:1fr}.wc{min-height:150px}.nh-date{display:none}}
+@media(prefers-reduced-motion:reduce){.wc{transition:none}.wc:hover{transform:none}}
+/* Boutons et états sur fond clair (dépôt, rangement, point du matin, connexion) */
+#S1 .rg-btn.main,#depot-screen .rg-btn.main,#matin-screen .rg-btn.main,#matin-screen .matin-go,#depot-bar .depot-send{background:#1D1D1F;border-color:#1D1D1F;color:#FFFFFF}
+#S1 .rg-btn,#depot-screen .rg-btn,#matin-screen .rg-btn{background:#FFFFFF}
+#S1 .rg-btn.quiet,#depot-screen .rg-btn.quiet,#matin-screen .rg-btn.quiet,#depot-screen .rg-btn.rg-chip{background:none}
+#depot-screen{background:#F5F5F7}
+#depot-screen .depot-title,#matin-screen .matin-date{font-family:var(--fd);letter-spacing:-.03em}
+#depot-screen .depot-item,#matin-screen .matin-row{border:none;box-shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.05)}
+#matin-screen{background:rgba(29,29,31,.38);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+#matin-screen .matin-card{border:none;background:#F5F5F7;box-shadow:0 30px 80px rgba(0,0,0,.28)}
+#depot-screen .depot-state.sent,#depot-screen .rg-done,#matin-screen .rg-done{color:#1E6B2E}
+#depot-screen .depot-state.sent{background:rgba(43,138,62,.14)}
+#depot-screen .depot-state.wait{background:rgba(194,120,3,.16);color:#8A4B00}
+#depot-screen .depot-state.local{background:var(--bg4);color:var(--t1)}
+#depot-screen .depot-state.rej{background:rgba(179,38,30,.12);color:#B3261E}
+#depot-screen .rg-moment,#matin-screen .matin-when{color:#8A4B00}
+#depot-screen .rg-input,#matin-screen .rg-input,#matin-screen .matin-field input[type=time]{color-scheme:light;background:#FFFFFF}
+#depot-bar .depot-pill{background:rgba(255,255,255,.97);border-color:rgba(0,0,0,.08);box-shadow:0 8px 30px rgba(0,0,0,.14)}
+#depot-bar .depot-note{background:#FFFFFF;border-color:rgba(0,0,0,.1);color:var(--t1)}
+#depot-bar .depot-input{color:#1D1D1F;color-scheme:light}
+#depot-bar .depot-input::placeholder{color:#6E6E73}
+/* Connexion */
+#auth-screen{background:#F5F5F7;font-family:var(--fs);align-items:flex-start}
+#auth-screen::before{content:"";position:fixed;left:0;right:0;top:0;height:460px;background:radial-gradient(440px 320px at 26% 0%,rgba(103,65,217,.18),transparent 70%),radial-gradient(480px 340px at 54% -8%,rgba(232,89,12,.24),transparent 70%),radial-gradient(440px 320px at 80% 4%,rgba(11,138,143,.20),transparent 70%);pointer-events:none}
+#auth-screen .auth-box{position:relative;max-width:420px;margin:max(6vh,calc(24px + env(safe-area-inset-top))) auto 24px;text-align:left}
+.auth-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;letter-spacing:.5px;margin-bottom:28px}
+.auth-card{padding:26px 22px 22px;border-radius:28px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,.05),0 24px 60px rgba(0,0,0,.10)}
+#auth-screen .auth-title{font-family:var(--fd);font-size:clamp(32px,8vw,40px);line-height:1;font-weight:800;letter-spacing:-.035em;margin-bottom:12px}
+#auth-screen .auth-title span{color:var(--t2)}
+#auth-screen .auth-text{font-size:16px;line-height:1.5;margin-bottom:20px}
+#auth-screen .auth-input{min-height:56px;border-radius:16px;border:1.5px solid rgba(0,0,0,.14);background:#F5F5F7;font-family:var(--fs);text-align:left;padding:0 16px;color-scheme:light}
+#auth-screen .auth-input:focus{border-color:#1D1D1F;background:#FFFFFF}
+#auth-screen .auth-input.code{text-align:center;font-family:var(--fd);font-size:30px;font-weight:700;letter-spacing:10px}
+#auth-screen .auth-btn{min-height:56px;border-radius:16px;background:#1D1D1F;color:#FFFFFF;font-family:var(--fs);font-size:17px;box-shadow:0 10px 22px rgba(0,0,0,.18)}
+#auth-screen .auth-link{min-height:48px;font-family:var(--fs);font-size:16px;font-weight:500;color:var(--t1)}
+#auth-screen .auth-link.soft{color:var(--t2)}
+#auth-screen .auth-link:disabled{color:var(--t2);cursor:default}
+#auth-screen .auth-err{font-size:15px}
+#auth-screen .auth-note{font-size:14px;margin-top:12px;padding:0 4px}
 </style>
 </head>
-<body>
+<body class="home-on">
 <!-- S1 HOME -->
-<div class="scr" id="S1"><div class="hw">
-  <nav class="hn"><div class="hn-left">
-    <div class="h-logo-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><path class="arc-shimmer" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div>
-    <div><div class="h-logo-name">ARC</div><div class="h-logo-sub">RAYAN &middot; VALENCE</div></div>
-  </div>
-  <div class="hn-right">
-    <div id="sync-pill"><div id="sync-dot"></div><span id="sync-lbl">ARC</span></div>
-    <button class="h-search-btn" id="btn-search"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Recherche<span class="h-search-kbd">K</span></button>
-    <button class="h-warroom-btn" id="btn-warroom"><svg viewBox="0 0 14 14" fill="none" width="12" height="12"><path d="M7 1L9 5l4 .5-3 2.8.7 4L7 10 3.3 12.3 4 8.3 1 5.5 5 5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>War Room</button>
-    <div style="position:relative"><button class="h-menu-btn" id="btn-menu">&#183;&#183;&#183;</button>
-      <div class="h-menu-dropdown" id="h-menu-dd">
+<div class="scr" id="S1"><div class="hw nh">
+  <nav class="nh-top">
+    <div class="nh-brand"><svg class="nh-ring" width="30" height="30" viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="6.9 62.2"><circle cx="14" cy="14" r="11" stroke="#E8590C"/><circle cx="14" cy="14" r="11" stroke="#0B8A8F" stroke-dashoffset="-9.87"/><circle cx="14" cy="14" r="11" stroke="#C27803" stroke-dashoffset="-19.74"/><circle cx="14" cy="14" r="11" stroke="#D6336C" stroke-dashoffset="-29.61"/><circle cx="14" cy="14" r="11" stroke="#6741D9" stroke-dashoffset="-39.48"/><circle cx="14" cy="14" r="11" stroke="#2B8A3E" stroke-dashoffset="-49.35"/><circle cx="14" cy="14" r="11" stroke="#1C5FD4" stroke-dashoffset="-59.22"/></g></svg><span>ARC</span></div>
+    <div class="nh-right">
+      <span class="nh-date" id="h-context-txt"></span>
+      <div id="sync-pill"><div id="sync-dot"></div><span id="sync-lbl">ARC</span></div>
+      <div style="position:relative"><button class="h-menu-btn" id="btn-menu" aria-label="Menu">&#183;&#183;&#183;</button>
+        <div class="h-menu-dropdown" id="h-menu-dd">
+          <button class="h-menu-item" id="btn-search"><svg viewBox="0 0 16 16" fill="none" width="15" height="15"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Recherche</button>
+          <button class="h-menu-item" id="btn-warroom"><svg viewBox="0 0 14 14" fill="none" width="15" height="15"><path d="M7 1L9 5l4 .5-3 2.8.7 4L7 10 3.3 12.3 4 8.3 1 5.5 5 5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>War Room</button>
         <label class="h-menu-item" style="cursor:pointer"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 2v9M4 7l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Importer<input type="file" id="file-imp" accept=".json" style="display:none"></label>
         <button class="h-menu-item" id="btn-export"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 14V5M4 9l4-4 4 4M2 3h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Exporter</button>
         <button class="h-menu-item" id="btn-auth"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="5.5" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 14c.8-2.6 2.9-4 5.5-4s4.7 1.4 5.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-auth-lbl">Se connecter</span></button>
         <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-matin-lbl">Point du matin</span></button>
+        </div>
       </div>
     </div>
-  </div></nav>
-  <div class="h-hero">
-    <div class="h-context-badge"><div class="h-context-dot" style="background:var(--green)"></div><span id="h-context-txt">Chargement...</span></div>
-    <div class="h-h1"><span class="h-h1-gradient">Un cerveau.</span><span class="h-h1-light">Sept espaces.</span></div>
-    <div class="h-sub" id="h-sub-txt">Rayan &middot; Valence.</div>
-    <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span class="h-sub-critical-dot" style="background:var(--red)"></span><span id="h-critical-txt"></span></div>
+  </nav>
+  <h1 class="nh-h1">Un cerveau.<br><span>Cinq projets, une vie.</span></h1>
+  <!-- MAINTENANT : la première étape tirée des pensées rangées, puis les suivantes -->
+  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
+    <div class="next-title" id="next-title">Maintenant</div>
+    <div id="next-list"></div>
+    <button class="next-torange" id="next-torange" type="button" hidden></button>
+    <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
+  </section>
+  <div class="nh-entries">
     <button class="depot-entry" id="depot-open" type="button"><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true">›</span></button>
     <button class="depot-entry" id="matin-open" type="button"><span class="depot-entry-t">Point du jour</span><span class="depot-entry-n" id="matin-entry-n"></span><span class="depot-entry-go" aria-hidden="true">›</span></button>
+  </div>
+  <section class="nh-sec" aria-labelledby="nh-proj">
+    <div class="nh-lbl" id="nh-proj">Projets</div>
+    <div id="hgrid"></div>
+  </section>
+  <section class="nh-sec" aria-labelledby="nh-vie">
+    <div class="nh-lbl" id="nh-vie">Ma vie</div>
+    <div class="lc-grid" id="poles-grid"></div>
+  </section>
+  <div class="nh-foot">Touche K pour chercher.</div>
+  <!-- Ancien accueil, gardé hors de l'écran : le code des compteurs, de l'ajout rapide et de la veille s'y branche encore.
+       À retirer avec lui au chantier « interface reconstruite ». -->
+  <div id="home-legacy" hidden>
+    <div class="h-sub" id="h-sub-txt"></div>
+    <div id="h-critical-badge" style="display:none" class="h-sub-critical"><span id="h-critical-txt"></span></div>
     <div class="h-stats">
       <div class="h-stat" style="animation-delay:.1s"><div class="h-stat-v" style="color:#FF9500" id="hs-proj">5</div><div class="h-stat-l">Projets</div></div>
       <div class="h-stat" style="animation-delay:.15s"><div class="h-stat-v" style="color:var(--green)" id="hs-done">0</div><div class="h-stat-l">Accomplies</div></div>
       <div class="h-stat" id="hs-blk-card" style="animation-delay:.2s"><div class="h-stat-v" style="color:#FF2D55" id="hs-blk">0</div><div class="h-stat-l">Bloquants</div></div>
       <div class="h-stat" style="animation-delay:.25s"><div class="h-stat-v" style="color:var(--teal)" id="hs-jou">0</div><div class="h-stat-l">Journal</div></div>
     </div>
-  </div>
-  <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
-  <!-- PROCHAINES ÉTAPES : tirées des pensées rangées -->
-  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
-    <div class="next-title" id="next-title">Prochaines étapes</div>
-    <div id="next-list"></div>
-    <button class="next-torange" id="next-torange" type="button" hidden></button>
-    <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
-  </section>
-  <!-- SECTION MONDES -->
-  <div class="h-section">
-    <div class="h-section-head">
-      <div class="h-section-lbl">&#127759; Mondes</div>
-      <div class="h-section-sub" id="h-mondes-sub"><span id="h-mondes-pct">0%</span> progression globale</div>
-    </div>
-    <div class="h-mondes-grid" id="hgrid"></div>
-  </div>
-
-  <!-- SECTION POLES -->
-  <div class="h-section">
-    <div class="h-section-head">
-      <div class="h-section-lbl">&#9889; P&#244;les personnels</div>
-    </div>
-    <div class="poles-grid" id="poles-grid"></div>
-  </div>
-
-  <!-- QUICK ADD -->
-  <div id="quick-add-bar"><div id="qa-top"><span id="qa-icon">+</span><input id="qa-inp" placeholder="Ajoute une t&#226;che..." autocomplete="off"></div><div id="qa-projects"></div></div>
-  <div class="h-intel-head"><div style="display:flex;align-items:center;gap:10px"><div class="h-sec-label">Veille &amp; Sources</div><span class="intel-count" id="intel-count">6 sources</span></div><button class="intel-refresh" id="btn-intel">&#8635; Actualiser</button></div>
+    <div class="h-prog"><div class="h-prog-top"><span class="h-prog-label">Progression globale</span><span class="h-prog-pct" id="h-prog-pct">0%</span></div><div class="h-prog-track"><div class="h-prog-fill" id="h-prog-fill" style="width:0%"></div></div><div class="h-prog-msg" id="h-prog-msg">Commence par une chose.</div></div>
+    <span id="h-mondes-pct">0%</span>
+    <div id="quick-add-bar"><div id="qa-top"><span id="qa-icon">+</span><input id="qa-inp" placeholder="Ajoute une t&#226;che..." autocomplete="off"></div><div id="qa-projects"></div></div>
+    <div class="h-intel-head"><div style="display:flex;align-items:center;gap:10px"><div class="h-sec-label">Veille &amp; Sources</div><span class="intel-count" id="intel-count">6 sources</span></div><button class="intel-refresh" id="btn-intel">&#8635; Actualiser</button></div>
   <div class="intel-grid" id="intel-grid"></div>
-  <div class="h-sec-label">Tes 5 projets</div>
-  <div class="hgrid" id="hgrid"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 0;border-top:1px solid var(--b1);font-size:11px;color:var(--t3);font-family:var(--fm)"><span>ARC v2</span><span><kbd style="background:var(--bg3);border:1px solid var(--b2);border-radius:5px;padding:2px 7px;font-family:var(--fm);font-size:10px">K</kbd> recherche</span></div>
+  </div>
 </div></div>
 
 <!-- S2 WORLD -->
@@ -1800,32 +1912,35 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 </div>
 <div id="auth-screen">
   <div class="auth-box">
+    <div class="auth-brand"><svg class="nh-ring" width="30" height="30" viewBox="0 0 28 28" aria-hidden="true"><g fill="none" stroke-width="4" stroke-linecap="round" stroke-dasharray="6.9 62.2"><circle cx="14" cy="14" r="11" stroke="#E8590C"/><circle cx="14" cy="14" r="11" stroke="#0B8A8F" stroke-dashoffset="-9.87"/><circle cx="14" cy="14" r="11" stroke="#C27803" stroke-dashoffset="-19.74"/><circle cx="14" cy="14" r="11" stroke="#D6336C" stroke-dashoffset="-29.61"/><circle cx="14" cy="14" r="11" stroke="#6741D9" stroke-dashoffset="-39.48"/><circle cx="14" cy="14" r="11" stroke="#2B8A3E" stroke-dashoffset="-49.35"/><circle cx="14" cy="14" r="11" stroke="#1C5FD4" stroke-dashoffset="-59.22"/></g></svg><span>ARC</span></div>
+    <div class="auth-card">
     <div class="auth-step active" id="auth-email">
-      <div class="auth-title">Connexion à ARC</div>
-      <div class="auth-text">Tes données sont privées et suivent ton compte sur le Mac, l'iPad et l'iPhone. Un code arrive par <span style="white-space:nowrap">e-mail</span>.</div>
+      <div class="auth-title">Un cerveau.<br><span>Un seul endroit.</span></div>
+      <div class="auth-text">Entre ton adresse : un code à 6 chiffres arrive par <span style="white-space:nowrap">e-mail</span>. Tes pensées te suivent sur le Mac et l'iPhone.</div>
       <input class="auth-input" id="auth-email-inp" type="email" inputmode="email" autocomplete="email" placeholder="ton@e-mail.fr" aria-label="Adresse e-mail">
       <div class="auth-err" id="auth-email-err" role="alert"></div>
       <button class="auth-btn" id="auth-send">Recevoir le code</button>
-      <button class="auth-link" id="auth-skip">Continuer sans connexion</button>
-      <div class="auth-note">Sans connexion, ARC fonctionne sur cet appareil seulement, sans synchronisation ni Claude.</div>
+      <button class="auth-link" id="auth-have">J'ai déjà un code</button>
+      <button class="auth-link soft" id="auth-skip">Continuer sans connexion</button>
     </div>
     <div class="auth-step" id="auth-code">
-      <div class="auth-title">Vérifie tes e-mails</div>
-      <div class="auth-text">Un code est parti à <b id="auth-code-to"></b>. Tape-le ici, ou touche le lien de l'e-mail sur cet appareil.</div>
+      <div class="auth-title">Ton code.</div>
+      <div class="auth-text">Il est parti à <b id="auth-code-to"></b>. Tape le dernier code reçu, ou touche le lien de l'e-mail sur cet appareil.</div>
       <input class="auth-input code" id="auth-code-inp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="000000" aria-label="Code reçu par e-mail">
       <div class="auth-err" id="auth-code-err" role="alert"></div>
       <button class="auth-btn" id="auth-verify">Valider</button>
       <button class="auth-link" id="auth-resend">Renvoyer un code</button>
-      <button class="auth-link" id="auth-back">Changer d'adresse</button>
+      <button class="auth-link soft" id="auth-back">Changer d'adresse</button>
     </div>
     <div class="auth-step" id="auth-ref">
-      <div class="auth-title">Aucune donnée sur ton compte</div>
-      <div class="auth-text">Cet appareil devient la référence : son contenu sera envoyé sur ton compte, et tes autres appareils le récupéreront.<br><b id="auth-ref-sum"></b></div>
+      <div class="auth-title">Premier appareil.</div>
+      <div class="auth-text">Ton compte ne contient encore rien. Cet appareil devient la référence : son contenu sera envoyé sur ton compte, et tes autres appareils le récupéreront.<br><b id="auth-ref-sum"></b></div>
       <div class="auth-err" id="auth-ref-err" role="alert"></div>
       <button class="auth-btn" id="auth-ref-yes">Oui, cet appareil fait foi</button>
-      <button class="auth-link" id="auth-ref-no">Pas maintenant</button>
-      <div class="auth-note">« Pas maintenant » : rien n'est envoyé ; la question reviendra au prochain lancement.</div>
+      <button class="auth-link soft" id="auth-ref-no">Pas maintenant</button>
     </div>
+    </div>
+    <div class="auth-note" id="auth-note">Sans connexion, ARC marche sur cet appareil seulement, sans synchronisation ni Claude.</div>
   </div>
 </div>
 <div id="war-room">
@@ -1945,31 +2060,64 @@ function renderAuthUI() {
 
 function authErrorText(e) {
   var m = (e && e.message) || String(e);
-  if(/rate limit|too many|security purposes/i.test(m)) return 'Trop de demandes : attends quelques minutes avant de redemander un code.';
+  if(/security purposes|only request this after/i.test(m)) return 'Un code vient de partir : attends une minute avant d\'en redemander un.';
+  if(/rate limit|too many/i.test(m)) return 'Trop de codes demandés : l\'envoi d\'e-mails est limité. Utilise le dernier code reçu (« J\'ai déjà un code »), ou réessaie dans une heure.';
   if(/signups not allowed|user not found|not allowed for otp/i.test(m)) return 'Cette adresse n\'a pas de compte ARC.';
   if(/expired|invalid/i.test(m)) return 'Code invalide ou expiré : redemande un code.';
   if(/fetch|network/i.test(m)) return 'Réseau indisponible : réessaie dans un instant.';
   return m;
 }
 
-async function authSendCode() {
+var AUTH_GAP_MS = 60000, _authTick = null;
+function authSentAt() { try { return Number(localStorage.getItem('arc_auth_sent_at')) || 0; } catch(e) { return 0; } }
+/* Après un envoi, « Renvoyer un code » attend une minute : chaque code demandé annule le précédent et l'envoi
+   d'e-mails est limité par heure côté Supabase. */
+function authCooldown() {
+  var btn = document.getElementById('auth-resend'); if(!btn) return;
+  var left = Math.ceil((authSentAt() + AUTH_GAP_MS - Date.now()) / 1000);
+  if(left > 0) { btn.disabled = true; btn.textContent = 'Renvoyer un code (dans ' + left + ' s)'; if(!_authTick) _authTick = setInterval(authCooldown, 1000); }
+  else { btn.disabled = false; btn.textContent = 'Renvoyer un code'; if(_authTick) { clearInterval(_authTick); _authTick = null; } }
+}
+function authShowCodeStep(email) {
+  document.getElementById('auth-code-to').textContent = email;
+  document.getElementById('auth-code-inp').value = '';
+  authErr('auth-code-err', '');
+  showAuthScreen('auth-code'); authCooldown();
+}
+function authReadEmail() {
   var email = document.getElementById('auth-email-inp').value.trim().toLowerCase();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { authErr('auth-email-err', 'Adresse e-mail invalide.'); return; }
-  if(!_sb) { authErr('auth-email-err', 'Service de connexion injoignable.'); return; }
-  var btn = document.getElementById('auth-send'); btn.disabled = true; authErr('auth-email-err', '');
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : '';
+}
+// « J'ai déjà un code » : aucun e-mail n'est demandé, on passe à la saisie du dernier code reçu
+function authHaveCode() {
+  var email = authReadEmail();
+  if(!email) { authErr('auth-email-err', 'Entre d\'abord ton adresse e-mail.'); return; }
+  try { localStorage.setItem('arc_auth_email', email); } catch(e) {}
+  authErr('auth-email-err', ''); authShowCodeStep(email);
+}
+async function authSendCode() {
+  var onCode = document.getElementById('auth-code').classList.contains('active');
+  var errId = onCode ? 'auth-code-err' : 'auth-email-err';
+  var email = onCode ? document.getElementById('auth-code-to').textContent : authReadEmail();
+  if(!email) { authErr(errId, 'Adresse e-mail invalide.'); return; }
+  if(!_sb) { authErr(errId, 'Service de connexion injoignable.'); return; }
+  if(authSentAt() + AUTH_GAP_MS > Date.now()) {
+    // Un code est parti il y a moins d'une minute : on ne redemande rien, on passe à la saisie
+    if(!onCode) authShowCodeStep(email); else authErr(errId, 'Un code vient de partir : regarde tes e-mails.');
+    return;
+  }
+  var btn = document.getElementById(onCode ? 'auth-resend' : 'auth-send'); btn.disabled = true; authErr(errId, '');
   try {
     var res = await _sb.auth.signInWithOtp({ email: email, options: {
       shouldCreateUser: false, // un seul compte, créé par Rayan dans Supabase
       emailRedirectTo: location.origin + location.pathname
     }});
     if(res.error) throw res.error;
-    try { localStorage.setItem('arc_auth_email', email); } catch(e) {}
-    document.getElementById('auth-code-to').textContent = email;
-    document.getElementById('auth-code-inp').value = '';
-    authErr('auth-code-err', '');
-    showAuthScreen('auth-code');
-  } catch(e) { authErr('auth-email-err', authErrorText(e)); }
-  btn.disabled = false;
+    try { localStorage.setItem('arc_auth_email', email); localStorage.setItem('arc_auth_sent_at', String(Date.now())); } catch(e) {}
+    authShowCodeStep(email);
+  } catch(e) { authErr(errId, authErrorText(e)); btn.disabled = false; }
+  if(!onCode) btn.disabled = false;
+  authCooldown();
 }
 
 async function authVerifyCode() {
@@ -2640,9 +2788,8 @@ function renderHome(){
   var cb=document.getElementById("h-context-badge");
   var ct=document.getElementById("h-context-txt");
   var d=new Date(); var h=d.getHours();
-  var slot=h<6?"🌙 Nuit":h<12?"☀️ Matin":h<18?"💼 Après-midi":"🌆 Soirée";
   var dayStr=d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
-  if(ct) ct.textContent=slot+" — "+dayStr;
+  if(ct) ct.textContent=dayStr.charAt(0).toUpperCase()+dayStr.slice(1);
 
   var blkCard=document.getElementById("hs-blk-card");
   if(blkCard) blkCard.className="h-stat"+(allBlk>0?" stat-alert":"");
@@ -2658,36 +2805,37 @@ function renderHome(){
   renderIntel();
 }
 
+/* Couleurs de l'accueil clair : trois tons par espace (clair, moyen, profond), ceux des maquettes. */
+var HOME_PAL = {
+  aryan:['#D9480F','#A8300A','#6B1B04'], atlas:['#0A7C82','#075C63','#03383D'], fba:['#B56A00','#8A4B00','#5C3200'],
+  kitchen:['#D6336C','#A61E4D','#6B1030'], teleneuf:['#6741D9','#4C2BB0','#2F1A75'],
+  sante:['#2B8A3E','#1E6B2E','#124A1E'], juridique:['#1C5FD4','#1247A8','#0B2F73']
+};
+function homeKey(name){ return String(name).toLowerCase().normalize('NFD').replace(/[^a-z0-9]/g,''); }
+function homePalStyle(key){ var c=HOME_PAL[key]||['#3A3A3C','#2C2C2E','#1D1D1F']; return '--sa:'+c[0]+';--sb:'+c[1]+';--sc:'+c[2]; }
+
 function renderPoles(){
   var grid=document.getElementById("poles-grid"); if(!grid) return;
-  var today=new Date().toDateString();
-  var santeCI=S.poles.sante.find(function(ci){ return new Date(ci.date).toDateString()===today; });
+  var subs={sante:"Rendez-vous, notes, documents, questions à poser.",juridique:"Démarches, contrats, échéances."};
   var html="";
   POLES.forEach(function(p){
-    var dot='<div class="pole-status-dot" style="background:'+p.color+';"></div>';
-    var sub="";
-    if(p.id==="sante"){
-      if(santeCI) sub='<div class="pole-checkin-done">Check-in fait aujourd\'hui</div>';
-      else sub='<div class="pole-checkin-pending">Check-in du jour manquant</div>';
-    } else if(p.id==="juridique"){
-      var jurObj=S.poles.juridique||{}; var total=Object.values(jurObj).reduce(function(a,b){ return a+(Array.isArray(b)?b.length:0); },0);
-      sub='<div class="pole-checkin-pending">'+total+' élément'+(total>1?"s":"")+' enregistré'+(total>1?"s":"")+'</div>';
-    }
-    html+='<div class="pole-card" style="--pc:'+p.color+';cursor:pointer" data-action="enter-pole" data-pole="'+p.id+'">' +dot+'<span class="pole-icon">'+p.icon+'</span><div class="pole-name" style="color:'+p.color+'">'+p.name+'</div><div class="pole-desc">'+p.desc+'</div>'+sub+'</div>';
+    html+='<div class="lc" role="button" tabindex="0" style="'+homePalStyle(p.id)+'" data-action="enter-pole" data-pole="'+p.id+'"><div class="lc-name">'+esc(p.name)+'</div><div class="lc-sub">'+esc(subs[p.id]||"")+'</div></div>';
   });
   grid.innerHTML=html;
 }
 
 function renderCards(){
   var g=document.getElementById("hgrid"); if(!g) return;
-  var html="";
+  var awake="",asleep="";
   WORLDS.forEach(function(wd){
+    var key=homeKey(wd.name);
     var allT=wd.tasks_done.concat(wd.tasks_todo);
     var done=allT.filter(function(t){ return S.tasks[wd.id]&&S.tasks[wd.id][t.id]; }).length;
-    var pct=allT.length>0?Math.round(done/allT.length*100):0;
-    var blk=(S.blkCustom[wd.id]||[]).length+wd.blockers.length;
-    var focusId=S.focus[wd.id];
-    var focusTxt="";
+    if(typeof RANGE_DORMANT!=="undefined"&&RANGE_DORMANT.indexOf(key)!==-1){
+      asleep+='<div class="wc-s" role="button" tabindex="0" style="'+homePalStyle(key)+'" data-action="enter-world" data-wid="'+wd.id+'"><span class="wc-s-dot"></span><span class="wc-s-name">'+esc(wd.name)+'</span><span class="wc-s-cat">'+esc(String(wd.cat||"").split(" · ").slice(0,2).join(" · "))+'</span><span class="wc-s-tag">Endormi</span></div>';
+      return;
+    }
+    var focusId=S.focus[wd.id], focusTxt="";
     if(focusId){
       var ft=allT.find(function(t){ return t.id===focusId&&!(S.tasks[wd.id]&&S.tasks[wd.id][t.id]); });
       if(ft) focusTxt=ft.t;
@@ -2696,28 +2844,15 @@ function renderCards(){
       var nt=wd.tasks_todo.find(function(t){ return !S.tasks[wd.id]||!S.tasks[wd.id][t.id]; });
       if(nt) focusTxt=nt.t;
     }
-    var prioMap={critical:"prio-critical",high:"prio-high",medium:"prio-medium",low:"prio-low"};
-    var prio=blk>2?"critical":blk>0?"high":pct>60?"medium":"low";
-    var prioLabel={critical:"🔴 CRITIQUE",high:"🟠 URGENCE",medium:"🔵 ACTIF",low:"⚪ NORMAL"};
-    html+='<div class="pc-monde" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'">';
-    html+='<div class="pc-monde-header">';
-    html+='<div class="pc-monde-top"><span class="pc-monde-icon">'+wd.icon+'</span><div class="pc-monde-badges">';
-    if(blk>0) html+='<div class="pc-monde-blk">⚡ '+blk+' bloquant'+(blk>1?"s":"")+'</div>';
-    html+='<span class="pc-monde-prio '+prioMap[prio]+'">'+prioLabel[prio]+'</span>';
-    html+='</div></div>';
-    html+='<div class="pc-monde-name">'+esc(wd.name)+'</div>';
-    html+='<div class="pc-monde-desc">'+esc(wd.desc)+'</div>';
-    html+='</div>';
-    html+='<div class="pc-monde-prog">';
-    html+='<div class="pc-monde-prog-row"><div class="pc-monde-track"><div class="pc-monde-fill" style="width:'+pct+'%;background:'+wd.color+'"></div></div><span class="pc-monde-pct">'+pct+'%</span></div>';
-    if(focusTxt) html+='<div class="pc-monde-focus">▶ '+esc(focusTxt.slice(0,70))+(focusTxt.length>70?"…":"")+'</div>';
-    html+='</div>';
-    html+='<div class="pc-monde-footer">';
-    wd.tags.forEach(function(tag){ html+='<span class="pc-monde-tag">'+esc(tag)+'</span>'; });
-    html+='</div>';
-    html+='</div>';
+    var left=allT.length-done;
+    awake+='<div class="wc" role="button" tabindex="0" style="'+homePalStyle(key)+'" data-action="enter-world" data-wid="'+wd.id+'">';
+    awake+='<span class="wc-cat">'+esc(String(wd.cat||"").split(" · ").slice(0,2).join(" · "))+'</span>';
+    awake+='<span class="wc-name">'+esc(wd.name)+'</span>';
+    if(focusTxt) awake+='<span class="wc-next">'+esc(focusTxt.slice(0,80))+(focusTxt.length>80?"…":"")+'</span>';
+    awake+='<span class="wc-foot">'+done+' faite'+(done>1?"s":"")+' · '+left+' à faire</span>';
+    awake+='</div>';
   });
-  g.innerHTML=html;
+  g.innerHTML='<div class="wc-grid">'+awake+'</div>'+(asleep?'<div class="wc-sleep">'+asleep+'</div>':'');
 }
 
 
@@ -3595,6 +3730,7 @@ document.addEventListener("click",function(ev){
   if(t.id==="auth-send"){ authSendCode(); return; }
   if(t.id==="auth-verify"){ authVerifyCode(); return; }
   if(t.id==="auth-resend"){ authSendCode(); return; }
+  if(t.id==="auth-have"){ authHaveCode(); return; }
   if(t.id==="auth-back"){ authErr("auth-email-err",""); showAuthScreen("auth-email"); return; }
   if(t.id==="auth-skip"){ try{ sessionStorage.setItem("arc_auth_skip","1"); }catch(e){} hideAuthScreen(); renderAuthUI(); return; }
   if(t.id==="auth-ref-yes"){ authMakeReference(); return; }
@@ -3900,11 +4036,19 @@ function deleteTool(widOrPoleId,toolId){
 
 var _screens=['S1','S2','S3','S4'];
 
+// Cartes de l'accueil (rôle bouton) : Entrée ou Espace les ouvrent, comme un clic
+document.addEventListener("keydown",function(e){
+  if(e.key!=="Enter"&&e.key!==" ") return;
+  var t=e.target; if(!t||!t.matches||!t.matches('[role="button"][data-action]')) return;
+  e.preventDefault(); t.click();
+});
 function showScreen(id){
   _screens.forEach(function(s){
     var el=document.getElementById(s);
     if(el){ el.classList.toggle("off",s!==id); }
   });
+  document.body.classList.toggle("home-on",id==="S1");
+  var tc=document.getElementById("theme-color"); if(tc) tc.setAttribute("content",id==="S1"?"#F5F5F7":"#000000");
 }
 
 
@@ -5182,6 +5326,8 @@ function rangeHomeRender() {
   list.textContent = '';
   rows.forEach(function(r) {
     var it = rgEl('div', 'next-item'); it.setAttribute('data-id', r.t.id);
+    var pal = HOME_PAL[r.f.space];
+    if(pal) { it.style.setProperty('--sa', pal[0]); it.style.setProperty('--sb', pal[1]); it.style.setProperty('--sc', pal[2]); }
     var top = rgEl('div', 'rg-row');
     top.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(r.f)));
     top.appendChild(rangePill(r.f.space));
@@ -5197,6 +5343,7 @@ function rangeHomeRender() {
     }));
     it.appendChild(acts);
     list.appendChild(it);
+    if(list.children.length === 1 && rows.length > 1) list.appendChild(rgEl('div', 'next-sep', 'Ensuite'));
   });
 }
 
