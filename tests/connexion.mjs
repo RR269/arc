@@ -157,7 +157,9 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   await page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
   const otp = calls.find(c => c.path.startsWith('/auth/v1/otp'));
   ok(otp && otp.body.email === 'rayan@test.fr' && otp.body.create_user === false && await page.isVisible('#auth-code-inp'), 'Mot de passe oublié : le code par e-mail marche encore, sans créer de compte', otp ? JSON.stringify(otp.body).slice(0, 80) : 'aucun appel');
-  await page.click('#auth-back'); await page.click('#auth-skip'); await page.click('#btn-menu');
+  await page.click('#auth-back'); await page.click('#auth-skip'); await page.waitForTimeout(400);
+  if (await page.isVisible('#matin-screen.open')) await page.click('.matin-go'); // après 8 h, le point du matin s'ouvre
+  await page.click('#btn-menu');
   ok(!(await page.isVisible('#btn-pass')), 'Sans session : « Mon mot de passe » absent du menu');
   await ctx.close();
 }

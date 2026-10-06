@@ -182,23 +182,21 @@ Nouvel accueil et nouvelle connexion (branche `design`, 6 octobre, partie de `ma
   **Côté Supabase, rien n'a changé** : les inscriptions sont fermées (« Créer un compte » répond « pas encore
   ouverte »), le compte de Rayan n'a pas encore de mot de passe, et le proxy Claude refuse tout autre compte que
   `ARC_OWNER_ID`. Ouvrir les inscriptions est une décision de Rayan (réglage Auth, e-mails de confirmation limités).
-- Écran d'entrée, 6 octobre au matin, trois retours de Rayan, dans l'ordre : (1) pas de phrase en haut, de la
-  couleur, le logo, le nom ; (2) après un essai en dégradé avec un exemple « appeler le comptable » : couleurs pas
-  assez vivantes, l'exemple « n'a rien à faire là », « déposer » n'est pas la chose principale, il veut du relief,
-  de la 3D, que ça bouge, « le design d'aujourd'hui » ; (3) après un essai tout jaune avec des sphères en orbite :
-  le jaune doit rester une **touche**, pas un fond, et il voit ARC comme « un monde connecté, avec plein de
-  branchements, la maison mère au milieu, de la luminosité et de l'interactivité ».
-  Version actuelle : côté nuit violette, le nom ARC en grand, et le monde connecté — la maison mère (logo en anneau
-  en volume, couleurs qui tournent, halo) au centre, sept branches lumineuses qui ondulent vers des sphères en
-  relief (Projets, Idées, Objectifs, À faire, Santé, Démarches, Envies), leurs petites ramifications qui
-  scintillent, des liens entre voisins, des impulsions de lumière jaune qui partent du centre. Le pointeur attire
-  les points proches et incline le logo ; survoler ou toucher un point envoie une salve de lumière ; l'inclinaison
-  du téléphone joue quand le navigateur la donne sans autorisation. Dessin sur `<canvas id="auth-net">`
-  (`SCENE_NODES`, `authSceneDraw`, `authSceneRun`) ; une image posée si « moins de mouvement » ; arrêtée quand
-  l'écran se ferme. Phrase : « Tout ce que tu portes dans la tête, relié en un seul endroit. ». Touches de jaune :
-  la lumière qui voyage, le bouton, l'onglet actif. Aucune bibliothèque ajoutée. Pas encore validé par Rayan.
+- Écran d'entrée : quatre essais le 6 octobre au matin (dégradé + exemple « comptable », jaune + sphères en orbite,
+  nuit + branches), tous refusés par Rayan (« design de 2002 » pour les sphères brillantes : esthétique Web 2.0).
+  Trois directions lui ont alors été montrées en images (A Aurora sombre, B clair aérien, C marque forte) ;
+  **Rayan a choisi A** à 15 h 52. Construit sur la branche `design` : tout l'écran sombre `#09090B`, cinq nappes
+  de couleur floues qui dérivent (`.auth-aurora`, animation CSS), un grain fin ; à gauche le logo (anneau conique
+  qui tourne par `@property --spin`), sept pastilles en verre dépoli (Projets, Idées, Objectifs, À faire, Santé,
+  Démarches, Envies ; noms d'exemple à affiner) reliées au logo par des lignes de lumière fines, des pointillés
+  entre voisines, des impulsions blanches qui circulent (canvas `#auth-net`, `SCENE_NODES`, `authSceneDraw`) ;
+  à droite la carte de connexion en verre. Le pointeur attire doucement les pastilles et incline le logo ;
+  survoler ou toucher une pastille allume sa ligne et envoie une salve ; inclinaison du téléphone si le navigateur
+  la donne sans autorisation. Une image posée si « moins de mouvement » ; arrêtée à la fermeture. Phrase : « Tout
+  ce que tu portes dans la tête, relié en un seul endroit. ». Aucune bibliothèque ajoutée. Pas encore vu par Rayan
+  sur ses appareils. La même direction est à appliquer ensuite à l'accueil et aux mondes.
 - Tests le 6 octobre (bac à sable, bibliothèques servies en local) : connexion 13/13 (`tests/connexion.mjs`), dépôt
-  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 542 `<div` / 542 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
+  19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 544 `<div` / 544 `</div>` ; cinq mondes et deux pôles s'ouvrent, aucune erreur de console,
   iPhone 390×844 et Mac 1440×900. Pas encore vu par Rayan sur ses appareils.
 
 ### Décisions de Rayan (5 octobre)
