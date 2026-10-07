@@ -147,6 +147,29 @@ const dit = m => `${fmt(m.ratio)} sur « ${m.t} » (${m.n}, x ${m.x}, y ${m.y})`
   await ctx.close();
 }
 
+/* 1 bis. Pas de pavé (charte, règle 5) : sur téléphone, aucun texte de l'écran d'entrée ne dépasse 4 lignes, dans
+       aucun état de la carte ; ce qu'ARC fait est une frise de trois étapes, pas un paragraphe */
+{
+  let pire = { n: 0, t: '' }, etapes = 0;
+  for (const w of [375, 390]) {
+    const { ctx, page } = await open({ width: w, height: 844 }, 1);
+    for (const etat of ['auth-email', 'auth-code', 'auth-pass', 'auth-ref']) {
+      await page.evaluate(e => { showAuthScreen(e); const r = document.getElementById('auth-ref-sum'); if (r) r.textContent = '5 mondes, 12 pensées.'; }, etat);
+      await page.waitForTimeout(200);
+      const r = await page.evaluate(() => {
+        const blocs = [...document.querySelectorAll('#auth-screen p, #auth-screen .auth-text, #auth-screen .auth-note, #auth-screen .auth-proof span, #auth-screen .auth-err')].filter(e => e.offsetParent !== null && e.textContent.trim());
+        // un paragraphe s'arrête au premier retour à la ligne forcé : la ligne de chiffres qui le suit est une donnée, pas de la prose
+        const lignes = e => { const g = document.createRange(), br = e.querySelector('br'); g.selectNodeContents(e); if (br) g.setEndBefore(br); return new Set([...g.getClientRects()].map(x => Math.round(x.top / 4))).size; };
+        const l = blocs.map(e => ({ n: lignes(e), t: e.textContent.trim().slice(0, 36) })).sort((a, b) => b.n - a.n)[0] || { n: 0, t: '' };
+        return { l, etapes: document.querySelectorAll('#auth-screen .auth-proof li').length };
+      });
+      if (r.l.n > pire.n) pire = r.l; etapes = r.etapes;
+    }
+    await ctx.close();
+  }
+  ok(pire.n > 0 && pire.n <= 4 && etapes === 3, 'Pas de pavé : aucun texte de plus de 4 lignes sur téléphone, trois étapes en frise', `le plus long : ${pire.n} lignes (« ${pire.t}… »)`);
+}
+
 /* 2. Contraste mesuré dans l'image, à chaque taille d'écran, en haut, au milieu et en bas du défilement */
 for (const [w, h] of TAILLES) {
   const { ctx, page } = await open({ width: w, height: h });

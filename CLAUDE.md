@@ -197,12 +197,16 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - **Mac (≥ 861 px)** : le fond tient à l'écran ; trois arcs chauds en haut à droite, trois froids en bas à gauche, dont
   le rayon se règle sur la largeur libre (`--jour`, `--nuit`) : aucun arc n'entre dans la colonne du texte.
 - **Lisibilité, mesurée dans l'image** (`tests/entree-fond.mjs`, 12 tailles d'écran, 5 états de la carte, haut, milieu
-  et bas du défilement) : le texte le moins contrasté est à 4,90 : 1 (le bout violet du titre, sur 430 px). Pour y
+  et bas du défilement) : le texte le moins contrasté est à 4,85 : 1 (le bout violet du titre, sur 430 px). Pour y
   arriver : sous-titre, note du bas, petits libellés de la carte et textes d'attente des champs éclaircis ; dégradé du
   bouton resserré (orange → rouge à 18 % → violet), car le blanc sur l'orange était à 2,8 : 1 pour les libellés longs.
 - Aucune bibliothèque ajoutée. `color-mix()` demande Safari 16.2 ou plus (sinon deux lueurs simples, `@supports`).
 - `entree` contient `main` (fusion du 7 octobre, PR #6 `accueil-v2` comprise) : la demande de fusion ne heurte rien.
-- Tests : entrée-fond 22/22, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 569 `<div` /
+- **Plus de pavé (7 octobre, 4 h 40, remarque de Rayan)** : le paragraphe de cinq lignes qui expliquait ARC est retiré.
+  Restent le titre, une ligne (« Un projet, une idée, une envie, qu'il rapporte ou non. ») et les trois étapes en
+  frise, reliées par un trait. Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
+  (détail dans `docs/MOTS-ARC.md`). Sur iPhone, le bouton « Se connecter » arrive maintenant dans le premier écran.
+- Tests : entrée-fond 23/23, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 569 `<div` /
   569 `</div>`. Vérifié dans Chromium seulement : **le rendu sur l'iPhone de Rayan (Safari) reste à voir par lui.**
 - `docs/CHARTE-DESIGN.md` et `docs/ETAT-DES-LIEUX-CHARTE.md` repris de la branche `charte` (ils n'étaient sur aucune
   autre branche) : la charte fait foi pour l'interface.

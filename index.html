@@ -1327,11 +1327,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-h1{font-size:clamp(30px,7.4vw,44px);letter-spacing:-1.4px;line-height:1.08;margin:0 0 16px}
 .auth-h1-light{font-weight:700;letter-spacing:-1.2px;margin-bottom:6px}
 .auth-h1-gradient{font-weight:800}
-.auth-pitch{font-size:15px;color:#C9C9CF;margin-bottom:18px}
-.auth-proof{gap:10px;margin-bottom:36px}
-.auth-proof li{display:grid;grid-template-columns:10px auto 1fr;column-gap:10px;align-items:baseline;font-weight:400;color:#B8B8BF;font-size:14px}
+/* Les mots (remarque de Rayan, 7 octobre 4 h 40) : plus de pavé. Le paragraphe de cinq lignes est retiré ; il n'en
+   reste que la ligne qui dit pour quoi (« Un projet, une idée, une envie, qu'il rapporte ou non. »). Ce qu'ARC fait
+   se montre : une frise de trois étapes, reliées par un trait (charte, règles 5 et 6 : un enchaînement se montre). */
+.auth-pitch{font-size:16px;line-height:1.45;color:#D6D6DC;margin-bottom:22px}
+.auth-proof{gap:14px;margin-bottom:36px}
+.auth-proof li{position:relative;display:grid;grid-template-columns:10px auto 1fr;column-gap:12px;align-items:baseline;font-weight:400;color:#CFCFD6;font-size:15px}
 .auth-proof li i{width:10px;height:10px;align-self:center}
-.auth-proof li b{font-weight:700;color:#F5F5F7;white-space:nowrap}
+.auth-proof li b{font-size:16px;font-weight:700;color:#F5F5F7;white-space:nowrap}
+.auth-proof li:not(:last-child)::after{content:"";position:absolute;left:4.25px;width:1.5px;top:22px;bottom:-17px;border-radius:1px;background:rgba(255,255,255,.18)}
 .auth-input:focus{border-color:rgba(0,143,200,.8);box-shadow:0 0 0 3px rgba(0,143,200,.2)}
 .auth-btn{background:linear-gradient(90deg,var(--a-orange) 0%,var(--a-rouge) 18%,var(--a-violet) 100%);box-shadow:0 12px 30px -10px rgba(218,13,35,.55)}
 .auth-tab.on{background:rgba(255,255,255,.12)}
@@ -2025,7 +2029,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   <div class="auth-box">
     <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Chaque pens&eacute;e, un monde</div></div></div>
     <h1 class="auth-h1"><span class="auth-h1-light">Ta t&ecirc;te n'est pas faite pour tout porter.</span><span class="auth-h1-gradient">Une pens&eacute;e na&icirc;t. Un monde grandit.</span></h1>
-    <p class="auth-pitch">Ce que tu as en t&ecirc;te ne doit plus attendre le soir ou le week-end. D&eacute;pose-le &agrave; l'instant o&ugrave; il arrive&nbsp;: ARC lui donne un monde &agrave; lui, et t'apporte chaque jour ce qu'il faut pour le faire grandir. Un projet, une id&eacute;e, une envie, qu'il rapporte ou non.</p>
+    <p class="auth-pitch">Un projet, une id&eacute;e, une envie, qu'il&nbsp;rapporte&nbsp;ou&nbsp;non.</p>
     <ul class="auth-proof" aria-label="Ce qu'ARC fait">
       <li style="--c:var(--a-jaune)"><i></i><b>D&eacute;pose</b><span>&agrave; la voix ou au clavier, &agrave; l'instant</span></li>
       <li style="--c:var(--a-rouge)"><i></i><b>Fais na&icirc;tre</b><span>chaque pens&eacute;e devient un monde &agrave; toi</span></li>

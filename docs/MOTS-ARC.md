@@ -74,6 +74,22 @@ Trois repères (ce qu'ARC fait, en trois verbes, chacun sa couleur) :
 
 Sous le logo : « Chaque pensée, un monde » (remplace « Un cerveau · Sept espaces », faux pour un autre compte).
 
+### Correction du 7 octobre, 4 h 40 : plus de paragraphe
+
+Remarque de Rayan en voyant l'écran : « c'est le gros paragraphe avec toutes ces écritures, qui veut expliquer ce qu'il
+en est d'ARC, mais n'est pas adapté. L'approche dans la forme est bonne, mais dans le fond n'est pas bonne. »
+
+Le texte de trois phrases ci-dessus faisait cinq lignes sur iPhone (la charte en permet trois ou quatre) et redisait
+en prose ce que le titre et les trois repères disent déjà. Il est retiré de l'écran. Ce qui reste, sans un mot nouveau :
+
+> **Ta tête n'est pas faite pour tout porter.**
+> **Une pensée naît. Un monde grandit.**
+> Un projet, une idée, une envie, qu'il rapporte ou non.
+> Dépose · Fais naître · Fais grandir, en frise de trois étapes reliées par un trait
+
+Règle à garder : sur un écran d'ARC, ce qu'ARC fait se montre (étapes, frise, carte) ; on ne l'explique pas dans un
+paragraphe. `tests/entree-fond.mjs` refuse tout texte de plus de quatre lignes sur téléphone.
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par
