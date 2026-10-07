@@ -1314,9 +1314,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
    (--card-y et --card-h = le haut et la hauteur de la carte dans le fond, posés par authFond() : justes quel que
    soit le retour à la ligne du texte au-dessus et l'état de la carte ; les valeurs écrites ici sont celles d'un
    écran de 390 px, en secours) ; le vert ferme le bas. */
-.w-rouge{--c:var(--a-rouge);--rim:var(--a-rouge);--x:calc(100% + 40px);--y:-200px;--r:270px;--a3:15%;--a4:3%;--a5:0%}
-.w-orange{--c:var(--a-orange);--x:calc(100% + 36px);--y:-176px;--r:200px;--a2:30%;--a3:11%;--a4:3%;--a5:0%}
-.w-jaune{--c:var(--a-jaune);--x:calc(100% + 30px);--y:-150px;--r:142px;--in:38%;--a4:4%;--a5:0%}
+.w-rouge{--c:var(--a-rouge);--rim:var(--a-rouge);--x:calc(100% + 40px);--y:-212px;--r:255px;--a3:15%;--a4:3%;--a5:0%}
+.w-orange{--c:var(--a-orange);--x:calc(100% + 36px);--y:-186px;--r:190px;--a2:30%;--a3:11%;--a4:3%;--a5:0%}
+.w-jaune{--c:var(--a-jaune);--x:calc(100% + 30px);--y:-158px;--r:134px;--in:38%;--a4:4%;--a5:0%}
 .w-vert{--c:var(--a-vert);--x:34%;--y:calc(100% - 118px + 1400px);--r:1400px;--in:30%;--inw:150px}
 .w-violet{--c:var(--a-violet);--rim:color-mix(in srgb,var(--a-violet) 88%,#fff);--x:30%;--y:calc(var(--card-y) - 22px + 1000px);--r:1000px;--in:46%;--inw:210px}
 .w-cyan{--c:var(--a-cyan);--x:76%;--y:calc(var(--card-y) + var(--card-h) * .38 + 780px);--r:780px;--in:46%;--inw:210px}
@@ -1342,7 +1342,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-tab.on{background:rgba(255,255,255,.12)}
 .auth-note-dot{background:var(--a-vert)}
 /* Lisibilité mesurée (tests/entree-fond.mjs) : petits textes et textes d'attente éclaircis jusqu'à 4,5 : 1 au moins */
-.auth-brand-sub{color:#B4B4BC}
+.auth-brand-sub{color:#B4B4BC;letter-spacing:1.6px;white-space:nowrap}
 .auth-note{color:#C4C4CC}
 .auth-alt-k,.auth-alt-go{color:#B4B4BC}
 .auth-input::placeholder{color:#9A9AA2}
@@ -2027,13 +2027,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 <div id="auth-screen">
   <div class="auth-glow" aria-hidden="true"><i class="auth-world w-rouge"></i><i class="auth-world w-orange"></i><i class="auth-world w-jaune"></i><i class="auth-world w-violet"></i><i class="auth-world w-cyan"></i><i class="auth-world w-vert"></i></div>
   <div class="auth-box">
-    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Penser. Entreprendre.</div></div></div>
+    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Penser. D&eacute;velopper. Entreprendre.</div></div></div>
     <h1 class="auth-h1"><span class="auth-h1-light">Tu as une id&eacute;e.</span><span class="auth-h1-gradient">Elle devient r&eacute;elle.</span></h1>
     <p class="auth-pitch">Garde en t&ecirc;te le strict n&eacute;cessaire. Le&nbsp;reste&nbsp;prend&nbsp;vie&nbsp;ici.</p>
-    <ul class="auth-proof" aria-label="Comment ton id&eacute;e devient r&eacute;elle">
-      <li style="--c:var(--a-jaune)"><i></i><b>Tu la d&eacute;poses</b><span>en un geste, avant qu'elle devienne du&nbsp;vent</span></li>
-      <li style="--c:var(--a-rouge)"><i></i><b>Elle prend forme</b><span>rang&eacute;e, avec sa prochaine &eacute;tape</span></li>
-      <li style="--c:var(--a-cyan)"><i></i><b>ARC t'accompagne</b><span>tes t&acirc;ches et tes points, partout &agrave;&nbsp;jour</span></li>
+    <ul class="auth-proof" aria-label="Ce qu'ARC fait">
+      <li style="--c:var(--a-jaune)"><i></i><b>Penser</b><span>D&eacute;pose ton id&eacute;e, &agrave; la voix ou au clavier.</span></li>
+      <li style="--c:var(--a-rouge)"><i></i><b>D&eacute;velopper</b><span>ARC la range et fixe sa prochaine &eacute;tape.</span></li>
+      <li style="--c:var(--a-cyan)"><i></i><b>Entreprendre</b><span>Tes t&acirc;ches du jour, sur tous tes appareils.</span></li>
     </ul>
     <div class="auth-card">
     <div class="auth-step active" id="auth-email">

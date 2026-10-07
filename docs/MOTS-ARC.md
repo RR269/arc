@@ -151,6 +151,27 @@ Choix faits en écrivant : « un geste » plutôt qu'« un clic » (sur iPhone o
 plutôt que « synchronisation en temps réel » (pas de jargon) ; « l'impossible devient possible » laissé de côté (très
 grande promesse, que l'écran ne prouve pas). Les trois étapes s'affichent de la même façon sur iPhone et sur Mac.
 
+### Demande du 7 octobre, 6 h 51 : la devise en trois mots, et les trois points retravaillés
+
+Rayan : « Penser, développer, entreprendre. Et maintenant, il faut retravailler les trois points. Qu'ils soient
+explicites et clairs, vraiment bien dits, écrits. Qu'ils soient vraiment représentatifs de ce qu'il en est vraiment
+là. En trois points. Court, clair, précis. »
+
+**La devise, sous le logo : « Penser. Développer. Entreprendre. »** (ses mots, validée par lui en les donnant).
+
+Les trois points reprennent les trois mots de la devise, chacun avec ce qu'ARC fait vraiment aujourd'hui.
+**Proposés, pas encore validés** :
+
+| Point | Sa ligne | Ce qu'ARC fait derrière |
+|---|---|---|
+| **Penser** | Dépose ton idée, à la voix ou au clavier. | le dépôt de pensées |
+| **Développer** | ARC la range et fixe sa prochaine étape. | le rangement par l'IA (espace, étape, moment) |
+| **Entreprendre** | Tes tâches du jour, sur tous tes appareils. | le point du matin, les tâches, la synchronisation |
+
+Règles d'écriture tenues : une ligne par point sur iPhone (44 signes au plus), une phrase complète avec son point,
+des noms concrets (idée, étape, tâches, appareils), rien qu'ARC ne fasse pas déjà. Les lignes de 6 h 17 (« Tu la
+déposes », « Elle prend forme », « ARC t'accompagne ») sont remplacées.
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par

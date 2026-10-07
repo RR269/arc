@@ -206,10 +206,13 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
   Restent le titre, une ligne et les trois étapes en frise, reliées par un trait. La ligne, choisie par Rayan à
   5 h 50 parmi cinq propositions : « Garde en tête le strict nécessaire. Le reste prend vie ici. » (« qu'il rapporte
   ou non » est écarté : incompréhensible à l'écran, pas l'identité d'ARC).
-- **Toutes les phrases du haut changées sauf celle-là (7 octobre, 6 h 17, demande de Rayan)**, **proposé, pas encore
-  validé** : sous le logo « Penser. Entreprendre. » ; titre « Tu as une idée. » (blanc) puis « Elle devient réelle. »
-  (dégradé) ; frise « Tu la déposes · en un geste, avant qu'elle devienne du vent », « Elle prend forme · rangée, avec
-  sa prochaine étape », « ARC t'accompagne · tes tâches et tes points, partout à jour ». Les anciennes phrases
+- **Toutes les phrases du haut changées sauf celle-là (7 octobre, 6 h 17 puis 6 h 51, demandes de Rayan)** :
+  sous le logo, la devise donnée par Rayan : « Penser. Développer. Entreprendre. » ; titre « Tu as une idée. » (blanc)
+  puis « Elle devient réelle. » (dégradé), **proposé, pas encore validé** ; frise reprenant les trois mots de la
+  devise, **proposée, pas encore validée** : « Penser · Dépose ton idée, à la voix ou au clavier. », « Développer ·
+  ARC la range et fixe sa prochaine étape. », « Entreprendre · Tes tâches du jour, sur tous tes appareils. » (une
+  ligne chacune sur iPhone, rien qu'ARC ne fasse pas déjà). Sur téléphone, les trois arcs du coin sont un peu
+  resserrés pour passer au-dessus de la devise, plus longue. Les anciennes phrases
   (« Ta tête n'est pas faite pour tout porter », « Une pensée naît. Un monde grandit. », « Chaque pensée, un monde »,
   Dépose / Fais naître / Fais grandir) ne sont plus sur l'écran. Tableau avant / après dans `docs/MOTS-ARC.md`. Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
   (détail dans `docs/MOTS-ARC.md`). Sur iPhone, le bouton « Se connecter » arrive maintenant dans le premier écran.
