@@ -305,7 +305,11 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   la mention de « J'ai déjà un code » (bouton disparu) est retirée.
 - **Côté Supabase, rien n'a changé et rien n'a été lu** : inscriptions toujours fermées. Non essayé en réel :
   l'enregistrement du mot de passe juste après un code (`updateUser`) n'est prouvé que contre de fausses réponses.
-- Tests : connexion 19/19 (six contrôles ajoutés), entrée-fond 25/25, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
+- **Trousseau du navigateur** (20 h 40, Rayan : « faire directement le nécessaire sans devoir y revenir ») : l'adresse
+  est annoncée comme identifiant (`autocomplete="username"`), et l'étape « Ton mot de passe » porte l'adresse du
+  compte dans un champ invisible (`#auth-pass-user`) pour que Safari ou Chrome proposent de retenir adresse et mot
+  de passe. Non vérifiable ici : c'est le navigateur de Rayan qui décide de le proposer.
+- Tests : connexion 20/20 (sept contrôles ajoutés), entrée-fond 25/25, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
   25/25, matin 27/27, proxy 41/41 ; 569 `<div` / 569 `</div>`.
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de

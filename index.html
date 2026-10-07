@@ -768,6 +768,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .auth-title{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:8px}
 .auth-text{font-size:15px;color:#B8B8BF;line-height:1.55;margin-bottom:18px}
 .auth-text b{color:var(--t1);font-weight:600}
+.auth-user{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;opacity:0;pointer-events:none;clip-path:inset(50%)} /* l'adresse du compte, pour le trousseau du navigateur seulement */
 .auth-lbl{display:block;font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#9A9AA2;font-family:var(--fm);margin:0 0 8px 2px}
 .auth-input{width:100%;min-height:52px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.4);color:var(--t1);font-size:17px;font-family:inherit;outline:none;margin-bottom:16px;color-scheme:dark}
 .auth-input::placeholder{color:#6E6E76}
@@ -2390,7 +2391,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <button class="auth-tab" id="auth-tab-up" type="button" role="tab" aria-selected="false">Créer un compte</button>
       </div>
       <label class="auth-lbl" for="auth-email-inp">Adresse e-mail</label>
-      <input class="auth-input" id="auth-email-inp" type="email" inputmode="email" autocomplete="email" placeholder="ton@e-mail.fr">
+      <input class="auth-input" id="auth-email-inp" type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="ton@e-mail.fr">
       <label class="auth-lbl" for="auth-pass-inp">Mot de passe</label>
       <div class="auth-passrow">
         <input class="auth-input" id="auth-pass-inp" type="password" autocomplete="current-password" placeholder="8 caractères au moins">
@@ -2406,6 +2407,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="auth-step" id="auth-pass">
       <div class="auth-title">Ton mot de passe</div>
       <div class="auth-text">Choisis-le une fois : tu te connecteras ensuite avec ton adresse et ce mot de passe, sans attendre de code.</div>
+      <input class="auth-user" id="auth-pass-user" type="email" autocomplete="username" readonly tabindex="-1" aria-hidden="true">
       <label class="auth-lbl" for="auth-newpass-inp">Nouveau mot de passe</label>
       <div class="auth-passrow">
         <input class="auth-input" id="auth-newpass-inp" type="password" autocomplete="new-password" placeholder="8 caractères au moins">
@@ -2547,7 +2549,7 @@ function showAuthScreen(step) {
     setTimeout(function() { inp.focus(); }, 50);
   }
   var note = document.getElementById('auth-note'); if(note) note.hidden = step !== 'auth-email';
-  if(step === 'auth-pass') { document.getElementById('auth-newpass-inp').value = ''; setTimeout(function() { document.getElementById('auth-newpass-inp').focus(); }, 50); }
+  if(step === 'auth-pass') { document.getElementById('auth-pass-user').value = (_session && _session.user && _session.user.email) || ''; document.getElementById('auth-newpass-inp').value = ''; setTimeout(function() { document.getElementById('auth-newpass-inp').focus(); }, 50); }
   if(step === 'auth-code') setTimeout(function() { document.getElementById('auth-code-inp').focus(); }, 50);
   authFond();
   if(!_authFondObs && window.ResizeObserver) { _authFondObs = new ResizeObserver(authFond); _authFondObs.observe(scr.querySelector('.auth-box')); }

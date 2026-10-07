@@ -212,6 +212,10 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   await page.fill('#auth-code-inp', '654321'); await page.click('#auth-verify');
   await page.waitForSelector('#auth-pass.active', { timeout: 5000 }).catch(() => {});
   const proposed = await page.isVisible('#auth-newpass-inp');
+  const trousseau = await page.evaluate(() => ({ id: document.getElementById('auth-email-inp').autocomplete, compte: document.getElementById('auth-pass-user').value,
+    role: document.getElementById('auth-pass-user').autocomplete, neuf: document.getElementById('auth-newpass-inp').autocomplete }));
+  ok(trousseau.id === 'username' && trousseau.compte === 'rayan@test.fr' && trousseau.role === 'username' && trousseau.neuf === 'new-password',
+     'Trousseau du navigateur : l\'adresse est annoncée comme identifiant, et l\'étape « Ton mot de passe » porte l\'adresse du compte', JSON.stringify(trousseau));
   await page.waitForTimeout(700); // la synchronisation qui suit la connexion ne doit pas refermer l'étape
   const still = await page.isVisible('#auth-newpass-inp');
   ok(/Il est parti à rayan@test\.fr/.test(txt) && proposed && still, 'Entré par un code : ARC propose aussitôt de choisir un mot de passe, et l\'étape reste ouverte', `texte : ${txt.slice(0, 50)}…, proposé : ${proposed}, encore là : ${still}`);
