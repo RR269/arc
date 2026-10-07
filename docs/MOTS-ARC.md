@@ -104,7 +104,7 @@ Il demande des propositions de phrases pour le haut de l'écran. Ses mots, dits 
 - « on accompagne au maximum l'entrepreneur, le libre penseur, tous ceux qui utilisent ARC » (les tâches, les points,
   la synchronisation en temps réel)
 
-Propositions faites le 7 octobre (aucune n'est choisie tant que Rayan ne l'a pas dit) :
+Propositions faites le 7 octobre. **Rayan a choisi la 2, « sans hésiter » (5 h 50) : elle est sur l'écran.**
 
 1. Au lieu de devenir du vent, ton idée devient réelle.
 2. Garde en tête le strict nécessaire. Le reste prend vie ici.

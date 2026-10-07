@@ -203,8 +203,9 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - Aucune bibliothèque ajoutée. `color-mix()` demande Safari 16.2 ou plus (sinon deux lueurs simples, `@supports`).
 - `entree` contient `main` (fusion du 7 octobre, PR #6 `accueil-v2` comprise) : la demande de fusion ne heurte rien.
 - **Plus de pavé (7 octobre, 4 h 40, remarque de Rayan)** : le paragraphe de cinq lignes qui expliquait ARC est retiré.
-  Restent le titre, une ligne (« Un projet, une idée, une envie, qu'il rapporte ou non. ») et les trois étapes en
-  frise, reliées par un trait. Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
+  Restent le titre, une ligne et les trois étapes en frise, reliées par un trait. La ligne, choisie par Rayan à
+  5 h 50 parmi cinq propositions : « Garde en tête le strict nécessaire. Le reste prend vie ici. » (« qu'il rapporte
+  ou non » est écarté : incompréhensible à l'écran, pas l'identité d'ARC). Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
   (détail dans `docs/MOTS-ARC.md`). Sur iPhone, le bouton « Se connecter » arrive maintenant dans le premier écran.
 - Tests : entrée-fond 23/23, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 569 `<div` /
   569 `</div>`. Vérifié dans Chromium seulement : **le rendu sur l'iPhone de Rayan (Safari) reste à voir par lui.**
