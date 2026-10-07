@@ -1366,6 +1366,138 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 }
 /* Navigateur sans color-mix (avant 2023) : deux lueurs simples à la place des mondes */
 @supports not (color:color-mix(in srgb,red,blue)){.auth-world{display:none}.auth-glow{background:radial-gradient(60% 34% at 100% 0,rgba(233,125,0,.28),transparent 70%),radial-gradient(70% 40% at 0 100%,rgba(0,143,200,.22),transparent 70%)}}
+/* ═══ MONDES, passe de design (branche mondes, 7 octobre) ═══
+   Même contenu, même ordre, mêmes fonctions : seul le dessin change, pour les cinq mondes à la fois (un seul écran,
+   #S2, teinté par --wc). Même identité que l'entrée et l'accueil : noir, cartes en relief, étiquettes mono, et le
+   monde « vu à son horizon » (un arc net de sa couleur, sans mode de fusion) au bas de son en-tête.
+   Charte : textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, contraste ≥ 4,5 : 1. Contrôle : tests/mondes.mjs. */
+#S2{--t2:#B8B8BF;--t3:#9A9AA2;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);--carte:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),#0E0E11;--relief:inset 0 1px 0 rgba(255,255,255,.07),0 10px 30px -14px rgba(0,0,0,.8)}
+/* Barre du haut */
+#S2 .wtop{height:60px;padding:0 16px;gap:10px;background:rgba(0,0,0,.84)}
+#S2 .w-back{min-height:44px;padding:0 14px;border-radius:12px;font-size:14px;color:#D0D0D6;background:rgba(255,255,255,.05);border-color:var(--b2)}
+#S2 .w-back svg{width:14px;height:14px}
+#S2 .w-center{gap:10px}
+#S2 .w-icon{font-size:0;width:16px;height:16px;border-radius:50%;background:#000;box-shadow:inset 0 0 0 2px var(--wc,#fff),0 0 12px color-mix(in srgb,var(--wc,#fff) 55%,transparent)}
+#S2 .w-name{font-size:17px}
+#S2 .w-pct-b{font-size:12px;padding:4px 10px}
+#S2 .w-act{min-height:44px;padding:0 14px;border-radius:12px;font-size:13px;color:#D0D0D6;background:rgba(255,255,255,.05)}
+#S2 .w-timer{min-height:44px;padding:0 12px;border-radius:12px;font-size:12px;color:var(--t3)}
+/* En-tête du monde : son nom, et son horizon */
+#S2 .wmain{padding:20px 16px calc(var(--depot-space,0px) + 28px)}
+#S2 .w-hero{display:block;padding:22px 20px 74px;margin-bottom:14px;border-radius:22px;border:1px solid color-mix(in srgb,var(--wc,#fff) 22%,rgba(255,255,255,.06));box-shadow:var(--relief);
+  background:radial-gradient(circle at 62% calc(100% + 1160px),color-mix(in srgb,var(--wc,#fff) 12%,#000) 0,color-mix(in srgb,var(--wc,#fff) 12%,#000) 1040px,color-mix(in srgb,var(--wc,#fff) 46%,#000) 1198.1px,color-mix(in srgb,var(--wc,#fff) 78%,#fff) 1199.1px,color-mix(in srgb,var(--wc,#fff) 78%,#fff) 1200.5px,color-mix(in srgb,var(--wc,#fff) 62%,transparent) 1201.5px,color-mix(in srgb,var(--wc,#fff) 30%,transparent) 1212px,color-mix(in srgb,var(--wc,#fff) 12%,transparent) 1240px,color-mix(in srgb,var(--wc,#fff) 3%,transparent) 1300px,transparent 1400px),#0A0A0D}
+#S2 .w-hero::before,#S2 .w-hero::after{display:none}
+#S2 .w-hero-right{position:absolute;top:18px;right:18px}
+#S2 .w-hero-cat{font-size:12px;letter-spacing:2px;margin:4px 92px 10px 0;color:color-mix(in srgb,var(--wc,#fff) 78%,#fff);line-height:1.5}
+#S2 .w-hero-name{font-size:34px;letter-spacing:-1px;margin:0 92px 14px 0;text-shadow:none;color:color-mix(in srgb,var(--wc,#fff) 82%,#fff)}
+#S2 .w-hero-desc{font-size:15px;line-height:1.55;color:#C9C9CF;max-width:34em;margin-bottom:16px}
+#S2 .w-hero-tags{gap:8px;margin-bottom:0}
+#S2 .wband-tag{font-size:12px;padding:5px 11px;color:#B8B8BF;background:rgba(255,255,255,.05);border-color:var(--b2)}
+#S2 .wband-ring,#S2 .wband-ring svg{width:76px;height:76px}
+#S2 .wband-ring-track{stroke:rgba(255,255,255,.1)}
+#S2 .wband-ring-pct{font-size:17px}
+#S2 .wband-ring-lbl{font-size:12px;color:var(--t3);margin-top:3px}
+#S2 .w-focus-banner{min-height:52px;margin:18px 0 0;border-radius:16px}
+#S2 .w-focus-lbl,#S2 .w-focus-open{font-size:12px}
+#S2 .w-focus-txt{font-size:15px}
+/* Les cartes : même relief partout */
+#S2 .wm,#S2 .wmission,#S2 .waction,#S2 .wtask-row,#S2 .wna-item,#S2 .wtool-card{background:var(--carte);border:1px solid var(--b1);border-radius:18px;box-shadow:var(--relief)}
+#S2 .wmetrics{gap:12px;margin-bottom:12px}
+#S2 .wm{padding:16px 16px 14px;min-height:88px}
+#S2 .wm-v{font-size:30px;letter-spacing:-.8px;margin-bottom:6px;line-height:1}
+#S2 .wm-l{font-size:12px;letter-spacing:1.2px;color:var(--t3);font-family:var(--fm)}
+#S2 .wmission{padding:18px;margin-bottom:28px;gap:14px}
+#S2 .wmission-dot{margin-top:8px}
+#S2 .wmission-lbl{font-size:12px;margin-bottom:8px}
+#S2 .wmission-txt{font-size:16px;line-height:1.5}
+#S2 .wsec{margin-bottom:28px}
+#S2 .wsec-head{margin-bottom:14px;min-height:20px}
+#S2 .wsec-lbl,#S2 .wtask-grp-lbl{font-size:12px;letter-spacing:2px;color:var(--t3)}
+#S2 .wsec-info{font-size:14px;color:var(--t3)}
+#S2 .waction{padding:20px 20px 20px 22px}
+#S2 .waction-prio-b{font-size:12px;padding:4px 10px;color:color-mix(in srgb,var(--wc,#fff) 62%,#fff)!important}
+#S2 .waction-num{width:40px;height:40px;border-radius:12px;font-size:19px}
+#S2 .waction-title{font-size:19px;line-height:1.25;margin-bottom:8px}
+#S2 .waction-detail{font-size:15px;line-height:1.55;color:var(--t2)}
+/* Champs et boutons d'ajout : 16 px dans les champs (sinon l'iPhone zoome), 48 px de haut */
+#S2 .wtask-inp,#S2 .wblk-inp,#S2 .wjou-inp{min-height:48px;padding:0 16px;border-radius:14px;font-size:16px;background:rgba(0,0,0,.4);border-color:var(--b2)}
+#S2 .wnotes-ta{padding:14px 16px;border-radius:16px;font-size:16px;line-height:1.55;background:rgba(0,0,0,.4);border-color:var(--b2)}
+#S2 .wtask-inp:focus,#S2 .wjou-inp:focus,#S2 .wnotes-ta:focus{border-color:color-mix(in srgb,var(--wc,#fff) 70%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--wc,#fff) 18%,transparent)}
+#S2 .wtask-add-btn,#S2 .wjou-btn,#S2 .wblk-add-btn{min-height:48px;padding:0 16px;border-radius:14px;font-size:14px;white-space:nowrap}
+#S2 .wtask-add-btn,#S2 .wjou-btn{color:#E8E8EC;background:rgba(255,255,255,.07)}
+#S2 .wtask-add-row,#S2 .wjou-add-row{gap:10px}
+#S2 .wblk-add{gap:10px;margin-top:12px}
+/* Tâches : une ligne lisible, des cibles de 44 px */
+#S2 .wtask-grp-lbl{padding:14px 0 10px;min-height:44px;display:flex;align-items:center}
+#S2 .wtask-list{gap:8px}
+#S2 .wtask-row{min-height:60px;padding:8px 6px 8px 12px;gap:10px;border-radius:16px}
+#S2 .wtask-row.done{opacity:1}
+#S2 .wtask-row.blk-t{border-color:rgba(255,55,95,.3)}
+#S2 .drag-handle{font-size:15px;color:#77777F;width:20px;text-align:center}
+#S2 .wtask-cb{position:relative;width:24px;height:24px;border-radius:8px;border-color:rgba(255,255,255,.28)}
+#S2 .wtask-cb::before{content:"";position:absolute;inset:-12px}
+#S2 .wtask-cb.chk{border-color:var(--green)}
+#S2 .wtask-cb.chk::after{width:6px;height:11px;margin-top:-2px}
+#S2 .wtask-txt{font-size:15px;line-height:1.4;padding:6px 0}
+#S2 .wtask-row.done .wtask-txt{color:#9A9AA2}
+#S2 .task-focus-btn,#S2 .wtask-del{width:44px;height:44px;min-width:44px;padding:0;margin:0 -4px;border-radius:12px;font-size:16px;color:#8E8E95;display:flex;align-items:center;justify-content:center}
+#S2 .task-focus-btn.pinned{color:var(--orange)}
+#S2 .task-deadline-badge{font-size:12px;padding:3px 8px;border-radius:8px}
+#S2 .wtask-open-hint{font-size:12px}
+/* Bloquants, prochaines actions, journal, outils */
+#S2 .wblk-list{gap:10px}
+#S2 .wblk{min-height:56px;padding:16px;border-radius:16px;align-items:center;background:rgba(255,55,95,.06);border-color:rgba(255,55,95,.28)}
+#S2 .wblk-num{font-size:12px;margin-top:0}
+#S2 .wblk-text{font-size:15px}
+#S2 .wblk-arr{font-size:15px;color:#FF9FB0}
+#S2 .wna-list{gap:10px}
+#S2 .wna-item{min-height:56px;padding:16px;gap:12px;align-items:center}
+#S2 .wna-num{font-size:12px;width:20px;margin-top:0;color:var(--t3)}
+#S2 .wna-text{font-size:15px;color:#D6D6DC}
+#S2 .wnotes-hint{font-size:12px;margin-top:8px}
+#S2 .wjou-entry{padding:14px 0;gap:14px}
+#S2 .wjou-ts{font-size:12px;width:96px}
+#S2 .wjou-text{font-size:15px;color:#D6D6DC}
+#S2 .wjou-del{width:44px;height:44px;font-size:15px;opacity:1}
+#S2 .wjou-empty{font-size:15px;color:var(--t3)}
+#S2 .wtools-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+#S2 .wtool-card,#S2 .wtool-add{min-height:92px;border-radius:16px}
+#S2 .wtool-name,#S2 .wtool-add{font-size:12px}
+#S2 .wtool-add{color:var(--t2)}
+#S2 .wtool-del{opacity:1;font-size:12px;min-width:28px;min-height:28px}
+/* Claude, à côté du monde (Mac et tablette large) */
+#S2 .wcp{background:#08080A}
+#S2 .cp-head{padding:14px 16px}
+#S2 .cp-logo{width:32px;height:32px;border-radius:10px;font-size:15px}
+#S2 .cp-title{font-size:15px}
+#S2 .cp-sub{font-size:12px;color:var(--t3)}
+#S2 .cp-clr{min-height:44px;padding:0 12px;border-radius:12px;font-size:13px;color:var(--t2)}
+#S2 .cp-brief-txt,#S2 .cp-cap-txt{font-size:12px}
+#S2 #cp-welcome>div>div:nth-child(1){display:none}
+#S2 #cp-welcome>div>div:nth-child(2){font-size:16px!important;margin:8px 0!important}
+#S2 #cp-welcome>div>div:nth-child(3){font-size:14px!important;color:var(--t2)!important;line-height:1.55!important}
+#S2 .cp-ta{font-size:16px;min-height:44px;border-radius:14px}
+#S2 .cp-send{width:44px;height:44px;border-radius:14px}
+#S2 .cp-inp-hint{font-size:12px;color:var(--t3)}
+#S2 .cp-ta::placeholder{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:767px){
+  #S2 .wtask-row{gap:6px;padding-left:8px}
+  #S2 .drag-handle{width:14px}
+  #S2 .task-focus-btn,#S2 .wtask-del{margin:0 -8px}
+  #S2 .wtask-del{margin-right:-2px}
+}
+@media(min-width:768px){
+  #S2 .wtop{padding:0 20px}
+  #S2 .wmain{padding:28px 28px calc(var(--depot-space,0px) + 40px)}
+  #S2 .w-hero{padding:28px 28px 84px}
+  #S2 .w-hero-right{top:24px;right:24px}
+  #S2 .w-hero-name{font-size:40px}
+  #S2 .wband-ring,#S2 .wband-ring svg{width:88px;height:88px}
+  #S2 .wband-ring-pct{font-size:19px}
+  #S2 .wmetrics{grid-template-columns:repeat(4,1fr)}
+  #S2 .wcp{width:340px}
+}
+@media(prefers-reduced-motion:reduce){#S2 .wm:hover,#S2 .wtool-card:hover{transform:none}}
 </style>
 </head>
 <body>
@@ -1486,7 +1618,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
             </svg>
             <div class="wband-ring-txt">
               <div class="wband-ring-pct" id="ring-pct">0%</div>
-              <div class="wband-ring-lbl">done</div>
+              <div class="wband-ring-lbl">fait</div>
             </div>
           </div>
         </div>
