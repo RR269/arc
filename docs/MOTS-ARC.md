@@ -172,6 +172,16 @@ Règles d'écriture tenues : une ligne par point sur iPhone (44 signes au plus),
 des noms concrets (idée, étape, tâches, appareils), rien qu'ARC ne fasse pas déjà. Les lignes de 6 h 17 (« Tu la
 déposes », « Elle prend forme », « ARC t'accompagne ») sont remplacées.
 
+### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
+
+| Avant | Après |
+|---|---|
+| Bloc « Mot de passe oublié ? · Recevoir un code par e-mail » | Lien « Mot de passe oublié ? » sous le champ du mot de passe |
+| Bloc « Juste regarder ? · Continuer sans connexion » | Ligne « Continuer sans connexion · Sur cet appareil seulement. » sous un filet |
+| Note en pied « Sans connexion · cet appareil seulement · sans synchronisation ni Claude » | retirée (elle se lisait comme un état d'ARC) |
+
+Le mot « code » n'est plus sur l'écran d'entrée : Rayan veut une connexion normale (adresse et mot de passe).
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par
