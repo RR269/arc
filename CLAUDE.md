@@ -385,6 +385,12 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   « Penser · Dépose chaque pensée. Aucune ne se perd. », « Développer · ARC la range, la relie et la fait avancer. »,
   « Entreprendre · Chaque matin, ta prochaine étape t'attend. » Deux autres jeux dans `docs/MOTS-ARC.md`.
   `tests/entree-fond.mjs` : 31 contrôles (une ligne par phrase de 375 à 430 px).
+- **Refusées par Rayan (8 octobre, 1 h 06)** : « quand on développe, on ne range pas ! […] ARC est un espace qui est
+  voué à être le centre de contrôle et le point de départ de tout. » **Règle à garder : sous chaque mot, la phrase
+  dit ce qu'on attend en lisant ce mot, pas le mécanisme (jamais « ranger » sous « Développer »).** Nouvelle
+  proposition, même branche et même PR #13, **à valider** : « Penser · Dépose ton idée : tout part d'ici. »,
+  « Développer · Fais-en un projet, étape par étape. », « Entreprendre · Passe à l'action et pilote tout d'ici. »
+  La deuxième engage le chantier « faire naître un monde depuis une pensée », pas encore construit.
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son

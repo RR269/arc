@@ -193,6 +193,25 @@ Deux autres jeux proposés à Rayan le même soir, non retenus par défaut :
 Règles tenues : une ligne par point sur iPhone (375 à 430 px, contrôlé par `tests/entree-fond.mjs`), une phrase
 complète avec son point, 46 signes au plus, rien qu'ARC ne fasse pas déjà.
 
+### La frise, deuxième réécriture (8 octobre, 1 h 06)
+
+Remarque de Rayan sur la proposition de 23 h 46 : « quand on développe, on ne range pas ! Quand on lit Développer, on
+ne s'attend pas à ce qu'on nous propose de ranger, ce n'est pas ça qu'on pense logique. ARC est un espace qui est
+voué à être le centre de contrôle et le point de départ de tout. »
+
+**Règle à garder : la phrase dit ce qu'on attend en lisant le mot, pas ce que la machine fait derrière.** « Ranger »
+est un mot du mécanisme (le rangement par l'IA) : il ne doit pas apparaître sous « Développer ».
+
+| Mot | Ce qu'on attend en le lisant | Phrase (proposée, à valider par Rayan) |
+|---|---|---|
+| **Penser** | une idée, et l'endroit où elle commence | Dépose ton idée : tout part d'ici. |
+| **Développer** | l'idée grandit, elle devient un projet | Fais-en un projet, étape par étape. |
+| **Entreprendre** | agir, mener ses projets | Passe à l'action et pilote tout d'ici. |
+
+« D'ici » revient deux fois, exprès : ARC est le point de départ (Penser) et le centre de contrôle (Entreprendre).
+Ce que la deuxième phrase engage : aujourd'hui ARC attache une pensée à un projet qui existe déjà et lui donne une
+étape ; faire naître un projet depuis une pensée reste à construire (chantier suivant de la liste de Rayan).
+
 ### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
 
 | Avant | Après |
