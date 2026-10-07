@@ -1498,6 +1498,220 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #S2 .wcp{width:340px}
 }
 @media(prefers-reduced-motion:reduce){#S2 .wm:hover,#S2 .wtool-card:hover{transform:none}}
+/* ═══ SANTÉ ET JURIDIQUE, passe de design (branche poles, 7 octobre) ═══
+   Même contenu, même ordre, mêmes fonctions. Même identité que l'entrée, l'accueil et les mondes, en plus calme
+   (vision : « Ma vie » à part, dans un style plus calme) : horizon discret de la couleur du pôle, cartes en relief.
+   Charte : textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, contraste ≥ 4,5 : 1, pictogrammes au trait d'une seule
+   famille à la place des emoji, aucun mode de fusion. Contrôle : tests/poles.mjs. */
+#S3{--pc:#30d158}
+#S4{--pc:#0a84ff}
+:is(#S3,#S4){--t2:#B8B8BF;--t3:#9A9AA2;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);--carte:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),#0E0E11;--relief:inset 0 1px 0 rgba(255,255,255,.07),0 10px 30px -14px rgba(0,0,0,.8);
+  --horizon:radial-gradient(circle at 60% calc(100% + 1168px),color-mix(in srgb,var(--pc) 9%,#000) 0,color-mix(in srgb,var(--pc) 9%,#000) 1060px,color-mix(in srgb,var(--pc) 30%,#000) 1198.1px,color-mix(in srgb,var(--pc) 80%,#fff) 1199.1px,color-mix(in srgb,var(--pc) 80%,#fff) 1200.3px,color-mix(in srgb,var(--pc) 40%,transparent) 1201.3px,color-mix(in srgb,var(--pc) 16%,transparent) 1212px,color-mix(in srgb,var(--pc) 6%,transparent) 1236px,transparent 1290px),#0A0A0D}
+/* Pictogrammes au trait : un masque, teinté par la couleur de l'élément */
+:is(#S3,#S4) :is(.checkin-em,.jur-sec-icon,.jur-search-bar>span:first-child){font-size:0!important;flex-shrink:0;width:22px;height:22px;background:var(--ico-c,#C9C9CF);-webkit-mask:var(--ico) center/contain no-repeat;mask:var(--ico) center/contain no-repeat}
+#S3 .checkin-card:nth-child(1) .checkin-em{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z'/%3E%3C/svg%3E")}
+#S3 .checkin-card:nth-child(2) .checkin-em{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 3 5 14h6l-1 7 8-11h-6l1-7z'/%3E%3C/svg%3E")}
+#S3 .checkin-card:nth-child(3) .checkin-em{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h4l3-8 4 16 3-8h4'/%3E%3C/svg%3E")}
+#S3 .checkin-card:nth-child(4) .checkin-em{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z'/%3E%3C/svg%3E")}
+#S3 .checkin-em{--ico-c:var(--mc,var(--green))}
+#S4 .jur-search-bar>span:first-child{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14z M20 20l-4-4'/%3E%3C/svg%3E");--ico-c:#9A9AA2}
+#S4 .jur-sec-head[data-sec="statut"] .jur-sec-icon{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 21V5l8-2v18 M12 9h8v12 M2 21h20 M7 8h2 M7 12h2 M7 16h2 M15 13h2 M15 17h2'/%3E%3C/svg%3E")}
+#S4 .jur-sec-head[data-sec="contrats"] .jur-sec-icon{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6'/%3E%3C/svg%3E")}
+#S4 .jur-sec-head[data-sec="aides"] .jur-sec-icon{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M15.5 9.2a4 4 0 1 0 0 5.6 M7.5 11h5.5 M7.5 13h5.5'/%3E%3C/svg%3E")}
+#S4 .jur-sec-head[data-sec="demarches"] .jur-sec-icon{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 4h6v3H9z M9 5.5H6V21h12V5.5h-3 M9 12h6 M9 16h6'/%3E%3C/svg%3E")}
+#S4 .jur-sec-icon{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 3h7l5 5v13H7z M14 3v5h5 M10 13h6 M10 17h6'/%3E%3C/svg%3E");width:24px;height:24px}
+/* Barre du haut */
+:is(#S3,#S4) .ptop{height:60px;padding:0 16px;gap:10px;background:rgba(0,0,0,.84)}
+:is(#S3,#S4) .p-back{min-height:44px;padding:0 14px;border-radius:12px;font-size:14px;color:#D0D0D6;background:rgba(255,255,255,.05);border-color:var(--b2)}
+:is(#S3,#S4) .p-back svg{width:14px;height:14px}
+:is(#S3,#S4) .p-icon{font-size:0;width:16px;height:16px;border-radius:50%;background:#000;box-shadow:inset 0 0 0 2px var(--pc),0 0 10px color-mix(in srgb,var(--pc) 45%,transparent)}
+:is(#S3,#S4) .p-name{font-size:17px;color:color-mix(in srgb,var(--pc) 80%,#fff)!important}
+:is(#S3,#S4) .p-act{min-height:44px;padding:0 14px;border-radius:12px;font-size:13px;background:rgba(255,255,255,.05);color:color-mix(in srgb,var(--pc) 72%,#fff)!important}
+:is(#S3,#S4) .p-center{min-width:0}
+:is(#S3,#S4) .p-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#S3,#S4) :is(.p-back,.p-act){flex-shrink:0;white-space:nowrap}
+:is(#S3,#S4) .pmain{padding:20px 16px calc(var(--depot-space,0px) + 28px)}
+/* Sections, champs, boutons */
+:is(#S3,#S4) .psec{margin-bottom:28px}
+:is(#S3,#S4) .psec-head{margin-bottom:14px;min-height:20px}
+:is(#S3,#S4) .psec-lbl{font-size:12px;letter-spacing:2px;color:var(--t3)}
+:is(#S3,#S4) .psec-head>span:not(.psec-lbl){font-size:12px!important;color:var(--t3)!important}
+:is(#S3,#S4) :is(.hab-inp,.obj-inp,.wjou-inp,.jur-inp,.jur-inp-main){min-height:48px;padding:0 16px;border-radius:14px;font-size:16px;background:rgba(0,0,0,.4);border:1px solid var(--b2);color:var(--t1)}
+:is(#S3,#S4) :is(.hab-inp,.obj-inp,.wjou-inp,.jur-inp,.jur-inp-main){min-width:0;text-overflow:ellipsis}
+:is(#S3,#S4) :is(.hab-inp,.obj-inp,.wjou-inp,.jur-inp,.jur-inp-main)::placeholder{color:var(--t3)}
+:is(#S3,#S4) :is(.hab-inp,.obj-inp,.wjou-inp,.jur-inp,.jur-inp-main,.wnotes-ta):focus{border-color:color-mix(in srgb,var(--pc) 70%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--pc) 18%,transparent);outline:none}
+:is(#S3,#S4) .wnotes-ta{padding:14px 16px;border-radius:16px;font-size:16px;line-height:1.55;background:rgba(0,0,0,.4);border-color:var(--b2)}
+:is(#S3,#S4) :is(.hab-add-btn,.obj-add-btn,.wjou-btn){min-height:48px;padding:0 16px;border-radius:14px;font-size:14px;white-space:nowrap}
+:is(#S3,#S4) .wjou-btn{color:#E8E8EC;background:rgba(255,255,255,.07)}
+:is(#S3,#S4) :is(.hab-add-btn,.obj-add-btn){color:color-mix(in srgb,var(--pc) 75%,#fff)}
+:is(#S3,#S4) :is(.hab-add-row,.obj-add-row,.wjou-add-row){gap:10px}
+:is(#S3,#S4) .wjou-entry{padding:14px 0;gap:14px}
+:is(#S3,#S4) .wjou-ts{font-size:12px;width:96px}
+:is(#S3,#S4) .wjou-text{font-size:15px;color:#D6D6DC}
+:is(#S3,#S4) .wjou-del{width:44px;height:44px;font-size:15px;opacity:1}
+:is(#S3,#S4) .wjou-empty{font-size:15px;color:var(--t3);line-height:1.5}
+:is(#S3,#S4) .wtools-grid{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+:is(#S3,#S4) :is(.wtool-card,.wtool-add){min-height:92px;border-radius:16px}
+:is(#S3,#S4) :is(.wtool-name,.wtool-add){font-size:12px}
+:is(#S3,#S4) .wtool-add{color:var(--t2)}
+:is(#S3,#S4) .wtool-del{opacity:1;font-size:12px}
+:is(#S3,#S4) .wtool-del::before{content:"";position:absolute;inset:-10px}
+/* Cartes : même relief partout */
+:is(#S3,#S4) :is(.sante-kpi,.checkin-wrap,.sante-chart-wrap,.hab-card,.obj-item,.jur-section,.jur-search-bar,.wtool-card){background:var(--carte);border:1px solid var(--b1);border-radius:18px;box-shadow:var(--relief)}
+/* SANTÉ */
+#S3 .sante-hero{background:var(--horizon);border:1px solid color-mix(in srgb,var(--pc) 20%,rgba(255,255,255,.06));border-radius:22px;box-shadow:var(--relief);padding:24px 20px 70px;margin-bottom:14px}
+#S3 .sante-hero::before{display:none}
+#S3 .sante-ring-track{stroke:rgba(255,255,255,.1)}
+#S3 .sante-score-lbl{font-size:12px;letter-spacing:1.5px;color:var(--t3)}
+#S3 .sante-hero-title{font-size:22px;margin-bottom:6px}
+#S3 .sante-hero-sub{font-size:15px;line-height:1.5;color:#C9C9CF}
+#S3 .sante-streak,#S3 .sante-streak-row{font-size:14px;color:var(--t2)}
+#S3 .sante-streak-badge{font-size:12px}
+#S3 .sante-kpi-grid{gap:12px;margin-bottom:14px}
+#S3 .sante-kpi{padding:18px 12px 14px}
+#S3 .sante-kpi-val{font-size:28px;margin-bottom:8px;color:color-mix(in srgb,var(--mc,var(--green)) 82%,#fff)}
+#S3 .sante-kpi-lbl{font-size:12px;letter-spacing:1px;color:var(--t3);margin-bottom:8px}
+#S3 .sante-kpi-delta{font-size:12px;padding:3px 10px}
+#S3 .sante-kpi-delta.flat{background:rgba(255,255,255,.07);color:var(--t3)}
+#S3 .checkin-wrap{padding:20px 16px;margin-bottom:28px}
+#S3 .checkin-title{font-size:18px}
+#S3 .checkin-date-badge,#S3 .checkin-done-badge{font-size:12px;padding:5px 12px}
+#S3 .checkin-date-badge{color:var(--t2);background:rgba(255,255,255,.06)}
+#S3 .checkin-grid{gap:12px}
+#S3 .checkin-card{background:rgba(0,0,0,.35);border:1px solid var(--b1);border-radius:16px;padding:18px 14px 12px}
+#S3 .checkin-card-head{margin-bottom:8px}
+#S3 .checkin-lbl{font-size:12px;letter-spacing:1px;color:var(--t2)}
+#S3 .checkin-unit-sm{color:var(--t3)}
+#S3 .checkin-slider{height:44px;margin:0;background:linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16)) center/100% 6px no-repeat;border-radius:0}
+#S3 .checkin-slider::-webkit-slider-thumb{width:28px;height:28px}
+#S3 .checkin-range-labels{font-size:12px;color:var(--t3)}
+#S3 .checkin-range-labels span{font-size:12px!important}
+#S3 .checkin-save-btn{min-height:52px;font-size:16px;border-radius:16px}
+#S3 .sante-chart-wrap{padding:20px 16px;margin-bottom:28px}
+#S3 .sante-chart-title{font-size:18px}
+#S3 .sante-period-tabs,#S3 .sante-metric-tabs{gap:8px}
+#S3 .sante-period-tab,#S3 .sante-metric-tab{min-width:48px;min-height:44px;padding:0 14px;border-radius:14px;font-size:13px;color:var(--t2)}
+#S3 :is(.sante-period-tab,.sante-metric-tab).active{color:#000}
+#S3 .chart-empty{font-size:15px;color:var(--t3);padding:28px 0}
+#S3 .chart-empty-icon{display:none}
+#S3 .chart-bars{height:132px;gap:6px}
+#S3 .chart-col{height:100%}
+#S3 .chart-bar-inner{min-height:0}
+#S3 .chart-bar-fill{border-radius:6px 6px 0 0}
+#S3 .chart-lbl{font-size:12px;color:var(--t3);padding-top:6px;white-space:nowrap}
+#S3 .chart-lbl.today{color:#fff;font-weight:700}
+#S3 .chart-bar-fill:hover::after{font-size:12px}
+#S3 .hab-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+#S3 .hab-card{padding:16px 14px 14px;min-height:96px}
+#S3 .hab-em{display:none}
+#S3 .hab-card-top{justify-content:flex-end;margin-bottom:6px;min-height:24px}
+#S3 .hab-check{width:24px;height:24px;border-radius:8px;border-color:rgba(255,255,255,.28)}
+#S3 .hab-name{font-size:15px;margin-bottom:6px}
+#S3 .hab-streak{font-size:12px;color:var(--t3)}
+#S3 .hab-del{top:auto;bottom:10px;right:10px;font-size:12px;opacity:1;padding:4px 8px;color:var(--t3);background:rgba(255,255,255,.06)}
+#S3 .hab-del::before{content:"";position:absolute;inset:-12px -10px}
+#S3 .obj-list{gap:10px}
+#S3 .obj-item{min-height:56px;padding:12px 8px 12px 16px}
+#S3 .obj-item.done{opacity:1}
+#S3 .obj-item.done .obj-txt{color:var(--t3)}
+#S3 .obj-check{position:relative;width:24px;height:24px}
+#S3 .obj-check::before{content:"";position:absolute;inset:-12px}
+#S3 .obj-txt{font-size:15px}
+#S3 .obj-del{width:44px;height:44px;font-size:15px;opacity:1;display:flex;align-items:center;justify-content:center}
+/* JURIDIQUE */
+#S4 .jur-hero{background:var(--horizon);border:1px solid color-mix(in srgb,var(--pc) 22%,rgba(255,255,255,.06));border-radius:22px;box-shadow:var(--relief);padding:26px 20px 72px;margin-bottom:14px}
+#S4 .jur-hero::before,#S4 .jur-hero-icon{display:none}
+#S4 .jur-hero-title{font-size:24px;margin-bottom:14px}
+#S4 .jur-stat-badge{font-size:12px;padding:6px 12px}
+#S4 .jur-stat-badge[style*="0a84ff"],#S4 .jur-stat-badge[style*="10,132,255"]{color:#6FB7FF!important}
+#S4 .jur-search-bar{min-height:52px;padding:0 6px 0 16px;gap:10px;margin-bottom:14px}
+#S4 .jur-search-inp{font-size:16px;min-height:48px;min-width:0}
+#S4 .jur-search-clear{width:44px;height:44px;font-size:15px;color:var(--t3)}
+#S4 .jur-section{margin-bottom:10px}
+#S4 .jur-sec-head{min-height:68px;padding:12px 14px 12px 16px;gap:14px}
+#S4 .jur-sec-icon{--ico-c:color-mix(in srgb,var(--pc) 55%,#fff)}
+#S4 .jur-sec-title{font-size:16px;margin-bottom:3px}
+#S4 .jur-sec-sub{font-size:12px;color:#A6A6AE;line-height:1.4}
+#S4 .jur-sec-head:hover{background:rgba(255,255,255,.025)}
+#S4 .jur-count-badge{font-size:12px;padding:3px 10px}
+#S4 .jur-sec-arr{font-size:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+#S4 .jur-sec-arr::before{content:"";width:8px;height:8px;margin-left:-3px;border-right:1.7px solid var(--t3);border-top:1.7px solid var(--t3);transform:rotate(45deg)}
+#S4 .jur-sec-body{padding:0 14px 14px}
+#S4 .jur-item{margin-bottom:8px}
+#S4 .jur-item-row{padding:12px 8px 12px 14px;gap:12px;align-items:center;background:rgba(0,0,0,.35);border-radius:14px}
+#S4 .jur-item-row.done{opacity:1}
+#S4 .jur-item-body{flex:1;min-width:0}
+#S4 :is(.jur-item-text,.jur-item-txt){font-size:15px;line-height:1.45;margin-bottom:6px}
+#S4 .jur-item-meta{gap:8px}
+#S4 :is(.jur-item-tag,.jur-item-dl,.jur-item-prio,.jur-item-ts){font-size:12px;padding:3px 8px;border-radius:8px;font-family:var(--fm)}
+#S4 .jur-item-ts{padding:0;color:var(--t3)}
+#S4 .jur-item-dot{width:10px;height:10px;margin:0}
+#S4 .jur-item.item-done .jur-item-text{text-decoration:line-through;color:var(--t3)}
+#S4 .jur-item-dl.urgent{color:#FF8FA3;background:rgba(255,55,95,.14)}
+#S4 .jur-item-dl.soon{color:#FFC36B;background:rgba(255,149,0,.14)}
+#S4 .jur-item-dl.ok{color:var(--t2);background:rgba(255,255,255,.07)}
+#S4 .jur-item-btn.del{padding:0;color:var(--t3);background:none}
+#S4 .jur-empty{font-size:15px;color:var(--t3);padding:2px 2px 10px}
+#S4 .jur-count-badge[style*="0a84ff"]{color:#6FB7FF!important}
+#S4 :is(.jur-count-badge,.jur-stat-badge)[style*="--red"]{color:#FF8FA3!important}
+#S4 #jur-sections-list{margin-bottom:28px}
+#S4 .jur-item-acts{gap:6px}
+#S4 .jur-item-btn{min-width:44px;min-height:44px;padding:0 12px;border-radius:12px;font-size:13px;color:#E8E8EC;background:rgba(255,255,255,.08)}
+#S4 .jur-open-btn{min-height:48px;border-radius:14px;font-size:14px;color:#6FB7FF}
+#S4 .jur-add-form{padding:14px;margin-top:10px;border-radius:14px;background:rgba(0,0,0,.35);border:1px solid var(--b1)}
+#S4 .jur-inp-main{width:100%;margin-bottom:10px}
+#S4 .jur-add-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+#S4 :is(.jur-sel,.jur-dl-inp,.jur-dl){min-height:48px;padding:0 12px;border-radius:14px;font-size:16px;font-family:var(--f);color:var(--t1);background:rgba(0,0,0,.4);border:1px solid var(--b2);color-scheme:dark}
+#S4 .jur-add-actions,#S4 .jur-form-btns{display:flex;gap:8px}
+#S4 :is(.jur-submit-btn,.jur-cancel-btn){min-height:48px;padding:0 18px;border-radius:14px;font-size:15px}
+#S4 .jur-submit-btn{background:linear-gradient(135deg,#0A68D4,#0052B0)}
+#S4 .jur-cancel-btn{color:#D0D0D6;background:rgba(255,255,255,.05)}
+#S4 .jur-form-lbl{font-size:12px}
+#S4 .jur-tl-wrap{padding-left:18px}
+#S4 :is(.jur-tl-date,.jur-tl-cat){font-size:12px}
+#S4 .jur-tl-cat{color:#6FB7FF}
+#S4 .jur-tl-text{font-size:15px;color:#D6D6DC}
+#S4 .jur-tl-empty{font-size:15px;color:var(--t3)}
+#S4 .jur-tl-row{position:relative;padding:0 0 18px 6px}
+#S4 .jur-tl-row .jur-tl-dot{left:-16px;top:6px}
+#S4 .jur-tl-title{font-size:15px;line-height:1.45;color:#E8E8EC;margin-bottom:4px}
+#S4 .jur-tl-meta{font-size:12px;font-family:var(--fm);color:var(--t3);line-height:1.5}
+/* Claude, à côté du pôle (Mac et tablette large) */
+:is(#S3,#S4) .pcp{background:#08080A}
+:is(#S3,#S4) .cp-head{padding:14px 16px}
+:is(#S3,#S4) .cp-logo{width:32px;height:32px;border-radius:10px;font-size:15px}
+:is(#S3,#S4) .cp-title{font-size:15px}
+:is(#S3,#S4) .cp-sub{font-size:12px;color:var(--t3)}
+:is(#S3,#S4) .cp-clr{min-height:44px;padding:0 12px;border-radius:12px;font-size:13px;color:var(--t2)}
+:is(#S3,#S4) [id^="cp-welcome"]>div:nth-child(1){display:none}
+:is(#S3,#S4) [id^="cp-welcome"]>div:nth-child(2){font-size:16px!important;margin:8px 0!important}
+:is(#S3,#S4) [id^="cp-welcome"]>div:nth-child(3){font-size:14px!important;color:var(--t2)!important;line-height:1.55!important}
+#S4 #cp-welcome-jur>div:nth-child(4){font-size:13px!important;color:#F0C987!important;line-height:1.5;padding:10px 12px!important;border-radius:12px!important}
+:is(#S3,#S4) .cp-sugs{gap:8px}
+:is(#S3,#S4) .cp-sug{min-height:44px;padding:0 14px;border-radius:12px;font-size:14px;color:#D6D6DC}
+:is(#S3,#S4) .cp-ta{font-size:16px;min-height:44px;border-radius:14px}
+:is(#S3,#S4) .cp-ta::placeholder{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#S3,#S4) .cp-send{width:44px;height:44px;border-radius:14px}
+:is(#S3,#S4) .cp-inp-hint{font-size:12px;color:var(--t3)}
+@media(min-width:768px){
+  :is(#S3,#S4) .ptop{padding:0 20px}
+  :is(#S3,#S4) .pmain{padding:28px 28px calc(var(--depot-space,0px) + 40px)}
+  :is(#S3,#S4) .pcp{width:340px}
+  #S3 .sante-hero{padding:28px 28px 80px}
+  #S4 .jur-hero{padding:30px 28px 84px}
+  #S3 .checkin-wrap,#S3 .sante-chart-wrap{padding:24px}
+}
+@media(max-width:767px){
+  :is(#S3,#S4) .ptop{gap:8px}
+  :is(#S3,#S4) .p-back{padding:0 11px}
+  :is(#S3,#S4) .p-center{padding:0 2px;gap:8px}
+  :is(#S3,#S4) .p-act{padding:0 11px}
+  #S3 .sante-streak-row{justify-content:center;gap:6px 14px}
+  #S3 .sante-kpi-grid{grid-template-columns:repeat(2,1fr)}
+  #S3 .checkin-grid{grid-template-columns:1fr}
+  #S3 .sante-chart-head{flex-wrap:wrap;gap:12px}
+}
+@media(prefers-reduced-motion:reduce){:is(#S3,#S4) :is(.sante-kpi,.wtool-card,.checkin-save-btn):hover{transform:none}}
 </style>
 </head>
 <body>
@@ -1955,13 +2169,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <div id="cp-welcome-sante" style="padding:16px;text-align:center">
           <div style="font-size:32px;margin-bottom:8px">&#129360;</div>
           <div style="font-size:13px;font-weight:800;margin-bottom:6px">Claude Sant&#233;</div>
-          <div style="font-size:11px;color:var(--t2);line-height:1.65;margin-bottom:14px">Conseils personnalis&#233;s bas&#233;s sur tes donn&#233;es r&#233;elles.</div>
+          <div style="font-size:11px;color:var(--t2);line-height:1.65;margin-bottom:14px">Je note, je retrouve, je pr&#233;pare tes rendez-vous.</div>
           <div class="cp-sugs">
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Analyse mon check-in')">&#128200; Analyse check-in</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Optimiser mon sommeil')">&#127769; Optimiser sommeil</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Programme sport entrepreneur')">&#128170; Programme sport</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('G&#233;rer le stress')">&#129504; G&#233;rer le stress</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Routine matin optimale')">&#9728; Routine matin</button>
+            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Analyse mon check-in')">Analyse check-in</button>
+            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Optimiser mon sommeil')">Optimiser sommeil</button>
+            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Programme sport entrepreneur')">Programme sport</button>
+            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('G&#233;rer le stress')">G&#233;rer le stress</button>
+            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Routine matin optimale')">Routine matin</button>
           </div>
         </div>
         <div class="typing" id="cp-typing-sante"><div class="tdots"><span></span><span></span><span></span></div></div>
@@ -2051,7 +2265,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <div style="font-size:13px;font-weight:800;margin-bottom:5px">Claude Juridique</div>
           <div style="font-size:11px;color:var(--t2);line-height:1.65;margin-bottom:8px">Statuts, contrats, aides, d&#233;marches.</div>
           <div style="font-size:10px;color:var(--t3);padding:5px 10px;background:rgba(255,149,0,.06);border:1px solid rgba(255,149,0,.18);border-radius:8px;margin-bottom:14px">
-            &#9888; Usage informatif uniquement. Consulte un professionnel pour tout acte r&#233;el.
+            Usage informatif uniquement. Consulte un professionnel pour tout acte r&#233;el.
           </div>
           <div class="cp-sugs">
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Quel statut juridique pour une app livraison halal en France ?')">Statut ARYAN</button>
@@ -3525,7 +3739,7 @@ function updateSanteHero(){
     }, 100);
     var label = score >= 80 ? 'Excellente forme' : score >= 60 ? 'Bonne forme' : score >= 40 ? 'Forme correcte' : 'Fatigue detectee';
     if(titleEl) titleEl.textContent = label;
-    if(subEl) subEl.textContent = 'Sommeil '+ci.sommeil+'h · Energie '+ci.energie+'/10 · Sport '+ci.sport+'min · Mental '+ci.mental+'/10';
+    if(subEl) subEl.textContent = 'Sommeil '+ci.sommeil+' h · Énergie '+ci.energie+'/10 · Sport '+ci.sport+' min · Mental '+ci.mental+'/10';
     if(ring){ ring.style.stroke = score >= 70 ? '#30d158' : score >= 45 ? '#FF9500' : '#FF2D55'; }
     if(scoreEl){ scoreEl.style.color = score >= 70 ? '#30d158' : score >= 45 ? '#FF9500' : '#FF2D55'; }
   } else {
@@ -3541,8 +3755,7 @@ function updateSanteHero(){
     var avgScore7 = getAvgScore(7);
     streakRow.innerHTML =
       '<div class="sante-streak'+(streak >= 3 ? '' : ' warn')+'">' +
-        (streak >= 3 ? '&#128293;' : '&#9889;') +
-        ' <b class="sante-streak">' + streak + '</b> jour' + (streak > 1 ? 's' : '') + ' de suite' +
+        '<b class="sante-streak">' + streak + '</b> jour' + (streak > 1 ? 's' : '') + ' de suite' +
       '</div>' +
       (avgScore7 > 0 ? '<div class="sante-streak">Score 7j : <b>' + avgScore7 + '</b>/100</div>' : '');
   }
@@ -3681,7 +3894,7 @@ function renderSanteChart(){
       '<div class="chart-bar-inner">' +
         '<div class="chart-bar-fill" data-tip="'+tip+'" style="height:'+pct+'%;background:'+(val!==null ? color : 'var(--bg4)')+(isToday ? ';box-shadow:0 0 0 2px '+color+'40' : '')+'"></div>' +
       '</div>' +
-      '<div class="chart-lbl" style="color:'+(isToday ? color : 'var(--t3)')+'">'+lbl+'</div>' +
+      '<div class="chart-lbl'+(isToday ? ' today' : '')+'">'+lbl+'</div>' +
     '</div>';
   });
   if(!html || validVals.length === 0){
@@ -3749,7 +3962,7 @@ function renderHabitudes(){
       '<button class="hab-del" data-action="del-hab" data-hid="'+h.id+'">&#10005;</button>' +
       '<div class="hab-card-top"><span class="hab-em">'+h.em+'</span><div class="hab-check"></div></div>' +
       '<div class="hab-name">'+esc(h.name)+'</div>' +
-      '<div class="hab-streak">'+(isDone?'&#10003; Fait':'A faire')+'</div>' +
+      '<div class="hab-streak">'+(isDone?'Fait':'À faire')+'</div>' +
     '</div>';
   }).join('');
 }
@@ -3772,9 +3985,9 @@ function renderObjectifs(){
   if(!S.poles.objectifs.length){ list.innerHTML = '<div class="wjou-empty">Aucun objectif. Ajoutes-en un.</div>'; return; }
   list.innerHTML = S.poles.objectifs.map(function(o, i){
     return '<div class="obj-item'+(o.done?' done':'')+'">' +
-      '<div class="obj-cb'+(o.done?' chk':'')+'" data-action="toggle-obj" data-oi="'+i+'"></div>' +
-      '<div class="obj-text">'+esc(o.t)+'</div>' +
-      '<div class="obj-del" data-action="del-obj" data-oi="'+i+'">&#10005;</div>' +
+      '<div class="obj-check" role="checkbox" aria-checked="'+(o.done?'true':'false')+'" data-action="toggle-obj" data-oi="'+i+'"></div>' +
+      '<div class="obj-txt">'+esc(o.t)+'</div>' +
+      '<div class="obj-del" role="button" aria-label="Supprimer" data-action="del-obj" data-oi="'+i+'">&#10005;</div>' +
     '</div>';
   }).join('');
 }
@@ -3805,8 +4018,8 @@ function santeCpSend(textOverride){
 var JUR_SECTIONS = [
   {id:'statut',icon:'&#127970;',title:'Statut & Entreprise',desc:'Structure juridique, immatriculation, SIRET',color:'#0a84ff'},
   {id:'contrats',icon:'&#128196;',title:'Contrats & Documents',desc:'CGV, CGU, accords, NDA, partenariats',color:'#AF52DE'},
-  {id:'aides',icon:'&#128176;',title:'Aides & Financement',desc:'Subventions, prets, aides creation, ACRE',color:'#30d158'},
-  {id:'demarches',icon:'&#128203;',title:'Demarches en cours',desc:'Procedures administratives actives',color:'#FF9500'}
+  {id:'aides',icon:'&#128176;',title:'Aides & Financement',desc:'Subventions, prêts, aides à la création, ACRE',color:'#30d158'},
+  {id:'demarches',icon:'&#128203;',title:'Démarches en cours',desc:'Procédures administratives actives',color:'#FF9500'}
 ];
 
 function renderJuridique(){
@@ -3834,8 +4047,8 @@ function renderJurHero(){
     });
   });
   statsRow.innerHTML =
-    '<div class="jur-stat-badge" style="background:rgba(10,132,255,.1);color:#0a84ff;border:1px solid rgba(10,132,255,.2)">'+total+' element'+(total>1?'s':'')+' total</div>' +
-    (done ? '<div class="jur-stat-badge" style="background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.2)">'+done+' done</div>' : '') +
+    '<div class="jur-stat-badge" style="background:rgba(10,132,255,.1);color:#0a84ff;border:1px solid rgba(10,132,255,.2)">'+total+' élément'+(total>1?'s':'')+' au total</div>' +
+    (done ? '<div class="jur-stat-badge" style="background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.2)">'+done+' fait'+(done>1?'s':'')+'</div>' : '') +
     (urgent ? '<div class="jur-stat-badge" style="background:rgba(255,55,95,.1);color:var(--red);border:1px solid rgba(255,55,95,.2)">'+urgent+' urgent'+( urgent>1?'s':'')+'</div>' : '');
 }
 
@@ -3843,6 +4056,8 @@ function renderJurSections(filter){
   var list = document.getElementById('jur-sections-list'); if(!list) return;
   if(!S.poles.juridique) S.poles.juridique = {};
   JUR_SECTIONS.forEach(function(sec){ if(!S.poles.juridique[sec.id]) S.poles.juridique[sec.id] = []; });
+  // Les sections ouvertes le restent quand la liste est redessinée (ajout, « Fait », suppression).
+  var ouvertes = [].map.call(list.querySelectorAll('.jur-sec-body.open'), function(b){ return b.id; });
   var html = '';
   JUR_SECTIONS.forEach(function(sec){
     var items = S.poles.juridique[sec.id] || [];
@@ -3859,19 +4074,19 @@ function renderJurSections(filter){
         '<div class="jur-sec-info"><div class="jur-sec-title">'+sec.title+'</div><div class="jur-sec-sub">'+sec.desc+'</div></div>' +
         (items.length ? '<span class="jur-count-badge" style="background:rgba(10,132,255,.1);color:#0a84ff;border:1px solid rgba(10,132,255,.2)">'+items.length+'</span>' : '') +
         (urgentCount ? '<span class="jur-count-badge" style="background:rgba(255,55,95,.1);color:var(--red);border:1px solid rgba(255,55,95,.2)">'+urgentCount+' urgent</span>' : '') +
-        (doneCount && items.length ? '<span class="jur-count-badge" style="background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.2)">'+doneCount+' done</span>' : '') +
+        (doneCount && items.length ? '<span class="jur-count-badge" style="background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.2)">'+doneCount+' fait'+(doneCount>1?'s':'')+'</span>' : '') +
         '<span class="jur-sec-arr" id="jur-arr-'+sec.id+'">&#9658;</span>' +
       '</div>' +
       '<div class="jur-sec-body" id="jur-body-'+sec.id+'">';
-    if(!items.length) html += '<div style="font-size:12px;color:var(--t3);padding:4px 0 8px">Aucun element. Ajoutes-en un ci-dessous.</div>';
+    if(!items.length) html += '<div class="jur-empty">Aucun élément pour l\'instant.</div>';
     items.forEach(function(item, idx){
       var dotColor = item.status === 'done' ? '#30d158' : getUrgencyColor(item.deadline);
       var dlHtml = '';
       if(item.deadline && item.status !== 'done'){
         var diff = Math.ceil((new Date(item.deadline) - new Date()) / (1000*60*60*24));
         var cls = diff < 0 ? 'urgent' : diff <= 3 ? 'urgent' : diff <= 7 ? 'soon' : 'ok';
-        var dlTxt = diff < 0 ? 'En retard de '+Math.abs(diff)+'j' : diff === 0 ? 'Aujourd\'hui !' : diff+' jour'+(diff>1?'s':'');
-        dlHtml = '<span class="jur-item-dl '+cls+'">&#8981; '+dlTxt+'</span>';
+        var dlTxt = diff < 0 ? 'Dépassée de '+Math.abs(diff)+' j' : diff === 0 ? 'Aujourd\'hui' : 'Dans '+diff+' jour'+(diff>1?'s':'');
+        dlHtml = '<span class="jur-item-dl '+cls+'">'+dlTxt+'</span>';
       }
       var statusColors = {todo:'rgba(255,255,255,.2)',progress:'#FF9500',done:'#30d158',urgent:'#FF2D55'};
       html += '<div class="jur-item item-'+(item.status||'todo')+'" id="jit-'+sec.id+'-'+idx+'">' +
@@ -3880,34 +4095,38 @@ function renderJurSections(filter){
           '<div class="jur-item-body">' +
             '<div class="jur-item-text">'+esc(item.t)+'</div>' +
             '<div class="jur-item-meta">' +
-              (item.priority ? '<span class="jur-item-tag" style="background:'+getPrioColor(item.priority,true)+';color:'+getPrioColor(item.priority)+'">'+item.priority+'</span>' : '') +
-              (item.tag ? '<span class="jur-item-tag" style="background:rgba(10,132,255,.08);color:#0a84ff">'+esc(item.tag)+'</span>' : '') +
+              (item.priority ? '<span class="jur-item-tag" style="background:'+getPrioColor(item.priority,true)+';color:'+getPrioColor(item.priority)+'">Priorité '+esc(item.priority)+'</span>' : '') +
+              (item.tag ? '<span class="jur-item-tag" style="background:rgba(10,132,255,.08);color:#6FB7FF">'+esc(item.tag)+'</span>' : '') +
               dlHtml +
             '</div>' +
           '</div>' +
           '<div class="jur-item-acts">' +
-            (item.status !== 'done' ? '<button class="jur-item-btn done-it" data-action="jur-item-done" data-sec="'+sec.id+'" data-idx="'+idx+'">Done</button>' : '<button class="jur-item-btn" data-action="jur-item-done" data-sec="'+sec.id+'" data-idx="'+idx+'">Reouvrir</button>') +
-            '<button class="jur-item-btn del" data-action="jur-item-del" data-sec="'+sec.id+'" data-idx="'+idx+'">&#10005;</button>' +
+            (item.status !== 'done' ? '<button class="jur-item-btn done-it" data-action="jur-item-done" data-sec="'+sec.id+'" data-idx="'+idx+'">Fait</button>' : '<button class="jur-item-btn" data-action="jur-item-done" data-sec="'+sec.id+'" data-idx="'+idx+'">Rouvrir</button>') +
+            '<button class="jur-item-btn del" aria-label="Supprimer" data-action="jur-item-del" data-sec="'+sec.id+'" data-idx="'+idx+'">&#10005;</button>' +
           '</div>' +
         '</div>' +
       '</div>';
     });
     html += '<div id="jur-form-'+sec.id+'" style="display:none" class="jur-add-form">' +
-      '<input class="jur-inp-main" id="jur-inp-'+sec.id+'" placeholder="Description de l\'element...">' +
+      '<input class="jur-inp-main" id="jur-inp-'+sec.id+'" placeholder="Description de l\'élément...">' +
       '<div class="jur-add-meta">' +
-        '<select class="jur-sel" id="jur-sel-prio-'+sec.id+'"><option value="">Priorite</option><option value="haute">Haute</option><option value="normale">Normale</option><option value="basse">Basse</option></select>' +
-        '<select class="jur-sel" id="jur-sel-status-'+sec.id+'"><option value="todo">A faire</option><option value="progress">En cours</option></select>' +
-        '<input class="jur-dl-inp" type="date" id="jur-dl-'+sec.id+'" title="Echeance">' +
+        '<select class="jur-sel" id="jur-sel-prio-'+sec.id+'"><option value="">Priorité</option><option value="haute">Haute</option><option value="normale">Normale</option><option value="basse">Basse</option></select>' +
+        '<select class="jur-sel" id="jur-sel-status-'+sec.id+'"><option value="todo">À faire</option><option value="progress">En cours</option></select>' +
+        '<input class="jur-dl-inp" type="date" id="jur-dl-'+sec.id+'" title="Échéance">' +
       '</div>' +
       '<div class="jur-add-actions">' +
         '<button class="jur-submit-btn" data-action="jur-add-item" data-sec="'+sec.id+'">Ajouter</button>' +
         '<button class="jur-cancel-btn" data-action="jur-close-form" data-sec="'+sec.id+'">Annuler</button>' +
       '</div>' +
     '</div>' +
-    '<button class="jur-open-btn" data-action="jur-open-form" data-sec="'+sec.id+'">+ Ajouter un element</button>' +
+    '<button class="jur-open-btn" data-action="jur-open-form" data-sec="'+sec.id+'">+ Ajouter un élément</button>' +
     '</div></div>';
   });
   list.innerHTML = html;
+  ouvertes.forEach(function(id){
+    var b = document.getElementById(id), arr = document.getElementById(id.replace('jur-body-','jur-arr-'));
+    if(b) b.classList.add('open'); if(arr) arr.classList.add('open');
+  });
 }
 
 function getUrgencyColor(deadline){
@@ -3920,7 +4139,7 @@ function getUrgencyColor(deadline){
 }
 
 function getPrioColor(p, bg){
-  var m = {haute:['rgba(255,55,95,.12)','#FF2D55'], normale:['rgba(10,132,255,.1)','#0a84ff'], basse:['rgba(255,255,255,.06)','var(--t3)']};
+  var m = {haute:['rgba(255,55,95,.14)','#FF8FA3'], normale:['rgba(10,132,255,.14)','#6FB7FF'], basse:['rgba(255,255,255,.07)','#B8B8BF']};
   var v = m[p] || m.normale;
   return bg ? v[0] : v[1];
 }
@@ -3940,7 +4159,7 @@ function searchJur(q){
   // Auto-expand sections with results
   JUR_SECTIONS.forEach(function(sec){
     var items = (S.poles.juridique[sec.id] || []).filter(function(it){ return it.t.toLowerCase().indexOf(q.toLowerCase()) !== -1; });
-    if(items.length){ jurToggle(sec.id); }
+    if(items.length){ var b = document.getElementById('jur-body-'+sec.id), arr = document.getElementById('jur-arr-'+sec.id); if(b) b.classList.add('open'); if(arr) arr.classList.add('open'); }
   });
 }
 
@@ -3952,14 +4171,14 @@ function renderJurTimeline(){
       if(it.deadline) events.push({t:it.t, date:it.deadline, status:it.status||'todo', sec:sec.title, color:it.status==='done'?'#30d158':getUrgencyColor(it.deadline)});
     });
     (S.poles.juridique[sec.id] || []).forEach(function(it){
-      if(it.status === 'done' && it.doneDate) events.push({t:it.t+' (done)', date:it.doneDate, status:'done', sec:sec.title, color:'#30d158'});
+      if(it.status === 'done' && it.doneDate) events.push({t:it.t+' (fait)', date:it.doneDate, status:'done', sec:sec.title, color:'#30d158'});
     });
   });
   events.sort(function(a,b){ return new Date(a.date) - new Date(b.date); });
-  if(!events.length){ tl.innerHTML = '<div class="wjou-empty">Aucune echeance definie. Ajoute des dates dans tes elements.</div>'; return; }
+  if(!events.length){ tl.innerHTML = '<div class="wjou-empty">Aucune échéance définie. Ajoute des dates dans tes éléments.</div>'; return; }
   tl.innerHTML = events.slice(0,10).map(function(ev){
     var diff = Math.ceil((new Date(ev.date) - new Date()) / (1000*60*60*24));
-    var dlTxt = ev.status === 'done' ? 'Termine' : diff < 0 ? 'Depasse de '+Math.abs(diff)+'j' : diff === 0 ? 'Aujourd\'hui' : 'Dans '+diff+'j';
+    var dlTxt = ev.status === 'done' ? 'Terminé' : diff < 0 ? 'Dépassée de '+Math.abs(diff)+' j' : diff === 0 ? 'Aujourd\'hui' : 'Dans '+diff+' jour'+(diff>1?'s':'');
     return '<div class="jur-tl-row">' +
       '<div class="jur-tl-dot" style="background:'+ev.color+';border-color:'+ev.color+'"></div>' +
       '<div class="jur-tl-body"><div class="jur-tl-title">'+esc(ev.t)+'</div><div class="jur-tl-meta">'+esc(ev.sec)+' · '+new Date(ev.date).toLocaleDateString('fr-FR')+' · '+dlTxt+'</div></div>' +
