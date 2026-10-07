@@ -13,6 +13,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
   `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `entree-fond.mjs` (fond de l'écran d'entrée : contraste mesuré dans l'image, six couleurs dans le fond et pas dans les lettres),
+  `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
+  `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
@@ -43,7 +45,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/mondes.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -229,6 +231,26 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
   `tests/entree-fond.mjs` (25 contrôles) : aucun mode de fusion sur cet écran, et au moins 8 % de l'écran en noir franc.
   **Règle à garder : pas de `mix-blend-mode` dans ARC ; tout effet doit donner la même image sans lui.** Le reste
   (verre de la carte, arcs, horizons qui suivent la carte) rend bien sur son iPhone, d'après ses captures.
+
+Mondes, passe de design (branche `mondes`, 7 octobre après-midi, partie de `main` à `1d4fa61`) :
+- Rayan a validé l'écran d'entrée sur son iPhone (« c'est en noir, c'est bon ») et la PR #8 est fusionnée. Suite de
+  sa liste : les mondes, ARYAN d'abord, dans la même identité.
+- Les cinq mondes partagent un seul écran (`#S2`, teinté par `--wc`) : la passe s'applique aux cinq à la fois. Même
+  contenu, même ordre, mêmes fonctions ; seul le dessin change (bloc de style `#S2 …` à la fin de la feuille).
+- **Identité** : l'en-tête du monde porte son horizon, comme sur l'écran d'entrée (un arc net de sa couleur au bas de
+  l'en-tête, en `radial-gradient`, sans mode de fusion) ; cartes en relief comme sur l'accueil ; étiquettes mono.
+- **Charte, mesurée** (`tests/mondes.mjs`, cinq mondes × iPhone 390 et Mac 1440) : avant, ARYAN comptait 29 cibles
+  sous 44 px, 44 textes sous 12 px (jusqu'à 8 px) et des champs à 13 px ; après : zéro. Contraste le plus faible :
+  4,91 : 1. L'étoile et la croix d'une tâche font 44 px ; la case à cocher a une zone de toucher de 48 px.
+- Petites corrections de mots et de signes : « done » → « fait » dans l'anneau ; l'emoji du monde dans la barre du
+  haut devient un petit anneau de sa couleur ; l'emoji du panneau Claude est retiré. Une tâche faite n'est plus
+  estompée (elle passait sous 3 : 1) : elle reste barrée, en gris lisible.
+- **Pas touché, à faire ensuite** : le cockpit d'une tâche, les tiroirs (ouverts par les cartes), la War Room ; les
+  emoji des outils et de l'accueil ; la description d'ARYAN fait six lignes sur iPhone (contenu de Rayan, non modifié).
+- `tests/mesure.mjs` : la mesure du contraste est maintenant commune ; elle lit aussi les couleurs `color(srgb …)`
+  (rendu d'un `color-mix()`) et le texte sombre sur fond clair.
+- Tests : mondes 6/6, entrée-fond 25/25, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41.
+  Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.** Aucun mode de fusion (règle Safari).
 
 ### Décisions de Rayan (5 octobre)
 

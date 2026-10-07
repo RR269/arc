@@ -10,8 +10,8 @@
 // pixel le plus clair du morceau, lu dans l'image (fond masqué).
 // Seuil : 4,5 : 1 pour tout texte, grand ou petit (règle de la charte de Rayan). Les boutons désactivés sont exclus.
 
-import zlib from 'node:zlib';
 import { chromium, startServer, SB } from './outils.mjs';
+import { png, mesurer } from './mesure.mjs';
 
 const SEUIL = 4.5;
 const SIX = { vert: '#4FB82A', jaune: '#F2B108', orange: '#E97D00', rouge: '#DA0D23', violet: '#8B2694', cyan: '#008FC8' };
@@ -22,41 +22,6 @@ const { server, url } = await startServer();
 const browser = await chromium.launch();
 const results = [];
 const ok = (cond, name, detail = '') => results.push({ ok: !!cond, name, detail });
-
-/* ── Lecture d'un PNG (8 bits, RVB ou RVBA, non entrelacé) sans dépendance ── */
-function png(buf) {
-  let p = 8, w = 0, h = 0, type = 0; const idat = [];
-  while (p < buf.length) {
-    const len = buf.readUInt32BE(p), t = buf.toString('ascii', p + 4, p + 8), d = buf.subarray(p + 8, p + 8 + len);
-    if (t === 'IHDR') { w = d.readUInt32BE(0); h = d.readUInt32BE(4); type = d[9]; if (d[8] !== 8 || d[12] !== 0) throw new Error('PNG non géré'); }
-    if (t === 'IDAT') idat.push(d);
-    p += 12 + len;
-  }
-  const bpp = type === 6 ? 4 : type === 2 ? 3 : 0; if (!bpp) throw new Error('PNG non géré : type ' + type);
-  const raw = zlib.inflateSync(Buffer.concat(idat)), stride = w * bpp, px = Buffer.alloc(h * stride);
-  for (let y = 0; y < h; y++) {
-    const f = raw[y * (stride + 1)], src = y * (stride + 1) + 1, dst = y * stride;
-    for (let x = 0; x < stride; x++) {
-      const a = x >= bpp ? px[dst + x - bpp] : 0, b = y ? px[dst + x - stride] : 0, c = (x >= bpp && y) ? px[dst + x - stride - bpp] : 0;
-      let v = raw[src + x];
-      if (f === 1) v += a; else if (f === 2) v += b; else if (f === 3) v += (a + b) >> 1;
-      else if (f === 4) { const pa = Math.abs(b - c), pb = Math.abs(a - c), pc = Math.abs(a + b - 2 * c); v += (pa <= pb && pa <= pc) ? a : (pb <= pc ? b : c); }
-      px[dst + x] = v & 255;
-    }
-  }
-  return { w, h, bpp, px };
-}
-const LIN = Array.from({ length: 256 }, (_, i) => { const c = i / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; });
-// Luminance la plus claire et la plus sombre d'un rectangle (pixels de l'image)
-function range(img, x0, y0, x1, y1) {
-  let max = 0, min = 1;
-  x0 = Math.max(0, Math.floor(x0)); y0 = Math.max(0, Math.floor(y0)); x1 = Math.min(img.w, Math.ceil(x1)); y1 = Math.min(img.h, Math.ceil(y1));
-  for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) {
-    const i = (y * img.w + x) * img.bpp, L = 0.2126 * LIN[img.px[i]] + 0.7152 * LIN[img.px[i + 1]] + 0.0722 * LIN[img.px[i + 2]];
-    if (L > max) max = L; if (L < min) min = L;
-  }
-  return { max, min, vide: x1 <= x0 || y1 <= y0 };
-}
 
 async function open(viewport, dsf = 2) {
   const ctx = await browser.newContext({ viewport, deviceScaleFactor: dsf, timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
@@ -71,55 +36,9 @@ async function open(viewport, dsf = 2) {
   return { ctx, page, errors };
 }
 
-// Les morceaux de texte visibles de l'écran d'entrée, en pixels CSS de la fenêtre
-const morceaux = () => {
-  const scr = document.getElementById('auth-screen'), out = [], W = innerWidth, H = innerHeight;
-  const nom = el => { const c = el.closest('[class]'); return c ? '.' + String(c.className).split(' ')[0] : el.tagName.toLowerCase(); };
-  const lum = c => { const m = c.match(/[\d.]+/g).map(Number); if (m.length > 3 && m[3] < 1) return null; const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }; return 0.2126 * f(m[0]) + 0.7152 * f(m[1]) + 0.0722 * f(m[2]); };
-  const add = (r, n, t, L) => {
-    if (r.width < 2 || r.height < 2 || r.bottom <= 0 || r.top >= H || r.right <= 0 || r.left >= W) return;
-    const k = Math.max(1, Math.ceil(r.width / 32)), w = r.width / k;
-    for (let i = 0; i < k; i++) out.push({ x0: r.left + i * w, x1: r.left + (i + 1) * w, y0: r.top, y1: r.bottom, n, t, L });
-  };
-  const tw = document.createTreeWalker(scr, NodeFilter.SHOW_TEXT);
-  for (let node; (node = tw.nextNode());) {
-    const el = node.parentElement; if (!node.nodeValue.trim() || !el || el.closest('[aria-hidden="true"]')) continue;
-    if (el.offsetParent === null || el.closest(':disabled')) continue;
-    const range = document.createRange(); range.selectNodeContents(node);
-    const cs = getComputedStyle(el), fill = cs.webkitTextFillColor || cs.color;
-    const L = /text/.test(cs.webkitBackgroundClip || cs.backgroundClip || '') ? null : lum(fill);
-    for (const r of range.getClientRects()) add(r, nom(el), node.nodeValue.trim().slice(0, 28), L);
-  }
-  for (const inp of scr.querySelectorAll('input')) {
-    if (inp.offsetParent === null) continue;
-    const b = inp.getBoundingClientRect(), cs = getComputedStyle(inp);
-    add(new DOMRect(b.left + parseFloat(cs.paddingLeft), b.top + 10, b.width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), b.height - 20), 'champ', inp.value || inp.placeholder, lum(inp.value ? cs.color : getComputedStyle(inp, '::placeholder').color));
-  }
-  return out;
-};
-const MASQUE_TEXTE = '#auth-screen,#auth-screen *{color:transparent!important;-webkit-text-fill-color:transparent!important;caret-color:transparent!important;text-shadow:none!important}' +
-  '#auth-screen ::placeholder{color:transparent!important;-webkit-text-fill-color:transparent!important}.auth-h1-gradient{background:none!important}';
-const MASQUE_FOND = '.auth-glow{display:none!important}';
-
-// Mesure l'écran tel qu'il est défilé : renvoie le pire contraste et la liste des morceaux sous le seuil
-async function mesure(page, dsf = 2) {
-  const list = await page.evaluate(morceaux);
-  const a = await page.addStyleTag({ content: MASQUE_TEXTE }); const fond = png(await page.screenshot());
-  await a.evaluate(n => n.remove());
-  const c = await page.addStyleTag({ content: MASQUE_FOND }); const texte = png(await page.screenshot());
-  await c.evaluate(n => n.remove());
-  let pire = { ratio: Infinity }, n = 0; const sous = [];
-  for (const m of list) {
-    const T = range(texte, m.x0 * dsf, m.y0 * dsf, m.x1 * dsf, m.y1 * dsf); if (T.vide) continue;
-    if ((T.max + 0.05) / (T.min + 0.05) < 1.6) continue;                    // aucun trait de lettre dans ce morceau
-    const F = range(fond, m.x0 * dsf, m.y0 * dsf, m.x1 * dsf, m.y1 * dsf);
-    const ratio = ((m.L == null ? T.max : m.L) + 0.05) / (F.max + 0.05); n++;
-    const item = { ratio, n: m.n, t: m.t, x: Math.round(m.x0), y: Math.round(m.y0) };
-    if (ratio < pire.ratio) pire = item;
-    if (ratio < SEUIL) sous.push(item);
-  }
-  return { pire, sous, n };
-}
+// Mesure du contraste dans l'image : outils communs (tests/mesure.mjs)
+const MASQUE_TEXTE_EN_PLUS = '.auth-h1-gradient{background:none!important}';
+const mesure = (page, dsf = 2) => mesurer(page, { racine: '#auth-screen', masqueFond: '.auth-glow{display:none!important}', masqueEnPlus: MASQUE_TEXTE_EN_PLUS, dsf, seuil: SEUIL });
 const detail = {};
 const note = (k, sous) => { if (!sous.length) return; const g = {}; for (const m of sous) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0, pos: '' }; e.nb++; if (m.ratio < e.min) { e.min = m.ratio; e.pos = `x ${m.x}, y ${m.y}`; } } detail[k] = Object.entries(g).map(([n, e]) => `${e.min.toFixed(2)}  ${n}  (${e.nb} morceaux, pire en ${e.pos})`); };
 const fmt = r => r.toFixed(2).replace('.', ',') + ' : 1';
