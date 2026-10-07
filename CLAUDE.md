@@ -344,6 +344,39 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   (`.auth-alt`, `.auth-note`) sont retirés. Le mot « code » n'est plus sur cet écran. Tests : connexion 26/26
   (ordre, écarts, cibles ≥ 44 px, bouton dans le premier écran de l'iPhone), entrée-fond 25/25 ; 567 `<div` /
   567 `</div>`. Le rendu du trousseau n'est vérifiable que sur l'iPhone de Rayan.
+- **Le cadran et le mouvement (même branche `entree-bas`, PR #12, 7 octobre 22 h 42)**. Ce que Rayan a dit : « je te veux
+  expert aguerri en design et psychologie de ce que l'humain apprécie ; j'exige un design comme APPLE pour la
+  typographie, le cadran des fonctions ; la couleur violette du trait, modifie-la en vert ; en bas le vert,
+  modifie-le comme tu penses que ce soit mieux ; le point de Penser, mets le jaune poussin ; Développer en orange et
+  Entreprendre en rouge ; mets de la fluidité ; un design qui inspire le monde connecté ; ARC est et va devenir le
+  centre de contrôle de chaque être humain, comme dans la science-fiction ». Fait :
+  - **Couleurs** : l'horizon qui porte la carte est vert (« le reste prend vie ici »), le cyan passe derrière elle,
+    le violet ferme le bas (trait un peu plus épais et plus clair, `--w`, car c'est la plus sombre des six) ; sur Mac,
+    vert, cyan, violet du plus large au plus petit. L'ordre des `<i class="auth-world">` compte : le plus grand
+    disque d'abord (`w-vert`, `w-cyan`, `w-violet`), sinon son corps opaque cache les autres. Frise : jaune poussin
+    `#FFE066` (`--a-poussin`), orange, rouge, comme les trois arcs du coin ; traits en dégradé d'un point au suivant.
+  - **Typographie** : sous le titre, tout le texte passe dans la police du système (`--fa` : San Francisco sur iPhone
+    et Mac, Plus Jakarta Sans ailleurs). Plus de petites capitales ni de chasse fixe dans la carte. Le titre garde
+    Plus Jakarta Sans, la devise sous le logo garde ses capitales (ce sont les mots de Rayan).
+  - **Le cadran** : sélecteur à curseur glissant (`.auth-tabs[data-mode]`, posé par `authSetMode`) ; deux champs
+    groupés à libellé flottant (`.auth-fields`, `.auth-field`, `placeholder=" "`) ; œil au trait à la place de
+    « Voir » (le mot reste pour les lecteurs d'écran) ; « 8 caractères au moins. » sous le champ quand on crée un
+    compte (`#auth-pass-hint`) ; bouton plein de 50 px ; chevron dessiné. Champs à 17 px, cibles de 44 px au moins.
+  - **Mouvement, un seul récit** : à l'arrivée, le jour se lève, la frise se pose, l'horizon s'allume, la carte se
+    pose (`authLever`, `authPoser`). Ensuite, toutes les 13 s, une lumière descend la frise (`authFlux`, `authPoint`)
+    puis file le long de l'horizon vert (`authEclat`, `.w-vert::after`). Seulement `transform`, `opacity` et la
+    position d'un fond de 3 px ; aucun mode de fusion ; tout s'arrête avec `prefers-reduced-motion`. `authFond()`
+    retire le déplacement d'entrée de la carte de sa mesure, sinon l'horizon se posait 14 px trop bas.
+  - Tests : entrée-fond 30/30 (cinq contrôles ajoutés : couleurs des horizons et de la frise, typographie de la
+    carte, curseur et libellé flottant, mouvement), connexion 26/26, mondes 6/6, pôles 9/9, dépôt 19/19, matin 27/27,
+    proxy 41/41 ; contraste le plus faible 4,98 : 1 ; 572 `<div` / 572 `</div>`.
+  - **`tests/rangement.mjs` échoue entre 23 h et minuit (24/25), y compris sur la version en ligne** : prouvé le
+    7 octobre à 23 h 05 sur `origin/main`. Cause : `rangeTonight()` (`index.html`, « Ce soir ») renvoie « dans une
+    heure, à l'heure ronde » après 20 h, donc minuit du lendemain après 23 h ; la pensée n'est plus dans
+    « Aujourd'hui » du point du matin et le contrôle 20 ne la trouve pas. Rien à voir avec l'écran d'entrée ; à
+    corriger à part (le test devrait fixer l'heure, et « Ce soir » après 23 h est à décider avec Rayan).
+  - Vérifié dans Chromium seulement : la police San Francisco, le verre de la carte et la fluidité réelle du
+    mouvement ne se jugent que sur l'iPhone et le Mac de Rayan.
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son
