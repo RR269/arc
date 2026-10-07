@@ -1297,25 +1297,69 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-note-dot{width:6px;height:6px;border-radius:50%;background:#30d158;flex-shrink:0;animation:pulse 2s infinite}
 @media(max-width:400px){.auth-note{font-size:10.5px;letter-spacing:.5px}}
 
-/* Palette remise par Rayan le 7 octobre (mesurée dans son image) : vert #4FB82A, jaune #F2B108, orange #E97D00,
-   rouge #DA0D23, violet #8B2694, cyan #008FC8, sur noir. Les mots : docs/MOTS-ARC.md. */
-#auth-screen{background:#000}
-.auth-glow{background:radial-gradient(50% 36% at 12% 4%,rgba(79,184,42,.16),transparent 70%),radial-gradient(45% 36% at 88% 12%,rgba(139,38,148,.22),transparent 70%),radial-gradient(40% 30% at 70% 100%,rgba(0,143,200,.14),transparent 70%),radial-gradient(36% 28% at 10% 100%,rgba(233,125,0,.12),transparent 70%)}
+/* ═══ ÉCRAN D'ENTRÉE : le fond (correction de Rayan, 7 octobre 3 h) ═══
+   Les six couleurs remises par Rayan (mesurées dans son image) vont dans LE FOND, jamais dans les lettres.
+   Le titre garde l'écriture d'ARC : blanc, puis le dégradé orange → rose → violet de l'accueil (.auth-h1-gradient, plus haut).
+   Le fond : six mondes vus à leur horizon. Chacun est un disque sombre dont le bord (un arc net) porte sa couleur
+   et éclaire ce qui l'entoure. Trois chauds se lèvent en haut à droite, trois froids montent d'en bas à gauche.
+   Sur téléphone le fond défile avec le contenu : les arcs vifs restent hors des textes, quel que soit le défilement.
+   Contrôle : tests/entree-fond.mjs (contraste mesuré dans l'image, arcs présents, titre sans les six couleurs). */
+#auth-screen{background:#000;overflow-x:hidden;--card-y:546px;--card-h:522px;--a-vert:#4FB82A;--a-jaune:#F2B108;--a-orange:#E97D00;--a-rouge:#DA0D23;--a-violet:#8B2694;--a-cyan:#008FC8}
+#auth-screen.active{display:grid;grid-template-columns:100%;grid-template-rows:auto}
+.auth-box{grid-area:1/1;justify-self:center;align-self:start;margin:0}
+.auth-glow{grid-area:1/1;align-self:stretch;justify-self:stretch;position:relative;inset:auto;overflow:hidden;background:none;margin:calc(-24px - env(safe-area-inset-top)) -16px calc(-24px - env(safe-area-inset-bottom))}
+.auth-world{position:absolute;inset:0;--rim:color-mix(in srgb,var(--c) 78%,#fff);--body:color-mix(in srgb,var(--c) 9%,#000);--a1:62%;--a2:36%;--a3:19%;--a4:8%;--a5:2.5%;--in:26%;--inw:90px;
+  background:radial-gradient(circle at var(--x) var(--y),var(--body) 0,var(--body) calc(var(--r) - var(--inw)),color-mix(in srgb,var(--c) var(--in),#000) calc(var(--r) - 1.6px),var(--rim) calc(var(--r) - .7px),var(--rim) calc(var(--r) + .3px),color-mix(in srgb,var(--c) var(--a1),transparent) calc(var(--r) + 1.3px),color-mix(in srgb,var(--c) var(--a2),transparent) calc(var(--r) + 10px),color-mix(in srgb,var(--c) var(--a3),transparent) calc(var(--r) + 34px),color-mix(in srgb,var(--c) var(--a4),transparent) calc(var(--r) + 90px),color-mix(in srgb,var(--c) var(--a5),transparent) calc(var(--r) + 180px),transparent calc(var(--r) + 300px))}
+/* Téléphone : le jour dans le coin haut droit, hors de tout texte ; deux horizons froids portent la carte
+   (--card-y et --card-h = le haut et la hauteur de la carte dans le fond, posés par authFond() : justes quel que
+   soit le retour à la ligne du texte au-dessus et l'état de la carte ; les valeurs écrites ici sont celles d'un
+   écran de 390 px, en secours) ; le vert ferme le bas. */
+.w-rouge{--c:var(--a-rouge);--rim:var(--a-rouge);--x:calc(100% + 40px);--y:-200px;--r:270px;--a3:15%;--a4:3%;--a5:0%}
+.w-orange{--c:var(--a-orange);--x:calc(100% + 36px);--y:-176px;--r:200px;--a2:30%;--a3:11%;--a4:3%;--a5:0%}
+.w-jaune{--c:var(--a-jaune);--x:calc(100% + 30px);--y:-150px;--r:142px;--in:38%;--a4:4%;--a5:0%}
+.w-vert{--c:var(--a-vert);--x:34%;--y:calc(100% - 118px + 1400px);--r:1400px;--in:30%;--inw:150px}
+.w-violet{--c:var(--a-violet);--rim:color-mix(in srgb,var(--a-violet) 88%,#fff);--x:30%;--y:calc(var(--card-y) - 22px + 1000px);--r:1000px;--in:46%;--inw:210px}
+.w-cyan{--c:var(--a-cyan);--x:76%;--y:calc(var(--card-y) + var(--card-h) * .38 + 780px);--r:780px;--in:46%;--inw:210px}
+/* La matière : un grain très fin sur tout le fond (il casse aussi les paliers des dégradés) */
+.auth-glow::after{content:"";position:absolute;inset:0;opacity:.42;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+/* L'écriture : celle d'ARC. Le logo d'origine, le titre blanc puis le dégradé de l'accueil. */
 .auth-mark{animation:none}
-.auth-arcs{width:44px;height:44px;display:block}
 .auth-h1{font-size:clamp(30px,7.4vw,44px);letter-spacing:-1.4px;line-height:1.08;margin:0 0 16px}
 .auth-h1-light{font-weight:700;letter-spacing:-1.2px;margin-bottom:6px}
-.auth-h1-gradient{font-weight:800;background:linear-gradient(90deg,#4FB82A 0%,#F2B108 22%,#E97D00 40%,#DA0D23 58%,#8B2694 78%,#008FC8 100%);-webkit-background-clip:text;background-clip:text}
+.auth-h1-gradient{font-weight:800}
 .auth-pitch{font-size:15px;color:#C9C9CF;margin-bottom:18px}
-.auth-proof{gap:10px;margin-bottom:24px}
+.auth-proof{gap:10px;margin-bottom:36px}
 .auth-proof li{display:grid;grid-template-columns:10px auto 1fr;column-gap:10px;align-items:baseline;font-weight:400;color:#B8B8BF;font-size:14px}
 .auth-proof li i{width:10px;height:10px;align-self:center}
 .auth-proof li b{font-weight:700;color:#F5F5F7;white-space:nowrap}
 .auth-input:focus{border-color:rgba(0,143,200,.8);box-shadow:0 0 0 3px rgba(0,143,200,.2)}
-.auth-btn{background:linear-gradient(90deg,#E97D00 0%,#DA0D23 55%,#8B2694 100%);box-shadow:0 12px 30px -10px rgba(218,13,35,.55)}
+.auth-btn{background:linear-gradient(90deg,var(--a-orange) 0%,var(--a-rouge) 18%,var(--a-violet) 100%);box-shadow:0 12px 30px -10px rgba(218,13,35,.55)}
 .auth-tab.on{background:rgba(255,255,255,.12)}
-.auth-note-dot{background:#4FB82A}
+.auth-note-dot{background:var(--a-vert)}
+/* Lisibilité mesurée (tests/entree-fond.mjs) : petits textes et textes d'attente éclaircis jusqu'à 4,5 : 1 au moins */
+.auth-brand-sub{color:#B4B4BC}
+.auth-note{color:#C4C4CC}
+.auth-alt-k,.auth-alt-go{color:#B4B4BC}
+.auth-input::placeholder{color:#9A9AA2}
+/* La carte : un verre sombre, le fond passe derrière elle, adouci */
+.auth-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)),rgba(9,9,12,.62);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5)}
 @media(max-width:400px){.auth-proof li{grid-template-columns:10px 1fr;row-gap:1px}.auth-proof li span{grid-column:2}}
+/* Mac et tablette large : le fond tient à l'écran. Les arcs se règlent sur la largeur libre de chaque côté de la
+   colonne de texte (440 px au centre) et s'arrêtent 30 à 40 px avant elle : aucun arc ne passe sous un texte. */
+@media(min-width:861px){
+  #auth-screen{--jour:min(540px,calc(50vw - 190px));--nuit:min(590px,calc(50vw - 140px))}
+  .auth-box{align-self:auto;margin:auto}
+  .auth-glow{position:fixed;inset:0;margin:0;background:#000}
+  .auth-proof{margin-bottom:24px}
+  .w-rouge{--x:calc(100% + 70px);--y:-90px;--r:var(--jour)}
+  .w-orange{--x:calc(100% + 40px);--y:-110px;--r:calc(var(--jour) * .7)}
+  .w-jaune{--x:calc(100% + 10px);--y:-70px;--r:calc(var(--jour) * .4)}
+  .w-violet{--rim:color-mix(in srgb,var(--a-violet) 92%,#fff);--x:-110px;--y:calc(100% + 150px);--r:var(--nuit);--in:26%;--inw:90px}
+  .w-cyan{--x:-60px;--y:calc(100% + 190px);--r:calc(var(--nuit) * .77);--in:26%;--inw:90px}
+  .w-vert{--x:-130px;--y:calc(100% + 120px);--r:calc(var(--nuit) * .475);--in:26%;--inw:90px}
+}
+/* Navigateur sans color-mix (avant 2023) : deux lueurs simples à la place des mondes */
+@supports not (color:color-mix(in srgb,red,blue)){.auth-world{display:none}.auth-glow{background:radial-gradient(60% 34% at 100% 0,rgba(233,125,0,.28),transparent 70%),radial-gradient(70% 40% at 0 100%,rgba(0,143,200,.22),transparent 70%)}}
 </style>
 </head>
 <body>
@@ -1977,15 +2021,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   </form>
 </div>
 <div id="auth-screen">
-  <div class="auth-glow" aria-hidden="true"></div>
+  <div class="auth-glow" aria-hidden="true"><i class="auth-world w-rouge"></i><i class="auth-world w-orange"></i><i class="auth-world w-jaune"></i><i class="auth-world w-violet"></i><i class="auth-world w-cyan"></i><i class="auth-world w-vert"></i></div>
   <div class="auth-box">
-    <div class="auth-brand"><div class="auth-mark"><svg class="auth-arcs" viewBox="0 0 48 48" aria-hidden="true"><g fill="none" stroke-width="4.2" stroke-linecap="round"><path d="M8 40 A26 26 0 0 1 40 8" stroke="#4FB82A"/><path d="M12 40 A22 22 0 0 1 40 12" stroke="#F2B108"/><path d="M16 40 A18 18 0 0 1 40 16" stroke="#E97D00"/><path d="M20 40 A14 14 0 0 1 40 20" stroke="#DA0D23"/><path d="M24 40 A10 10 0 0 1 40 24" stroke="#8B2694"/><path d="M28 40 A6 6 0 0 1 40 28" stroke="#008FC8"/></g></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Chaque pens&eacute;e, un monde</div></div></div>
+    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Chaque pens&eacute;e, un monde</div></div></div>
     <h1 class="auth-h1"><span class="auth-h1-light">Ta t&ecirc;te n'est pas faite pour tout porter.</span><span class="auth-h1-gradient">Une pens&eacute;e na&icirc;t. Un monde grandit.</span></h1>
     <p class="auth-pitch">Ce que tu as en t&ecirc;te ne doit plus attendre le soir ou le week-end. D&eacute;pose-le &agrave; l'instant o&ugrave; il arrive&nbsp;: ARC lui donne un monde &agrave; lui, et t'apporte chaque jour ce qu'il faut pour le faire grandir. Un projet, une id&eacute;e, une envie, qu'il rapporte ou non.</p>
     <ul class="auth-proof" aria-label="Ce qu'ARC fait">
-      <li style="--c:#F2B108"><i></i><b>D&eacute;pose</b><span>&agrave; la voix ou au clavier, &agrave; l'instant</span></li>
-      <li style="--c:#DA0D23"><i></i><b>Fais na&icirc;tre</b><span>chaque pens&eacute;e devient un monde &agrave; toi</span></li>
-      <li style="--c:#008FC8"><i></i><b>Fais grandir</b><span>chaque matin, la prochaine &eacute;tape</span></li>
+      <li style="--c:var(--a-jaune)"><i></i><b>D&eacute;pose</b><span>&agrave; la voix ou au clavier, &agrave; l'instant</span></li>
+      <li style="--c:var(--a-rouge)"><i></i><b>Fais na&icirc;tre</b><span>chaque pens&eacute;e devient un monde &agrave; toi</span></li>
+      <li style="--c:var(--a-cyan)"><i></i><b>Fais grandir</b><span>chaque matin, la prochaine &eacute;tape</span></li>
     </ul>
     <div class="auth-card">
     <div class="auth-step active" id="auth-email">
@@ -2142,6 +2186,18 @@ function showAuthScreen(step) {
   var note = document.getElementById('auth-note'); if(note) note.hidden = step !== 'auth-email';
   if(step === 'auth-pass') { document.getElementById('auth-newpass-inp').value = ''; setTimeout(function() { document.getElementById('auth-newpass-inp').focus(); }, 50); }
   if(step === 'auth-code') setTimeout(function() { document.getElementById('auth-code-inp').focus(); }, 50);
+  authFond();
+  if(!_authFondObs && window.ResizeObserver) { _authFondObs = new ResizeObserver(authFond); _authFondObs.observe(scr.querySelector('.auth-box')); }
+}
+// Le fond de l'écran d'entrée : dit au dessin où est la carte (--card-y, --card-h), pour que les horizons la portent
+// quelle que soit la hauteur du texte au-dessus. Rien d'autre : tout le dessin est dans la feuille de style.
+var _authFondObs = null;
+function authFond() {
+  var scr = document.getElementById('auth-screen'); if(!scr || !scr.classList.contains('active')) return;
+  var fond = scr.querySelector('.auth-glow'), carte = scr.querySelector('.auth-card'); if(!fond || !carte) return;
+  var c = carte.getBoundingClientRect(), y = Math.round(c.top - fond.getBoundingClientRect().top) + 'px', h = Math.round(c.height) + 'px';
+  if(scr.style.getPropertyValue('--card-y') !== y) scr.style.setProperty('--card-y', y);
+  if(scr.style.getPropertyValue('--card-h') !== h) scr.style.setProperty('--card-h', h);
 }
 function hideAuthScreen() {
   var scr = document.getElementById('auth-screen'); if(scr) scr.classList.remove('active');
