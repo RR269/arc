@@ -107,6 +107,7 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
 {
   let mode = 'closed';
   const { ctx, page, calls } = await open(async ({ path }) => {
+    if (path === '/auth/v1/otp') return { status: 422, json: { code: 422, error_code: 'otp_disabled', msg: 'Signups not allowed for otp' } }; // adresse sans compte
     if (path !== '/auth/v1/signup') return null;
     if (mode === 'closed') return { status: 422, json: { code: 422, error_code: 'signup_disabled', msg: 'Signups not allowed for this instance' } };
     if (mode === 'taken') return { status: 200, json: { id: 'x', email: 'rayan@test.fr', identities: [] } };
@@ -118,7 +119,7 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   await page.click('#auth-go');
   await page.waitForFunction(() => document.getElementById('auth-email-err').textContent.length > 0, null, { timeout: 5000 }).catch(() => {});
   const closedMsg = await page.textContent('#auth-email-err');
-  ok(/pas encore ouverte/.test(closedMsg), 'Inscriptions fermées dans Supabase : « pas encore ouverte »', closedMsg);
+  ok(/pas encore ouverte/.test(closedMsg) && !(await page.isVisible('#auth-code-inp')), 'Inscriptions fermées, adresse sans compte : « pas encore ouverte », aucun code proposé', closedMsg);
   mode = 'taken'; await page.click('#auth-go');
   await page.waitForFunction(() => /déjà un compte/.test(document.getElementById('auth-email-err').textContent), null, { timeout: 5000 }).catch(() => {});
   const takenMsg = await page.textContent('#auth-email-err');
@@ -161,6 +162,90 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   if (await page.isVisible('#matin-screen.open')) await page.click('.matin-go'); // après 8 h, le point du matin s'ouvre
   await page.click('#btn-menu');
   ok(!(await page.isVisible('#btn-pass')), 'Sans session : « Mon mot de passe » absent du menu');
+  await ctx.close();
+}
+
+/* 7. « Créer un compte » avec l'adresse d'un compte qui existe (inscriptions fermées) : un code confirme, puis le
+      mot de passe choisi est enregistré. C'est le chemin de Rayan le 7 octobre au soir. */
+{
+  const { ctx, page, calls, errors } = await open(async ({ method, path }) => {
+    if (path === '/auth/v1/signup') return { status: 422, json: { code: 422, error_code: 'signup_disabled', msg: 'Signups not allowed for this instance' } };
+    if (path === '/auth/v1/otp') return { status: 200, json: {} };
+    if (path === '/auth/v1/verify') return { status: 200, json: session() };
+    if (path === '/auth/v1/user') return { status: 200, json: session().user };
+    return null;
+  });
+  await page.waitForSelector('#auth-screen.active');
+  await page.click('#auth-tab-up');
+  await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.fill('#auth-pass-inp', 'mon-mot-de-passe-choisi');
+  await page.click('#auth-go');
+  await page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
+  const txt = (await page.textContent('#auth-code .auth-text')).replace(/\s+/g, ' ');
+  const otp = calls.find(c => c.path.startsWith('/auth/v1/otp'));
+  const kept = await page.evaluate(() => (JSON.stringify(localStorage) + JSON.stringify(sessionStorage)).includes('mon-mot-de-passe-choisi'));
+  ok(await page.isVisible('#auth-code-inp') && /compte existe déjà/.test(txt) && /rayan@test\.fr/.test(txt) && /mot de passe sera enregistré/.test(txt) && otp && otp.body.create_user === false && !kept,
+     'Compte existant, inscriptions fermées : « Créer un compte » envoie un code de confirmation au lieu de bloquer ; le mot de passe n\'est écrit nulle part', txt);
+  await page.fill('#auth-code-inp', '123456'); await page.click('#auth-verify');
+  await page.waitForFunction(() => !document.getElementById('auth-screen').classList.contains('active'), null, { timeout: 5000 }).catch(() => {});
+  await page.waitForTimeout(300);
+  const put = calls.find(c => c.method === 'PUT' && c.path.startsWith('/auth/v1/user'));
+  const verify = calls.find(c => c.path.startsWith('/auth/v1/verify'));
+  const after = await page.evaluate(() => ({ ferme: !document.getElementById('auth-screen').classList.contains('active'), toast: (document.querySelector('.toast, #toast') || {}).textContent || '',
+    garde: (JSON.stringify(localStorage) + JSON.stringify(sessionStorage)).includes('mon-mot-de-passe-choisi') }));
+  ok(verify && verify.body.token === '123456' && put && put.body.password === 'mon-mot-de-passe-choisi' && after.ferme && !after.garde && !errors.length,
+     'Code tapé : connecté, le mot de passe choisi est enregistré sur le compte, l\'écran se ferme', `vérification : ${!!verify}, enregistrement : ${put ? 'PUT ' + put.path : 'aucun'}, fermé : ${after.ferme}, erreurs : ${errors.join(' | ')}`);
+  await ctx.close();
+}
+
+/* 8. « Recevoir un code » : une fois le code tapé, ARC propose de choisir un mot de passe ; « Plus tard » referme */
+{
+  const { ctx, page, calls } = await open(async ({ path }) => {
+    if (path === '/auth/v1/otp') return { status: 200, json: {} };
+    if (path === '/auth/v1/verify') return { status: 200, json: session() };
+    if (path === '/auth/v1/user') return { status: 200, json: session().user };
+    return null;
+  });
+  await page.waitForSelector('#auth-screen.active');
+  await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.click('#auth-send');
+  await page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
+  const txt = (await page.textContent('#auth-code .auth-text')).replace(/\s+/g, ' ');
+  await page.fill('#auth-code-inp', '654321'); await page.click('#auth-verify');
+  await page.waitForSelector('#auth-pass.active', { timeout: 5000 }).catch(() => {});
+  const proposed = await page.isVisible('#auth-newpass-inp');
+  await page.waitForTimeout(700); // la synchronisation qui suit la connexion ne doit pas refermer l'étape
+  const still = await page.isVisible('#auth-newpass-inp');
+  ok(/Il est parti à rayan@test\.fr/.test(txt) && proposed && still, 'Entré par un code : ARC propose aussitôt de choisir un mot de passe, et l\'étape reste ouverte', `texte : ${txt.slice(0, 50)}…, proposé : ${proposed}, encore là : ${still}`);
+  await page.fill('#auth-newpass-inp', 'choisi-apres-le-code'); await page.click('#auth-pass-save');
+  await page.waitForFunction(() => !document.getElementById('auth-screen').classList.contains('active'), null, { timeout: 5000 }).catch(() => {});
+  const put = calls.find(c => c.method === 'PUT' && c.path.startsWith('/auth/v1/user'));
+  ok(put && put.body.password === 'choisi-apres-le-code' && !(await page.isVisible('#auth-screen')), 'Mot de passe choisi après le code : enregistré, écran fermé', put ? 'PUT ' + put.path : 'aucun appel');
+  await ctx.close();
+}
+{
+  const { ctx, page, calls } = await open(async ({ path }) => {
+    if (path === '/auth/v1/otp') return { status: 200, json: {} };
+    if (path === '/auth/v1/verify') return { status: 200, json: session() };
+    if (path === '/auth/v1/user') return { status: 200, json: session().user };
+    return null;
+  });
+  await page.waitForSelector('#auth-screen.active');
+  await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.click('#auth-send');
+  await page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
+  await page.fill('#auth-code-inp', '654321'); await page.click('#auth-verify');
+  await page.waitForSelector('#auth-pass.active', { timeout: 5000 }).catch(() => {});
+  await page.click('#auth-pass-later'); await page.waitForTimeout(300);
+  ok(!(await page.isVisible('#auth-screen')) && !calls.some(c => c.method === 'PUT'), '« Plus tard » : l\'écran se ferme, aucun mot de passe enregistré, la connexion reste');
+  await ctx.close();
+}
+
+/* 9. Arrivé par le lien de l'e-mail : même proposition de mot de passe */
+{
+  const s9 = session();
+  const { ctx, page } = await open(async ({ path }) => path === '/auth/v1/user' ? { status: 200, json: s9.user } : null);
+  await page.goto(url + '#access_token=' + s9.access_token + '&expires_in=3600&expires_at=' + s9.expires_at + '&refresh_token=refresh-de-test&token_type=bearer&type=magiclink');
+  await page.reload();
+  await page.waitForSelector('#auth-pass.active', { timeout: 6000 }).catch(() => {});
+  ok(await page.isVisible('#auth-newpass-inp'), 'Lien de l\'e-mail : connecté, ARC propose de choisir un mot de passe');
   await ctx.close();
 }
 

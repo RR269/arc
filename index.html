@@ -2417,7 +2417,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     </div>
     <div class="auth-step" id="auth-code">
       <div class="auth-title">Ton code</div>
-      <div class="auth-text">Il est parti à <b id="auth-code-to"></b>. Tape le dernier code reçu, ou touche le lien de l'e-mail sur cet appareil.</div>
+      <div class="auth-text"><span id="auth-code-pre">Il est parti à </span><b id="auth-code-to"></b><span id="auth-code-post">. Tape le dernier code reçu, ou touche le lien de l'e-mail sur cet appareil.</span></div>
       <input class="auth-input code" id="auth-code-inp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="000000" aria-label="Code reçu par e-mail">
       <div class="auth-err" id="auth-code-err" role="alert"></div>
       <button class="auth-btn" id="auth-verify">Entrer dans ARC</button>
@@ -2476,6 +2476,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 var SB_URL = 'https://zcelpyexerxlhwtfpcbf.supabase.co';
 var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpjZWxweWV4ZXJ4bGh3dGZwY2JmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwODY0NzQsImV4cCI6MjA5MTY2MjQ3NH0.lqwIh2iS5k4Yaz3y4LF5eS7yI30vsx63G_3suPzyi7Y';
 var _sb = null;
+var _authFromLink = false;
 var _syncTimer = null;
 var _pushing = false;
 
@@ -2484,6 +2485,8 @@ function sbInit() {
     console.warn('Supabase CDN unavailable — offline mode');
     return;
   }
+  // Arrivée par le lien de l'e-mail : l'adresse de la page porte le jeton, que supabase-js lit puis efface.
+  try { _authFromLink = /[#&]access_token=/.test(location.hash) || /[?&](code|token_hash)=/.test(location.search); } catch(e) {}
   try {
     _sb = supabase.createClient(SB_URL, SB_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
   } catch(e) { console.warn('Supabase init:', e); return; }
@@ -2493,10 +2496,18 @@ function sbInit() {
     _session = session || null;
     renderAuthUI();
     if(event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-      if(_session) { hideAuthScreen(); setTimeout(pullFromCloud, 0); }
+      if(_session) {
+        // Arrivé par le lien de l'e-mail : proposer de choisir un mot de passe, comme après un code tapé.
+        if(_authFromLink) { _authFromLink = false; _authAskPass = true; }
+        // Une étape de compte en cours (mot de passe, premier appareil) ne se referme pas toute seule : Supabase
+        // renvoie SIGNED_IN au retour sur l'onglet.
+        var cur = document.querySelector('#auth-screen.active .auth-step.active'), curId = cur ? cur.id : '';
+        if(curId !== 'auth-pass' && curId !== 'auth-ref') authDone();
+        setTimeout(pullFromCloud, 0);
+      }
       else if(event === 'INITIAL_SESSION' && !authSkipped()) showAuthScreen('auth-email');
     }
-    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; }
+    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; _authAskPass = false; _authPendingPass = ''; }
   });
 }
 
@@ -2568,8 +2579,8 @@ function renderAuthUI() {
 function authErrorText(e) {
   var m = (e && e.message) || String(e);
   if(/security purposes|only request this after/i.test(m)) return 'Un code vient de partir : attends une minute avant d\'en redemander un.';
-  if(/rate limit|too many/i.test(m)) return 'Trop de codes demandés : l\'envoi d\'e-mails est limité. Utilise le dernier code reçu (« J\'ai déjà un code »), ou réessaie dans une heure.';
-  if(/invalid login credentials/i.test(m)) return 'Adresse ou mot de passe incorrect. Pas encore de mot de passe ? Reçois un code par e-mail, puis crée-le dans le menu « ··· ».';
+  if(/rate limit|too many/i.test(m)) return 'Trop de codes demandés : l\'envoi d\'e-mails est limité. Utilise le dernier code reçu, ou réessaie dans une heure.';
+  if(/invalid login credentials/i.test(m)) return 'Adresse ou mot de passe incorrect. Pas encore de mot de passe ? Touche « Recevoir un code par e-mail » : tu le choisiras juste après.';
   if(/signups not allowed|signup is disabled|signups are disabled/i.test(m)) return 'La création de compte n\'est pas encore ouverte.';
   if(/email not confirmed/i.test(m)) return 'Adresse pas encore confirmée : reçois un code par e-mail pour la confirmer.';
   if(/password should be|weak password|at least \d+ characters/i.test(m)) return 'Mot de passe trop faible : 8 caractères au moins, pas un mot courant.';
@@ -2582,6 +2593,11 @@ function authErrorText(e) {
 }
 
 var AUTH_GAP_MS = 60000, _authTick = null, _authMode = 'in', AUTH_PASS_MIN = 8;
+/* Deux chemins mènent au mot de passe quand le compte existe déjà (les inscriptions sont fermées dans Supabase) :
+   - « Créer un compte » avec l'adresse du compte : le mot de passe choisi attend en mémoire (_authPendingPass, jamais
+     écrit sur l'appareil), un code confirme que c'est bien le titulaire, puis le mot de passe est enregistré ;
+   - « Recevoir un code » : une fois entré, ARC propose de choisir un mot de passe (_authAskPass), « Plus tard » possible. */
+var _authPendingPass = '', _authAskPass = false, AUTH_CLOSED = /signups not allowed|signup is disabled|signups are disabled/i;
 function authSentAt() { try { return Number(localStorage.getItem('arc_auth_sent_at')) || 0; } catch(e) { return 0; } }
 /* Après un envoi, « Renvoyer un code » attend une minute : chaque code demandé annule le précédent et l'envoi
    d'e-mails est limité par heure côté Supabase. */
@@ -2593,6 +2609,9 @@ function authCooldown() {
 }
 function authShowCodeStep(email) {
   document.getElementById('auth-code-to').textContent = email;
+  // Mot de passe en attente : on tape le code ici (le lien de l'e-mail rechargerait la page et ferait oublier le mot de passe choisi)
+  document.getElementById('auth-code-pre').textContent = _authPendingPass ? 'Ton compte existe déjà. Tape le code envoyé à ' : 'Il est parti à ';
+  document.getElementById('auth-code-post').textContent = _authPendingPass ? ' : ton mot de passe sera enregistré.' : '. Tape le dernier code reçu, ou touche le lien de l\'e-mail sur cet appareil.';
   document.getElementById('auth-code-inp').value = '';
   authErr('auth-code-err', '');
   showAuthScreen('auth-code'); authCooldown();
@@ -2633,7 +2652,25 @@ function authSetMode(mode) {
   document.getElementById('auth-go').textContent = up ? 'Créer mon compte' : 'Se connecter';
   document.getElementById('auth-pass-inp').setAttribute('autocomplete', up ? 'new-password' : 'current-password');
   document.getElementById('auth-send').hidden = up;
+  _authPendingPass = '';
   authErr('auth-email-err', '');
+}
+// « Créer un compte » refusé parce que les inscriptions sont fermées : si l'adresse a déjà un compte, un code part et
+// le mot de passe choisi attend. Renvoie false si l'adresse n'a pas de compte (rien n'est envoyé, rien n'est gardé).
+async function authClaimWithCode(email, pass) {
+  if(authSentAt() + AUTH_GAP_MS <= Date.now()) {
+    var res = await _sb.auth.signInWithOtp({ email: email, options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname } });
+    if(res.error) { if(/user not found|not allowed for otp/i.test(res.error.message || '') || AUTH_CLOSED.test(res.error.message || '')) return false; throw res.error; }
+    try { localStorage.setItem('arc_auth_sent_at', String(Date.now())); } catch(e) {}
+  }
+  _authPendingPass = pass;
+  authShowCodeStep(email);
+  return true;
+}
+// Après une étape qui passait devant (premier appareil) : revenir au mot de passe à choisir, sinon fermer.
+function authDone() {
+  if(_authAskPass && _session) { authErr('auth-pass-err', ''); showAuthScreen('auth-pass'); }
+  else hideAuthScreen();
 }
 function authTogglePass(btnId, inpId) {
   var b = document.getElementById(btnId), i = document.getElementById(inpId), show = i.type === 'password';
@@ -2653,6 +2690,7 @@ async function authGo() {
       // La suite passe par onAuthStateChange → SIGNED_IN
     } else {
       var up = await _sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: location.origin + location.pathname } });
+      if(up.error && AUTH_CLOSED.test(up.error.message || '') && await authClaimWithCode(email, pass)) { document.getElementById('auth-pass-inp').value = ''; btn.disabled = false; return; }
       if(up.error) throw up.error;
       var u = up.data && up.data.user;
       if(u && Array.isArray(u.identities) && u.identities.length === 0) { authSetMode('in'); authErr('auth-email-err', 'Cette adresse a déjà un compte : connecte-toi.'); }
@@ -2672,6 +2710,7 @@ async function authSavePass() {
     var res = await _sb.auth.updateUser({ password: pass });
     if(res.error) throw res.error;
     document.getElementById('auth-newpass-inp').value = '';
+    _authAskPass = false;
     hideAuthScreen(); toast('Mot de passe enregistré');
   } catch(e) { authErr('auth-pass-err', authErrorText(e)); }
   btn.disabled = false;
@@ -2685,7 +2724,16 @@ async function authVerifyCode() {
   try {
     var res = await _sb.auth.verifyOtp({ email: email, token: code, type: 'email' });
     if(res.error) throw res.error;
-    // La suite (fermeture de l'écran, synchronisation) passe par onAuthStateChange → SIGNED_IN
+    // La fermeture de l'écran et la synchronisation passent par onAuthStateChange → SIGNED_IN.
+    // Reste le mot de passe : celui choisi dans « Créer un compte » est enregistré ; sinon ARC propose d'en choisir un.
+    var pend = _authPendingPass; _authPendingPass = '';
+    btn.disabled = false;
+    if(pend) {
+      var up = await _sb.auth.updateUser({ password: pend });
+      if(up.error) { _authAskPass = true; showAuthScreen('auth-pass'); authErr('auth-pass-err', authErrorText(up.error)); }
+      else toast('Connecté · mot de passe enregistré');
+    } else { _authAskPass = true; authErr('auth-pass-err', ''); showAuthScreen('auth-pass'); }
+    return;
   } catch(e) { authErr('auth-code-err', authErrorText(e)); }
   btn.disabled = false;
 }
@@ -2717,7 +2765,7 @@ async function authMakeReference() {
     authErr('auth-ref-err', 'Envoi impossible : réessaie dans un instant.');
     return;
   }
-  hideAuthScreen();
+  authDone();
   toast('☁ Cet appareil est la référence de ton compte');
 }
 
@@ -4311,12 +4359,12 @@ document.addEventListener("click",function(ev){
   if(t.id==="auth-eye"){ authTogglePass("auth-eye","auth-pass-inp"); return; }
   if(t.id==="auth-eye2"){ authTogglePass("auth-eye2","auth-newpass-inp"); return; }
   if(t.id==="auth-pass-save"){ authSavePass(); return; }
-  if(t.id==="auth-pass-later"){ hideAuthScreen(); return; }
+  if(t.id==="auth-pass-later"){ _authAskPass=false; hideAuthScreen(); return; }
   if(t.closest&&t.closest("#btn-pass")){ var dd=document.getElementById("h-menu-dd"); if(dd) dd.classList.remove("open"); if(_session){ authErr("auth-pass-err",""); showAuthScreen("auth-pass"); } return; }
-  if(t.id==="auth-back"){ authErr("auth-email-err",""); showAuthScreen("auth-email"); return; }
+  if(t.id==="auth-back"){ _authPendingPass=""; authErr("auth-email-err",""); showAuthScreen("auth-email"); return; }
   if(t.id==="auth-skip"||t.closest("#auth-skip")){ try{ sessionStorage.setItem("arc_auth_skip","1"); }catch(e){} hideAuthScreen(); renderAuthUI(); return; }
   if(t.id==="auth-ref-yes"){ authMakeReference(); return; }
-  if(t.id==="auth-ref-no"){ _syncPaused=true; hideAuthScreen(); renderAuthUI(); toast("Rien n'a été envoyé · question au prochain lancement"); return; }
+  if(t.id==="auth-ref-no"){ _syncPaused=true; authDone(); renderAuthUI(); toast("Rien n'a été envoyé · question au prochain lancement"); return; }
   if(t.id==="sante-export-btn"){ exportSante(); return; }
   if(t.getAttribute&&t.getAttribute("data-action")==="notif"){ toast("Notifications bientôt disponibles"); document.getElementById("h-menu-dd").classList.remove("open"); return; }
   // Toggle task

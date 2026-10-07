@@ -288,6 +288,32 @@ Santé et Juridique, passe de design (branche `poles`, 7 octobre en fin d'après
   proxy 41/41 ; 569 `<div` / 569 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
   Aucun mode de fusion (règle Safari).
 
+Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` à `b57a648`, PR #10 fusionnée à 17 h 59) :
+- **Ce que Rayan a vécu** (capture du Mac, 20 h 12) : onglet « Créer un compte », son adresse, un mot de passe →
+  « La création de compte n'est pas encore ouverte. » Il en a conclu qu'il ne pouvait entrer que sans connexion.
+  Cause : son compte existe déjà et les inscriptions sont fermées dans Supabase ; l'écran ne disait pas quoi faire.
+- **Correction** : quand « Créer un compte » est refusé parce que les inscriptions sont fermées, ARC demande un code
+  pour cette adresse (`authClaimWithCode`, `shouldCreateUser: false`). Si l'adresse a un compte : étape « Ton code »
+  (« Ton compte existe déjà. Tape le code envoyé à … : ton mot de passe sera enregistré. »), puis le mot de passe
+  choisi est enregistré (`updateUser`) et l'écran se ferme. Si l'adresse n'a pas de compte : message inchangé.
+  Le mot de passe choisi attend en mémoire (`_authPendingPass`), jamais sur l'appareil ; il est oublié si on change
+  d'onglet de la carte, d'adresse, ou si la page se recharge.
+- **Après un code tapé ou le lien de l'e-mail** (« Mot de passe oublié ? »), ARC propose aussitôt « Ton mot de passe »
+  (`_authAskPass`, `_authFromLink`, `authDone`), avec « Plus tard ». Une étape de compte ouverte (mot de passe,
+  premier appareil) ne se referme plus toute seule quand Supabase renvoie `SIGNED_IN` au retour sur l'onglet.
+- Messages : « Pas encore de mot de passe ? Touche « Recevoir un code par e-mail » : tu le choisiras juste après. » ;
+  la mention de « J'ai déjà un code » (bouton disparu) est retirée.
+- **Côté Supabase, rien n'a changé et rien n'a été lu** : inscriptions toujours fermées. Non essayé en réel :
+  l'enregistrement du mot de passe juste après un code (`updateUser`) n'est prouvé que contre de fausses réponses.
+- Tests : connexion 19/19 (six contrôles ajoutés), entrée-fond 25/25, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
+  25/25, matin 27/27, proxy 41/41 ; 569 `<div` / 569 `</div>`.
+- **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
+  la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
+  départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son
+  compte contient du contenu Santé ou Juridique. Vu dans ses captures : la barre du haut de l'accueil déborde à
+  droite sur iPhone (« Non connecté » et « War Room » sur deux lignes), pas corrigé.
+- **À suivre, demandé par Rayan** : « finir de modifier cette page » (l'écran d'entrée), après la connexion.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
