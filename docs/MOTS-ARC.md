@@ -212,6 +212,10 @@ est un mot du mécanisme (le rangement par l'IA) : il ne doit pas apparaître so
 Ce que la deuxième phrase engage : aujourd'hui ARC attache une pensée à un projet qui existe déjà et lui donne une
 étape ; faire naître un projet depuis une pensée reste à construire (chantier suivant de la liste de Rayan).
 
+Validé par Rayan le 8 octobre à 1 h 21 : « là on y est !!! ». À 1 h 41, il fixe les couleurs des trois points :
+Penser en rouge, Développer en orange, Entreprendre en vert, chacun ne s'allumant que lorsque le fil de lumière
+l'atteint (des feux de départ : ARC est le point de départ).
+
 ### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
 
 | Avant | Après |

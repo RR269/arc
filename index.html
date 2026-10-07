@@ -1371,13 +1371,21 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
      Ensuite une lumière descend la frise (Penser → Développer → Entreprendre) puis file le long de l'horizon vert.
      Rien d'autre ne bouge. Tout est en transform et opacity, sans mode de fusion, et s'arrête si l'appareil demande
      moins d'animations. */
-#auth-screen{--a-poussin:#FFE066;--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Plus Jakarta Sans",sans-serif;--g0:-16deg;--g1:40deg}
+#auth-screen{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Plus Jakarta Sans",sans-serif;--g0:-10deg;--g1:24deg}
 .auth-pitch,.auth-proof,.auth-card{font-family:var(--fa)}
 .auth-pitch{font-size:17px;line-height:1.4;letter-spacing:-.2px}
-.auth-proof li b{font-size:17px;font-weight:600;letter-spacing:-.25px}
-.auth-proof li span{font-size:15px;line-height:1.35;letter-spacing:-.1px;color:#C9C9CF}
-.auth-proof li i{background:color-mix(in srgb,var(--c) 90%,#fff);box-shadow:0 0 14px color-mix(in srgb,var(--c) 75%,transparent)}
-.auth-proof li:not(:last-child)::after{background:linear-gradient(color-mix(in srgb,var(--c) 70%,transparent),color-mix(in srgb,var(--n) 70%,transparent))}
+/* La frise (8 octobre, 1 h 41, demande de Rayan) : typographie façon Apple bien visible (le mot en grand, serré, la
+   phrase en gris dessous) ; points rouge, orange, vert, comme des feux de départ. Chaque point a deux états : éteint
+   (le <i>) et allumé (son ::after, avec la lueur). Le fil a de même un trait éteint (::after du <li>) et un trait de
+   lumière (::before) qui descend. Sans animation, tout est allumé. */
+.auth-proof{gap:18px}
+.auth-proof li{grid-template-columns:12px 1fr;column-gap:14px;row-gap:2px}
+.auth-proof li b{font-size:20px;font-weight:600;line-height:24px;letter-spacing:-.45px}
+.auth-proof li span{font-size:16px;line-height:21px;letter-spacing:-.2px;color:#B4B4BA}
+.auth-proof li i{position:relative;width:12px;height:12px;background:color-mix(in srgb,var(--c) 30%,#0E0E10);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 50%,transparent)}
+.auth-proof li i::after{content:"";position:absolute;inset:0;border-radius:50%;background:color-mix(in srgb,var(--c) 86%,#fff);box-shadow:0 0 6px var(--c),0 0 14px var(--c),0 0 30px color-mix(in srgb,var(--c) 70%,transparent)}
+.auth-proof li:not(:last-child)::after{left:5px;width:2px;top:23px;bottom:-19px;background:linear-gradient(color-mix(in srgb,var(--c) 30%,transparent),color-mix(in srgb,var(--n) 30%,transparent))}
+.auth-proof li:not(:last-child)::before{content:"";position:absolute;left:5px;width:2px;top:23px;bottom:-19px;border-radius:1px;background:linear-gradient(color-mix(in srgb,var(--c) 90%,#fff),color-mix(in srgb,var(--n) 90%,#fff));box-shadow:0 0 6px color-mix(in srgb,var(--c) 70%,transparent),0 0 12px color-mix(in srgb,var(--n) 60%,transparent);transform-origin:50% 0}
 /* La carte */
 .auth-card{padding:16px 16px 6px;border-radius:28px;border-color:rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -40px rgba(0,0,0,.95);letter-spacing:-.1px}
 .auth-tabs{position:relative;gap:0;padding:2px;border-radius:13px;background:rgba(120,120,128,.26);border:none;margin-bottom:14px}
@@ -1427,9 +1435,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* Le mouvement */
 @keyframes authLever{from{opacity:0}to{opacity:1}}
 @keyframes authPoser{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes authPoint{0%,9%,100%{transform:scale(1)}3%{transform:scale(1.45)}}
-@keyframes authFlux{0%{background-position:0 -22px}11%,100%{background-position:0 calc(100% + 22px)}}
-@keyframes authEclat{0%{opacity:0;transform:rotate(var(--g0)) translateY(calc(var(--r) * -1))}3%,40%{opacity:1}44%,100%{opacity:0;transform:rotate(var(--g1)) translateY(calc(var(--r) * -1))}}
+@keyframes authFeu1{0%{opacity:0;transform:scale(.6)}4%{opacity:1;transform:scale(1.5)}10%,78%{opacity:1;transform:scale(1)}90%,100%{opacity:0;transform:scale(1)}}
+@keyframes authFeu2{0%,19%{opacity:0;transform:scale(.6)}23%{opacity:1;transform:scale(1.5)}29%,78%{opacity:1;transform:scale(1)}90%,100%{opacity:0;transform:scale(1)}}
+@keyframes authFeu3{0%,37%{opacity:0;transform:scale(.6)}41%{opacity:1;transform:scale(1.5)}47%,78%{opacity:1;transform:scale(1)}90%,100%{opacity:0;transform:scale(1)}}
+@keyframes authFil1{0%,4%{opacity:1;transform:scaleY(0)}19%,78%{opacity:1;transform:scaleY(1)}90%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
+@keyframes authFil2{0%,23%{opacity:1;transform:scaleY(0)}37%,78%{opacity:1;transform:scaleY(1)}90%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
+@keyframes authEclat{0%,41%{opacity:0;transform:rotate(var(--g0)) translateY(calc(var(--r) * -1))}44%,76%{opacity:1}80%,100%{opacity:0;transform:rotate(var(--g1)) translateY(calc(var(--r) * -1))}}
 @media(prefers-reduced-motion:no-preference){
   #auth-screen.active .auth-world{animation:authLever 1.5s cubic-bezier(.2,.7,.2,1) both}
   #auth-screen.active .w-orange{animation-delay:.1s}
@@ -1442,13 +1453,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #auth-screen.active .auth-proof li:nth-child(2){animation-delay:.54s}
   #auth-screen.active .auth-proof li:nth-child(3){animation-delay:.66s}
   #auth-screen.active .auth-card{animation:authPoser .9s cubic-bezier(.16,1,.3,1) .8s both}
-  /* Le récit qui revient, toutes les 13 s : la lumière descend la frise, puis file le long de l'horizon vert */
-  .auth-proof li i{animation:authPoint 13s ease-out 2.6s infinite}
-  .auth-proof li:nth-child(2) i{animation-delay:3.9s}
-  .auth-proof li:nth-child(3) i{animation-delay:5.2s}
-  .auth-proof li:not(:last-child)::before{content:"";position:absolute;left:3.5px;width:3px;top:22px;bottom:-17px;border-radius:2px;background:linear-gradient(transparent,color-mix(in srgb,var(--n) 55%,#fff),transparent) 0 -22px/100% 22px no-repeat;animation:authFlux 13s linear 2.7s infinite}
-  .auth-proof li:nth-child(2)::before{animation-delay:4s}
-  .w-vert::after{content:"";position:absolute;left:var(--x);top:var(--y);width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:radial-gradient(circle,#fff 0,color-mix(in srgb,var(--a-vert) 55%,#fff) 40%,transparent 72%);box-shadow:0 0 14px 3px color-mix(in srgb,var(--a-vert) 60%,transparent);opacity:0;animation:authEclat 13s cubic-bezier(.35,0,.65,1) 5.6s infinite}
+  /* Le récit qui revient, en continu (8 s) : le point rouge s'allume, le fil de lumière descend, l'orange s'allume
+     quand il l'atteint, puis le vert ; la lumière file alors le long de l'horizon vert ; tout s'éteint et repart.
+     Les animations attendent la fin de l'arrivée (2 s) dans leur état de départ : éteint. */
+  .auth-proof li i::after{animation:authFeu1 8s ease-out 2s infinite backwards}
+  .auth-proof li:nth-child(2) i::after{animation-name:authFeu2}
+  .auth-proof li:nth-child(3) i::after{animation-name:authFeu3}
+  .auth-proof li:not(:last-child)::before{animation:authFil1 8s linear 2s infinite backwards}
+  .auth-proof li:nth-child(2)::before{animation-name:authFil2}
+  .w-vert::after{content:"";position:absolute;left:var(--x);top:var(--y);width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:radial-gradient(circle,#fff 0,color-mix(in srgb,var(--a-vert) 55%,#fff) 40%,transparent 72%);box-shadow:0 0 14px 3px color-mix(in srgb,var(--a-vert) 60%,transparent);opacity:0;animation:authEclat 8s linear 2s infinite backwards}
 }
 @media(prefers-reduced-motion:reduce){.auth-tabs::before,.auth-field .auth-lbl,.auth-btn,.auth-skip-go{transition:none}}
 /* Mac et tablette large : le fond tient à l'écran. Les arcs se règlent sur la largeur libre de chaque côté de la
@@ -2480,9 +2493,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <h1 class="auth-h1"><span class="auth-h1-light">Tu as une id&eacute;e.</span><span class="auth-h1-gradient">Elle devient r&eacute;elle.</span></h1>
     <p class="auth-pitch">Garde en t&ecirc;te le strict n&eacute;cessaire. Le&nbsp;reste&nbsp;prend&nbsp;vie&nbsp;ici.</p>
     <ul class="auth-proof" aria-label="Ce qu'ARC fait">
-      <li style="--c:var(--a-poussin);--n:var(--a-orange)"><i></i><b>Penser</b><span>D&eacute;pose ton id&eacute;e&nbsp;: tout part d&rsquo;ici.</span></li>
-      <li style="--c:var(--a-orange);--n:var(--a-rouge)"><i></i><b>D&eacute;velopper</b><span>Fais-en un projet, &eacute;tape par &eacute;tape.</span></li>
-      <li style="--c:var(--a-rouge)"><i></i><b>Entreprendre</b><span>Passe &agrave; l&rsquo;action et pilote tout d&rsquo;ici.</span></li>
+      <li style="--c:var(--a-rouge);--n:var(--a-orange)"><i></i><b>Penser</b><span>D&eacute;pose ton id&eacute;e&nbsp;: tout part d&rsquo;ici.</span></li>
+      <li style="--c:var(--a-orange);--n:var(--a-vert)"><i></i><b>D&eacute;velopper</b><span>Fais-en un projet, &eacute;tape par &eacute;tape.</span></li>
+      <li style="--c:var(--a-vert)"><i></i><b>Entreprendre</b><span>Passe &agrave; l&rsquo;action et pilote tout d&rsquo;ici.</span></li>
     </ul>
     <div class="auth-card">
     <div class="auth-step active" id="auth-email">

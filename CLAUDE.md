@@ -391,6 +391,23 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   proposition, même branche et même PR #13, **à valider** : « Penser · Dépose ton idée : tout part d'ici. »,
   « Développer · Fais-en un projet, étape par étape. », « Entreprendre · Passe à l'action et pilote tout d'ici. »
   La deuxième engage le chantier « faire naître un monde depuis une pensée », pas encore construit.
+- **Phrases validées par Rayan (8 octobre, 1 h 21) : « là on y est !!! »** (les trois de la PR #13).
+- **La frise en feux de départ (même branche `mots-frise`, PR #13, 8 octobre 1 h 41)**. Rayan : « la calligraphie style
+  Apple n'est pas visible sur les trois points ; mettre le point jaune en rouge, l'orange reste orange, le rouge
+  devient vert, et le tout lumineux, mais les points ne deviennent lumineux que quand le fil de lumière arrive à
+  eux ; et ce en continu ». Fait :
+  - Typographie : le mot à 20 px, demi-gras, serré (`-0,45 px`) ; la phrase à 16 px en gris `#B4B4BA`.
+  - Couleurs : Penser rouge, Développer orange, Entreprendre vert (`--a-poussin` n'existe plus).
+  - Chaque point a deux états : éteint (le `<i>`, teinte sombre) et allumé (son `::after`, avec la lueur). Le fil a
+    un trait éteint (`li::after`) et un trait de lumière (`li::before`) qui descend (`scaleY`).
+  - Boucle de 8 s, en continu (`authFeu1/2/3`, `authFil1/2`, `authEclat`) : le rouge s'allume, le fil descend,
+    l'orange s'allume quand il l'atteint, puis le vert ; la lumière file alors le long de l'horizon vert ; tout
+    s'éteint et repart. `authFlux` et `authPoint` sont retirés. Sans animation, les trois points restent allumés.
+  - Tests : entrée-fond 33/33 (deux contrôles ajoutés : l'ordre d'allumage image par image, et l'état sans
+    animation) ; contraste le plus faible 4,84 : 1 ; les sept autres suites passent ; 572 `<div` / 572 `</div>`.
+- **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
+  (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
+  sur les données à la création de compte (texte à écrire avec lui).
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son

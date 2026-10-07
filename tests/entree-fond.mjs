@@ -194,7 +194,7 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
 }
 
 /* 6. Le cadran et le mouvement (demande de Rayan, 7 octobre 22 h 42) : l'horizon qui porte la carte est vert, le violet
-      ferme le bas ; frise jaune poussin, orange, rouge ; carte sans capitales ni chasse fixe, champs à 17 px, curseur
+      ferme le bas ; frise rouge, orange, vert ; carte sans capitales ni chasse fixe, champs à 17 px, curseur
       du sélecteur qui suit l'onglet, libellés flottants ; un mouvement qui s'arrête si l'appareil le demande. */
 {
   const { ctx, page, errors } = await open({ width: 390, height: 844 }, 1);
@@ -221,11 +221,11 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
     const avant = curseur(); authSetMode('up'); const apres = curseur(); authSetMode('in');
     const inp = document.getElementById('auth-email-inp'), lbl = inp.nextElementSibling; inp.blur();
     const repos = lbl.getBoundingClientRect().top; inp.value = 'a@b.fr'; const flotte = lbl.getBoundingClientRect().top; inp.value = '';
-    return { points: points.map(res), attendu: ['#FFE066', '#E97D00', '#DA0D23'].map(res), maj: textes.filter(t => t.maj !== 'none').map(t => t.t), fixe: textes.filter(t => t.fixe).map(t => t.t),
+    return { points: points.map(res), attendu: ['#DA0D23', '#E97D00', '#4FB82A'].map(res), maj: textes.filter(t => t.maj !== 'none').map(t => t.t), fixe: textes.filter(t => t.fixe).map(t => t.t),
              petits: textes.filter(t => t.px < 13).map(t => t.t), champs, avant, apres, largeur: Math.round(document.querySelector('.auth-tabs').getBoundingClientRect().width / 2), monte: Math.round(repos - flotte),
              police: cs(carte).fontFamily.split(',')[0].trim(), rayon: parseFloat(cs(carte).borderTopLeftRadius) };
   });
-  ok(cadran.points.join() === cadran.attendu.join(), 'Frise : Penser en jaune poussin, Développer en orange, Entreprendre en rouge', cadran.points.join(' · '));
+  ok(cadran.points.join() === cadran.attendu.join(), 'Frise : Penser en rouge, Développer en orange, Entreprendre en vert', cadran.points.join(' · '));
   ok(!cadran.maj.length && !cadran.fixe.length && !cadran.petits.length && cadran.champs.every(v => v >= 17) && /apple-system/.test(cadran.police),
      'Carte : police du système (San Francisco sur iPhone et Mac), ni capitales ni chasse fixe, aucun texte sous 13 px, champs à 17 px', `police ${cadran.police}, champs ${cadran.champs.join(' / ')} px${cadran.maj.length ? ', capitales : ' + cadran.maj.join(', ') : ''}${cadran.fixe.length ? ', chasse fixe : ' + cadran.fixe.join(', ') : ''}`);
   ok(cadran.avant === 0 && Math.abs(cadran.apres - cadran.largeur) <= 4 && cadran.monte >= 8, 'Sélecteur : le curseur suit l\'onglet ; champ rempli : le libellé monte au-dessus de la valeur', `curseur ${cadran.avant} → ${cadran.apres} px, libellé monté de ${cadran.monte} px`);
@@ -248,7 +248,25 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   ok(calme === 0 && vie.enCours > 0 && permis && (vie.carte === 'none' || /matrix\(1, 0, 0, 1, 0, 0\)/.test(vie.carte)) && vie.opaque && Math.abs(vie.y - vie.vrai) <= 1 && !errors.length && !err2.length,
      'Mouvement : il tourne, seulement en transform et opacity, laisse la carte et l\'horizon à leur place, et s\'arrête si l\'appareil demande moins d\'animations',
      `en cours ${vie.enCours} (0 en mode calme : ${calme}), propriétés animées : ${vie.props.join(', ')}, horizon ${vie.y} px pour une carte à ${vie.vrai} px`);
+  // Les feux : chaque point ne s'allume que lorsque le fil de lumière l'atteint, puis tout s'éteint et repart
+  const feux = await p2.evaluate(() => {
+    const anims = document.getAnimations().filter(a => /^auth(Feu|Fil)/.test(a.animationName || ''));
+    const etat = part => { anims.forEach(a => { a.pause(); a.currentTime = 2000 + part * 8000; });
+      const lis = [...document.querySelectorAll('#auth-screen .auth-proof li')];
+      const o = lis.map(li => Math.round(parseFloat(getComputedStyle(li.querySelector('i'), '::after').opacity)));
+      const fil = lis.slice(0, 2).map(li => +new DOMMatrixReadOnly(getComputedStyle(li, '::before').transform).m22.toFixed(2));
+      return o.join('') + ' fil ' + fil.join('/'); };
+    const r = { n: anims.length, avant: (() => { anims.forEach(a => { a.pause(); a.currentTime = 500; }); return [...document.querySelectorAll('#auth-screen .auth-proof li i')].map(i => Math.round(parseFloat(getComputedStyle(i, '::after').opacity))).join(''); })(),
+                t10: etat(0.10), t30: etat(0.30), t50: etat(0.50), t95: etat(0.95) };
+    anims.forEach(a => a.play()); return r;
+  });
+  ok(feux.n === 5 && feux.avant === '000' && /^100 fil 0\.\d+\/0$/.test(feux.t10) && /^110 fil 1\/0\.\d+$/.test(feux.t30) && feux.t50 === '111 fil 1/1' && /^000 /.test(feux.t95),
+     'Feux : le rouge s\'allume, le fil descend, l\'orange s\'allume quand il l\'atteint, puis le vert ; tout s\'éteint et repart', `avant ${feux.avant} · 10 % ${feux.t10} · 30 % ${feux.t30} · 50 % ${feux.t50} · 95 % ${feux.t95}`);
   await ctx2.close();
+  const calme2 = await open({ width: 390, height: 844 }, 1);
+  const fixes = await calme2.page.evaluate(() => [...document.querySelectorAll('#auth-screen .auth-proof li i')].map(i => getComputedStyle(i, '::after').opacity).join(''));
+  ok(fixes === '111', 'Sans animation, les trois points sont allumés', fixes);
+  await calme2.ctx.close();
 }
 
 /* 7. La frise dit l'utilité de chaque mot (remarque de Rayan, 7 octobre 23 h 46), une ligne par point sur téléphone */
