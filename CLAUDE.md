@@ -329,6 +329,11 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   Sans confirmation d'e-mail, n'importe qui peut créer des comptes avec n'importe quelle adresse. Héberger les
   données de santé d'autres personnes engage Rayan (RGPD) : à traiter avant d'inviter quelqu'un.
 - Tests après cette décision : connexion 24/24, les sept autres suites inchangées.
+- **Fait par Rayan le 7 octobre** : PR #11 fusionnée à 20 h 59 ; dans Supabase (Authentication › Sign In / Providers,
+  bloc « User Signups »), « Allow new users to sign up » activé et « Confirm email » désactivé, enregistré à 22 h 02
+  (sa capture : « Successfully updated settings »). Les inscriptions sont donc ouvertes, sans confirmation d'e-mail.
+  Reste à constater par lui : son propre passage (« Créer un compte » avec son adresse → un code, une fois → mot de
+  passe enregistré). Sa liste « Users » ne montre qu'un compte, le sien.
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son
