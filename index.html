@@ -1324,7 +1324,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-glow::after{content:"";position:absolute;inset:0;opacity:.42;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 /* L'écriture : celle d'ARC. Le logo d'origine, le titre blanc puis le dégradé de l'accueil. */
 .auth-mark{animation:none}
-.auth-h1{font-size:clamp(30px,7.4vw,44px);letter-spacing:-1.4px;line-height:1.08;margin:0 0 16px}
+.auth-h1{font-size:clamp(32px,8.4vw,46px);letter-spacing:-1.4px;line-height:1.08;margin:0 0 16px}
 .auth-h1-light{font-weight:700;letter-spacing:-1.2px;margin-bottom:6px}
 .auth-h1-gradient{font-weight:800}
 /* Les mots (remarque de Rayan, 7 octobre 4 h 40) : plus de pavé. Le paragraphe de cinq lignes est retiré ; il n'en
@@ -1332,9 +1332,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
    se montre : une frise de trois étapes, reliées par un trait (charte, règles 5 et 6 : un enchaînement se montre). */
 .auth-pitch{font-size:16px;line-height:1.45;color:#D6D6DC;margin-bottom:22px}
 .auth-proof{gap:14px;margin-bottom:36px}
-.auth-proof li{position:relative;display:grid;grid-template-columns:10px auto 1fr;column-gap:12px;align-items:baseline;font-weight:400;color:#CFCFD6;font-size:15px}
+.auth-proof li{position:relative;display:grid;grid-template-columns:10px 1fr;column-gap:12px;row-gap:1px;align-items:baseline;font-weight:400;color:#CFCFD6;font-size:15px}
 .auth-proof li i{width:10px;height:10px;align-self:center}
 .auth-proof li b{font-size:16px;font-weight:700;color:#F5F5F7;white-space:nowrap}
+.auth-proof li span{grid-column:2}
 .auth-proof li:not(:last-child)::after{content:"";position:absolute;left:4.25px;width:1.5px;top:22px;bottom:-17px;border-radius:1px;background:rgba(255,255,255,.18)}
 .auth-input:focus{border-color:rgba(0,143,200,.8);box-shadow:0 0 0 3px rgba(0,143,200,.2)}
 .auth-btn{background:linear-gradient(90deg,var(--a-orange) 0%,var(--a-rouge) 18%,var(--a-violet) 100%);box-shadow:0 12px 30px -10px rgba(218,13,35,.55)}
@@ -1347,7 +1348,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-input::placeholder{color:#9A9AA2}
 /* La carte : un verre sombre, le fond passe derrière elle, adouci */
 .auth-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)),rgba(9,9,12,.62);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5)}
-@media(max-width:400px){.auth-proof li{grid-template-columns:10px 1fr;row-gap:1px}.auth-proof li span{grid-column:2}}
 /* Mac et tablette large : le fond tient à l'écran. Les arcs se règlent sur la largeur libre de chaque côté de la
    colonne de texte (440 px au centre) et s'arrêtent 30 à 40 px avant elle : aucun arc ne passe sous un texte. */
 @media(min-width:861px){
@@ -2027,13 +2027,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 <div id="auth-screen">
   <div class="auth-glow" aria-hidden="true"><i class="auth-world w-rouge"></i><i class="auth-world w-orange"></i><i class="auth-world w-jaune"></i><i class="auth-world w-violet"></i><i class="auth-world w-cyan"></i><i class="auth-world w-vert"></i></div>
   <div class="auth-box">
-    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">L'id&eacute;e devient r&eacute;elle</div></div></div>
-    <h1 class="auth-h1"><span class="auth-h1-light">Ta t&ecirc;te n'est pas faite pour tout porter.</span><span class="auth-h1-gradient">Une pens&eacute;e na&icirc;t. Un monde grandit.</span></h1>
+    <div class="auth-brand"><div class="auth-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div><div><div class="auth-brand-name">ARC</div><div class="auth-brand-sub">Penser. Entreprendre.</div></div></div>
+    <h1 class="auth-h1"><span class="auth-h1-light">Tu as une id&eacute;e.</span><span class="auth-h1-gradient">Elle devient r&eacute;elle.</span></h1>
     <p class="auth-pitch">Garde en t&ecirc;te le strict n&eacute;cessaire. Le&nbsp;reste&nbsp;prend&nbsp;vie&nbsp;ici.</p>
-    <ul class="auth-proof" aria-label="Ce qu'ARC fait">
-      <li style="--c:var(--a-jaune)"><i></i><b>D&eacute;pose</b><span>&agrave; la voix ou au clavier, &agrave; l'instant</span></li>
-      <li style="--c:var(--a-rouge)"><i></i><b>Fais na&icirc;tre</b><span>chaque pens&eacute;e devient un monde &agrave; toi</span></li>
-      <li style="--c:var(--a-cyan)"><i></i><b>Fais grandir</b><span>chaque matin, la prochaine &eacute;tape</span></li>
+    <ul class="auth-proof" aria-label="Comment ton id&eacute;e devient r&eacute;elle">
+      <li style="--c:var(--a-jaune)"><i></i><b>Tu la d&eacute;poses</b><span>en un geste, avant qu'elle devienne du&nbsp;vent</span></li>
+      <li style="--c:var(--a-rouge)"><i></i><b>Elle prend forme</b><span>rang&eacute;e, avec sa prochaine &eacute;tape</span></li>
+      <li style="--c:var(--a-cyan)"><i></i><b>ARC t'accompagne</b><span>tes t&acirc;ches et tes points, partout &agrave;&nbsp;jour</span></li>
     </ul>
     <div class="auth-card">
     <div class="auth-step active" id="auth-email">

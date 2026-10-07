@@ -182,8 +182,8 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
   ressemble à un drapeau ». Ces couleurs sont pour LE FOND. L'écriture reste celle d'ARC.
 - **Règle à garder** : jamais six bandes voisines dans l'ordre de l'arc-en-ciel, nulle part (c'est ce qui fait
   « drapeau »). Ici les couleurs sont séparées en deux familles (trois chaudes, trois froides), loin l'une de l'autre.
-- Les mots de l'écran sont ceux de `docs/MOTS-ARC.md` (titre « Ta tête n'est pas faite pour tout porter. » puis « Une
-  pensée naît. Un monde grandit. », sous le logo « Chaque pensée, un monde ») ; « J'ai déjà un code » n'existe plus.
+- Les mots de l'écran sont dans `docs/MOTS-ARC.md` (ils ont changé le 7 octobre à 6 h 17, voir plus bas) ; « J'ai
+  déjà un code » n'existe plus.
 - **Le titre** : blanc, puis le dégradé de l'accueil (`#FF9500` → `#FF2D55` → `#AF52DE`). Logo ARC d'origine (la marque
   en six arcs est retirée : le fond porte déjà les arcs).
 - **Le fond** : six « mondes » vus à leur horizon. Chacun est un `<i class="auth-world">` dans `.auth-glow` : un disque
@@ -205,9 +205,13 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - **Plus de pavé (7 octobre, 4 h 40, remarque de Rayan)** : le paragraphe de cinq lignes qui expliquait ARC est retiré.
   Restent le titre, une ligne et les trois étapes en frise, reliées par un trait. La ligne, choisie par Rayan à
   5 h 50 parmi cinq propositions : « Garde en tête le strict nécessaire. Le reste prend vie ici. » (« qu'il rapporte
-  ou non » est écarté : incompréhensible à l'écran, pas l'identité d'ARC). Sous le logo, « Chaque pensée, un monde »
-  n'était « pas à jour » pour Rayan (5 h 57) : remplacé par « L'idée devient réelle », **proposé, pas encore validé**
-  (trois autres propositions dans `docs/MOTS-ARC.md`). Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
+  ou non » est écarté : incompréhensible à l'écran, pas l'identité d'ARC).
+- **Toutes les phrases du haut changées sauf celle-là (7 octobre, 6 h 17, demande de Rayan)**, **proposé, pas encore
+  validé** : sous le logo « Penser. Entreprendre. » ; titre « Tu as une idée. » (blanc) puis « Elle devient réelle. »
+  (dégradé) ; frise « Tu la déposes · en un geste, avant qu'elle devienne du vent », « Elle prend forme · rangée, avec
+  sa prochaine étape », « ARC t'accompagne · tes tâches et tes points, partout à jour ». Les anciennes phrases
+  (« Ta tête n'est pas faite pour tout porter », « Une pensée naît. Un monde grandit. », « Chaque pensée, un monde »,
+  Dépose / Fais naître / Fais grandir) ne sont plus sur l'écran. Tableau avant / après dans `docs/MOTS-ARC.md`. Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
   (détail dans `docs/MOTS-ARC.md`). Sur iPhone, le bouton « Se connecter » arrive maintenant dans le premier écran.
 - Tests : entrée-fond 23/23, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 569 `<div` /
   569 `</div>`. Vérifié dans Chromium seulement : **le rendu sur l'iPhone de Rayan (Safari) reste à voir par lui.**

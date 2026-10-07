@@ -129,6 +129,28 @@ vent, elle devient réelle grâce à ARC »). Autres propositions, si celle-ci n
 
 Contrainte : 25 signes au plus, pour tenir sous le logo sans toucher les arcs du coin sur un iPhone de 375 px.
 
+### Demande du 7 octobre, 6 h 17 : tout changer sauf « Garde en tête… »
+
+Rayan : « les trois points deviendront ce que les 4 phrases seront en haut. Tout changer (les phrases) à part
+"Garde en tête…" ». Lecture retenue : les quatre phrases du haut sont la ligne sous le logo, les deux lignes du titre
+et « Garde en tête… » ; cette dernière reste, tout le reste change, et les trois étapes en découlent.
+
+Ce qui est sur l'écran depuis, **proposé, pas encore validé par Rayan** (tout vient de ses mots de 5 h 48) :
+
+| Place | Avant | Maintenant | D'où ça vient |
+|---|---|---|---|
+| Sous le logo | Chaque pensée, un monde | **Penser. Entreprendre.** | « on accompagne l'entrepreneur, le libre penseur » |
+| Titre, blanc | Ta tête n'est pas faite pour tout porter. | **Tu as une idée.** | « on pense, on a une idée » |
+| Titre, dégradé | Une pensée naît. Un monde grandit. | **Elle devient réelle.** | « elle devient réelle grâce à ARC » |
+| Ligne | (inchangée) | Garde en tête le strict nécessaire. Le reste prend vie ici. | choisie par Rayan à 5 h 50 |
+| Étape 1 | Dépose · à la voix ou au clavier, à l'instant | **Tu la déposes** · en un geste, avant qu'elle devienne du vent | « en un clic », « au lieu qu'elle devienne du vent » |
+| Étape 2 | Fais naître · chaque pensée devient un monde à toi | **Elle prend forme** · rangée, avec sa prochaine étape | le rangement, tel qu'il marche aujourd'hui |
+| Étape 3 | Fais grandir · chaque matin, la prochaine étape | **ARC t'accompagne** · tes tâches et tes points, partout à jour | « on accompagne », « les tâches, les points, la synchronisation en temps réel » |
+
+Choix faits en écrivant : « un geste » plutôt qu'« un clic » (sur iPhone on touche ou on dicte) ; « partout à jour »
+plutôt que « synchronisation en temps réel » (pas de jargon) ; « l'impossible devient possible » laissé de côté (très
+grande promesse, que l'écran ne prouve pas). Les trois étapes s'affichent de la même façon sur iPhone et sur Mac.
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par
