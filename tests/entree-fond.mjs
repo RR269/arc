@@ -233,7 +233,7 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   const { ctx, page } = await open({ width: 390, height: 844 }, 1);
   const st = await page.addStyleTag({ content: '.auth-box{visibility:hidden!important}' });
   const total = await page.evaluate(() => document.getElementById('auth-screen').scrollHeight);
-  const vu = {}; let colores = 0, pixels = 0;
+  const vu = {}; let colores = 0, pixels = 0, noirs = 0;
   // Même teinte (à 14° près), vive et lumineuse : le bord d'un monde, pas une lueur éteinte
   const teinte = (r, g, b) => { const M = Math.max(r, g, b), m = Math.min(r, g, b), d = M - m; if (!d) return null; const h = M === r ? ((g - b) / d) % 6 : M === g ? (b - r) / d + 2 : (r - g) / d + 4; return { h: (h * 60 + 360) % 360, s: d / M, v: M / 255 }; };
   const cible = Object.fromEntries(Object.entries(SIX).map(([k, hex]) => [k, teinte(parseInt(hex.slice(1, 3), 16), parseInt(hex.slice(3, 5), 16), parseInt(hex.slice(5, 7), 16)).h]));
@@ -244,6 +244,7 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
     for (let i = 0; i < img.w * img.h; i++) {
       const r = img.px[i * img.bpp], g = img.px[i * img.bpp + 1], b = img.px[i * img.bpp + 2]; pixels++;
       if (Math.max(r, g, b) - Math.min(r, g, b) > 14) colores++;
+      if (Math.max(r, g, b) <= 6) noirs++;
       if (Math.max(r, g, b) > 150) for (const k in SIX) if (!vu[k] && proche(r, g, b, k)) vu[k] = true;
     }
   }
@@ -251,6 +252,18 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   const part = Math.round(100 * colores / pixels);
   ok(Object.keys(SIX).every(k => vu[k]), 'Chaque couleur se voit à l\'écran, à pleine force, sur le bord d\'un monde', Object.keys(SIX).filter(k => vu[k]).join(', '));
   ok(part >= 30, 'Le fond n\'est plus un noir vide : au moins 30 % de l\'écran porte de la couleur', `${part} % des pixels`);
+  // Le 7 octobre, sur l'iPhone de Rayan (Safari), un grain blanc posé en mix-blend-mode « overlay » n'était pas fusionné :
+  // tout le noir devenait gris. Deux gardes : aucun mode de fusion sur cet écran, et le noir reste noir.
+  const fusion = await page.evaluate(() => {
+    const out = [];
+    for (const e of document.querySelectorAll('#auth-screen, #auth-screen *')) for (const ps of [null, '::before', '::after']) {
+      const m = getComputedStyle(e, ps).mixBlendMode; if (m && m !== 'normal') out.push((e.className || e.tagName) + (ps || '') + ' : ' + m);
+    }
+    return out;
+  });
+  const partNoir = Math.round(100 * noirs / pixels);
+  ok(!fusion.length, 'Aucun mode de fusion sur l\'écran d\'entrée (Safari sur iPhone ne les applique pas ici)', fusion.join(' ; ') || 'aucun');
+  ok(partNoir >= 8, 'Le noir reste noir : aucun voile sur le fond', `${partNoir} % de l'écran est noir franc`);
   const geste = await page.evaluate(() => {
     const s = document.getElementById('auth-screen'), b = document.getElementById('auth-go').getBoundingClientRect();
     s.scrollTo(0, 0); const dessus = document.elementFromPoint(innerWidth - 20, 20);

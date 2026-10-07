@@ -188,8 +188,8 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
   en six arcs est retirée : le fond porte déjà les arcs).
 - **Le fond** : six « mondes » vus à leur horizon. Chacun est un `<i class="auth-world">` dans `.auth-glow` : un disque
   sombre dont le bord est un arc net de sa couleur, avec une lueur vers l'extérieur et une teinte profonde à
-  l'intérieur (un seul `radial-gradient`, réglé par `--x`, `--y`, `--r`, `--c`). Un grain fin (`.auth-glow::after`,
-  fusion `overlay` : il ne touche que la lumière, le noir reste noir). La carte est un verre sombre (`backdrop-filter`).
+  l'intérieur (un seul `radial-gradient`, réglé par `--x`, `--y`, `--r`, `--c`). Un grain fin (`.auth-glow::after`) :
+  noir, posé sans mode de fusion (voir « Safari » plus bas). La carte est un verre sombre (`backdrop-filter`).
 - **Téléphone (< 861 px)** : le fond défile avec le contenu (`#auth-screen` en grille, `.auth-glow` et `.auth-box` dans
   la même case). Jaune, orange, rouge dans le coin haut droit, hors de tout texte ; l'horizon violet passe juste
   au-dessus de la carte, le cyan derrière elle, le vert sous elle. `authFond()` pose `--card-y` et `--card-h` (haut et
@@ -220,6 +220,15 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
   569 `</div>`. Vérifié dans Chromium seulement : **le rendu sur l'iPhone de Rayan (Safari) reste à voir par lui.**
 - `docs/CHARTE-DESIGN.md` et `docs/ETAT-DES-LIEUX-CHARTE.md` repris de la branche `charte` (ils n'étaient sur aucune
   autre branche) : la charte fait foi pour l'interface.
+- **En ligne depuis le 7 octobre, 7 h 10** : Rayan a fusionné la PR #7 (`main` à `27c5a34`).
+- **Safari sur iPhone : le noir était gris (constaté par Rayan à 7 h 15, corrigé sur la branche `entree-safari`)**.
+  Cause prouvée : le grain était blanc et posé en `mix-blend-mode: overlay` ; Safari sur iPhone ne l'a pas fusionné,
+  il l'a posé tel quel, d'où un voile gris sur tout l'écran. Preuve : la même page dans Chromium avec
+  `mix-blend-mode: normal` donne exactement sa capture. Correction : grain noir posé normalement (sur le noir il ne
+  change rien), arcs un peu épaissis (1,4 px) et lueurs remontées pour garder le même rendu. Deux contrôles ajoutés à
+  `tests/entree-fond.mjs` (25 contrôles) : aucun mode de fusion sur cet écran, et au moins 8 % de l'écran en noir franc.
+  **Règle à garder : pas de `mix-blend-mode` dans ARC ; tout effet doit donner la même image sans lui.** Le reste
+  (verre de la carte, arcs, horizons qui suivent la carte) rend bien sur son iPhone, d'après ses captures.
 
 ### Décisions de Rayan (5 octobre)
 

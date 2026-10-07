@@ -1308,20 +1308,22 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #auth-screen.active{display:grid;grid-template-columns:100%;grid-template-rows:auto}
 .auth-box{grid-area:1/1;justify-self:center;align-self:start;margin:0}
 .auth-glow{grid-area:1/1;align-self:stretch;justify-self:stretch;position:relative;inset:auto;overflow:hidden;background:none;margin:calc(-24px - env(safe-area-inset-top)) -16px calc(-24px - env(safe-area-inset-bottom))}
-.auth-world{position:absolute;inset:0;--rim:color-mix(in srgb,var(--c) 78%,#fff);--body:color-mix(in srgb,var(--c) 9%,#000);--a1:62%;--a2:36%;--a3:19%;--a4:8%;--a5:2.5%;--in:26%;--inw:90px;
-  background:radial-gradient(circle at var(--x) var(--y),var(--body) 0,var(--body) calc(var(--r) - var(--inw)),color-mix(in srgb,var(--c) var(--in),#000) calc(var(--r) - 1.6px),var(--rim) calc(var(--r) - .7px),var(--rim) calc(var(--r) + .3px),color-mix(in srgb,var(--c) var(--a1),transparent) calc(var(--r) + 1.3px),color-mix(in srgb,var(--c) var(--a2),transparent) calc(var(--r) + 10px),color-mix(in srgb,var(--c) var(--a3),transparent) calc(var(--r) + 34px),color-mix(in srgb,var(--c) var(--a4),transparent) calc(var(--r) + 90px),color-mix(in srgb,var(--c) var(--a5),transparent) calc(var(--r) + 180px),transparent calc(var(--r) + 300px))}
+.auth-world{position:absolute;inset:0;--rim:color-mix(in srgb,var(--c) 76%,#fff);--body:color-mix(in srgb,var(--c) 13%,#000);--a1:70%;--a2:46%;--a3:25%;--a4:11%;--a5:3.5%;--in:34%;--inw:90px;
+  background:radial-gradient(circle at var(--x) var(--y),var(--body) 0,var(--body) calc(var(--r) - var(--inw)),color-mix(in srgb,var(--c) var(--in),#000) calc(var(--r) - 1.9px),var(--rim) calc(var(--r) - .9px),var(--rim) calc(var(--r) + .5px),color-mix(in srgb,var(--c) var(--a1),transparent) calc(var(--r) + 1.5px),color-mix(in srgb,var(--c) var(--a2),transparent) calc(var(--r) + 10px),color-mix(in srgb,var(--c) var(--a3),transparent) calc(var(--r) + 34px),color-mix(in srgb,var(--c) var(--a4),transparent) calc(var(--r) + 90px),color-mix(in srgb,var(--c) var(--a5),transparent) calc(var(--r) + 180px),transparent calc(var(--r) + 300px))}
 /* Téléphone : le jour dans le coin haut droit, hors de tout texte ; deux horizons froids portent la carte
    (--card-y et --card-h = le haut et la hauteur de la carte dans le fond, posés par authFond() : justes quel que
    soit le retour à la ligne du texte au-dessus et l'état de la carte ; les valeurs écrites ici sont celles d'un
    écran de 390 px, en secours) ; le vert ferme le bas. */
-.w-rouge{--c:var(--a-rouge);--rim:var(--a-rouge);--x:calc(100% + 40px);--y:-212px;--r:255px;--a3:15%;--a4:3%;--a5:0%}
-.w-orange{--c:var(--a-orange);--x:calc(100% + 36px);--y:-186px;--r:190px;--a2:30%;--a3:11%;--a4:3%;--a5:0%}
-.w-jaune{--c:var(--a-jaune);--x:calc(100% + 30px);--y:-158px;--r:134px;--in:38%;--a4:4%;--a5:0%}
-.w-vert{--c:var(--a-vert);--x:34%;--y:calc(100% - 118px + 1400px);--r:1400px;--in:30%;--inw:150px}
-.w-violet{--c:var(--a-violet);--rim:color-mix(in srgb,var(--a-violet) 88%,#fff);--x:30%;--y:calc(var(--card-y) - 22px + 1000px);--r:1000px;--in:46%;--inw:210px}
-.w-cyan{--c:var(--a-cyan);--x:76%;--y:calc(var(--card-y) + var(--card-h) * .38 + 780px);--r:780px;--in:46%;--inw:210px}
-/* La matière : un grain très fin sur tout le fond (il casse aussi les paliers des dégradés) */
-.auth-glow::after{content:"";position:absolute;inset:0;opacity:.42;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.w-rouge{--c:var(--a-rouge);--rim:color-mix(in srgb,var(--a-rouge) 86%,#fff);--x:calc(100% + 40px);--y:-212px;--r:255px;--a3:20%;--a4:4%;--a5:0%}
+.w-orange{--c:var(--a-orange);--x:calc(100% + 36px);--y:-186px;--r:190px;--a2:40%;--a3:15%;--a4:4%;--a5:0%}
+.w-jaune{--c:var(--a-jaune);--x:calc(100% + 30px);--y:-158px;--r:134px;--in:50%;--a4:5%;--a5:0%}
+.w-vert{--c:var(--a-vert);--x:34%;--y:calc(100% - 118px + 1400px);--r:1400px;--in:40%;--inw:150px}
+.w-violet{--c:var(--a-violet);--rim:color-mix(in srgb,var(--a-violet) 88%,#fff);--x:30%;--y:calc(var(--card-y) - 22px + 1000px);--r:1000px;--in:60%;--inw:210px}
+.w-cyan{--c:var(--a-cyan);--x:76%;--y:calc(var(--card-y) + var(--card-h) * .38 + 780px);--r:780px;--in:60%;--inw:210px}
+/* La matière : un grain très fin. Il est NOIR et posé normalement, sans mode de fusion : sur le noir il ne change
+   rien, sur la lumière il donne du grain. (Safari sur iPhone n'appliquait pas mix-blend-mode ici : un grain blanc
+   en « overlay » y devenait un voile gris sur tout l'écran, constaté par Rayan le 7 octobre. Ne pas y revenir.) */
+.auth-glow::after{content:"";position:absolute;inset:0;opacity:.28;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 /* L'écriture : celle d'ARC. Le logo d'origine, le titre blanc puis le dégradé de l'accueil. */
 .auth-mark{animation:none}
 .auth-h1{font-size:clamp(32px,8.4vw,46px);letter-spacing:-1.4px;line-height:1.08;margin:0 0 16px}
@@ -1358,9 +1360,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .w-rouge{--x:calc(100% + 70px);--y:-90px;--r:var(--jour)}
   .w-orange{--x:calc(100% + 40px);--y:-110px;--r:calc(var(--jour) * .7)}
   .w-jaune{--x:calc(100% + 10px);--y:-70px;--r:calc(var(--jour) * .4)}
-  .w-violet{--rim:color-mix(in srgb,var(--a-violet) 92%,#fff);--x:-110px;--y:calc(100% + 150px);--r:var(--nuit);--in:26%;--inw:90px}
-  .w-cyan{--x:-60px;--y:calc(100% + 190px);--r:calc(var(--nuit) * .77);--in:26%;--inw:90px}
-  .w-vert{--x:-130px;--y:calc(100% + 120px);--r:calc(var(--nuit) * .475);--in:26%;--inw:90px}
+  .w-violet{--rim:color-mix(in srgb,var(--a-violet) 92%,#fff);--x:-110px;--y:calc(100% + 150px);--r:var(--nuit);--in:34%;--inw:90px}
+  .w-cyan{--x:-60px;--y:calc(100% + 190px);--r:calc(var(--nuit) * .77);--in:34%;--inw:90px}
+  .w-vert{--x:-130px;--y:calc(100% + 120px);--r:calc(var(--nuit) * .475);--in:34%;--inw:90px}
 }
 /* Navigateur sans color-mix (avant 2023) : deux lueurs simples à la place des mondes */
 @supports not (color:color-mix(in srgb,red,blue)){.auth-world{display:none}.auth-glow{background:radial-gradient(60% 34% at 100% 0,rgba(233,125,0,.28),transparent 70%),radial-gradient(70% 40% at 0 100%,rgba(0,143,200,.22),transparent 70%)}}
