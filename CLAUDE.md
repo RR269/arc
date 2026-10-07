@@ -288,6 +288,54 @@ Santé et Juridique, passe de design (branche `poles`, 7 octobre en fin d'après
   proxy 41/41 ; 569 `<div` / 569 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
   Aucun mode de fusion (règle Safari).
 
+Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` à `b57a648`, PR #10 fusionnée à 17 h 59) :
+- **Ce que Rayan a vécu** (capture du Mac, 20 h 12) : onglet « Créer un compte », son adresse, un mot de passe →
+  « La création de compte n'est pas encore ouverte. » Il en a conclu qu'il ne pouvait entrer que sans connexion.
+  Cause : son compte existe déjà et les inscriptions sont fermées dans Supabase ; l'écran ne disait pas quoi faire.
+- **Correction** : quand « Créer un compte » est refusé parce que les inscriptions sont fermées, ARC demande un code
+  pour cette adresse (`authClaimWithCode`, `shouldCreateUser: false`). Si l'adresse a un compte : étape « Ton code »
+  (« Ton compte existe déjà. Tape le code envoyé à … : ton mot de passe sera enregistré. »), puis le mot de passe
+  choisi est enregistré (`updateUser`) et l'écran se ferme. Si l'adresse n'a pas de compte : message inchangé.
+  Le mot de passe choisi attend en mémoire (`_authPendingPass`), jamais sur l'appareil ; il est oublié si on change
+  d'onglet de la carte, d'adresse, ou si la page se recharge.
+- **Après un code tapé ou le lien de l'e-mail** (« Mot de passe oublié ? »), ARC propose aussitôt « Ton mot de passe »
+  (`_authAskPass`, `_authFromLink`, `authDone`), avec « Plus tard ». Une étape de compte ouverte (mot de passe,
+  premier appareil) ne se referme plus toute seule quand Supabase renvoie `SIGNED_IN` au retour sur l'onglet.
+- Messages : « Pas encore de mot de passe ? Touche « Recevoir un code par e-mail » : tu le choisiras juste après. » ;
+  la mention de « J'ai déjà un code » (bouton disparu) est retirée.
+- **Côté Supabase, rien n'a changé et rien n'a été lu** : inscriptions toujours fermées. Non essayé en réel :
+  l'enregistrement du mot de passe juste après un code (`updateUser`) n'est prouvé que contre de fausses réponses.
+- **Trousseau du navigateur** (20 h 40, Rayan : « faire directement le nécessaire sans devoir y revenir ») : l'adresse
+  est annoncée comme identifiant (`autocomplete="username"`), et l'étape « Ton mot de passe » porte l'adresse du
+  compte dans un champ invisible (`#auth-pass-user`) pour que Safari ou Chrome proposent de retenir adresse et mot
+  de passe. Non vérifiable ici : c'est le navigateur de Rayan qui décide de le proposer.
+- Tests : connexion 20/20 (sept contrôles ajoutés), entrée-fond 25/25, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
+  25/25, matin 27/27, proxy 41/41 ; 569 `<div` / 569 `</div>`.
+- **Décision de Rayan (7 octobre, 20 h 44)** : « je ne veux plus le système du code, je veux une inscription et une
+  ouverture de compte normales » ; un code une seule fois pour son compte déjà créé ; « pour les utilisateurs il
+  leur faut le moyen de s'inscrire ». Fait dans la page (même branche, PR #11) :
+  - « Créer un compte » = `signUp` adresse + mot de passe ; si Supabase ouvre la session tout de suite, la personne
+    est dans ARC sans code (« Compte créé · bienvenue dans ARC »), et un compte créé à l'instant ne voit pas la
+    question « Premier appareil » (`_authNewAccount` : l'appareil est relié et envoyé d'office).
+  - Adresse déjà inscrite tapée dans « Créer un compte » (`authExisting`) : le bon mot de passe fait entrer ; sinon un
+    code confirme que c'est bien la personne et enregistre le mot de passe choisi. Jamais de message en anglais.
+  - Le code ne reste que comme secours (« Mot de passe oublié ? ») et pour le compte de Rayan, une fois.
+  **À faire par Rayan dans Supabase, sans quoi rien ne change** (Authentication › Sign In / Providers) : activer
+  « Allow new users to sign up » ; dans le fournisseur Email, désactiver « Confirm email » (sinon chaque inscription
+  attend un e-mail de confirmation, et l'envoi d'e-mails de l'offre gratuite est très limité).
+  **Ce qu'un autre utilisateur trouve aujourd'hui, non résolu** : les cinq mondes de Rayan écrits en dur (ARYAN, FBA…),
+  Valence et ARYAN dans Juridique ; pas de Claude ni de rangement (le proxy refuse tout autre compte que
+  `ARC_OWNER_ID`, 403) ; ses données sont à lui seul d'après les règles des tables (non revérifié dans la base).
+  Sans confirmation d'e-mail, n'importe qui peut créer des comptes avec n'importe quelle adresse. Héberger les
+  données de santé d'autres personnes engage Rayan (RGPD) : à traiter avant d'inviter quelqu'un.
+- Tests après cette décision : connexion 24/24, les sept autres suites inchangées.
+- **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
+  la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
+  départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son
+  compte contient du contenu Santé ou Juridique. Vu dans ses captures : la barre du haut de l'accueil déborde à
+  droite sur iPhone (« Non connecté » et « War Room » sur deux lignes), pas corrigé.
+- **À suivre, demandé par Rayan** : « finir de modifier cette page » (l'écran d'entrée), après la connexion.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
