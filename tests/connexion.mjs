@@ -63,10 +63,21 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   });
   ok(s.tabs && s.fields && s.go === 'Se connecter' && s.minBtn >= 44 && s.wide && !errors.length,
      'Entrée : onglets « Se connecter » et « Créer un compte », adresse, mot de passe, cibles ≥ 44 px', `bouton : ${s.go}, cible min ${Math.round(s.minBtn)} px, erreurs ${errors.length}`);
+  // Le bas de la carte : une connexion normale, sans trou ni pavé, et des champs qui restent sombres
+  const bas = await page.evaluate(() => {
+    const r = id => document.getElementById(id).getBoundingClientRect(), oubli = r('auth-send'), go = r('auth-go'), pass = r('auth-pass-inp'), skip = r('auth-skip');
+    const regles = [...document.styleSheets].flatMap(sh => { try { return [...sh.cssRules]; } catch (e) { return []; } }).filter(x => /autofill/.test(x.selectorText || ''));
+    return { ordre: pass.bottom <= oubli.top + 1 && oubli.bottom <= go.top + 1 && go.bottom <= skip.top + 1, oubli: Math.round(oubli.height), texte: document.getElementById('auth-send').textContent.trim(),
+             trou: Math.round(go.top - pass.bottom), premierEcran: go.bottom <= innerHeight, skip: Math.round(skip.height), pied: !!document.querySelector('.auth-note, .auth-alt'),
+             sombre: regles.length > 0 && regles.every(x => /inset/.test(x.style.boxShadow || x.style.webkitBoxShadow || '') && !/255, 255|250, 255/.test(x.style.boxShadow || '')) };
+  });
+  ok(bas.ordre && bas.texte === 'Mot de passe oublié ?' && bas.oubli >= 44 && bas.trou <= 64 && bas.premierEcran && bas.skip >= 44 && !bas.pied,
+     'Bas de la carte : « Mot de passe oublié ? » sous le champ, bouton principal dans le premier écran de l\'iPhone, « Continuer sans connexion » en dessous, plus de note en pied', JSON.stringify(bas));
+  ok(bas.sombre, 'Champs remplis par le trousseau du navigateur : une règle les garde sombres (pas de jaune pâle)');
   await page.click('#auth-tab-up');
   const up = await page.evaluate(() => ({ go: document.getElementById('auth-go').textContent, ac: document.getElementById('auth-pass-inp').autocomplete,
-    codeLinks: document.getElementById('auth-send').offsetParent !== null }));
-  ok(up.go === 'Créer mon compte' && up.ac === 'new-password' && !up.codeLinks, 'Onglet « Créer un compte » : bouton et champ adaptés, liens de code masqués', JSON.stringify(up));
+    codeLinks: document.getElementById('auth-send').offsetParent !== null, ecart: Math.round(document.getElementById('auth-go').getBoundingClientRect().top - document.getElementById('auth-pass-inp').getBoundingClientRect().bottom) }));
+  ok(up.go === 'Créer mon compte' && up.ac === 'new-password' && !up.codeLinks && up.ecart >= 20 && up.ecart <= 40, 'Onglet « Créer un compte » : bouton et champ adaptés, liens de code masqués', JSON.stringify(up));
   await page.click('#auth-eye');
   ok(await page.evaluate(() => document.getElementById('auth-pass-inp').type === 'text' && document.getElementById('auth-eye').textContent === 'Cacher'), '« Voir » montre le mot de passe');
   await ctx.close();

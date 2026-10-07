@@ -334,6 +334,16 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   (sa capture : « Successfully updated settings »). Les inscriptions sont donc ouvertes, sans confirmation d'e-mail.
   Reste à constater par lui : son propre passage (« Créer un compte » avec son adresse → un code, une fois → mot de
   passe enregistré). Sa liste « Users » ne montre qu'un compte, le sien.
+- **Constaté par Rayan (22 h 14)** : « c'est fait », son mot de passe existe ; sur son iPhone, le trousseau de Safari
+  remplit l'adresse et le mot de passe (ses captures : les deux champs en jaune pâle).
+- **Le bas de la carte d'entrée (branche `entree-bas`, 22 h 20, demande de Rayan)** : champs remplis par le trousseau
+  gardés sombres (`:-webkit-autofill`, ombre intérieure, pas de mode de fusion ; le jaune rendait « Voir » illisible) ;
+  « Mot de passe oublié ? » devient un lien sous le champ (`.auth-forgot`, même `#auth-send`) ; le bouton principal
+  suit sans trou (la ligne d'erreur ne prend de place que s'il y a une erreur) ; « Continuer sans connexion · Sur cet
+  appareil seulement. » est une ligne sous un filet (`.auth-skip`) ; la note en pied et les deux gros blocs
+  (`.auth-alt`, `.auth-note`) sont retirés. Le mot « code » n'est plus sur cet écran. Tests : connexion 26/26
+  (ordre, écarts, cibles ≥ 44 px, bouton dans le premier écran de l'iPhone), entrée-fond 25/25 ; 567 `<div` /
+  567 `</div>`. Le rendu du trousseau n'est vérifiable que sur l'iPhone de Rayan.
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son

@@ -784,9 +784,8 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .auth-link.soft{color:#9A9AA2}
 .auth-link:hover{color:var(--t1)}
 .auth-link:disabled{color:#6E6E76;cursor:default}
-.auth-link[hidden],.auth-alt-btn[hidden],.auth-note[hidden],.h-menu-item[hidden]{display:none}
+.auth-link[hidden],.auth-forgot[hidden],.h-menu-item[hidden]{display:none}
 .auth-err{min-height:20px;font-size:14px;color:#FF6B81;margin:0 0 10px 2px;line-height:1.5}
-.auth-note{font-size:13px;color:#9A9AA2;line-height:1.55;margin:14px 4px 0}
 @media(min-width:861px){#auth-screen{align-items:center}.auth-box{max-width:440px}.auth-card{padding:28px 26px 20px}}
 @media(prefers-reduced-motion:reduce){.auth-mark,.auth-h1-gradient,.auth-h1-light,.auth-step.active{animation:none}}
 #sync-pill{cursor:pointer}
@@ -1287,16 +1286,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-proof{list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:8px}
 .auth-proof li{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:#E8E8EC;letter-spacing:-.1px}
 .auth-proof li i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c);flex-shrink:0}
-.auth-alt{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-.auth-alt-btn{display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto;column-gap:10px;align-items:center;text-align:left;min-height:56px;padding:9px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:var(--t1);font-family:inherit;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
-.auth-alt-btn:hover{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.06)}
-.auth-alt-btn:active{transform:scale(.99)}
-.auth-alt-k{font-family:var(--fm);font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:#9A9AA2}
-.auth-alt-v{font-size:15px;font-weight:600;color:#F5F5F7;letter-spacing:-.1px}
-.auth-alt-go{grid-row:1/3;grid-column:2;font-size:24px;line-height:1;color:#9A9AA2}
-.auth-note{display:flex;align-items:center;gap:8px;font-family:var(--fm);font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#8E8E95;margin:16px 4px 0;line-height:1.5}
-.auth-note-dot{width:6px;height:6px;border-radius:50%;background:#30d158;flex-shrink:0;animation:pulse 2s infinite}
-@media(max-width:400px){.auth-note{font-size:10.5px;letter-spacing:.5px}}
 
 /* ═══ ÉCRAN D'ENTRÉE : le fond (correction de Rayan, 7 octobre 3 h) ═══
    Les six couleurs remises par Rayan (mesurées dans son image) vont dans LE FOND, jamais dans les lettres.
@@ -1343,14 +1332,31 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-input:focus{border-color:rgba(0,143,200,.8);box-shadow:0 0 0 3px rgba(0,143,200,.2)}
 .auth-btn{background:linear-gradient(90deg,var(--a-orange) 0%,var(--a-rouge) 18%,var(--a-violet) 100%);box-shadow:0 12px 30px -10px rgba(218,13,35,.55)}
 .auth-tab.on{background:rgba(255,255,255,.12)}
-.auth-note-dot{background:var(--a-vert)}
 /* Lisibilité mesurée (tests/entree-fond.mjs) : petits textes et textes d'attente éclaircis jusqu'à 4,5 : 1 au moins */
 .auth-brand-sub{color:#B4B4BC;letter-spacing:1.6px;white-space:nowrap}
-.auth-note{color:#C4C4CC}
-.auth-alt-k,.auth-alt-go{color:#B4B4BC}
 .auth-input::placeholder{color:#9A9AA2}
 /* La carte : un verre sombre, le fond passe derrière elle, adouci */
 .auth-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)),rgba(9,9,12,.62);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5)}
+/* Le bas de la carte (7 octobre au soir) : une connexion normale. « Mot de passe oublié ? » est un lien sous le champ,
+   le bouton principal suit sans trou, « Continuer sans connexion » est une ligne discrète sous un filet. */
+.auth-passrow .auth-input{margin-bottom:0}
+.auth-passrow{margin-bottom:6px}
+.auth-forgot{display:block;margin:0 -8px 0 auto;min-height:44px;padding:0 8px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;color:#C4C4CC;cursor:pointer;border-radius:10px}
+.auth-forgot:hover{color:#fff}
+.auth-forgot:disabled{color:#8E8E95;cursor:default}
+#auth-email .auth-err{min-height:0;margin:0 2px 12px}
+#auth-email .auth-err:empty{margin-bottom:6px}
+#auth-email .auth-forgot[hidden]+.auth-err{margin-top:20px} /* onglet « Créer un compte » : pas de lien, le bouton garde sa distance */
+#auth-pass .auth-passrow,#auth-pass .auth-err:empty{margin-bottom:16px}
+.auth-skip{position:relative;display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;width:100%;min-height:60px;margin-top:18px;padding:14px 2px 2px;border:none;border-top:1px solid rgba(255,255,255,.1);background:none;text-align:left;font-family:inherit;cursor:pointer;color:var(--t1)}
+.auth-skip-t{font-size:15px;font-weight:600;color:#E8E8EC}
+.auth-skip-s{grid-column:1;font-size:13px;line-height:1.45;color:#B4B4BC;margin-top:2px}
+.auth-skip-go{grid-row:1/3;grid-column:2;font-size:22px;line-height:1;color:#B4B4BC}
+.auth-skip:hover .auth-skip-t{color:#fff}
+/* Champs remplis par le trousseau : le navigateur les peint en jaune pâle, ARC les garde sombres */
+.auth-input:-webkit-autofill,.auth-input:-webkit-autofill:hover,.auth-input:-webkit-autofill:active{-webkit-text-fill-color:#F5F5F7;caret-color:#F5F5F7;-webkit-box-shadow:0 0 0 1000px #0B0B0F inset;box-shadow:0 0 0 1000px #0B0B0F inset;transition:background-color 99999s ease-out,color 99999s ease-out}
+.auth-input:-webkit-autofill:focus{-webkit-text-fill-color:#F5F5F7;caret-color:#F5F5F7;-webkit-box-shadow:0 0 0 1000px #0B0B0F inset,0 0 0 3px rgba(0,143,200,.2);box-shadow:0 0 0 1000px #0B0B0F inset,0 0 0 3px rgba(0,143,200,.2);transition:background-color 99999s ease-out,color 99999s ease-out}
+.auth-input:autofill{-webkit-text-fill-color:#F5F5F7;caret-color:#F5F5F7;box-shadow:0 0 0 1000px #0B0B0F inset}
 /* Mac et tablette large : le fond tient à l'écran. Les arcs se règlent sur la largeur libre de chaque côté de la
    colonne de texte (440 px au centre) et s'arrêtent 30 à 40 px avant elle : aucun arc ne passe sous un texte. */
 @media(min-width:861px){
@@ -2397,12 +2403,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <input class="auth-input" id="auth-pass-inp" type="password" autocomplete="current-password" placeholder="8 caractères au moins">
         <button class="auth-eye" id="auth-eye" type="button" aria-pressed="false">Voir</button>
       </div>
+      <button class="auth-forgot" id="auth-send" type="button">Mot de passe oubli&eacute; ?</button>
       <div class="auth-err" id="auth-email-err" role="alert"></div>
       <button class="auth-btn" id="auth-go">Se connecter</button>
-      <div class="auth-alt">
-        <button class="auth-alt-btn" id="auth-send"><span class="auth-alt-k">Mot de passe oubli&eacute; ?</span><span class="auth-alt-v">Recevoir un code par e-mail</span><span class="auth-alt-go" aria-hidden="true">&rsaquo;</span></button>
-        <button class="auth-alt-btn" id="auth-skip"><span class="auth-alt-k">Juste regarder ?</span><span class="auth-alt-v">Continuer sans connexion</span><span class="auth-alt-go" aria-hidden="true">&rsaquo;</span></button>
-      </div>
+      <button class="auth-skip" id="auth-skip" type="button"><span class="auth-skip-t">Continuer sans connexion</span><span class="auth-skip-s">Sur cet appareil seulement.</span><span class="auth-skip-go" aria-hidden="true">&rsaquo;</span></button>
     </div>
     <div class="auth-step" id="auth-pass">
       <div class="auth-title">Ton mot de passe</div>
@@ -2434,7 +2438,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <button class="auth-link soft" id="auth-ref-no">Pas maintenant</button>
     </div>
     </div>
-    <div class="auth-note" id="auth-note"><span class="auth-note-dot"></span>Sans connexion &middot; cet appareil seulement &middot; sans synchronisation ni Claude</div>
   </div>
 </div>
 <div id="war-room">
@@ -2548,7 +2551,6 @@ function showAuthScreen(step) {
     try { if(!inp.value) inp.value = localStorage.getItem('arc_auth_email') || ''; } catch(e) {}
     setTimeout(function() { inp.focus(); }, 50);
   }
-  var note = document.getElementById('auth-note'); if(note) note.hidden = step !== 'auth-email';
   if(step === 'auth-pass') { document.getElementById('auth-pass-user').value = (_session && _session.user && _session.user.email) || ''; document.getElementById('auth-newpass-inp').value = ''; setTimeout(function() { document.getElementById('auth-newpass-inp').focus(); }, 50); }
   if(step === 'auth-code') setTimeout(function() { document.getElementById('auth-code-inp').focus(); }, 50);
   authFond();
@@ -2582,7 +2584,7 @@ function authErrorText(e) {
   var m = (e && e.message) || String(e);
   if(/security purposes|only request this after/i.test(m)) return 'Un code vient de partir : attends une minute avant d\'en redemander un.';
   if(/rate limit|too many/i.test(m)) return 'Trop de codes demandés : l\'envoi d\'e-mails est limité. Utilise le dernier code reçu, ou réessaie dans une heure.';
-  if(/invalid login credentials/i.test(m)) return 'Adresse ou mot de passe incorrect. Pas encore de mot de passe ? Touche « Recevoir un code par e-mail » : tu le choisiras juste après.';
+  if(/invalid login credentials/i.test(m)) return 'Adresse ou mot de passe incorrect. Pas encore de mot de passe ? Touche « Mot de passe oublié ? » : tu le choisiras juste après.';
   if(/signups not allowed|signup is disabled|signups are disabled/i.test(m)) return 'La création de compte n\'est pas encore ouverte.';
   if(/already registered|already been registered|already exists/i.test(m)) return 'Cette adresse a déjà un compte : connecte-toi.';
   if(/email address.*invalid|unable to validate email|invalid email/i.test(m)) return 'Adresse e-mail refusée : vérifie-la.';
