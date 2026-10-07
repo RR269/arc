@@ -90,6 +90,30 @@ en prose ce que le titre et les trois repères disent déjà. Il est retiré de 
 Règle à garder : sur un écran d'ARC, ce qu'ARC fait se montre (étapes, frise, carte) ; on ne l'explique pas dans un
 paragraphe. `tests/entree-fond.mjs` refuse tout texte de plus de quatre lignes sur téléphone.
 
+### Remarque du 7 octobre, 5 h 48 : la ligne sous le titre ne va pas
+
+Rayan garde la mise en page (titre, une ligne, frise de trois étapes). Il écarte la ligne « Un projet, une idée, une
+envie, qu'il rapporte ou non. » : « qu'il rapporte ou non, on ne peut pas comprendre. Ce n'est pas l'identité d'ARC. »
+Il demande des propositions de phrases pour le haut de l'écran. Ses mots, dits à l'oral, repris tels quels :
+
+- « c'est le cerveau : on pense, on a une idée ; au lieu qu'elle devienne du vent, elle devient réelle grâce à ARC »
+- « il ne faut pas que ce soit téléguidé »
+- « c'est pour se décharger la tête, ne laisser que le strict nécessaire dans la tête »
+- « au lieu d'entasser une multitude de choses importantes à s'occuper, on leur donne vie en un clic »
+- « dès ce clic-là, l'impossible devient possible, parce qu'on peut tout faire »
+- « on accompagne au maximum l'entrepreneur, le libre penseur, tous ceux qui utilisent ARC » (les tâches, les points,
+  la synchronisation en temps réel)
+
+Propositions faites le 7 octobre (aucune n'est choisie tant que Rayan ne l'a pas dit) :
+
+1. Au lieu de devenir du vent, ton idée devient réelle.
+2. Garde en tête le strict nécessaire. Le reste prend vie ici.
+3. Ce qui s'entasse dans ta tête prend vie en un geste.
+4. Tu as l'idée. ARC t'accompagne jusqu'au bout.
+5. Une idée, un geste : l'impossible devient possible.
+
+À écarter désormais : « qu'il rapporte ou non », « lucratif ou non » (juste dans la vision, incompréhensible à l'écran).
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par
