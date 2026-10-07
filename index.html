@@ -1165,6 +1165,120 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .hw{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 .wmain,.pmain{padding-bottom:calc(var(--depot-space,0px) + 24px)}
 
+/* ═══ ACCUEIL, passe de design (branche accueil-v2, 7 octobre) ═══
+   Même contenu, même ordre, même identité sombre ; seul le dessin change : relief, lumière de chaque monde,
+   lisibilité (textes ≥ 12 px, cibles ≥ 44 px), rythme des espacements, arrondis et filets unifiés. */
+#S1{--t3:#8E8E95;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.13);background:#070709}
+#S1::before{content:"";position:absolute;inset:0 0 auto 0;height:620px;pointer-events:none;background:radial-gradient(60% 45% at 18% 0%,rgba(255,149,0,.16),transparent 70%),radial-gradient(45% 40% at 70% 8%,rgba(175,82,222,.12),transparent 70%)}
+#S1 .hw{position:relative}
+/* Carte commune : relief par un filet clair en haut et une ombre profonde */
+#S1 .depot-entry,#S1 .h-stat,#S1 .h-prog,#S1 .next-item,#S1 .next-empty,#S1 .pc-monde,#S1 .pole-card,#S1 #quick-add-bar,#S1 .intel-card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),#0E0E11;border:1px solid var(--b1);border-radius:20px;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 10px 30px -14px rgba(0,0,0,.8)}
+/* En-tête */
+#S1 .hn{height:64px;background:rgba(7,7,9,.82);border-bottom:1px solid var(--b1)}
+#S1 .h-logo-name{font-size:22px;letter-spacing:1.5px}
+#S1 .h-logo-sub{font-size:9px;color:#9A9AA2;letter-spacing:3px}
+#S1 #sync-pill{min-height:36px;padding:0 12px;border-radius:18px}
+#S1 #sync-lbl{font-size:11px;color:#9A9AA2}
+#S1 .h-search-btn,#S1 .h-warroom-btn{min-height:40px;padding:0 14px;border-radius:12px;font-size:13px}
+#S1 .h-search-btn{color:#C9C9CF}
+#S1 .h-search-kbd{font-size:11px}
+#S1 .h-menu-btn{width:40px;height:40px;border-radius:12px;font-size:18px;color:#C9C9CF}
+/* Haut de page */
+#S1 .h-hero{padding-top:44px;margin-bottom:28px}
+#S1 .h-context-badge{font-size:12px;color:#B8B8BF;min-height:32px;padding:0 14px;border-radius:16px;background:rgba(255,255,255,.04);border-color:var(--b2)}
+#S1 .h-h1{font-size:clamp(44px,6vw,64px);letter-spacing:-2.4px;margin-bottom:12px}
+#S1 .h-sub{font-size:15px;color:#9A9AA2}
+#S1 .h-sub-critical{min-height:32px;padding:0 12px;border-radius:16px;font-size:12px;color:#D0D0D6;background:rgba(255,45,85,.08);border-color:rgba(255,45,85,.28)}
+#S1 .h-entries,#S1 .h-hero .depot-entry{margin-top:0}
+#S1 .depot-entry{min-height:60px;margin:14px 0 0;padding:12px 18px;max-width:none}
+#S1 .depot-entry-t{font-size:17px}
+#S1 .depot-entry-n{font-size:15px;color:#9A9AA2}
+#S1 .depot-entry-go{color:#9A9AA2}
+#S1 .depot-entry:hover,#S1 .depot-entry:active{border-color:var(--b3);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),#0E0E11}
+/* Compteurs : un grand chiffre, sa lumière, un libellé lisible */
+#S1 .h-stats{gap:12px;margin-top:22px}
+#S1 .h-stat{position:relative;overflow:hidden;padding:18px 18px 16px;min-height:96px}
+#S1 .h-stat::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--sc,#fff),transparent);opacity:.9}
+#S1 .h-stat:nth-child(1){--sc:#FF9500}#S1 .h-stat:nth-child(2){--sc:#30d158}#S1 .h-stat:nth-child(3){--sc:#FF2D55}#S1 .h-stat:nth-child(4){--sc:#5ac8fa}
+#S1 .h-stat-v{font-size:34px;letter-spacing:-1px;margin-bottom:6px;text-shadow:0 0 24px color-mix(in srgb,var(--sc,#fff) 45%,transparent)}
+#S1 .h-stat-l{font-size:12px;letter-spacing:1.8px;color:#9A9AA2}
+#S1 .h-stat.stat-alert{background:linear-gradient(180deg,rgba(255,45,85,.10),rgba(255,45,85,.03)),#0E0E11;border-color:rgba(255,45,85,.3)}
+#S1 .h-stat:hover{transform:translateY(-3px);border-color:var(--b2)}
+/* Progression */
+#S1 .h-prog{padding:18px 20px;margin-bottom:28px}
+#S1 .h-prog-label{font-size:12px;color:#9A9AA2;letter-spacing:1.8px}
+#S1 .h-prog-pct{font-size:15px}
+#S1 .h-prog-track{height:6px;background:rgba(255,255,255,.08)}
+#S1 .h-prog-fill{box-shadow:0 0 14px rgba(255,80,120,.5)}
+#S1 .h-prog-msg{font-size:13px;color:#9A9AA2;font-style:normal;margin-top:10px}
+/* Prochaines étapes */
+#S1 .next-wrap{margin:0 0 32px}
+#S1 .next-title{font-size:22px;letter-spacing:-.4px}
+#S1 .next-item{padding:18px 20px;border-left:3px solid var(--rg-c,#fff)}
+#S1 .next-step{font-size:18px}
+#S1 .next-when{font-size:14px}
+#S1 .next-empty{padding:18px 20px;font-size:16px;color:#C9C9CF;border-style:solid}
+#S1 .rg-lbl{font-size:13px;color:#9A9AA2}
+#S1 .rg-btn{min-height:44px;font-size:16px;border-radius:12px;background:rgba(255,255,255,.06);border-color:var(--b2)}
+#S1 .rg-btn.main{background:#F5F5F7;color:#000;border-color:#F5F5F7}
+/* Sections */
+#S1 .h-section{margin-bottom:36px}
+#S1 .h-section-head{margin-bottom:16px;align-items:baseline}
+#S1 .h-section-lbl,#S1 .h-sec-label{font-size:12px;letter-spacing:2.2px;color:#9A9AA2}
+#S1 .h-section-sub,#S1 .intel-count{font-size:12px;color:#8E8E95}
+#S1 .h-mondes-grid{gap:14px}
+/* Mondes : la lumière du monde, un nom qui porte, des étiquettes lisibles */
+#S1 .pc-monde{border-radius:22px}
+#S1 .pc-monde::before{opacity:.9;background:radial-gradient(70% 55% at 20% 0%,color-mix(in srgb,var(--pc,#fff) 20%,transparent),transparent 70%)}
+#S1 .pc-monde::after{left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 5%,var(--pc,#fff) 50%,transparent 95%);opacity:.85}
+#S1 .pc-monde:hover{transform:translateY(-6px);box-shadow:0 28px 70px -20px color-mix(in srgb,var(--pc,#000) 55%,#000),inset 0 1px 0 rgba(255,255,255,.1);border-color:color-mix(in srgb,var(--pc,#fff) 40%,transparent)}
+#S1 .pc-monde-header{padding:22px 20px 14px}
+#S1 .pc-monde-icon{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:color-mix(in srgb,var(--pc,#fff) 16%,transparent);border:1px solid color-mix(in srgb,var(--pc,#fff) 30%,transparent);font-size:26px;filter:none;box-shadow:0 8px 24px -8px color-mix(in srgb,var(--pc,#fff) 70%,transparent)}
+#S1 .pc-monde-blk{font-size:12px}
+#S1 .pc-monde-prio{font-size:11px;padding:4px 10px}
+#S1 .pc-monde-name{font-size:24px;letter-spacing:-.7px;margin:14px 0 6px;text-shadow:0 0 36px color-mix(in srgb,var(--pc,#fff) 50%,transparent)}
+#S1 .pc-monde-desc{font-size:13px;color:#B8B8BF;line-height:1.55}
+#S1 .pc-monde-prog{padding:0 20px 16px}
+#S1 .pc-monde-track{height:6px;background:rgba(255,255,255,.08)}
+#S1 .pc-monde-fill{box-shadow:0 0 12px color-mix(in srgb,var(--pc,#fff) 70%,transparent)}
+#S1 .pc-monde-pct{font-size:12px}
+#S1 .pc-monde-focus{font-size:12px;color:#B8B8BF;font-style:normal}
+#S1 .pc-monde-footer{padding:0 20px 18px;gap:6px}
+#S1 .pc-monde-tag{font-size:12px;padding:5px 10px;border-radius:10px;color:#B8B8BF;background:rgba(255,255,255,.05);border:1px solid var(--b1)}
+/* Pôles */
+#S1 .poles-grid{gap:14px}
+#S1 .pole-card{padding:24px 22px;background:linear-gradient(180deg,color-mix(in srgb,var(--pc,#fff) 9%,transparent),transparent 60%),#0E0E11}
+#S1 .pole-card::before{left:0;right:0;height:2px;opacity:.85}
+#S1 .pole-icon{font-size:30px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:color-mix(in srgb,var(--pc,#fff) 16%,transparent);border:1px solid color-mix(in srgb,var(--pc,#fff) 30%,transparent);margin-bottom:14px}
+#S1 .pole-name{font-size:24px;letter-spacing:-.6px}
+#S1 .pole-desc{font-size:14px;color:#B8B8BF}
+#S1 .pole-checkin-done,#S1 .pole-checkin-pending{font-size:12px;color:#9A9AA2}
+#S1 .pole-status-dot{width:10px;height:10px;top:18px;right:18px}
+/* Ajout rapide, veille */
+#S1 #quick-add-bar{padding:14px 18px;margin-bottom:28px}
+#S1 #qa-icon{font-size:20px;color:#9A9AA2}
+#S1 #qa-inp{font-size:16px;min-height:44px}
+#S1 #qa-projects{gap:8px}
+#S1 .qa-proj-btn{font-size:12px;min-height:34px;padding:0 12px;color:#B8B8BF;background:rgba(255,255,255,.05)}
+#S1 .h-intel-head{margin-bottom:14px}
+#S1 .intel-refresh{min-height:40px;padding:0 14px;font-size:13px;color:#C9C9CF;border-radius:12px}
+#S1 .intel-grid{gap:12px;margin-bottom:28px}
+#S1 .intel-card{padding:18px;border-radius:18px}
+#S1 .intel-badge{font-size:11px;padding:4px 10px}
+#S1 .intel-text{font-size:14px;color:#D0D0D6;line-height:1.6}
+#S1 .intel-source,#S1 .intel-open{font-size:12px;color:#9A9AA2}
+#S1 .intel-open{min-height:32px;display:inline-flex;align-items:center}
+/* Un doublon vide hérité d'avril : la section « Tes 5 projets » n'a plus de contenu */
+#S1 .hw > .h-sec-label,#S1 .hgrid{display:none}
+@media(max-width:560px){
+  #S1 .hw{padding-left:16px;padding-right:16px}
+  #S1 .hn{padding:0 16px}
+  #S1 .h-hero{padding-top:28px}
+  #S1 .h-stats{grid-template-columns:1fr 1fr}
+  #S1 .poles-grid{grid-template-columns:1fr}
+  #S1 .pc-monde-name{font-size:22px}
+}
+@media(prefers-reduced-motion:reduce){#S1 .pc-monde:hover,#S1 .h-stat:hover{transform:none}}
 /* Le message et le bas de l'écran (retours de Rayan, 7 octobre 1 h 20) */
 #auth-screen{font-family:var(--f)}
 .auth-h1{margin-bottom:14px}
@@ -5373,6 +5487,7 @@ function rangeHomeRender() {
   list.textContent = '';
   rows.forEach(function(r) {
     var it = rgEl('div', 'next-item'); it.setAttribute('data-id', r.t.id);
+    it.style.setProperty('--rg-c', rangeSpaceInfo(r.f.space).color);
     var top = rgEl('div', 'rg-row');
     top.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(r.f)));
     top.appendChild(rangePill(r.f.space));
