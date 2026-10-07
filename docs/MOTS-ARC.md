@@ -114,6 +114,21 @@ Propositions faites le 7 octobre. **Rayan a choisi la 2, « sans hésiter » (5 
 
 À écarter désormais : « qu'il rapporte ou non », « lucratif ou non » (juste dans la vision, incompréhensible à l'écran).
 
+### Remarque du 7 octobre, 5 h 57 : la ligne sous le logo n'est pas à jour
+
+Rayan, devant la capture : « le texte n'est pas à jour », et il désigne la ligne sous le logo (« Chaque pensée, un
+monde »). Elle redisait le titre (« Une pensée naît. Un monde grandit. ») et datait d'avant ses mots du matin.
+
+Posée sur l'écran, en attendant son mot : **« L'idée devient réelle »** (son image : « au lieu qu'elle devienne du
+vent, elle devient réelle grâce à ARC »). Autres propositions, si celle-ci ne va pas :
+
+1. L'idée devient réelle (sur l'écran)
+2. La tête légère
+3. Rien ne devient du vent
+4. De l'idée au réel
+
+Contrainte : 25 signes au plus, pour tenir sous le logo sans toucher les arcs du coin sur un iPhone de 375 px.
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par

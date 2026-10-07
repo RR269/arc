@@ -205,7 +205,9 @@ Point du matin (chantier 4, branche `rangement`, à la suite) :
 - **Plus de pavé (7 octobre, 4 h 40, remarque de Rayan)** : le paragraphe de cinq lignes qui expliquait ARC est retiré.
   Restent le titre, une ligne et les trois étapes en frise, reliées par un trait. La ligne, choisie par Rayan à
   5 h 50 parmi cinq propositions : « Garde en tête le strict nécessaire. Le reste prend vie ici. » (« qu'il rapporte
-  ou non » est écarté : incompréhensible à l'écran, pas l'identité d'ARC). Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
+  ou non » est écarté : incompréhensible à l'écran, pas l'identité d'ARC). Sous le logo, « Chaque pensée, un monde »
+  n'était « pas à jour » pour Rayan (5 h 57) : remplacé par « L'idée devient réelle », **proposé, pas encore validé**
+  (trois autres propositions dans `docs/MOTS-ARC.md`). Règle à garder : ce qu'ARC fait se montre, on ne l'explique pas dans un paragraphe
   (détail dans `docs/MOTS-ARC.md`). Sur iPhone, le bouton « Se connecter » arrive maintenant dans le premier écran.
 - Tests : entrée-fond 23/23, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; 569 `<div` /
   569 `</div>`. Vérifié dans Chromium seulement : **le rendu sur l'iPhone de Rayan (Safari) reste à voir par lui.**
