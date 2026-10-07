@@ -251,6 +251,20 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   await ctx2.close();
 }
 
+/* 7. La frise dit l'utilité de chaque mot (remarque de Rayan, 7 octobre 23 h 46), une ligne par point sur téléphone */
+{
+  const vus = [];
+  for (const w of [375, 390, 430]) {   // les largeurs d'iPhone
+    const { ctx, page } = await open({ width: w, height: 800 }, 1);
+    vus.push(...await page.evaluate(w => [...document.querySelectorAll('#auth-screen .auth-proof li')].map(li => { const sp = li.querySelector('span'), g = document.createRange(); g.selectNodeContents(sp);
+      return { w, mot: li.querySelector('b').textContent, phrase: sp.textContent, lignes: new Set([...g.getClientRects()].map(x => Math.round(x.top / 4))).size }; }), w));
+    await ctx.close();
+  }
+  const a390 = vus.filter(v => v.w === 390), trop = vus.filter(v => v.lignes !== 1);
+  ok(a390.map(v => v.mot).join() === 'Penser,Développer,Entreprendre' && a390.every(v => /\.$/.test(v.phrase) && v.phrase.length <= 46) && !trop.length,
+     'Frise : trois phrases complètes, une ligne chacune sur iPhone (375 à 430 px)', a390.map(v => `${v.mot} · ${v.phrase}`).join(' | ') + (trop.length ? ` ; sur deux lignes : ${trop.map(v => v.mot + ' à ' + v.w + ' px').join(', ')}` : ''));
+}
+
 await browser.close(); server.close();
 if (process.env.DETAIL) for (const [k, v] of Object.entries(detail)) console.log(k + '\n  ' + v.join('\n  '));
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);

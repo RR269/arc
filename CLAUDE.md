@@ -377,6 +377,14 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     corriger à part (le test devrait fixer l'heure, et « Ce soir » après 23 h est à décider avec Rayan).
   - Vérifié dans Chromium seulement : la police San Francisco, le verre de la carte et la fluidité réelle du
     mouvement ne se jugent que sur l'iPhone et le Mac de Rayan.
+- **PR #12 fusionnée à 23 h 38 ; constaté par Rayan sur son iPhone (23 h 43 et 23 h 46)** : l'écran rend comme prévu
+  dans Safari (horizon vert, violet en bas, police d'Apple, éclat visible sur sa capture), et « les champs se
+  remplissent, tout est ok » avec le trousseau.
+- **Les trois phrases de la frise (branche `mots-frise`, 23 h 46)**. Rayan : elles « ne reflètent pas exactement […]
+  les points d'ARC et son utilité ». Réécrites pour dire ce que chaque mot apporte, **proposées, à valider** :
+  « Penser · Dépose chaque pensée. Aucune ne se perd. », « Développer · ARC la range, la relie et la fait avancer. »,
+  « Entreprendre · Chaque matin, ta prochaine étape t'attend. » Deux autres jeux dans `docs/MOTS-ARC.md`.
+  `tests/entree-fond.mjs` : 31 contrôles (une ligne par phrase de 375 à 430 px).
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son

@@ -172,6 +172,27 @@ Règles d'écriture tenues : une ligne par point sur iPhone (44 signes au plus),
 des noms concrets (idée, étape, tâches, appareils), rien qu'ARC ne fasse pas déjà. Les lignes de 6 h 17 (« Tu la
 déposes », « Elle prend forme », « ARC t'accompagne ») sont remplacées.
 
+### Les trois phrases de la frise, réécrites (7 octobre, 23 h 46)
+
+Remarque de Rayan : « les trois phrases qui sont sous Penser, Développer et Entreprendre me dérangent, car elles ne
+reflètent pas exactement, dans la manière dont elles sont pensées, les points d'ARC et son utilité ». Les anciennes
+décrivaient le mécanisme (la voix, le clavier, les appareils) ; les nouvelles disent ce que chaque mot apporte.
+
+| Mot | Avant | Après (proposée, à valider par Rayan) | Ce qu'ARC fait réellement derrière |
+|---|---|---|---|
+| **Penser** | Dépose ton idée, à la voix ou au clavier. | Dépose chaque pensée. Aucune ne se perd. | le dépôt : écrit sur l'appareil puis sur le compte, jamais retiré |
+| **Développer** | ARC la range et fixe sa prochaine étape. | ARC la range, la relie et la fait avancer. | le rangement : un espace, une étape, un moment (mots de la vision) |
+| **Entreprendre** | Tes tâches du jour, sur tous tes appareils. | Chaque matin, ta prochaine étape t'attend. | le point du matin |
+
+Deux autres jeux proposés à Rayan le même soir, non retenus par défaut :
+- B, le poste de commande : « Vide ta tête ici, à la voix ou au clavier. » / « Chaque idée trouve son projet et son
+  étape. » / « Tous tes projets en main, sur tous tes écrans. »
+- C, au plus court : « Tu déposes. Rien ne se perd. » / « ARC organise. L'idée prend forme. » / « Tu agis. Chaque
+  jour, une étape. »
+
+Règles tenues : une ligne par point sur iPhone (375 à 430 px, contrôlé par `tests/entree-fond.mjs`), une phrase
+complète avec son point, 46 signes au plus, rien qu'ARC ne fasse pas déjà.
+
 ### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
 
 | Avant | Après |
