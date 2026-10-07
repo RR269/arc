@@ -311,6 +311,24 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   de passe. Non vérifiable ici : c'est le navigateur de Rayan qui décide de le proposer.
 - Tests : connexion 20/20 (sept contrôles ajoutés), entrée-fond 25/25, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
   25/25, matin 27/27, proxy 41/41 ; 569 `<div` / 569 `</div>`.
+- **Décision de Rayan (7 octobre, 20 h 44)** : « je ne veux plus le système du code, je veux une inscription et une
+  ouverture de compte normales » ; un code une seule fois pour son compte déjà créé ; « pour les utilisateurs il
+  leur faut le moyen de s'inscrire ». Fait dans la page (même branche, PR #11) :
+  - « Créer un compte » = `signUp` adresse + mot de passe ; si Supabase ouvre la session tout de suite, la personne
+    est dans ARC sans code (« Compte créé · bienvenue dans ARC »), et un compte créé à l'instant ne voit pas la
+    question « Premier appareil » (`_authNewAccount` : l'appareil est relié et envoyé d'office).
+  - Adresse déjà inscrite tapée dans « Créer un compte » (`authExisting`) : le bon mot de passe fait entrer ; sinon un
+    code confirme que c'est bien la personne et enregistre le mot de passe choisi. Jamais de message en anglais.
+  - Le code ne reste que comme secours (« Mot de passe oublié ? ») et pour le compte de Rayan, une fois.
+  **À faire par Rayan dans Supabase, sans quoi rien ne change** (Authentication › Sign In / Providers) : activer
+  « Allow new users to sign up » ; dans le fournisseur Email, désactiver « Confirm email » (sinon chaque inscription
+  attend un e-mail de confirmation, et l'envoi d'e-mails de l'offre gratuite est très limité).
+  **Ce qu'un autre utilisateur trouve aujourd'hui, non résolu** : les cinq mondes de Rayan écrits en dur (ARYAN, FBA…),
+  Valence et ARYAN dans Juridique ; pas de Claude ni de rangement (le proxy refuse tout autre compte que
+  `ARC_OWNER_ID`, 403) ; ses données sont à lui seul d'après les règles des tables (non revérifié dans la base).
+  Sans confirmation d'e-mail, n'importe qui peut créer des comptes avec n'importe quelle adresse. Héberger les
+  données de santé d'autres personnes engage Rayan (RGPD) : à traiter avant d'inviter quelqu'un.
+- Tests après cette décision : connexion 24/24, les sept autres suites inchangées.
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son

@@ -2509,7 +2509,7 @@ function sbInit() {
       }
       else if(event === 'INITIAL_SESSION' && !authSkipped()) showAuthScreen('auth-email');
     }
-    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; _authAskPass = false; _authPendingPass = ''; }
+    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; _authAskPass = false; _authPendingPass = ''; _authNewAccount = false; }
   });
 }
 
@@ -2584,6 +2584,8 @@ function authErrorText(e) {
   if(/rate limit|too many/i.test(m)) return 'Trop de codes demandés : l\'envoi d\'e-mails est limité. Utilise le dernier code reçu, ou réessaie dans une heure.';
   if(/invalid login credentials/i.test(m)) return 'Adresse ou mot de passe incorrect. Pas encore de mot de passe ? Touche « Recevoir un code par e-mail » : tu le choisiras juste après.';
   if(/signups not allowed|signup is disabled|signups are disabled/i.test(m)) return 'La création de compte n\'est pas encore ouverte.';
+  if(/already registered|already been registered|already exists/i.test(m)) return 'Cette adresse a déjà un compte : connecte-toi.';
+  if(/email address.*invalid|unable to validate email|invalid email/i.test(m)) return 'Adresse e-mail refusée : vérifie-la.';
   if(/email not confirmed/i.test(m)) return 'Adresse pas encore confirmée : reçois un code par e-mail pour la confirmer.';
   if(/password should be|weak password|at least \d+ characters/i.test(m)) return 'Mot de passe trop faible : 8 caractères au moins, pas un mot courant.';
   if(/different from the old/i.test(m)) return 'C\'est déjà ton mot de passe actuel.';
@@ -2600,6 +2602,8 @@ var AUTH_GAP_MS = 60000, _authTick = null, _authMode = 'in', AUTH_PASS_MIN = 8;
      écrit sur l'appareil), un code confirme que c'est bien le titulaire, puis le mot de passe est enregistré ;
    - « Recevoir un code » : une fois entré, ARC propose de choisir un mot de passe (_authAskPass), « Plus tard » possible. */
 var _authPendingPass = '', _authAskPass = false, AUTH_CLOSED = /signups not allowed|signup is disabled|signups are disabled/i;
+var AUTH_TAKEN = /already registered|already been registered|already exists/i;
+var _authNewAccount = false; // compte créé à l'instant sur cet appareil : pas de question « Premier appareil », l'appareil est la référence
 function authSentAt() { try { return Number(localStorage.getItem('arc_auth_sent_at')) || 0; } catch(e) { return 0; } }
 /* Après un envoi, « Renvoyer un code » attend une minute : chaque code demandé annule le précédent et l'envoi
    d'e-mails est limité par heure côté Supabase. */
@@ -2657,8 +2661,15 @@ function authSetMode(mode) {
   _authPendingPass = '';
   authErr('auth-email-err', '');
 }
-// « Créer un compte » refusé parce que les inscriptions sont fermées : si l'adresse a déjà un compte, un code part et
-// le mot de passe choisi attend. Renvoie false si l'adresse n'a pas de compte (rien n'est envoyé, rien n'est gardé).
+// « Créer un compte » avec une adresse qui a déjà un compte : on essaie d'abord d'entrer avec ce mot de passe (la
+// personne s'est trompée d'onglet) ; sinon un code confirme que c'est bien elle et le mot de passe choisi est enregistré.
+async function authExisting(email, pass) {
+  var r = await _sb.auth.signInWithPassword({ email: email, password: pass });
+  if(!r.error && r.data && r.data.session) return true;
+  return await authClaimWithCode(email, pass);
+}
+// Si l'adresse a déjà un compte, un code part et le mot de passe choisi attend. Renvoie false si l'adresse n'a pas
+// de compte (rien n'est envoyé, rien n'est gardé).
 async function authClaimWithCode(email, pass) {
   if(authSentAt() + AUTH_GAP_MS <= Date.now()) {
     var res = await _sb.auth.signInWithOtp({ email: email, options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname } });
@@ -2691,12 +2702,21 @@ async function authGo() {
       if(res.error) throw res.error;
       // La suite passe par onAuthStateChange → SIGNED_IN
     } else {
+      // Inscription normale : adresse + mot de passe. Si Supabase ouvre la session tout de suite (confirmation par
+      // e-mail désactivée), le compte est créé et la personne est dans ARC, sans code.
+      _authNewAccount = true;
       var up = await _sb.auth.signUp({ email: email, password: pass, options: { emailRedirectTo: location.origin + location.pathname } });
-      if(up.error && AUTH_CLOSED.test(up.error.message || '') && await authClaimWithCode(email, pass)) { document.getElementById('auth-pass-inp').value = ''; btn.disabled = false; return; }
-      if(up.error) throw up.error;
-      var u = up.data && up.data.user;
-      if(u && Array.isArray(u.identities) && u.identities.length === 0) { authSetMode('in'); authErr('auth-email-err', 'Cette adresse a déjà un compte : connecte-toi.'); }
-      else if(!(up.data && up.data.session)) { try { localStorage.setItem('arc_auth_sent_at', String(Date.now())); } catch(e) {} authShowCodeStep(email); }
+      var u = up.data && up.data.user, sess = up.data && up.data.session, em = up.error ? (up.error.message || '') : '';
+      if(!sess) _authNewAccount = false;
+      var taken = (up.error && (AUTH_CLOSED.test(em) || AUTH_TAKEN.test(em))) || (!up.error && u && Array.isArray(u.identities) && u.identities.length === 0);
+      if(taken) {
+        if(await authExisting(email, pass)) { document.getElementById('auth-pass-inp').value = ''; btn.disabled = false; return; }
+        if(up.error && AUTH_CLOSED.test(em)) throw up.error;
+        authSetMode('in'); authErr('auth-email-err', 'Cette adresse a déjà un compte : connecte-toi.');
+      }
+      else if(up.error) throw up.error;
+      else if(sess) toast('Compte créé · bienvenue dans ARC');
+      else { try { localStorage.setItem('arc_auth_sent_at', String(Date.now())); } catch(e) {} authShowCodeStep(email); }
     }
     document.getElementById('auth-pass-inp').value = '';
   } catch(e) { authErr('auth-email-err', authErrorText(e)); }
@@ -2814,7 +2834,13 @@ async function pullFromCloud() {
     var res = await _sb.from('arc_data').select('state,updated_at').eq('user_id', uid).maybeSingle();
     if(res.error) throw res.error;
     if(!res.data) {
-      // Aucune ligne pour ce compte : l'appareil ne devient la référence qu'avec l'accord de Rayan
+      // Compte créé à l'instant ici même : rien d'autre ne peut exister, l'appareil est la référence sans question.
+      if(_authNewAccount) {
+        _authNewAccount = false; linkDevice(); await pushToCloud();
+        if(document.getElementById('sync-dot').className === 'err') { try { localStorage.removeItem(LINK_KEY); } catch(e) {} }
+        return;
+      }
+      // Aucune ligne pour ce compte : l'appareil ne devient la référence qu'avec l'accord de la personne
       setSyncUI('', 'À confirmer');
       if(!_refAsked) {
         _refAsked = true;

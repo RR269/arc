@@ -19,7 +19,7 @@ const session = () => {
 };
 
 // Ouvre ARC sans session ; auth(req, url) décide de la réponse des appels /auth/v1/…
-async function open(auth, { withSession = false, viewport = { width: 390, height: 844 } } = {}) {
+async function open(auth, { withSession = false, viewport = { width: 390, height: 844 }, row = true } = {}) {
   const ctx = await browser.newContext({ viewport, timezoneId: 'Europe/Paris', locale: 'fr-FR' });
   const calls = [], errors = [];
   if (withSession) await ctx.addInitScript(sessionScript());
@@ -34,9 +34,12 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
       return r ? json(r.status, r.json) : json(200, {});
     }
     if (u.pathname.endsWith('/arc_data') && req.method() === 'GET') {
-      const row = { state: { _lastAction: 0 }, updated_at: '2026-01-01T00:00:00Z' };
-      return json(200, /vnd\.pgrst\.object/.test(req.headers()['accept'] || '') ? row : [row]);
+      const obj = /vnd\.pgrst\.object/.test(req.headers()['accept'] || '');
+      if (!row) return obj ? json(406, { code: 'PGRST116', details: 'The result contains 0 rows', message: 'JSON object requested, multiple (or no) rows returned' }) : json(200, []); // compte sans ligne
+      const r = { state: { _lastAction: 0 }, updated_at: '2026-01-01T00:00:00Z' };
+      return json(200, obj ? r : [r]);
     }
+    if (u.pathname.endsWith('/arc_data')) calls.push({ method: req.method(), path: u.pathname, body: {} });
     if (req.method() === 'GET') return json(200, []);
     return json(201, []);
   });
@@ -108,6 +111,7 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   let mode = 'closed';
   const { ctx, page, calls } = await open(async ({ path }) => {
     if (path === '/auth/v1/otp') return { status: 422, json: { code: 422, error_code: 'otp_disabled', msg: 'Signups not allowed for otp' } }; // adresse sans compte
+    if (path === '/auth/v1/token') return { status: 400, json: { code: 400, error_code: 'invalid_credentials', msg: 'Invalid login credentials' } };
     if (path !== '/auth/v1/signup') return null;
     if (mode === 'closed') return { status: 422, json: { code: 422, error_code: 'signup_disabled', msg: 'Signups not allowed for this instance' } };
     if (mode === 'taken') return { status: 200, json: { id: 'x', email: 'rayan@test.fr', identities: [] } };
@@ -170,6 +174,7 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
 {
   const { ctx, page, calls, errors } = await open(async ({ method, path }) => {
     if (path === '/auth/v1/signup') return { status: 422, json: { code: 422, error_code: 'signup_disabled', msg: 'Signups not allowed for this instance' } };
+    if (path === '/auth/v1/token') return { status: 400, json: { code: 400, error_code: 'invalid_credentials', msg: 'Invalid login credentials' } }; // le compte n'a pas encore de mot de passe
     if (path === '/auth/v1/otp') return { status: 200, json: {} };
     if (path === '/auth/v1/verify') return { status: 200, json: session() };
     if (path === '/auth/v1/user') return { status: 200, json: session().user };
@@ -251,6 +256,65 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   await page.waitForSelector('#auth-pass.active', { timeout: 6000 }).catch(() => {});
   ok(await page.isVisible('#auth-newpass-inp'), 'Lien de l\'e-mail : connecté, ARC propose de choisir un mot de passe');
   await ctx.close();
+}
+
+/* 10. Inscription normale (inscriptions ouvertes, sans confirmation par e-mail) : adresse + mot de passe, et la
+       personne est dans ARC. Aucun code, aucune question « Premier appareil ». */
+{
+  const { ctx, page, calls, errors } = await open(async ({ path }) => {
+    if (path === '/auth/v1/signup') return { status: 200, json: session() };
+    if (path === '/auth/v1/user') return { status: 200, json: session().user };
+    return null;
+  }, { row: false });
+  await page.waitForSelector('#auth-screen.active');
+  await page.click('#auth-tab-up');
+  await page.fill('#auth-email-inp', 'nouvelle@personne.fr'); await page.fill('#auth-pass-inp', 'son-mot-de-passe');
+  await page.click('#auth-go');
+  await page.waitForFunction(() => !document.getElementById('auth-screen').classList.contains('active'), null, { timeout: 5000 }).catch(() => {});
+  await page.waitForTimeout(900);
+  const sign = calls.find(c => c.path.startsWith('/auth/v1/signup'));
+  const st = await page.evaluate(() => ({ ferme: !document.getElementById('auth-screen').classList.contains('active'), relie: !!localStorage.getItem('arc_linked_uid'),
+    garde: (JSON.stringify(localStorage) + JSON.stringify(sessionStorage)).includes('son-mot-de-passe'), sync: document.getElementById('sync-lbl').textContent }));
+  const envoi = calls.some(c => c.path.endsWith('/arc_data') && c.method === 'POST');
+  ok(sign && sign.body.email === 'nouvelle@personne.fr' && sign.body.password === 'son-mot-de-passe' && st.ferme && !calls.some(c => c.path.includes('/otp') || c.path.includes('/verify')) && !errors.length,
+     'Inscription normale : adresse + mot de passe, le compte est créé et la personne est dans ARC, sans aucun code', `fermé : ${st.ferme}, appels : ${calls.map(c => c.path.split('?')[0].replace('/auth/v1/', '')).join(', ')}`);
+  ok(st.relie && envoi && !st.garde, 'Compte neuf : pas de question « Premier appareil », l\'appareil est relié et son contenu envoyé ; le mot de passe n\'est écrit nulle part', `relié : ${st.relie}, envoi : ${envoi}, état : ${st.sync}`);
+  await ctx.close();
+}
+
+/* 11. « Créer un compte » avec une adresse déjà inscrite (inscriptions ouvertes) : le bon mot de passe fait entrer ;
+       un autre mot de passe passe par un code de confirmation, jamais par un message en anglais. */
+{
+  let bon = true;
+  const { ctx, page, calls } = await open(async ({ path }) => {
+    if (path === '/auth/v1/signup') return { status: 422, json: { code: 422, error_code: 'user_already_exists', msg: 'User already registered' } };
+    if (path === '/auth/v1/token') return bon ? { status: 200, json: session() } : { status: 400, json: { code: 400, error_code: 'invalid_credentials', msg: 'Invalid login credentials' } };
+    if (path === '/auth/v1/otp') return { status: 200, json: {} };
+    if (path === '/auth/v1/user') return { status: 200, json: session().user };
+    return null;
+  });
+  await page.waitForSelector('#auth-screen.active');
+  await page.click('#auth-tab-up');
+  await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.fill('#auth-pass-inp', 'le-bon-mot-de-passe');
+  await page.click('#auth-go');
+  await page.waitForFunction(() => !document.getElementById('auth-screen').classList.contains('active'), null, { timeout: 5000 }).catch(() => {});
+  ok(!(await page.isVisible('#auth-screen')) && !calls.some(c => c.path.includes('/otp')), 'Adresse déjà inscrite, bon mot de passe dans « Créer un compte » : la personne entre, sans code');
+  await ctx.close();
+  bon = false;
+  const b = await open(async ({ path }) => {
+    if (path === '/auth/v1/signup') return { status: 422, json: { code: 422, error_code: 'user_already_exists', msg: 'User already registered' } };
+    if (path === '/auth/v1/token') return { status: 400, json: { code: 400, error_code: 'invalid_credentials', msg: 'Invalid login credentials' } };
+    if (path === '/auth/v1/otp') return { status: 200, json: {} };
+    return null;
+  });
+  await b.page.waitForSelector('#auth-screen.active');
+  await b.page.click('#auth-tab-up');
+  await b.page.fill('#auth-email-inp', 'rayan@test.fr'); await b.page.fill('#auth-pass-inp', 'un-autre-mot-de-passe');
+  await b.page.click('#auth-go');
+  await b.page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
+  const txt = (await b.page.textContent('#auth-code .auth-text')).replace(/\s+/g, ' ');
+  ok(await b.page.isVisible('#auth-code-inp') && /compte existe déjà/.test(txt) && !/registered/i.test(await b.page.textContent('#auth-email-err')), 'Adresse déjà inscrite, autre mot de passe : un code confirme que c\'est bien la personne', txt);
+  await b.ctx.close();
 }
 
 await browser.close(); server.close();
