@@ -77,7 +77,9 @@ const morceaux = ({ racine, cadre, hors }) => {
     if (inp.offsetParent === null || inp.type === 'checkbox' || inp.type === 'range') continue;
     const b = inp.getBoundingClientRect(), cs = getComputedStyle(inp), pt = Math.min(10, parseFloat(cs.paddingTop) || 10);
     const hh = inp.tagName === 'TEXTAREA' ? Math.min(b.height - 2 * pt, parseFloat(cs.lineHeight) || 24) : b.height - 20;
-    add(new DOMRect(b.left + parseFloat(cs.paddingLeft), b.top + (inp.tagName === 'TEXTAREA' ? parseFloat(cs.paddingTop) : 10), b.width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), hh), 'champ', inp.value || inp.placeholder, lum(inp.value ? cs.color : getComputedStyle(inp, '::placeholder').color));
+    // champ de date : pas de texte d'attente, le format « jj/mm/aaaa » s'écrit dans la couleur du champ ; le pictogramme du calendrier (à droite) n'est pas du texte
+    const date = /^(date|time|datetime-local|month)$/.test(inp.type), droite = date ? 44 : 0;
+    add(new DOMRect(b.left + parseFloat(cs.paddingLeft), b.top + (inp.tagName === 'TEXTAREA' ? parseFloat(cs.paddingTop) : 10), b.width - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - droite, hh), 'champ', inp.value || inp.placeholder || (date ? 'date' : ''), lum(inp.value || date ? cs.color : getComputedStyle(inp, '::placeholder').color));
   }
   return out;
 };

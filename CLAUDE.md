@@ -14,6 +14,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `entree-fond.mjs` (fond de l'écran d'entrée : contraste mesuré dans l'image, six couleurs dans le fond et pas dans les lettres),
   `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
+  `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
@@ -45,7 +46,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/mondes.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -251,6 +252,41 @@ Mondes, passe de design (branche `mondes`, 7 octobre après-midi, partie de `mai
   (rendu d'un `color-mix()`) et le texte sombre sur fond clair.
 - Tests : mondes 6/6, entrée-fond 25/25, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41.
   Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.** Aucun mode de fusion (règle Safari).
+
+Santé et Juridique, passe de design (branche `poles`, 7 octobre en fin d'après-midi, partie de `main` à `c39f0f3`) :
+- Rayan a vu les mondes en ligne (PR #9 fusionnée, « les changements sont effectués ») et demandé la suite : les deux
+  pôles, dans la même identité.
+- Même contenu, même ordre, mêmes fonctions ; le dessin change (bloc de style `:is(#S3,#S4) …` à la fin de la
+  feuille). Identité en plus calme (vision : « Ma vie » à part) : horizon discret de la couleur du pôle dans
+  l'en-tête (vert Santé, bleu Juridique), cartes en relief, étiquettes mono, anneau de couleur dans la barre du haut.
+- **Pictogrammes au trait** à la place des emoji (lune, éclair, pouls, cible ; loupe ; immeuble, document, euro,
+  liste) : un masque CSS (`--ico`) teinté par la couleur de l'élément, une seule famille, trait de 1,7. L'emoji reste
+  dans le balisage, en taille 0. Les emoji des habitudes et du graphique vide sont masqués.
+- **Charte, mesurée** (`tests/poles.mjs`, deux pôles × vide et rempli × iPhone 390 et Mac 1440) : zéro texte sous
+  12 px, zéro champ sous 16 px, zéro cible sous 44 px ; contraste le plus faible : 4,70 : 1 ; sur un téléphone de
+  360 px, aucun bouton de la barre du haut ne sort de l'écran (« Aides » était coupé à 390 px au premier essai).
+- **Trois défauts déjà en ligne, prouvés puis réparés** (ils n'étaient pas dans la demande, ils empêchaient l'usage) :
+  1. Santé, objectifs : la case à cocher mesurait 0 × 0 px (le code écrivait `obj-cb` et `obj-text`, la feuille de
+     style ne connaît que `obj-check` et `obj-txt`) : on ne pouvait pas cocher un objectif. Le code écrit les bonnes classes.
+  2. Santé, « Tendances » : toutes les barres faisaient 4 px, même après un check-in (colonnes sans hauteur). Mesure
+     sur `main` : « 4 4 4 4 4 4 4 » ; après : « 4 4 4 4 4 4 64 » pour 7 h de sommeil.
+  3. Juridique : ajouter un élément, le marquer fait ou le supprimer refermait la section (toute la liste est
+     redessinée) : l'élément ajouté disparaissait de la vue. `renderJurSections` garde les sections ouvertes ;
+     `searchJur` ouvre les sections trouvées sans passer par `jurToggle`.
+  Les éléments juridiques, leurs étiquettes et la chronologie n'avaient aucun style (classes `jur-item-text`,
+  `jur-tl-row`… absentes de la feuille) : ils en ont un.
+- Mots corrigés (accents, anglais) : « À faire », « Fait », « Rouvrir », « fait(s) » au lieu de « done », « Priorité
+  haute », « Dans 5 jours », « Dépassée de 2 j », « Terminé », « Démarches en cours », « Aucun élément pour
+  l'instant. », « Énergie ». Accueil de Claude Santé : « Je note, je retrouve, je prépare tes rendez-vous. » (les
+  consignes envoyées à Claude ne sont pas touchées).
+- **Pas touché, décision de Rayan** : le contenu de Santé reste un suivi à curseurs (check-in, score, série de jours),
+  alors que la vision demande mémoire, échéances, documents, rendez-vous, sans série ; les boutons de Claude Santé
+  « Optimiser sommeil », « Programme sport », « Gérer le stress », « Routine matin » demandent des conseils, ce que
+  les consignes refusent. Le bouton « Aides » et les suggestions juridiques nomment Valence et ARYAN en dur.
+- `tests/mesure.mjs` : un champ de date vide se mesure avec la couleur du champ, sans son pictogramme de calendrier.
+- Tests : pôles 9/9, mondes 6/6, entrée-fond 25/25, connexion 13/13, dépôt 19/19, rangement 25/25, matin 27/27,
+  proxy 41/41 ; 569 `<div` / 569 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
+  Aucun mode de fusion (règle Safari).
 
 ### Décisions de Rayan (5 octobre)
 
