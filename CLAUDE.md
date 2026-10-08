@@ -13,7 +13,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
   `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `entree-fond.mjs` (fond de l'écran d'entrée : contraste mesuré dans l'image, six couleurs dans le fond et pas dans les lettres),
-  `accueil.mjs` (accueil, vide et rempli : mêmes mesures, barre du haut de 360 à 430 px, moment de la journée),
+  `accueil.mjs` (accueil, vide et rempli : mêmes mesures, barre du haut de 360 à 430 px, moment de la journée ;
+  ordre de l'accueil, prochaine étape, « Ensuite », projets endormis et réveillés),
   `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
   `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
@@ -25,6 +26,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Cinq mondes (tableau `WORLDS`, l'`id` est l'index) : ARYAN, FBA, KITCHEN, TELENEUF, ATLAS.
 - Le contenu d'un monde (tâches, bloquants, mission) est écrit en dur dans `WORLDS` ; ce que Rayan coche vit dans `S`.
 - Changer la liste des mondes ou marquer des tâches comme faites : incrémenter `WORLDS_V` et compléter `migrateWorlds`.
+- Un projet peut être « endormi » : `S.sleep[id]` (`mondeDort`, `mondeSommeil`, `renderSommeil`) ; c'est la seule
+  source, pour l'accueil comme pour la note « Endormi. » envoyée au proxy de rangement (`rangeSpaces`).
 - Deux pôles personnels : Santé et Juridique.
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
@@ -528,6 +531,48 @@ Accueil, l'intérieur (branche `interieur-accueil`, 8 octobre 5 h, partie de `ma
 - Tests : accueil 8/8 (nouveau), entrée-fond 40/40, connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
   25/25, matin 27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 4,89 : 1 ; 571 `<div` / 571 `</div>`.
   Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone** (police San Francisco, horizon masqué).
+
+Accueil, le poste de commande (même branche `interieur-accueil`, PR #14, 8 octobre 6 h) :
+- Rayan (5 h 50) : « on se veut en expert design et en expert fonctionnalité », « revoir ce qu'on propose, ce qu'on
+  est censé proposer en respectant la vision », « nos objectifs, les vrais, sans se perdre avec tout ce qui a été
+  dit » ; le design qu'il a apprécié se maintient et se continue dans les chantiers suivants.
+- **Règle à garder : l'accueil a UN but, la prochaine étape** (vision : le geste central et « la valeur est dans le
+  retour » ; étude complète, écran « Aujourd'hui »). Tout ce qui s'y ajoute passe en dessous ou n'y entre pas.
+- **L'ordre** : barre du haut ; moment, titre, « Valence · date » ; l'horizon d'ARC ; **« Prochaine étape »** (une
+  carte de verre à la couleur de son espace, « C'est fait » = la seule touche blanche de l'écran, « Fixer un moment »
+  si elle n'en a pas) ; **« Ensuite »** (une ligne par étape, toute la ligne ouvre la pensée dans « Déposé ») ;
+  « N pensées à ranger » ; « Déposé » et « Point du jour » ; **« Projets »** (ceux qui avancent, puis la liste
+  « Endormis ») ; **« Ma vie »** (Santé, Juridique, cartes plus calmes) ; pied. Sur iPhone 390 × 844 la prochaine
+  étape et sa touche sont dans le premier écran ; l'accueil passe de 4 744 px à 2 277 px de haut.
+- **Sortis de l'accueil** (verdict « supprimer » de l'inventaire de `docs/ETUDE-COMPLETE.md`) : les quatre compteurs,
+  la progression globale et sa phrase tirée au sort, « N bloquants. Résous maintenant. », « CRITIQUE » et
+  « URGENCE », les étiquettes techniques des cartes, « Check-in du jour manquant » et le point qui clignote, l'ajout
+  rapide de tâche (le dépôt le remplace), « Veille & Sources » (figée depuis avril ; `renderIntel`, `INTEL_STATIC`,
+  `renderQA`, `animateCount` retirés, 129 lignes de style mortes aussi). Aucune donnée n'est effacée : `S.intel` et
+  les tâches restent dans l'état.
+- **Projets endormis** (décision du 5 octobre, enfin dans la page) : `WORLDS_V` = 3, `migrateWorlds` endort FBA,
+  KITCHEN et TELENEUF une fois (`S.sleep`) ; ensuite c'est Rayan qui décide. Un projet endormi quitte les cartes :
+  une ligne sous « Endormis » (anneau, nom, « Réveiller ») ; la ligne ouvre toujours le monde. Dans chaque monde, en
+  bas : « Endormir ce projet » / « Réveiller ce projet » (`.w-sommeil`). `RANGE_DORMANT` n'existe plus : la note
+  « Endormi. » envoyée au proxy suit `S.sleep`. Piège connu : un appareil resté sur une ancienne version de la page
+  renvoie un état sans `sleep` ; à la lecture suivante les trois projets se rendorment.
+- Carte d'un projet : pictogramme, « N bloquants » avec un point ambre (un fait, sans rouge ni ordre), nom,
+  description sur deux lignes, progression, prochaine tâche. Le titre « Sept espaces. » est calculé (mondes + pôles).
+- Mots : « Prochaine étape », « Ensuite », « Projets », « Ma vie », « Endormis », « Réveiller », « 2 en cours ·
+  3 endormis » ; état vide : « Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine
+  étape. » ; Santé : « Ton suivi du jour, tes habitudes et tes objectifs. » (ce que l'écran fait aujourd'hui ;
+  l'ancienne phrase promettait « performance, accompagnement »).
+- Mac : la prochaine étape prend toute la largeur, sa touche à droite. Le raccourci « K recherche » du pied ne se
+  montre que là où il y a un clavier.
+- **À décider par Rayan (signalé, pas touché)** : « Valence » et le titre « Un cerveau. Sept espaces. » (vision :
+  plus rien en dur) ; la War Room dans la barre du haut (elle s'ouvre sur ARYAN, tâches écrites en avril) ; le
+  contenu de Santé (suivi à curseurs) ; les tâches et bloquants d'ARYAN et d'ATLAS affichés sur les cartes datent
+  de l'état reconstitué, pas des pensées déposées (le lien pensée → projet reste à construire).
+- Tests : accueil 12/12 (quatre contrôles ajoutés : ordre et retraits, prochaine étape dans le premier écran,
+  « Ensuite » et « C'est fait », endormir et réveiller avec rechargement ; le moment de la journée pose l'heure au
+  lieu de l'avancer, l'avance échouait parfois sous charge), entrée-fond 40/40, connexion 27/27, mondes 6/6, pôles
+  9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 5,41 : 1 ;
+  538 `<div` / 538 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
 
 ### Décisions de Rayan (5 octobre)
 

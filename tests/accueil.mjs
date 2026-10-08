@@ -1,5 +1,5 @@
-// Tests de l'accueil (#S1), le premier écran après la connexion (passe « intérieur » du 8 octobre : même contenu,
-// identité de l'écran d'entrée, charte appliquée).
+// Tests de l'accueil (#S1), le premier écran après la connexion (8 octobre : identité de l'écran d'entrée, charte
+// appliquée, et l'accueil ramené à UN but, la prochaine étape ; projets endormis à part ; « Ma vie » à part).
 // Lancement depuis la racine du dépôt (voir tests/depot.mjs pour installer Playwright) :
 //   NODE_PATH=/tmp/arc-outils/node_modules node tests/accueil.mjs
 // Supabase est remplacé par un faux serveur : aucune requête ne part vers le vrai projet.
@@ -8,6 +8,9 @@
 // un faux proxy) : textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, aucun emoji, aucun mode de fusion, aucun
 // débordement, contraste ≥ 4,5 : 1 mesuré dans l'image sur toute la hauteur ; police du système pour le texte ;
 // l'horizon d'ARC sous le titre ; la barre du haut tient sur un téléphone de 360 px, même avec un état long.
+// L'ordre de l'accueil (prochaine étape, Déposé et point du jour, Projets, Ma vie), ce qui en est sorti, la
+// prochaine étape et sa touche dans le premier écran de l'iPhone, « C'est fait », « Ensuite » qui ouvre « Déposé »,
+// endormir et réveiller un projet (gardé dans S.sleep, relu au lancement suivant).
 
 import { chromium, startServer, fakeSupabase, openPage, sessionScript, deposit } from './outils.mjs';
 import { mesurer } from './mesure.mjs';
@@ -33,20 +36,20 @@ const reponses = () => { const d = new Date(); d.setHours(23, 30, 0, 0); let i =
 const releve = () => {
   const root = document.getElementById('S1'), vis = e => e.offsetParent !== null && e.getBoundingClientRect().width > 0;
   const nom = e => (e.id ? '#' + e.id : '.' + String(e.className).split(' ')[0]);
-  const cibles = [...root.querySelectorAll('button, a[href], input, textarea, select, label, [data-action], #sync-pill, .intel-open')].filter(vis)
+  const cibles = [...root.querySelectorAll('button, a[href], input, textarea, select, label, [data-action], [role=button], #sync-pill')].filter(vis)
     .map(e => ({ r: e.getBoundingClientRect(), n: nom(e) })).filter(c => c.r.height < 43.5 || c.r.width < 43.5).map(c => `${c.n} ${Math.round(c.r.width)}×${Math.round(c.r.height)}`);
   const petits = [], emoji = [], polices = new Set(); const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let nd; (nd = tw.nextNode());) { const e = nd.parentElement; if (!nd.nodeValue.trim() || !vis(e)) continue; const cs = getComputedStyle(e), s = parseFloat(cs.fontSize); if (s === 0) continue;
     if (s < 12) petits.push(`${nom(e)} ${s}px`); const m = nd.nodeValue.match(/\p{Extended_Pictographic}/gu); if (m) emoji.push(nom(e) + ' ' + m.join('')); polices.add(cs.fontFamily.split(',')[0].trim().replace(/"/g, '')); }
   const champs = [...root.querySelectorAll('input:not([type=file]), textarea, select')].filter(vis).filter(e => parseFloat(getComputedStyle(e).fontSize) < 16).map(nom);
   const fusion = []; for (const e of root.querySelectorAll('*')) for (const ps of [null, '::before', '::after']) { const m = getComputedStyle(e, ps).mixBlendMode; if (m && m !== 'normal') fusion.push(nom(e)); }
-  const hors = [...root.querySelectorAll('.hn *, .h-hero > *, .h-section, .next-wrap, #quick-add-bar, .intel-card')].filter(vis).filter(e => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).filter(e => !e.classList.contains('h-horizon')).map(nom);
+  const hors = [...root.querySelectorAll('.hn *, .h-hero > *, .h-section, .h-entries, .next-wrap, .next-item, .h-dort-row')].filter(vis).filter(e => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).filter(e => !e.classList.contains('h-horizon')).map(nom);
   const hz = getComputedStyle(root.querySelector('.h-horizon'), '::before'), texte = e => getComputedStyle(root.querySelector(e)).fontFamily.split(',')[0].trim();
   const ids = [...document.querySelectorAll('[id]')].map(e => e.id).filter((x, i, a) => a.indexOf(x) !== i);
   return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], emoji, champs, fusion, hors: [...new Set(hors)], ids, polices: [...polices],
            large: document.documentElement.scrollWidth <= innerWidth && root.scrollWidth <= root.clientWidth + 1,
            horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), systeme: [texte('.h-sub'), texte('.depot-entry-t'), texte('.pc-monde-desc')], titre: texte('.h-h1'),
-           mondes: root.querySelectorAll('.pc-monde').length, poles: root.querySelectorAll('.pole-card').length, etapes: root.querySelectorAll('#next-list .next-item').length,
+           mondes: root.querySelectorAll('.pc-monde').length, dort: root.querySelectorAll('.h-dort-row').length, poles: root.querySelectorAll('.pole-card').length, etapes: root.querySelectorAll('#next-list .next-item').length,
            date: (root.textContent.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) \d{1,2} /g) || []).length };
 };
 const contraste = async (page, nom) => {
@@ -89,7 +92,7 @@ for (const vp of ECRANS) {
     d(r.ids.length, `identifiants en double : ${r.ids.join(', ')}`);
     d(!r.horizon, 'l\'horizon d\'ARC manque sous le titre');
     d(r.systeme.some(f => f !== '-apple-system') || !/Jakarta/.test(r.titre), `écriture : texte ${r.systeme.join(' / ')}, titre ${r.titre}`);
-    d(r.mondes !== 5 || r.poles !== 2, `${r.mondes} mondes, ${r.poles} pôles`);
+    d(r.mondes !== 2 || r.dort !== 3 || r.poles !== 2, `${r.mondes} projets en cours, ${r.dort} endormis, ${r.poles} pôles`);
     d(r.date !== 1, `la date est écrite ${r.date} fois`);
     d(etat === 'rempli' && r.etapes < 2, `${r.etapes} prochaine(s) étape(s) affichée(s)`);
     const c = await contraste(page, etat); n += c.n; contrastes.push(...c.sous); if (c.pire.ratio < pire.ratio) pire = c.pire;
@@ -102,15 +105,79 @@ for (const vp of ECRANS) {
   await page.click('#btn-menu');
   if (contrastes.length) { const g = {}; for (const m of contrastes) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0 }; e.nb++; e.min = Math.min(e.min, m.ratio); } detail[vp.n] = Object.entries(g).map(([k, e]) => `${e.min.toFixed(2)}  ${k}  (${e.nb})`); }
   ok(!defauts.length, `${vp.n} : l'accueil respecte la charte, vide et rempli (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion ni débordement, police du système, horizon d'ARC, date écrite une fois)`,
-     defauts.slice(0, 4).join(' ; ') || `polices : ${dernier.polices.join(', ')} ; ${dernier.etapes} étapes, ${dernier.mondes} mondes, ${dernier.poles} pôles`);
+     defauts.slice(0, 4).join(' ; ') || `polices : ${dernier.polices.join(', ')} ; ${dernier.etapes} étapes, ${dernier.mondes} projets en cours, ${dernier.dort} endormis, ${dernier.poles} pôles`);
   ok(n > 300 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout sur l'accueil, vide et rempli, menu compris`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   // les cinq mondes et les deux pôles s'ouvrent depuis l'accueil, et on en revient
   const ouverts = [];
-  for (let w = 0; w < 5; w++) { await page.evaluate(i => document.querySelector(`#S1 .pc-monde[data-wid="${i}"]`).click(), w); await page.waitForTimeout(650);
+  for (let w = 0; w < 5; w++) { await page.evaluate(i => document.querySelector(`#S1 :is(.pc-monde, .h-dort-row)[data-wid="${i}"]`).click(), w); await page.waitForTimeout(650);
     ouverts.push(await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && document.getElementById('S1').classList.contains('off'))); await page.evaluate(() => goHome()); await page.waitForTimeout(450); }
   for (const p of ['sante', 'juridique']) { await page.evaluate(i => document.querySelector(`#S1 .pole-card[data-pole="${i}"]`).click(), p); await page.waitForTimeout(650);
     ouverts.push(await page.evaluate(i => !document.getElementById(i === 'sante' ? 'S3' : 'S4').classList.contains('off'), p)); await page.evaluate(() => goHome()); await page.waitForTimeout(450); }
-  ok(ouverts.length === 7 && ouverts.every(Boolean) && errors.length === 0, `${vp.n} : les cinq mondes et les deux pôles s'ouvrent depuis l'accueil, aucune erreur de console`, ouverts.map(o => o ? 'oui' : 'NON').join(' ') + (errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''));
+  ok(ouverts.length === 7 && ouverts.every(Boolean) && errors.length === 0, `${vp.n} : les cinq mondes (en cours ou endormis) et les deux pôles s'ouvrent depuis l'accueil, aucune erreur de console`, ouverts.map(o => o ? 'oui' : 'NON').join(' ') + (errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''));
+  await ctx.close();
+}
+
+/* L'accueil a UN but : la prochaine étape. L'ordre, ce qui en est sorti, les gestes */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  await ctx.addInitScript(sessionScript());
+  const fk = fakeSupabase(); fk.proxy = reponses();
+  const { page, errors } = await openPage(browser, url, { ctx, fk });
+  await page.waitForTimeout(500);
+  const plan = () => page.evaluate(() => { const root = document.getElementById('S1'), y = s => { const e = root.querySelector(s); return e && e.offsetParent !== null ? Math.round(e.getBoundingClientRect().top) : null; };
+    const txt = root.querySelector('.hw').innerText, bar = document.getElementById('depot-bar').getBoundingClientRect().top, go = root.querySelector('.is-now .rg-btn.main');
+    return { ordre: [y('.h-h1'), y('.h-horizon'), y('#next-steps'), y('.h-entries'), y('#hgrid'), y('#h-dort'), y('#poles-grid')],
+             sortis: ['.h-stats', '.h-prog', '#h-critical-badge', '#quick-add-bar', '.intel-card', '.pc-monde-tag', '.pc-monde-prio', '.pole-dot'].filter(s => root.querySelector(s)),
+             mots: ['Résous', 'CRITIQUE', 'URGENCE', 'manquant', 'Veille', 'bien-être complet'].filter(m => txt.includes(m)),
+             titre: document.getElementById('h-espaces').textContent, sous: document.getElementById('h-projets-sub').textContent,
+             lbl: [...root.querySelectorAll('.next-lbl')].map(e => e.textContent), vide: !document.getElementById('next-empty').hidden,
+             now: root.querySelector('.is-now .next-step')?.textContent || null, touche: go ? { bas: Math.round(go.getBoundingClientRect().bottom), barre: Math.round(bar), blanc: getComputedStyle(go).color } : null,
+             principaux: root.querySelectorAll('.rg-btn.main').length, lignes: [...root.querySelectorAll('.next-row .next-step')].map(e => e.textContent) }; });
+  const vide = await plan();
+  const croissant = a => a.every((v, i) => v !== null && (i === 0 || v > a[i - 1]));
+  ok(croissant(vide.ordre) && !vide.sortis.length && !vide.mots.length && vide.titre === 'Sept espaces.' && vide.sous === '2 en cours · 3 endormis' && vide.vide && !vide.now,
+     'Accueil : dans l\'ordre, titre, horizon, prochaine étape, Déposé et point du jour, Projets, Endormis, Ma vie ; compteurs, progression globale, ajout rapide, veille et mots pressants n\'y sont plus',
+     `positions ${vide.ordre.join(', ')} ; « ${vide.titre} » ; « ${vide.sous} »${vide.sortis.length ? ' ; restent ' + vide.sortis.join(', ') : ''}${vide.mots.length ? ' ; mots ' + vide.mots.join(', ') : ''}`);
+
+  for (const t of ['Appeler la comptable pour la TVA', 'Relire les CGV d\'Atlas', 'idée de nom pour la boutique']) { await deposit(page, t); await page.waitForTimeout(250); }
+  await page.waitForFunction(() => document.querySelectorAll('#next-list .next-item').length >= 2 && !document.getElementById('next-torange').hidden, null, { timeout: 8000 }).catch(() => {});
+  await page.evaluate(() => document.activeElement && document.activeElement.blur()); await page.waitForTimeout(300);
+  const plein = await plan();
+  ok(plein.now === 'Appeler la comptable pour la TVA' && plein.lbl.join('|') === 'Prochaine étape|Ensuite' && plein.principaux === 1 && plein.touche && plein.touche.bas < plein.touche.barre && plein.touche.blanc === 'rgb(11, 11, 15)' && plein.lignes.length === 1 && !plein.vide,
+     'Accueil : la prochaine étape est une carte avec la seule touche principale de l\'écran, « C\'est fait », visible dans le premier écran de l\'iPhone ; la suite est sous « Ensuite »',
+     `« ${plein.now} » ; libellés ${plein.lbl.join(', ')} ; ${plein.principaux} touche principale, bas à ${plein.touche?.bas} px (barre de dépôt à ${plein.touche?.barre} px) ; ensuite : ${plein.lignes.join(' / ')}`);
+
+  // « Ensuite » : toute la ligne ouvre la pensée dans « Déposé » ; « C'est fait » fait monter la suivante
+  const tid = await page.evaluate(() => document.querySelector('#S1 .next-row').getAttribute('data-id'));
+  await page.click('#S1 .next-row'); await page.waitForTimeout(300);
+  const dep = await page.evaluate(i => ({ ouvert: document.getElementById('depot-screen').classList.contains('open'), la: !!document.querySelector(`#depot-list [data-id="${i}"]`) }), tid);
+  await page.evaluate(() => depotClose()); await page.waitForTimeout(200);
+  await page.click('#S1 .is-now .rg-btn.main'); await page.waitForTimeout(300);
+  const apres = await plan();
+  ok(dep.ouvert && dep.la && apres.now === 'Relire les conditions générales de vente d\'Atlas' && apres.lbl.join('|') === 'Prochaine étape' && apres.lignes.length === 0,
+     'Accueil : une ligne « Ensuite » ouvre sa pensée dans « Déposé » ; « C\'est fait » retire l\'étape et la suivante devient la prochaine',
+     `Déposé ouvert ${dep.ouvert}, pensée présente ${dep.la} ; après « C'est fait » : « ${apres.now} », libellés ${apres.lbl.join(', ')}`);
+
+  // Endormir, réveiller : depuis l'accueil et depuis le monde ; gardé dans S.sleep, relu au lancement suivant
+  const etat = () => page.evaluate(() => ({ cours: [...document.querySelectorAll('#S1 .pc-monde')].map(e => +e.dataset.wid), dort: [...document.querySelectorAll('#S1 .h-dort-row')].map(e => +e.dataset.wid),
+    garde: (JSON.parse(localStorage.getItem('arc_v2') || '{}').sleep) || {}, v: S._worldsV, sous: document.getElementById('h-projets-sub').textContent, chez: !document.getElementById('S1').classList.contains('off') }));
+  const e0 = await etat();
+  await page.click('#S1 .h-dort-btn[data-wid="1"]'); await page.waitForTimeout(250);
+  const e1 = await etat();
+  await page.evaluate(() => document.querySelector('#S1 .pc-monde[data-wid="0"]').click()); await page.waitForTimeout(650);
+  const dans = await page.evaluate(() => ({ t: document.getElementById('w-sommeil-btn').textContent, h: Math.round(document.getElementById('w-sommeil-btn').getBoundingClientRect().height) }));
+  await page.evaluate(() => document.getElementById('w-sommeil-btn').click()); await page.waitForTimeout(200);
+  const dans2 = await page.evaluate(() => document.getElementById('w-sommeil-btn').textContent);
+  await page.evaluate(() => goHome()); await page.waitForTimeout(450);
+  const e2 = await etat();
+  await page.reload(); await page.waitForTimeout(900);
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
+  const e3 = await etat();
+  ok(e0.cours.join() === '0,4' && e0.dort.join() === '1,2,3' && e0.v === 3 && e1.chez && e1.cours.join() === '0,1,4' && e1.dort.join() === '2,3' && e1.garde[1] === false && e1.sous === '3 en cours · 2 endormis'
+     && dans.t === 'Endormir ce projet' && dans.h >= 44 && dans2 === 'Réveiller ce projet' && e2.cours.join() === '1,4' && e2.dort.join() === '0,2,3' && e2.garde[0] === true
+     && e3.cours.join() === '1,4' && e3.dort.join() === '0,2,3' && errors.length === 0,
+     'Projets endormis : FBA, KITCHEN et TELENEUF le sont au départ ; « Réveiller » depuis l\'accueil sans quitter l\'accueil, « Endormir ce projet » depuis le monde ; le choix est gardé et relu au lancement suivant',
+     `départ ${e0.cours.join()} | ${e0.dort.join()} ; après « Réveiller » FBA ${e1.cours.join()} | ${e1.dort.join()} (« ${e1.sous} ») ; ARYAN endormi ${e2.cours.join()} | ${e2.dort.join()} ; après rechargement ${e3.cours.join()} | ${e3.dort.join()}${errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''}`);
   await ctx.close();
 }
 
@@ -138,7 +205,8 @@ for (const vp of ECRANS) {
   const { ctx, page } = await openPage(browser, url, { fk: fakeSupabase(), clock: '2026-10-08T03:00:00+02:00' });
   const lire = () => page.evaluate(() => { renderHome(); const b = document.getElementById('h-context-badge'), i = b.querySelector('.h-context-ico'), m = getComputedStyle(i); return b.getAttribute('data-slot') + ':' + document.getElementById('h-context-txt').textContent + ':' + (/url\(/.test(m.maskImage || m.webkitMaskImage || '') ? 'picto' : 'rien'); });
   const vus = [await lire()];
-  for (const h of [6, 7, 7]) { await page.clock.fastForward(h * 3600e3); vus.push(await lire()); }
+  // l'heure est posée, pas avancée : avancer l'horloge de plusieurs heures d'un coup échouait parfois sous charge
+  for (const h of ['09', '16', '23']) { await page.clock.setFixedTime(new Date(`2026-10-08T${h}:00:00+02:00`)); vus.push(await lire()); }
   ok(vus.join(' | ') === 'nuit:Nuit:picto | matin:Matin:picto | aprem:Après-midi:picto | soir:Soirée:picto', 'Le moment de la journée : Nuit, Matin, Après-midi, Soirée, avec un pictogramme au trait', vus.join(' | '));
   await ctx.close();
 }
