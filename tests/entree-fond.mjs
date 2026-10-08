@@ -187,14 +187,14 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
     const s = document.getElementById('auth-screen'), b = document.getElementById('auth-go').getBoundingClientRect();
     s.scrollTo(0, 0); const dessus = document.elementFromPoint(innerWidth - 20, 20);
     return { fond: !!dessus && (dessus === s || !!dessus.closest('.auth-box') || getComputedStyle(dessus).pointerEvents !== 'none'), bouton: b.height, hauteur: s.scrollHeight,
-             contenu: Math.round(document.querySelector('.auth-box').getBoundingClientRect().height) + 48 };
+             contenu: Math.max(innerHeight, Math.round(document.querySelector('.auth-box').getBoundingClientRect().height) + 48) };
   });
-  ok(geste.fond && geste.bouton >= 44 && Math.abs(geste.hauteur - geste.contenu) <= 2, 'Le fond ne prend aucun toucher et n\'allonge pas le défilement', `défilement ${geste.hauteur} px, contenu ${geste.contenu} px`);
+  ok(geste.fond && geste.bouton >= 44 && Math.abs(geste.hauteur - geste.contenu) <= 2, 'Le fond ne prend aucun toucher et n\'allonge pas le défilement', `défilement ${geste.hauteur} px, contenu ou écran ${geste.contenu} px`);
   await ctx.close();
 }
 
 /* 6. Le cadran et le mouvement (demande de Rayan, 7 octobre 22 h 42) : l'horizon qui porte la carte est vert, le violet
-      ferme le bas ; frise jaune poussin, orange, rouge ; carte sans capitales ni chasse fixe, champs à 17 px, curseur
+      ferme le bas ; frise rouge, orange, vert ; carte sans capitales ni chasse fixe, champs à 17 px, curseur
       du sélecteur qui suit l'onglet, libellés flottants ; un mouvement qui s'arrête si l'appareil le demande. */
 {
   const { ctx, page, errors } = await open({ width: 390, height: 844 }, 1);
@@ -221,13 +221,19 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
     const avant = curseur(); authSetMode('up'); const apres = curseur(); authSetMode('in');
     const inp = document.getElementById('auth-email-inp'), lbl = inp.nextElementSibling; inp.blur();
     const repos = lbl.getBoundingClientRect().top; inp.value = 'a@b.fr'; const flotte = lbl.getBoundingClientRect().top; inp.value = '';
-    return { points: points.map(res), attendu: ['#FFE066', '#E97D00', '#DA0D23'].map(res), maj: textes.filter(t => t.maj !== 'none').map(t => t.t), fixe: textes.filter(t => t.fixe).map(t => t.t),
+    return { points: points.map(res), attendu: ['#DA0D23', '#E97D00', '#4FB82A'].map(res), maj: textes.filter(t => t.maj !== 'none').map(t => t.t), fixe: textes.filter(t => t.fixe).map(t => t.t),
              petits: textes.filter(t => t.px < 13).map(t => t.t), champs, avant, apres, largeur: Math.round(document.querySelector('.auth-tabs').getBoundingClientRect().width / 2), monte: Math.round(repos - flotte),
              police: cs(carte).fontFamily.split(',')[0].trim(), rayon: parseFloat(cs(carte).borderTopLeftRadius) };
   });
-  ok(cadran.points.join() === cadran.attendu.join(), 'Frise : Penser en jaune poussin, Développer en orange, Entreprendre en rouge', cadran.points.join(' · '));
+  ok(cadran.points.join() === cadran.attendu.join(), 'Frise : Penser en rouge, Développer en orange, Entreprendre en vert', cadran.points.join(' · '));
   ok(!cadran.maj.length && !cadran.fixe.length && !cadran.petits.length && cadran.champs.every(v => v >= 17) && /apple-system/.test(cadran.police),
      'Carte : police du système (San Francisco sur iPhone et Mac), ni capitales ni chasse fixe, aucun texte sous 13 px, champs à 17 px', `police ${cadran.police}, champs ${cadran.champs.join(' / ')} px${cadran.maj.length ? ', capitales : ' + cadran.maj.join(', ') : ''}${cadran.fixe.length ? ', chasse fixe : ' + cadran.fixe.join(', ') : ''}`);
+  const vif = await page.evaluate(() => { const sat = c => { const m = c.match(/[\d.]+/g).map(Number), un = /^color\(/.test(c), v = m.slice(0, 3).map(x => un ? x * 255 : x); return Math.max(...v) - Math.min(...v); };
+    const th = getComputedStyle(document.querySelector('.auth-tabs'), '::before'), ph = [...document.querySelectorAll('.auth-proof li span')].map(e => getComputedStyle(e).color);
+    return { touche: /gradient/.test(th.backgroundImage), phrases: ph, clair: ph.every(c => Math.min(...c.match(/\d+/g).slice(0, 3).map(Number)) >= 225), neutre: ph.every(c => sat(c) <= 8) }; });
+  const bouton = await page.evaluate(() => { const c = getComputedStyle(document.getElementById('auth-go')), n = v => v.match(/[\d.]+/g).slice(0, 3).map(Number); return { texte: c.color, sombre: Math.max(...n(c.color)) <= 40, fond: c.backgroundImage, clair: /rgb\(255, 255, 255\)/.test(c.backgroundImage) }; });
+  ok(bouton.sombre && bouton.clair, 'Bouton principal : une touche claire au libellé sombre, la seule grande forme blanche de l\'écran', `libellé ${bouton.texte}`);
+  ok(vif.touche && vif.clair && vif.neutre, 'Plus de gris fade : phrases de la frise en blanc lumineux, touche choisie du sélecteur aux couleurs d\'ARC', `phrases ${vif.phrases[0]}, touche en dégradé : ${vif.touche}`);
   ok(cadran.avant === 0 && Math.abs(cadran.apres - cadran.largeur) <= 4 && cadran.monte >= 8, 'Sélecteur : le curseur suit l\'onglet ; champ rempli : le libellé monte au-dessus de la valeur', `curseur ${cadran.avant} → ${cadran.apres} px, libellé monté de ${cadran.monte} px`);
   const calme = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running' && a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('#auth-screen')).length);
   await ctx.close();
@@ -248,7 +254,98 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   ok(calme === 0 && vie.enCours > 0 && permis && (vie.carte === 'none' || /matrix\(1, 0, 0, 1, 0, 0\)/.test(vie.carte)) && vie.opaque && Math.abs(vie.y - vie.vrai) <= 1 && !errors.length && !err2.length,
      'Mouvement : il tourne, seulement en transform et opacity, laisse la carte et l\'horizon à leur place, et s\'arrête si l\'appareil demande moins d\'animations',
      `en cours ${vie.enCours} (0 en mode calme : ${calme}), propriétés animées : ${vie.props.join(', ')}, horizon ${vie.y} px pour une carte à ${vie.vrai} px`);
+  // Les feux : chaque point ne s'allume que lorsque le fil de lumière l'atteint, puis tout s'éteint et repart
+  const feux = await p2.evaluate(() => {
+    const anims = document.getAnimations().filter(a => /^auth(Feu|Fil)/.test(a.animationName || ''));
+    const etat = part => { anims.forEach(a => { a.pause(); a.currentTime = 2000 + part * 8000; });
+      const lis = [...document.querySelectorAll('#auth-screen .auth-proof li')];
+      const o = lis.map(li => Math.round(parseFloat(getComputedStyle(li.querySelector('i'), '::after').opacity)));
+      const fil = lis.slice(0, 2).map(li => +new DOMMatrixReadOnly(getComputedStyle(li, '::before').transform).m22.toFixed(2));
+      return o.join('') + ' fil ' + fil.join('/'); };
+    const r = { n: anims.length, avant: (() => { anims.forEach(a => { a.pause(); a.currentTime = 500; }); return [...document.querySelectorAll('#auth-screen .auth-proof li i')].map(i => Math.round(parseFloat(getComputedStyle(i, '::after').opacity))).join(''); })(),
+                t10: etat(0.10), t30: etat(0.30), t50: etat(0.50), t95: etat(0.95) };
+    anims.forEach(a => a.play()); return r;
+  });
+  ok(feux.n === 5 && feux.avant === '000' && /^100 fil 0\.\d+\/0$/.test(feux.t10) && /^110 fil 1\/0\.\d+$/.test(feux.t30) && feux.t50 === '111 fil 1/1' && /^000 /.test(feux.t95),
+     'Feux : le rouge s\'allume, le fil descend, l\'orange s\'allume quand il l\'atteint, puis le vert ; tout s\'éteint et repart', `avant ${feux.avant} · 10 % ${feux.t10} · 30 % ${feux.t30} · 50 % ${feux.t50} · 95 % ${feux.t95}`);
   await ctx2.close();
+  const calme2 = await open({ width: 390, height: 844 }, 1);
+  const fixes = await calme2.page.evaluate(() => [...document.querySelectorAll('#auth-screen .auth-proof li i')].map(i => getComputedStyle(i, '::after').opacity).join(''));
+  ok(fixes === '111', 'Sans animation, les trois points sont allumés', fixes);
+  await calme2.ctx.close();
+}
+
+/* 7. La frise dit l'utilité de chaque mot (remarque de Rayan, 7 octobre 23 h 46), une ligne par point sur téléphone */
+{
+  const vus = [];
+  for (const w of [375, 390, 430]) {   // les largeurs d'iPhone
+    const { ctx, page } = await open({ width: w, height: 800 }, 1);
+    vus.push(...await page.evaluate(w => [...document.querySelectorAll('#auth-screen .auth-proof li')].map(li => { const sp = li.querySelector('span'), g = document.createRange(); g.selectNodeContents(sp);
+      return { w, mot: li.querySelector('b').textContent, phrase: sp.textContent, lignes: new Set([...g.getClientRects()].map(x => Math.round(x.top / 4))).size }; }), w));
+    await ctx.close();
+  }
+  const a390 = vus.filter(v => v.w === 390), trop = vus.filter(v => v.lignes !== 1);
+  ok(a390.map(v => v.mot).join() === 'Penser,Développer,Entreprendre' && a390.every(v => /\.$/.test(v.phrase) && v.phrase.length <= 46) && !trop.length,
+     'Frise : trois phrases complètes, une ligne chacune sur iPhone (375 à 430 px)', a390.map(v => `${v.mot} · ${v.phrase}`).join(' | ') + (trop.length ? ` ; sur deux lignes : ${trop.map(v => v.mot + ' à ' + v.w + ' px').join(', ')}` : ''));
+}
+
+/* 8. L'effet (demande de Rayan, 8 octobre 2 h) : la lumière arrive quelque part et l'écran répond, sans rien inventer.
+      État réel en tête de la carte, bouton armé quand les identifiants sont complets, étincelle, onde, comète, reflet
+      sur la carte et halo du bouton dans l'ordre, mots éteints encore lisibles, passage vers ARC. */
+{
+  const { ctx, page, errors } = await open({ width: 390, height: 844 }, 1);
+  const lire = () => page.evaluate(() => { const d = new Date(), el = document.getElementById('auth-status'), h = document.getElementById('auth-status-time').textContent, m = h.match(/^(\d\d):(\d\d):(\d\d)$/);
+    return { etat: el.getAttribute('data-etat'), txt: document.getElementById('auth-status-txt').textContent, heure: h, dansCarte: !!document.querySelector('.auth-card > #auth-status'), vu: el.offsetParent !== null,
+             ecart: m ? Math.abs((+m[1] * 3600 + +m[2] * 60 + +m[3]) - (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds())) : 99999, point: getComputedStyle(el.querySelector('i')).display !== 'none' }; });
+  const e1 = await lire(); await page.waitForTimeout(1300); const e2 = await lire();
+  await ctx.setOffline(true); await page.waitForTimeout(250); const e3 = await lire();
+  await ctx.setOffline(false); await page.waitForTimeout(250); const e4 = await lire();
+  // aucun mot d'état quand tout va bien : « En ligne » puis « Prêt » ont été refusés par Rayan (8 octobre)
+  const mots = await page.evaluate(() => (document.getElementById('auth-screen').textContent.match(/en ligne|prêt|connecté\b/gi) || []).join(', '));
+  const juste = e => e.ecart <= 2 || e.ecart >= 86398;
+  const DATE = /^[A-ZÉ][a-zéû]+ \d{1,2}(er)? [a-zéû]+$/;
+  ok(e1.dansCarte && e1.vu && e1.etat === 'on' && DATE.test(e1.txt) && !e1.point && e1.heure && juste(e1) && juste(e2) && e2.heure !== e1.heure
+     && e3.etat === 'off' && e3.txt === 'Pas de réseau' && e3.point && e4.etat === 'on' && DATE.test(e4.txt) && !mots,
+     'Tête de la carte : la date et l\'heure vraie à la seconde, aucun mot d\'état (ni « En ligne » ni « Prêt ») ; « Pas de réseau » seulement quand il n\'y en a pas', `${e1.txt} · ${e1.heure} → ${e2.heure} ; réseau coupé : ${e3.txt} ; revenu : ${e4.txt}${mots ? ' ; mots en trop : ' + mots : ''}`);
+  const arme = () => page.evaluate(() => { const go = document.getElementById('auth-go'); return go.classList.contains('is-ready') ? +getComputedStyle(go, '::after').opacity : 0; });
+  const a0 = await arme(); await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.fill('#auth-pass-inp', '1234567'); const a1 = await arme();
+  await page.fill('#auth-pass-inp', '12345678'); const a2 = await arme(); await page.evaluate(() => document.activeElement.blur()); await page.waitForTimeout(150);
+  const pret = await mesure(page, 1);
+  await page.fill('#auth-email-inp', 'rayan@'); const a3 = await arme();
+  ok(a0 === 0 && a1 === 0 && a2 >= 0.8 && a3 === 0 && pret.pire.ratio >= SEUIL && !errors.length,
+     'Bouton armé seulement quand l\'adresse est valide et le mot de passe complet ; son halo ne gêne aucun texte', `vide ${a0} · 7 caractères ${a1} · complet ${a2} · adresse incomplète ${a3} ; contraste le plus faible, bouton armé : ${dit(pret.pire)}`);
+  await page.fill('#auth-email-inp', '');
+  // Sans animation : le passage est immédiat
+  const direct = await page.evaluate(() => { hideAuthScreen(); return document.getElementById('auth-screen').className; });
+  await ctx.close();
+
+  const ctx3 = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'no-preference' });
+  await ctx3.route(SB + '/**', route => route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '[]' }));
+  const p3 = await ctx3.newPage(); const err3 = []; p3.on('pageerror', e => err3.push(String(e.message)));
+  await p3.goto(url); await p3.waitForSelector('#auth-screen.active'); await p3.evaluate(() => document.fonts.ready); await p3.waitForTimeout(600);
+  const voir = part => p3.evaluate(part => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = 2000 + part * 8000; }
+    const o = (sel, ps) => { const e = document.querySelector(sel); return e ? +parseFloat(getComputedStyle(e, ps).opacity).toFixed(2) : -1; };
+    return { onde: o('.auth-proof li:nth-child(1) i', '::before'), pointe: o('.auth-proof li:nth-child(1) span', '::after'), mot2: o('.auth-proof li:nth-child(2) b'), comete: o('.w-vert', '::after'), reflet: o('.auth-card', '::before'), halo: o('#auth-go', '::after') }; }, part);
+  const t4 = await voir(0.04), t10 = await voir(0.10), t50 = await voir(0.50), t63 = await voir(0.63), t97 = await voir(0.97);
+  const eteint = await mesure(p3, 1);   // à 97 % : points éteints, mots en retrait — ils doivent rester lisibles
+  const dit6 = v => Object.entries(v).map(([k, x]) => k + ' ' + x).join(' ');
+  ok(t4.onde >= 0.8 && t4.comete === 0 && t4.reflet === 0 && t10.pointe === 1 && t10.mot2 < 0.9 && t10.halo === 0
+     && t50.comete === 1 && t50.reflet === 1 && t50.mot2 === 1 && t50.pointe === 0 && t63.halo >= 0.95 && t63.comete === 0 && t63.reflet === 0
+     && Object.entries(t97).every(([k, x]) => k === 'mot2' ? x < 0.9 : x === 0),
+     'Effet, dans l\'ordre : onde à l\'allumage, étincelle sur le fil, comète sur l\'horizon et son reflet sur la carte, halo du bouton, puis tout s\'éteint', `4 % : ${dit6(t4)} | 10 % : ${dit6(t10)} | 50 % : ${dit6(t50)} | 63 % : ${dit6(t63)} | 97 % : ${dit6(t97)}`);
+  ok(eteint.pire.ratio >= SEUIL, 'Contraste ≥ 4,5 : 1 quand les points sont éteints et les mots en retrait', `${eteint.n} morceaux, le plus faible : ${dit(eteint.pire)}`);
+  await p3.evaluate(() => { for (const a of document.getAnimations()) a.play(); });
+  // On entre dans ARC : l'écran s'efface en un peu plus d'une demi-seconde, sans plus rien recevoir, puis il est retiré
+  await p3.evaluate(() => hideAuthScreen());
+  const pendant = await p3.evaluate(() => { const s = document.getElementById('auth-screen'); return { cls: s.className, gestes: getComputedStyle(s).pointerEvents, dessous: (document.elementFromPoint(195, 400) || {}).id !== 'auth-screen' && !document.elementFromPoint(195, 400).closest('#auth-screen') }; });
+  await p3.waitForTimeout(900);
+  const apres = await p3.evaluate(() => document.getElementById('auth-screen').className);
+  // Rouvert pendant le passage (question « Premier appareil ») : il reste ouvert
+  const rouvert = await p3.evaluate(async () => { showAuthScreen('auth-email'); hideAuthScreen(); showAuthScreen('auth-ref'); await new Promise(r => setTimeout(r, 900)); const s = document.getElementById('auth-screen'); return s.className + ' / ' + (document.querySelector('.auth-step.active') || {}).id; });
+  ok(direct === '' && /active/.test(pendant.cls) && /leaving/.test(pendant.cls) && pendant.gestes === 'none' && pendant.dessous && apres === '' && rouvert === 'active / auth-ref' && !err3.length,
+     'On entre dans ARC : passage d\'une demi-seconde, l\'écran ne prend plus aucun geste puis disparaît ; immédiat si l\'appareil demande moins d\'animations ; rouvert en cours de route, il reste',
+     `pendant « ${pendant.cls} », gestes ${pendant.gestes} ; après « ${apres} » ; mode calme « ${direct} » ; rouvert : ${rouvert}`);
+  await ctx3.close();
 }
 
 await browser.close(); server.close();

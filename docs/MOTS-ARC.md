@@ -172,6 +172,58 @@ Règles d'écriture tenues : une ligne par point sur iPhone (44 signes au plus),
 des noms concrets (idée, étape, tâches, appareils), rien qu'ARC ne fasse pas déjà. Les lignes de 6 h 17 (« Tu la
 déposes », « Elle prend forme », « ARC t'accompagne ») sont remplacées.
 
+### Les trois phrases de la frise, réécrites (7 octobre, 23 h 46)
+
+Remarque de Rayan : « les trois phrases qui sont sous Penser, Développer et Entreprendre me dérangent, car elles ne
+reflètent pas exactement, dans la manière dont elles sont pensées, les points d'ARC et son utilité ». Les anciennes
+décrivaient le mécanisme (la voix, le clavier, les appareils) ; les nouvelles disent ce que chaque mot apporte.
+
+| Mot | Avant | Après (proposée, à valider par Rayan) | Ce qu'ARC fait réellement derrière |
+|---|---|---|---|
+| **Penser** | Dépose ton idée, à la voix ou au clavier. | Dépose chaque pensée. Aucune ne se perd. | le dépôt : écrit sur l'appareil puis sur le compte, jamais retiré |
+| **Développer** | ARC la range et fixe sa prochaine étape. | ARC la range, la relie et la fait avancer. | le rangement : un espace, une étape, un moment (mots de la vision) |
+| **Entreprendre** | Tes tâches du jour, sur tous tes appareils. | Chaque matin, ta prochaine étape t'attend. | le point du matin |
+
+Deux autres jeux proposés à Rayan le même soir, non retenus par défaut :
+- B, le poste de commande : « Vide ta tête ici, à la voix ou au clavier. » / « Chaque idée trouve son projet et son
+  étape. » / « Tous tes projets en main, sur tous tes écrans. »
+- C, au plus court : « Tu déposes. Rien ne se perd. » / « ARC organise. L'idée prend forme. » / « Tu agis. Chaque
+  jour, une étape. »
+
+Règles tenues : une ligne par point sur iPhone (375 à 430 px, contrôlé par `tests/entree-fond.mjs`), une phrase
+complète avec son point, 46 signes au plus, rien qu'ARC ne fasse pas déjà.
+
+### La frise, deuxième réécriture (8 octobre, 1 h 06)
+
+Remarque de Rayan sur la proposition de 23 h 46 : « quand on développe, on ne range pas ! Quand on lit Développer, on
+ne s'attend pas à ce qu'on nous propose de ranger, ce n'est pas ça qu'on pense logique. ARC est un espace qui est
+voué à être le centre de contrôle et le point de départ de tout. »
+
+**Règle à garder : la phrase dit ce qu'on attend en lisant le mot, pas ce que la machine fait derrière.** « Ranger »
+est un mot du mécanisme (le rangement par l'IA) : il ne doit pas apparaître sous « Développer ».
+
+| Mot | Ce qu'on attend en le lisant | Phrase (proposée, à valider par Rayan) |
+|---|---|---|
+| **Penser** | une idée, et l'endroit où elle commence | Dépose ton idée : tout part d'ici. |
+| **Développer** | l'idée grandit, elle devient un projet | Fais-en un projet, étape par étape. |
+| **Entreprendre** | agir, mener ses projets | Passe à l'action et pilote tout d'ici. |
+
+« D'ici » revient deux fois, exprès : ARC est le point de départ (Penser) et le centre de contrôle (Entreprendre).
+Ce que la deuxième phrase engage : aujourd'hui ARC attache une pensée à un projet qui existe déjà et lui donne une
+étape ; faire naître un projet depuis une pensée reste à construire (chantier suivant de la liste de Rayan).
+
+Validé par Rayan le 8 octobre à 1 h 21 : « là on y est !!! ». À 1 h 41, il fixe les couleurs des trois points :
+Penser en rouge, Développer en orange, Entreprendre en vert, chacun ne s'allumant que lorsque le fil de lumière
+l'atteint (des feux de départ : ARC est le point de départ).
+
+### La tête de la carte (8 octobre)
+
+À gauche la date (« Jeudi 8 octobre »), à droite l'heure à la seconde. Aucun mot d'état quand tout va bien :
+« En ligne » (3 h 36 : « on ne peut pas mettre En ligne dans une page dans laquelle on n'est pas encore connecté »)
+puis « Prêt » (4 h 29 : « aucune utilité ») ont été refusés par Rayan. « Pas de réseau » prend la place de la date
+seulement quand il n'y en a pas.
+Règle : cet écran ne montre que des états vrais et utiles, jamais un mot ou un signal posé pour faire « connecté ».
+
 ### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
 
 | Avant | Après |
@@ -181,6 +233,9 @@ déposes », « Elle prend forme », « ARC t'accompagne ») sont remplacées.
 | Note en pied « Sans connexion · cet appareil seulement · sans synchronisation ni Claude » | retirée (elle se lisait comme un état d'ARC) |
 
 Le mot « code » n'est plus sur l'écran d'entrée : Rayan veut une connexion normale (adresse et mot de passe).
+
+8 octobre, 4 h 29 : la ligne « Continuer sans connexion · Sur cet appareil seulement. » est retirée (Rayan : « je peux
+me connecter maintenant »). La carte se termine par le bouton principal.
 
 ## 5. Ce que ces mots engagent
 

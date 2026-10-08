@@ -3,7 +3,7 @@
 //   NODE_PATH=/tmp/arc-outils/node_modules node tests/connexion.mjs
 // Supabase est remplacé par de fausses réponses : aucune requête ne part vers le vrai projet.
 
-import { chromium, startServer, SB, UID, sessionScript } from './outils.mjs';
+import { chromium, startServer, SB, UID, sessionScript, entrerSansSession } from './outils.mjs';
 
 const { server, url } = await startServer();
 const browser = await chromium.launch();
@@ -64,15 +64,16 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   ok(s.tabs && s.fields && s.go === 'Se connecter' && s.minBtn >= 44 && s.wide && !errors.length,
      'Entrée : onglets « Se connecter » et « Créer un compte », adresse, mot de passe, cibles ≥ 44 px', `bouton : ${s.go}, cible min ${Math.round(s.minBtn)} px, erreurs ${errors.length}`);
   // Le bas de la carte : une connexion normale, sans trou ni pavé, et des champs qui restent sombres
+  await page.waitForTimeout(1900);   // l'étape et la carte arrivent en glissant : on mesure une fois posées
   const bas = await page.evaluate(() => {
-    const r = id => document.getElementById(id).getBoundingClientRect(), oubli = r('auth-send'), go = r('auth-go'), pass = r('auth-pass-inp'), skip = r('auth-skip');
+    const r = id => document.getElementById(id).getBoundingClientRect(), oubli = r('auth-send'), go = r('auth-go'), pass = r('auth-pass-inp'), carte = document.querySelector('.auth-card').getBoundingClientRect();
     const regles = [...document.styleSheets].flatMap(sh => { try { return [...sh.cssRules]; } catch (e) { return []; } }).filter(x => /autofill(:\w+)?\s*(,|$)/.test(x.selectorText || ''));
-    return { ordre: pass.bottom <= oubli.top + 1 && oubli.bottom <= go.top + 1 && go.bottom <= skip.top + 1, oubli: Math.round(oubli.height), texte: document.getElementById('auth-send').textContent.trim(),
-             trou: Math.round(go.top - pass.bottom), premierEcran: go.bottom <= innerHeight, skip: Math.round(skip.height), pied: !!document.querySelector('.auth-note, .auth-alt'),
+    return { ordre: pass.bottom <= oubli.top + 1 && oubli.bottom <= go.top + 1, oubli: Math.round(oubli.height), texte: document.getElementById('auth-send').textContent.trim(),
+             trou: Math.round(go.top - pass.bottom), premierEcran: go.bottom <= innerHeight, sansCompte: !!document.getElementById('auth-skip') || /sans connexion/i.test(document.getElementById('auth-screen').textContent), marge: Math.round(carte.bottom - go.bottom), cote: Math.round(go.left - carte.left), pied: !!document.querySelector('.auth-note, .auth-alt'),
              sombre: regles.length > 0 && regles.every(x => /inset/.test(x.style.boxShadow || x.style.webkitBoxShadow || '') && !/255, 255|250, 255/.test(x.style.boxShadow || '')) };
   });
-  ok(bas.ordre && bas.texte === 'Mot de passe oublié ?' && bas.oubli >= 44 && bas.trou <= 64 && bas.premierEcran && bas.skip >= 44 && !bas.pied,
-     'Bas de la carte : « Mot de passe oublié ? » sous le champ, bouton principal dans le premier écran de l\'iPhone, « Continuer sans connexion » en dessous, plus de note en pied', JSON.stringify(bas));
+  ok(bas.ordre && bas.texte === 'Mot de passe oublié ?' && bas.oubli >= 44 && bas.trou <= 64 && bas.premierEcran && !bas.sansCompte && Math.abs(bas.marge - bas.cote) <= 2 && !bas.pied,
+     'Bas de la carte : « Mot de passe oublié ? » sous le champ, bouton principal dans le premier écran de l\'iPhone ; il ferme la carte (plus de « Continuer sans connexion »), même marge en bas que sur les côtés', JSON.stringify(bas));
   ok(bas.sombre, 'Champs remplis par le trousseau du navigateur : une règle les garde sombres (pas de jaune pâle)');
   await page.click('#auth-tab-up');
   const up = await page.evaluate(() => ({ go: document.getElementById('auth-go').textContent, ac: document.getElementById('auth-pass-inp').autocomplete,
@@ -173,7 +174,7 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   await page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
   const otp = calls.find(c => c.path.startsWith('/auth/v1/otp'));
   ok(otp && otp.body.email === 'rayan@test.fr' && otp.body.create_user === false && await page.isVisible('#auth-code-inp'), 'Mot de passe oublié : le code par e-mail marche encore, sans créer de compte', otp ? JSON.stringify(otp.body).slice(0, 80) : 'aucun appel');
-  await page.click('#auth-back'); await page.click('#auth-skip'); await page.waitForTimeout(400);
+  await page.click('#auth-back'); await entrerSansSession(page);   // comme quand le service de connexion est injoignable
   if (await page.isVisible('#matin-screen.open')) await page.click('.matin-go'); // après 8 h, le point du matin s'ouvre
   await page.click('#btn-menu');
   ok(!(await page.isVisible('#btn-pass')), 'Sans session : « Mon mot de passe » absent du menu');
@@ -253,7 +254,8 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   await page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
   await page.fill('#auth-code-inp', '654321'); await page.click('#auth-verify');
   await page.waitForSelector('#auth-pass.active', { timeout: 5000 }).catch(() => {});
-  await page.click('#auth-pass-later'); await page.waitForTimeout(300);
+  await page.click('#auth-pass-later');
+  await page.waitForFunction(() => !document.getElementById('auth-screen').classList.contains('active'), null, { timeout: 5000 }).catch(() => {});   // le passage vers ARC dure une demi-seconde
   ok(!(await page.isVisible('#auth-screen')) && !calls.some(c => c.method === 'PUT'), '« Plus tard » : l\'écran se ferme, aucun mot de passe enregistré, la connexion reste');
   await ctx.close();
 }
@@ -326,6 +328,21 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   const txt = (await b.page.textContent('#auth-code .auth-text')).replace(/\s+/g, ' ');
   ok(await b.page.isVisible('#auth-code-inp') && /compte existe déjà/.test(txt) && !/registered/i.test(await b.page.textContent('#auth-email-err')), 'Adresse déjà inscrite, autre mot de passe : un code confirme que c\'est bien la personne', txt);
   await b.ctx.close();
+}
+
+/* Plus d'usage « sans connexion » choisi (décision de Rayan, 8 octobre) : se déconnecter ramène à l'écran d'entrée */
+{
+  const { ctx, page, errors } = await open(async ({ path }) => path === '/auth/v1/logout' ? { status: 204, json: {} } : path === '/auth/v1/user' ? { status: 200, json: session().user } : null, { withSession: true });
+  await page.waitForTimeout(900);
+  const dedans = await page.evaluate(() => !document.getElementById('auth-screen').classList.contains('active'));
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
+  page.on('dialog', d => d.accept());
+  await page.evaluate(() => saveS());   // l'état local existe sur l'appareil avant la déconnexion
+  await page.click('#btn-menu'); await page.click('#btn-auth');
+  await page.waitForSelector('#auth-screen.active', { timeout: 5000 }).catch(() => {});
+  const st = await page.evaluate(() => ({ entree: document.getElementById('auth-screen').classList.contains('active'), etape: (document.querySelector('.auth-step.active') || {}).id, donnees: !!localStorage.getItem('arc_v2') }));
+  ok(dedans && st.entree && st.etape === 'auth-email' && st.donnees && !errors.length, 'Se déconnecter ramène à l\'écran d\'entrée ; les données restent sur l\'appareil', JSON.stringify(st));
+  await ctx.close();
 }
 
 await browser.close(); server.close();

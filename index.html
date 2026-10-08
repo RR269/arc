@@ -1339,7 +1339,8 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* La carte : un verre sombre, le fond passe derrière elle, adouci */
 .auth-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)),rgba(9,9,12,.62);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5)}
 /* Le bas de la carte (7 octobre au soir) : une connexion normale. « Mot de passe oublié ? » est un lien sous le champ,
-   le bouton principal suit sans trou, « Continuer sans connexion » est une ligne discrète sous un filet. */
+   le bouton principal suit sans trou. « Continuer sans connexion » a été retiré le 8 octobre (décision de Rayan :
+   « je peux me connecter maintenant ») : le bouton principal ferme la carte. */
 .auth-passrow .auth-input{margin-bottom:0}
 .auth-passrow{margin-bottom:6px}
 .auth-forgot{display:block;margin:0 -8px 0 auto;min-height:44px;padding:0 8px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;color:#C4C4CC;cursor:pointer;border-radius:10px}
@@ -1349,11 +1350,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #auth-email .auth-err:empty{margin-bottom:6px}
 #auth-email .auth-forgot[hidden]+.auth-err{margin-top:20px} /* onglet « Créer un compte » : pas de lien, le bouton garde sa distance */
 #auth-pass .auth-passrow,#auth-pass .auth-err:empty{margin-bottom:16px}
-.auth-skip{position:relative;display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;width:100%;min-height:60px;margin-top:18px;padding:14px 2px 2px;border:none;border-top:1px solid rgba(255,255,255,.1);background:none;text-align:left;font-family:inherit;cursor:pointer;color:var(--t1)}
-.auth-skip-t{font-size:15px;font-weight:600;color:#E8E8EC}
-.auth-skip-s{grid-column:1;font-size:13px;line-height:1.45;color:#B4B4BC;margin-top:2px}
-.auth-skip-go{grid-row:1/3;grid-column:2;font-size:22px;line-height:1;color:#B4B4BC}
-.auth-skip:hover .auth-skip-t{color:#fff}
 /* Champs remplis par le trousseau : le navigateur les peint en jaune pâle, ARC les garde sombres */
 .auth-input:-webkit-autofill,.auth-input:-webkit-autofill:hover,.auth-input:-webkit-autofill:active{-webkit-text-fill-color:#F5F5F7;caret-color:#F5F5F7;-webkit-box-shadow:0 0 0 1000px #0B0B0F inset;box-shadow:0 0 0 1000px #0B0B0F inset;transition:background-color 99999s ease-out,color 99999s ease-out}
 .auth-input:-webkit-autofill:focus{-webkit-text-fill-color:#F5F5F7;caret-color:#F5F5F7;-webkit-box-shadow:0 0 0 1000px #0B0B0F inset,0 0 0 3px rgba(0,143,200,.2);box-shadow:0 0 0 1000px #0B0B0F inset,0 0 0 3px rgba(0,143,200,.2);transition:background-color 99999s ease-out,color 99999s ease-out}
@@ -1364,24 +1360,36 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
    - Typographie : sous le titre, tout le texte passe dans la police du système (San Francisco sur iPhone et Mac ;
      Plus Jakarta Sans ailleurs). Plus de petites capitales ni de police à chasse fixe dans la carte.
    - Le cadran : sélecteur à curseur glissant, deux champs groupés à libellé flottant, œil au trait, bouton plein de
-     50 px, ligne « Continuer sans connexion » à chevron. Cibles de 44 px au moins, champs à 17 px.
+     50 px. Cibles de 44 px au moins, champs à 17 px.
    - Couleurs : l'horizon qui porte la carte est vert (« le reste prend vie ici »), le violet ferme le bas ; les
      points de la frise sont jaune poussin, orange, rouge, comme les trois arcs du coin.
    - Mouvement, un seul récit : à l'arrivée, le jour se lève, la frise se pose, l'horizon s'allume, la carte se pose.
      Ensuite une lumière descend la frise (Penser → Développer → Entreprendre) puis file le long de l'horizon vert.
      Rien d'autre ne bouge. Tout est en transform et opacity, sans mode de fusion, et s'arrête si l'appareil demande
      moins d'animations. */
-#auth-screen{--a-poussin:#FFE066;--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Plus Jakarta Sans",sans-serif;--g0:-16deg;--g1:40deg}
+#auth-screen{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Plus Jakarta Sans",sans-serif;--g0:-10deg;--g1:24deg}
 .auth-pitch,.auth-proof,.auth-card{font-family:var(--fa)}
-.auth-pitch{font-size:17px;line-height:1.4;letter-spacing:-.2px}
-.auth-proof li b{font-size:17px;font-weight:600;letter-spacing:-.25px}
-.auth-proof li span{font-size:15px;line-height:1.35;letter-spacing:-.1px;color:#C9C9CF}
-.auth-proof li i{background:color-mix(in srgb,var(--c) 90%,#fff);box-shadow:0 0 14px color-mix(in srgb,var(--c) 75%,transparent)}
-.auth-proof li:not(:last-child)::after{background:linear-gradient(color-mix(in srgb,var(--c) 70%,transparent),color-mix(in srgb,var(--n) 70%,transparent))}
+.auth-pitch{font-size:17px;line-height:1.4;letter-spacing:-.2px;color:#EBEBF0}
+/* La frise (8 octobre, 1 h 41, demande de Rayan) : typographie façon Apple bien visible (le mot en grand, serré, la
+   phrase en gris dessous) ; points rouge, orange, vert, comme des feux de départ. Chaque point a deux états : éteint
+   (le <i>) et allumé (son ::after, avec la lueur). Le fil a de même un trait éteint (::after du <li>) et un trait de
+   lumière (::before) qui descend. Sans animation, tout est allumé.
+   8 octobre, 2 h 49, Rayan : « le gris des descriptifs fait fade » → les phrases sont en blanc lumineux (#EBEBF0),
+   comme la ligne au-dessus ; mot et phrase passent de 80 % à 100 % quand leur point s'allume. « La couleur de la
+   fonction Se connecter aussi » → le sélecteur n'est plus gris : fond de verre sombre comme les champs, et la touche
+   choisie porte le dégradé d'ARC (filet orange → rose → violet, fond teinté, lueur). */
+.auth-proof{gap:18px}
+.auth-proof li{grid-template-columns:12px 1fr;column-gap:14px;row-gap:2px}
+.auth-proof li b{font-size:20px;font-weight:600;line-height:24px;letter-spacing:-.45px}
+.auth-proof li span{font-size:16px;line-height:21px;letter-spacing:-.2px;color:#EBEBF0}
+.auth-proof li i{position:relative;width:12px;height:12px;background:color-mix(in srgb,var(--c) 30%,#0E0E10);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 50%,transparent)}
+.auth-proof li i::after{content:"";position:absolute;inset:0;border-radius:50%;background:color-mix(in srgb,var(--c) 86%,#fff);box-shadow:0 0 6px var(--c),0 0 14px var(--c),0 0 30px color-mix(in srgb,var(--c) 70%,transparent)}
+.auth-proof li:not(:last-child)::after{left:5px;width:2px;top:23px;bottom:-19px;background:linear-gradient(color-mix(in srgb,var(--c) 30%,transparent),color-mix(in srgb,var(--n) 30%,transparent))}
+.auth-proof li:not(:last-child)::before{content:"";position:absolute;left:5px;width:2px;top:23px;bottom:-19px;border-radius:1px;background:linear-gradient(color-mix(in srgb,var(--c) 90%,#fff),color-mix(in srgb,var(--n) 90%,#fff));box-shadow:0 0 6px color-mix(in srgb,var(--c) 70%,transparent),0 0 12px color-mix(in srgb,var(--n) 60%,transparent);transform-origin:50% 0}
 /* La carte */
 .auth-card{padding:16px 16px 6px;border-radius:28px;border-color:rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -40px rgba(0,0,0,.95);letter-spacing:-.1px}
-.auth-tabs{position:relative;gap:0;padding:2px;border-radius:13px;background:rgba(120,120,128,.26);border:none;margin-bottom:14px}
-.auth-tabs::before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc(50% - 2px);border-radius:11px;background:rgba(255,255,255,.17);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 3px 8px rgba(0,0,0,.3);transition:transform .34s cubic-bezier(.3,1.25,.4,1)}
+.auth-tabs{position:relative;gap:0;padding:2px;border-radius:13px;background:rgba(4,4,6,.5);border:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);margin-bottom:14px}
+.auth-tabs::before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc(50% - 2px);box-sizing:border-box;border-radius:11px;border:1px solid transparent;background:linear-gradient(90deg,color-mix(in srgb,var(--a-orange) 34%,#121216),color-mix(in srgb,var(--a-rouge) 32%,#121216) 42%,color-mix(in srgb,var(--a-violet) 44%,#121216)) padding-box,linear-gradient(90deg,#FF9500,#FF2D55 50%,#AF52DE) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 20px -5px color-mix(in srgb,var(--a-rouge) 80%,transparent),0 3px 8px rgba(0,0,0,.3);transition:transform .34s cubic-bezier(.3,1.25,.4,1)}
 .auth-tabs[data-mode="up"]::before{transform:translateX(100%)}
 .auth-tab{position:relative;min-height:44px;border-radius:11px;font-size:15px;font-weight:500;letter-spacing:-.15px;color:#C9C9CF;transition:color .2s}
 .auth-tab.on{background:none;box-shadow:none;color:#fff;font-weight:600}
@@ -1400,22 +1408,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-field .auth-eye{top:7px;right:6px;width:44px;min-width:44px;height:44px;border-radius:12px;font-size:0}
 .auth-field .auth-eye::before{content:"";position:absolute;inset:0;background:#C9C9CF;-webkit-mask:var(--ico) center/22px 22px no-repeat;mask:var(--ico) center/22px 22px no-repeat;--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E")}
 .auth-field .auth-eye[aria-pressed="true"]::before{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4l16 16 M9.9 5.8A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-2.6 3.4 M6.3 7.6A15.600 15.600 0 0 0 2.500 12s3.500 6.500 9.500 6.500a9.300 9.300 0 0 0 3.900-.9 M9.900 9.900a2.800 2.800 0 0 0 4 4'/%3E%3C/svg%3E")}
-.auth-eye:focus-visible,.auth-tab:focus-visible,.auth-forgot:focus-visible,.auth-skip:focus-visible,.auth-btn:focus-visible,.auth-link:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+.auth-eye:focus-visible,.auth-tab:focus-visible,.auth-forgot:focus-visible,.auth-btn:focus-visible,.auth-link:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 .auth-hint{font-size:13px;line-height:18px;color:#A6A6AE;margin:8px 4px 0}
 .auth-hint[hidden]{display:none}
 .auth-forgot{margin-top:2px;font-size:15px;font-weight:400;letter-spacing:-.15px;color:#D6D6DC}
 #auth-email .auth-err{font-size:13px;line-height:18px;margin:0 4px 12px}
 #auth-email .auth-forgot[hidden]+.auth-err{margin-top:16px}
+#auth-email{padding-bottom:10px} /* le bouton principal est le dernier élément : même marge en bas que sur les côtés */
 #auth-pass .auth-fields{margin-bottom:0}
 #auth-pass .auth-hint{margin-bottom:14px}
 #auth-pass .auth-err:empty{margin-bottom:2px}
 .auth-btn{min-height:50px;border-radius:14px;font-size:17px;font-weight:600;letter-spacing:-.25px;margin-top:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 32px -12px rgba(218,13,35,.6);transition:transform .2s cubic-bezier(.2,.8,.2,1),filter .2s,opacity .2s}
 .auth-btn:active{transform:scale(.975);filter:brightness(.92)}
-.auth-skip{margin-top:14px;min-height:62px;padding:10px 4px 6px;border-top-color:rgba(255,255,255,.1)}
-.auth-skip-t{font-size:17px;font-weight:400;letter-spacing:-.25px;color:#F5F5F7}
-.auth-skip-s{font-size:13px;line-height:18px;color:#A6A6AE;margin-top:1px}
-.auth-skip-go{font-size:0;width:9px;height:9px;margin-right:8px;border-top:1.7px solid #9A9AA2;border-right:1.7px solid #9A9AA2;transform:rotate(45deg);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
-.auth-skip:active .auth-skip-go{transform:translateX(3px) rotate(45deg)}
 .auth-title{font-size:22px;font-weight:700;letter-spacing:-.45px;margin:6px 4px 6px}
 .auth-text{font-size:15px;line-height:1.45;letter-spacing:-.1px;color:#C9C9CF;margin:0 4px 16px}
 .auth-input.code{font-family:var(--fa);font-variant-numeric:tabular-nums;font-weight:600;letter-spacing:9px;border-radius:16px;min-height:60px;background:rgba(4,4,6,.5)}
@@ -1424,12 +1428,61 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #auth-code .auth-err:empty,#auth-ref .auth-err:empty{margin-bottom:2px}
 .auth-link{font-size:17px;font-weight:400;letter-spacing:-.25px}
 .auth-link.soft{font-size:15px;color:#A6A6AE}
+/* ═══ ÉCRAN D'ENTRÉE : l'effet (demande de Rayan, 8 octobre, 2 h) ═══
+   « Que dans cette fluidité il y ait de l'effet », et ce qui fait ressentir le monde connecté, le poste de commande.
+   Règle : la lumière ne fait pas que passer, elle ARRIVE quelque part, et l'écran répond. Rien d'inventé : chaque
+   signe dit un état vrai (en ligne, l'heure, identifiants complets).
+   - La frise : une étincelle court au bout du fil ; quand elle atteint un point, il s'allume et lance une onde ;
+     son mot s'allume avec lui.
+   - L'horizon : la lumière y file en comète (une tête, une traîne) ; la carte, juste dessous, en garde le reflet sur
+     son bord ; puis le bouton s'éclaire : l'énergie est arrivée à l'action.
+   - La carte répond : bouton « armé » quand l'adresse et le mot de passe sont complets (#auth-go.is-ready), lumière
+     sous le pointeur sur Mac (--mx, --my).
+   - La ligne d'état, en tête de la carte : la date à gauche, l'heure à la seconde à droite (authEtat). Aucun mot
+     d'état quand tout va bien (« En ligne » puis « Prêt » ont été refusés par Rayan : sans utilité) ; « Pas de
+     réseau » prend la place de la date seulement quand le navigateur n'a pas de réseau.
+   - On entre dans ARC : la carte s'efface, le fond plonge vers l'horizon, l'accueil apparaît (.leaving).
+   Toujours transform, opacity et la position d'un fond ; aucun mode de fusion ; rien ne bouge si l'appareil demande
+   moins d'animations (les points, les mots et l'état restent allumés, fixes). */
+.auth-proof li i::before{content:"";position:absolute;inset:-15px;border-radius:50%;border:1.25px solid color-mix(in srgb,var(--c) 80%,#fff);opacity:0;pointer-events:none}
+.auth-proof li:not(:last-child) span::after{content:"";position:absolute;left:-5px;width:22px;top:12px;bottom:-30px;background:radial-gradient(circle at 50% calc(100% - 11px),#fff 0,#fff 1.5px,color-mix(in srgb,var(--n) 85%,#fff) 3.2px,color-mix(in srgb,var(--n) 55%,transparent) 5.5px,transparent 11px) no-repeat;opacity:0;pointer-events:none}
+.auth-card{position:relative;isolation:isolate}
+.auth-card::before{content:"";position:absolute;left:26px;right:26px;top:-1px;height:18px;pointer-events:none;opacity:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--a-vert) 35%,#fff) 50%,transparent) -28% 0/36% 2px no-repeat,radial-gradient(50% 100% at 50% 0,color-mix(in srgb,var(--a-vert) 34%,transparent),transparent) -28% 0/36% 100% no-repeat}
+.auth-card::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity .45s;background:radial-gradient(320px circle at var(--mx,50%) var(--my,0px),rgba(255,255,255,.075),transparent 70%)}
+@media(hover:hover){.auth-card:hover::after{opacity:1}}
+/* Le bouton principal (8 octobre, 3 h 36, Rayan : « plus pro et plus clair avec le thème ») : une touche de lumière
+   blanche, libellé presque noir (comme « Déposer » dans ARC). Sur un fond déjà plein de couleurs, c'est la seule
+   grande forme blanche : on voit tout de suite où appuyer. Les couleurs d'ARC restent autour d'elle, en lueur
+   (orange, rose, violet), discrète au repos, pleine quand le bouton est armé ou que la lumière de la boucle arrive. */
+.auth-btn{position:relative;color:#0B0B0F;background:linear-gradient(180deg,#fff,#ECECF1);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.1),-56px 14px 28px -24px rgba(255,149,0,.5),0 16px 30px -20px rgba(255,45,85,.6),56px 14px 28px -24px rgba(175,82,222,.6)}
+.auth-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;box-shadow:0 0 0 1px #fff,-64px 6px 30px -16px rgba(255,149,0,.8),0 8px 34px -8px rgba(255,45,85,.8),64px 6px 30px -16px rgba(175,82,222,.9)}
+#auth-go.is-ready::after{opacity:.9}
+.auth-btn:disabled::after{display:none}
+.auth-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-2px 6px 12px;min-height:18px;font-family:var(--fa);font-size:13px;line-height:18px;color:#D6D6DC;font-variant-numeric:tabular-nums}
+.auth-status-etat{display:inline-flex;align-items:center;gap:8px}
+.auth-status-etat i{position:relative;width:7px;height:7px;border-radius:50%;background:#8E8E95}
+.auth-status[data-etat="on"] .auth-status-etat i{display:none}
+#auth-screen.leaving{pointer-events:none}
 /* Le mouvement */
 @keyframes authLever{from{opacity:0}to{opacity:1}}
 @keyframes authPoser{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes authPoint{0%,9%,100%{transform:scale(1)}3%{transform:scale(1.45)}}
-@keyframes authFlux{0%{background-position:0 -22px}11%,100%{background-position:0 calc(100% + 22px)}}
-@keyframes authEclat{0%{opacity:0;transform:rotate(var(--g0)) translateY(calc(var(--r) * -1))}3%,40%{opacity:1}44%,100%{opacity:0;transform:rotate(var(--g1)) translateY(calc(var(--r) * -1))}}
+@keyframes authFeu1{0%{opacity:0;transform:scale(.6)}4%{opacity:1;transform:scale(1.5)}10%,84%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(1)}}
+@keyframes authFeu2{0%,19%{opacity:0;transform:scale(.6)}23%{opacity:1;transform:scale(1.5)}29%,84%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(1)}}
+@keyframes authFeu3{0%,37%{opacity:0;transform:scale(.6)}41%{opacity:1;transform:scale(1.5)}47%,84%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(1)}}
+@keyframes authOnde1{0%,2%{opacity:0;transform:scale(.3)}4%{opacity:.85}17%,100%{opacity:0;transform:scale(1)}}
+@keyframes authOnde2{0%,21%{opacity:0;transform:scale(.3)}23%{opacity:.85}36%,100%{opacity:0;transform:scale(1)}}
+@keyframes authOnde3{0%,39%{opacity:0;transform:scale(.3)}41%{opacity:.85}54%,100%{opacity:0;transform:scale(1)}}
+@keyframes authMot1{0%{opacity:.8}5%,84%{opacity:1}94%,100%{opacity:.8}}
+@keyframes authMot2{0%,19%{opacity:.8}24%,84%{opacity:1}94%,100%{opacity:.8}}
+@keyframes authMot3{0%,37%{opacity:.8}42%,84%{opacity:1}94%,100%{opacity:.8}}
+@keyframes authFil1{0%,4%{opacity:1;transform:scaleY(0)}19%,84%{opacity:1;transform:scaleY(1)}94%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
+@keyframes authFil2{0%,23%{opacity:1;transform:scaleY(0)}37%,84%{opacity:1;transform:scaleY(1)}94%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
+@keyframes authPointe1{0%,4%{opacity:0;transform:translateY(calc(-100% + 22px))}5.5%{opacity:1}19%{opacity:1;transform:translateY(0)}21%,100%{opacity:0;transform:translateY(0)}}
+@keyframes authPointe2{0%,23%{opacity:0;transform:translateY(calc(-100% + 22px))}24.5%{opacity:1}37%{opacity:1;transform:translateY(0)}39%,100%{opacity:0;transform:translateY(0)}}
+@keyframes authEclat{0%,41%{opacity:0;transform:rotate(var(--g0)) translateY(calc(var(--r) * -1))}43%,60%{opacity:1}63%,100%{opacity:0;transform:rotate(var(--g1)) translateY(calc(var(--r) * -1))}}
+@keyframes authReflet{0%,44.7%{opacity:0;background-position:-28% 0,-28% 0}46%,54.8%{opacity:1}56.1%,100%{opacity:0;background-position:128% 0,128% 0}}
+@keyframes authAppel{0%,55%{opacity:0;transform:scale(.985)}63%{opacity:1;transform:scale(1)}82%,100%{opacity:0;transform:scale(1.012)}}
+@keyframes authPret{from{opacity:.5}to{opacity:1}}
 @media(prefers-reduced-motion:no-preference){
   #auth-screen.active .auth-world{animation:authLever 1.5s cubic-bezier(.2,.7,.2,1) both}
   #auth-screen.active .w-orange{animation-delay:.1s}
@@ -1442,15 +1495,34 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #auth-screen.active .auth-proof li:nth-child(2){animation-delay:.54s}
   #auth-screen.active .auth-proof li:nth-child(3){animation-delay:.66s}
   #auth-screen.active .auth-card{animation:authPoser .9s cubic-bezier(.16,1,.3,1) .8s both}
-  /* Le récit qui revient, toutes les 13 s : la lumière descend la frise, puis file le long de l'horizon vert */
-  .auth-proof li i{animation:authPoint 13s ease-out 2.6s infinite}
-  .auth-proof li:nth-child(2) i{animation-delay:3.9s}
-  .auth-proof li:nth-child(3) i{animation-delay:5.2s}
-  .auth-proof li:not(:last-child)::before{content:"";position:absolute;left:3.5px;width:3px;top:22px;bottom:-17px;border-radius:2px;background:linear-gradient(transparent,color-mix(in srgb,var(--n) 55%,#fff),transparent) 0 -22px/100% 22px no-repeat;animation:authFlux 13s linear 2.7s infinite}
-  .auth-proof li:nth-child(2)::before{animation-delay:4s}
-  .w-vert::after{content:"";position:absolute;left:var(--x);top:var(--y);width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:radial-gradient(circle,#fff 0,color-mix(in srgb,var(--a-vert) 55%,#fff) 40%,transparent 72%);box-shadow:0 0 14px 3px color-mix(in srgb,var(--a-vert) 60%,transparent);opacity:0;animation:authEclat 13s cubic-bezier(.35,0,.65,1) 5.6s infinite}
+  /* Le récit qui revient, en continu (8 s) : le point rouge s'allume et lance une onde, l'étincelle descend le fil,
+     l'orange s'allume quand elle l'atteint, puis le vert ; la lumière file alors en comète le long de l'horizon
+     vert, la carte en garde le reflet sur son bord, le bouton s'éclaire ; tout s'éteint et repart.
+     Les animations attendent la fin de l'arrivée (2 s) dans leur état de départ : éteint. */
+  .auth-proof li i::after{animation:authFeu1 8s ease-out 2s infinite backwards}
+  .auth-proof li:nth-child(2) i::after{animation-name:authFeu2}
+  .auth-proof li:nth-child(3) i::after{animation-name:authFeu3}
+  .auth-proof li i::before{animation:authOnde1 8s cubic-bezier(.2,.7,.3,1) 2s infinite backwards}
+  .auth-proof li:nth-child(2) i::before{animation-name:authOnde2}
+  .auth-proof li:nth-child(3) i::before{animation-name:authOnde3}
+  .auth-proof li :is(b,span){animation:authMot1 8s ease-out 2s infinite backwards}
+  .auth-proof li:nth-child(2) :is(b,span){animation-name:authMot2}
+  .auth-proof li:nth-child(3) :is(b,span){animation-name:authMot3}
+  .auth-proof li:not(:last-child)::before{animation:authFil1 8s linear 2s infinite backwards}
+  .auth-proof li:nth-child(2)::before{animation-name:authFil2}
+  .auth-proof li:not(:last-child) span::after{animation:authPointe1 8s linear 2s infinite backwards}
+  .auth-proof li:nth-child(2) span::after{animation-name:authPointe2}
+  /* la comète : une tête blanche et sa traîne, tangente à l'horizon ; elle tourne autour du centre du monde vert */
+  .w-vert::after{content:"";position:absolute;left:var(--x);top:var(--y);width:92px;height:40px;margin:-20px 0 0 -72px;transform-origin:72px 20px;background:radial-gradient(circle at 72px 20px,#fff 0,#fff 1.6px,color-mix(in srgb,var(--a-vert) 45%,#fff) 3.2px,color-mix(in srgb,var(--a-vert) 62%,transparent) 7px,color-mix(in srgb,var(--a-vert) 22%,transparent) 13px,transparent 20px),linear-gradient(90deg,transparent,rgba(255,255,255,.5) 60%,#fff) 0 18.5px/72px 3px no-repeat;opacity:0;animation:authEclat 8s linear 2s infinite backwards}
+  .auth-card::before{animation:authReflet 8s linear 2s infinite backwards}
+  .auth-btn::after{animation:authAppel 8s ease-out 2s infinite backwards}
+  #auth-go.is-ready::after{animation:authPret 1.6s ease-in-out infinite alternate}
+  /* On entre dans ARC */
+  #auth-screen.leaving{opacity:0;transition:opacity .44s ease-in .28s}
+  #auth-screen.leaving .auth-box{opacity:0;transform:translateY(-8px) scale(.985);transition:opacity .22s ease,transform .4s cubic-bezier(.3,0,.2,1)}
+  #auth-screen.leaving .auth-glow{transform:scale(2.2);transform-origin:30% calc(var(--card-y) + 2px);transition:transform .72s cubic-bezier(.4,0,.6,1)}
 }
-@media(prefers-reduced-motion:reduce){.auth-tabs::before,.auth-field .auth-lbl,.auth-btn,.auth-skip-go{transition:none}}
+@media(prefers-reduced-motion:reduce){.auth-tabs::before,.auth-field .auth-lbl,.auth-btn{transition:none}}
 /* Mac et tablette large : le fond tient à l'écran. Les arcs se règlent sur la largeur libre de chaque côté de la
    colonne de texte (440 px au centre) et s'arrêtent 30 à 40 px avant elle : aucun arc ne passe sous un texte. */
 @media(min-width:861px){
@@ -1458,6 +1530,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .auth-box{align-self:auto;margin:auto}
   .auth-glow{position:fixed;inset:0;margin:0;background:#000}
   .auth-proof{margin-bottom:24px}
+  #auth-screen.leaving .auth-glow{transform-origin:0 100%}
   .w-rouge{--x:calc(100% + 70px);--y:-90px;--r:var(--jour)}
   .w-orange{--x:calc(100% + 40px);--y:-110px;--r:calc(var(--jour) * .7)}
   .w-jaune{--x:calc(100% + 10px);--y:-70px;--r:calc(var(--jour) * .4)}
@@ -2480,11 +2553,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <h1 class="auth-h1"><span class="auth-h1-light">Tu as une id&eacute;e.</span><span class="auth-h1-gradient">Elle devient r&eacute;elle.</span></h1>
     <p class="auth-pitch">Garde en t&ecirc;te le strict n&eacute;cessaire. Le&nbsp;reste&nbsp;prend&nbsp;vie&nbsp;ici.</p>
     <ul class="auth-proof" aria-label="Ce qu'ARC fait">
-      <li style="--c:var(--a-poussin);--n:var(--a-orange)"><i></i><b>Penser</b><span>D&eacute;pose ton id&eacute;e, &agrave; la voix ou au clavier.</span></li>
-      <li style="--c:var(--a-orange);--n:var(--a-rouge)"><i></i><b>D&eacute;velopper</b><span>ARC la range et fixe sa prochaine &eacute;tape.</span></li>
-      <li style="--c:var(--a-rouge)"><i></i><b>Entreprendre</b><span>Tes t&acirc;ches du jour, sur tous tes appareils.</span></li>
+      <li style="--c:var(--a-rouge);--n:var(--a-orange)"><i></i><b>Penser</b><span>D&eacute;pose ton id&eacute;e&nbsp;: tout part d&rsquo;ici.</span></li>
+      <li style="--c:var(--a-orange);--n:var(--a-vert)"><i></i><b>D&eacute;velopper</b><span>Fais-en un projet, &eacute;tape par &eacute;tape.</span></li>
+      <li style="--c:var(--a-vert)"><i></i><b>Entreprendre</b><span>Passe &agrave; l&rsquo;action et pilote tout d&rsquo;ici.</span></li>
     </ul>
     <div class="auth-card">
+    <div class="auth-status" id="auth-status" data-etat="off"><span class="auth-status-etat"><i></i><span id="auth-status-txt">Pas de réseau</span></span><span id="auth-status-time"></span></div>
     <div class="auth-step active" id="auth-email">
       <div class="auth-tabs" data-mode="in" role="tablist" aria-label="Connexion ou création de compte">
         <button class="auth-tab on" id="auth-tab-in" type="button" role="tab" aria-selected="true">Se connecter</button>
@@ -2505,7 +2579,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <button class="auth-forgot" id="auth-send" type="button">Mot de passe oubli&eacute; ?</button>
       <div class="auth-err" id="auth-email-err" role="alert"></div>
       <button class="auth-btn" id="auth-go">Se connecter</button>
-      <button class="auth-skip" id="auth-skip" type="button"><span class="auth-skip-t">Continuer sans connexion</span><span class="auth-skip-s">Sur cet appareil seulement.</span><span class="auth-skip-go" aria-hidden="true">&rsaquo;</span></button>
     </div>
     <div class="auth-step" id="auth-pass">
       <div class="auth-title">Ton mot de passe</div>
@@ -2612,9 +2685,11 @@ function sbInit() {
         if(curId !== 'auth-pass' && curId !== 'auth-ref') authDone();
         setTimeout(pullFromCloud, 0);
       }
-      else if(event === 'INITIAL_SESSION' && !authSkipped()) showAuthScreen('auth-email');
+      else if(event === 'INITIAL_SESSION') showAuthScreen('auth-email');
     }
-    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; _authAskPass = false; _authPendingPass = ''; _authNewAccount = false; }
+    // Déconnecté (par Rayan, ou session refusée par le serveur) : retour à l'écran d'entrée. Il n'y a plus d'usage
+    // « sans connexion » choisi : ARC ne s'ouvre sans session que si le service de connexion est injoignable.
+    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; _authAskPass = false; _authPendingPass = ''; _authNewAccount = false; showAuthScreen('auth-email'); }
   });
 }
 
@@ -2640,14 +2715,14 @@ function isLinked() {
 function linkDevice() {
   try { localStorage.setItem(LINK_KEY, getUID()); localStorage.removeItem('arc_uid'); } catch(e) {}
 }
-function authSkipped() {
-  try { return sessionStorage.getItem('arc_auth_skip') === '1'; } catch(e) { return false; }
-}
 
 function showAuthScreen(step) {
   var scr = document.getElementById('auth-screen'); if(!scr) return;
+  if(_authLeave) { clearTimeout(_authLeave); _authLeave = null; }
+  scr.classList.remove('leaving');
   document.querySelectorAll('.auth-step').forEach(function(el) { el.classList.toggle('active', el.id === step); });
   scr.classList.add('active');
+  authVie();
   if(step === 'auth-email') {
     var inp = document.getElementById('auth-email-inp');
     try { if(!inp.value) inp.value = localStorage.getItem('arc_auth_email') || ''; } catch(e) {}
@@ -2670,8 +2745,59 @@ function authFond() {
   if(scr.style.getPropertyValue('--card-y') !== y) scr.style.setProperty('--card-y', y);
   if(scr.style.getPropertyValue('--card-h') !== h) scr.style.setProperty('--card-h', h);
 }
+// On entre dans ARC : la carte s'efface, le fond plonge vers l'horizon, l'accueil apparaît dessous. Pendant ce passage
+// l'écran ne reçoit plus aucun geste ; il est retiré à la fin. Sans animation (réglage de l'appareil) : retiré tout de suite.
+var _authLeave = null, AUTH_LEAVE_MS = 730;
 function hideAuthScreen() {
-  var scr = document.getElementById('auth-screen'); if(scr) scr.classList.remove('active');
+  var scr = document.getElementById('auth-screen'); if(!scr || !scr.classList.contains('active') || _authLeave) return;
+  var calme = true; try { calme = !window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e) {}
+  if(calme) { scr.classList.remove('active'); return; }
+  try { if(document.activeElement && scr.contains(document.activeElement)) document.activeElement.blur(); } catch(e) {}
+  scr.classList.add('leaving');
+  _authLeave = setTimeout(function() { _authLeave = null; scr.classList.remove('active', 'leaving'); }, AUTH_LEAVE_MS);
+}
+// L'écran d'entrée vit, sans rien inventer : chaque signe dit un état vrai.
+// - la ligne d'état : la date (ou « Pas de réseau » quand il n'y en a pas),
+//   l'heure à la seconde ; elle s'arrête d'elle-même quand l'écran est fermé ;
+// - le bouton principal est « armé » (is-ready) quand l'adresse est valide et le mot de passe assez long ;
+// - sur Mac, une lumière suit le pointeur sur la carte (--mx, --my).
+var _authVieOn = false, _authHorloge = null;
+function authArme() {
+  var go = document.getElementById('auth-go'), pass = document.getElementById('auth-pass-inp'); if(!go || !pass) return;
+  go.classList.toggle('is-ready', !!authReadEmail() && pass.value.length >= AUTH_PASS_MIN);
+}
+function authEtat() {
+  var el = document.getElementById('auth-status'); if(!el) return;
+  var on = !!_sb && navigator.onLine !== false, d = new Date();
+  // Aucun mot d'état quand tout va bien (« En ligne », « Prêt » : refusés par Rayan le 8 octobre, sans utilité).
+  // À gauche la date ; « Pas de réseau » la remplace seulement quand il n'y en a pas, car la connexion échouerait.
+  var jour = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  var gauche = on ? jour.charAt(0).toUpperCase() + jour.slice(1) : 'Pas de réseau';
+  var heure = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  var a = document.getElementById('auth-status-txt'), b = document.getElementById('auth-status-time');
+  if(el.getAttribute('data-etat') !== (on ? 'on' : 'off')) el.setAttribute('data-etat', on ? 'on' : 'off');
+  if(a.textContent !== gauche) a.textContent = gauche;
+  if(b.textContent !== heure) b.textContent = heure;
+  authArme();   // le trousseau du navigateur remplit parfois les champs sans prévenir
+}
+function authVie() {
+  authEtat();
+  if(!_authHorloge) (function tic() {
+    _authHorloge = setTimeout(function() {
+      var scr = document.getElementById('auth-screen');
+      if(!scr || !scr.classList.contains('active')) { _authHorloge = null; return; }
+      authEtat(); tic();
+    }, 1000 - (Date.now() % 1000) + 5);
+  })();
+  if(_authVieOn) return; _authVieOn = true;
+  window.addEventListener('online', authEtat); window.addEventListener('offline', authEtat);
+  var etape = document.getElementById('auth-email'); if(etape) etape.addEventListener('input', authArme);
+  var carte = document.querySelector('#auth-screen .auth-card'), souris = false;
+  try { souris = !!window.matchMedia && matchMedia('(hover:hover)').matches; } catch(e) {}
+  if(carte && souris) carte.addEventListener('pointermove', function(ev) {
+    var r = carte.getBoundingClientRect();
+    carte.style.setProperty('--mx', Math.round(ev.clientX - r.left) + 'px'); carte.style.setProperty('--my', Math.round(ev.clientY - r.top) + 'px');
+  });
 }
 function authErr(id, msg) { var el = document.getElementById(id); if(el) el.textContent = msg || ''; }
 
@@ -2768,6 +2894,7 @@ function authSetMode(mode) {
   document.querySelector('.auth-tabs').setAttribute('data-mode', _authMode);
   _authPendingPass = '';
   authErr('auth-email-err', '');
+  authArme();
 }
 // « Créer un compte » avec une adresse qui a déjà un compte : on essaie d'abord d'entrer avec ce mot de passe (la
 // personne s'est trompée d'onglet) ; sinon un code confirme que c'est bien elle et le mot de passe choisi est enregistré.
@@ -2828,7 +2955,7 @@ async function authGo() {
     }
     document.getElementById('auth-pass-inp').value = '';
   } catch(e) { authErr('auth-email-err', authErrorText(e)); }
-  btn.disabled = false;
+  btn.disabled = false; authArme();
 }
 // Une fois connecté : créer ou changer son mot de passe (menu « ··· » › Mon mot de passe)
 async function authSavePass() {
@@ -2873,6 +3000,8 @@ async function authSignOut() {
   if(!confirm('Se déconnecter ? Les données restent sur cet appareil ; la synchronisation s\'arrête.')) return;
   try { await _sb.auth.signOut(); } catch(e) { console.warn('Déconnexion :', e.message); }
   _session = null; renderAuthUI();
+  try { sessionStorage.removeItem('arc_auth_skip'); } catch(e) {}   // ancien passage « sans connexion », plus utilisé
+  showAuthScreen('auth-email');
   toast('Déconnecté · données gardées sur cet appareil');
 }
 
@@ -4498,7 +4627,6 @@ document.addEventListener("click",function(ev){
   if(t.id==="auth-pass-later"){ _authAskPass=false; hideAuthScreen(); return; }
   if(t.closest&&t.closest("#btn-pass")){ var dd=document.getElementById("h-menu-dd"); if(dd) dd.classList.remove("open"); if(_session){ authErr("auth-pass-err",""); showAuthScreen("auth-pass"); } return; }
   if(t.id==="auth-back"){ _authPendingPass=""; authErr("auth-email-err",""); showAuthScreen("auth-email"); return; }
-  if(t.id==="auth-skip"||t.closest("#auth-skip")){ try{ sessionStorage.setItem("arc_auth_skip","1"); }catch(e){} hideAuthScreen(); renderAuthUI(); return; }
   if(t.id==="auth-ref-yes"){ authMakeReference(); return; }
   if(t.id==="auth-ref-no"){ _syncPaused=true; authDone(); renderAuthUI(); toast("Rien n'a été envoyé · question au prochain lancement"); return; }
   if(t.id==="sante-export-btn"){ exportSante(); return; }

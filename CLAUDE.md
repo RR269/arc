@@ -377,6 +377,108 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     corriger à part (le test devrait fixer l'heure, et « Ce soir » après 23 h est à décider avec Rayan).
   - Vérifié dans Chromium seulement : la police San Francisco, le verre de la carte et la fluidité réelle du
     mouvement ne se jugent que sur l'iPhone et le Mac de Rayan.
+- **PR #12 fusionnée à 23 h 38 ; constaté par Rayan sur son iPhone (23 h 43 et 23 h 46)** : l'écran rend comme prévu
+  dans Safari (horizon vert, violet en bas, police d'Apple, éclat visible sur sa capture), et « les champs se
+  remplissent, tout est ok » avec le trousseau.
+- **Les trois phrases de la frise (branche `mots-frise`, 23 h 46)**. Rayan : elles « ne reflètent pas exactement […]
+  les points d'ARC et son utilité ». Réécrites pour dire ce que chaque mot apporte, **proposées, à valider** :
+  « Penser · Dépose chaque pensée. Aucune ne se perd. », « Développer · ARC la range, la relie et la fait avancer. »,
+  « Entreprendre · Chaque matin, ta prochaine étape t'attend. » Deux autres jeux dans `docs/MOTS-ARC.md`.
+  `tests/entree-fond.mjs` : 31 contrôles (une ligne par phrase de 375 à 430 px).
+- **Refusées par Rayan (8 octobre, 1 h 06)** : « quand on développe, on ne range pas ! […] ARC est un espace qui est
+  voué à être le centre de contrôle et le point de départ de tout. » **Règle à garder : sous chaque mot, la phrase
+  dit ce qu'on attend en lisant ce mot, pas le mécanisme (jamais « ranger » sous « Développer »).** Nouvelle
+  proposition, même branche et même PR #13, **à valider** : « Penser · Dépose ton idée : tout part d'ici. »,
+  « Développer · Fais-en un projet, étape par étape. », « Entreprendre · Passe à l'action et pilote tout d'ici. »
+  La deuxième engage le chantier « faire naître un monde depuis une pensée », pas encore construit.
+- **Phrases validées par Rayan (8 octobre, 1 h 21) : « là on y est !!! »** (les trois de la PR #13).
+- **La frise en feux de départ (même branche `mots-frise`, PR #13, 8 octobre 1 h 41)**. Rayan : « la calligraphie style
+  Apple n'est pas visible sur les trois points ; mettre le point jaune en rouge, l'orange reste orange, le rouge
+  devient vert, et le tout lumineux, mais les points ne deviennent lumineux que quand le fil de lumière arrive à
+  eux ; et ce en continu ». Fait :
+  - Typographie : le mot à 20 px, demi-gras, serré (`-0,45 px`) ; la phrase à 16 px en gris `#B4B4BA`.
+  - Couleurs : Penser rouge, Développer orange, Entreprendre vert (`--a-poussin` n'existe plus).
+  - Chaque point a deux états : éteint (le `<i>`, teinte sombre) et allumé (son `::after`, avec la lueur). Le fil a
+    un trait éteint (`li::after`) et un trait de lumière (`li::before`) qui descend (`scaleY`).
+  - Boucle de 8 s, en continu (`authFeu1/2/3`, `authFil1/2`, `authEclat`) : le rouge s'allume, le fil descend,
+    l'orange s'allume quand il l'atteint, puis le vert ; la lumière file alors le long de l'horizon vert ; tout
+    s'éteint et repart. `authFlux` et `authPoint` sont retirés. Sans animation, les trois points restent allumés.
+  - Tests : entrée-fond 33/33 (deux contrôles ajoutés : l'ordre d'allumage image par image, et l'état sans
+    animation) ; contraste le plus faible 4,84 : 1 ; les sept autres suites passent ; 572 `<div` / 572 `</div>`.
+- **L'effet : la lumière arrive, l'écran répond (même branche `mots-frise`, PR #13, 8 octobre 2 h)**. Rayan : « c'est
+  bien, mais j'aimerais que dans cette fluidité il y ait de l'effet, et qu'on ajoute dans le design ce genre de
+  choses qui font ressentir le monde connecté qui prône le contrôle total pour une productivité totale ».
+  **Règle à garder : sur cet écran, aucun faux chiffre ni faux signal ; chaque signe dit un état vrai.** Fait :
+  - La frise : une étincelle court au bout du fil (`li span::after`, `authPointe1/2`) ; à l'allumage chaque point
+    lance une onde (`li i::before`, `authOnde1/2/3`) ; son mot et sa phrase s'allument avec lui (`li b` et
+    `li span`, de 80 % à 100 %, `authMot1/2/3`).
+  - L'horizon : la lumière est une comète (tête blanche, traîne de 72 px, `.w-vert::after`) ; la carte, juste dessous,
+    en garde le reflet sur son bord, calé sur la position de la comète (`.auth-card::before`, `authReflet`) ; puis le
+    bouton s'éclaire (`.auth-btn::after`, `authAppel`). Boucle de 8 s : feux éteints de 84 à 94 %.
+  - La carte répond : bouton « armé » (`#auth-go.is-ready`, `authArme`) quand l'adresse est valide et le mot de passe
+    fait 8 caractères ; sur Mac, une lumière suit le pointeur (`--mx`, `--my`, `.auth-card::after`, sous le contenu).
+  - Ligne d'état en tête de la carte (`#auth-status`, `authEtat`, `authVie`) : un état vrai (« En ligne » au premier
+    jet, remplacé à 3 h 36 par « Prêt », voir plus bas), la date, l'heure à la seconde, chiffres à chasse fixe ; l'horloge s'arrête
+    d'elle-même quand l'écran est fermé. La carte gagne 28 px : le bouton reste dans le premier écran (844 px).
+  - On entre dans ARC (`hideAuthScreen`, classe `leaving`, `AUTH_LEAVE_MS` = 730 ms) : la carte s'efface, le fond
+    plonge vers l'horizon vert, l'accueil apparaît dessous ; pendant le passage l'écran ne prend plus aucun geste.
+    `showAuthScreen` annule un passage en cours. Immédiat si l'appareil demande moins d'animations. **Un test qui
+    attend la fermeture doit attendre que la classe `active` parte** (ne pas compter 300 ms).
+  - Toujours `transform`, `opacity` et la position d'un fond ; aucun mode de fusion ; aucune bibliothèque.
+  - Tests : entrée-fond 38/38 (cinq contrôles ajoutés : état réel avec réseau coupé puis revenu, bouton armé, ordre des
+    effets image par image, contraste quand les mots sont en retrait, passage vers ARC), connexion 26/26, mondes 6/6,
+    pôles 9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible 4,90 : 1 ;
+    573 `<div` / 573 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
+- **Plus de gris fade (même branche, PR #13, 8 octobre 2 h 49)**. Rayan, après avoir vu l'effet (« très bien ») : « le
+  gris des descriptifs sous les trois points ne me plaît pas, il fait fade, et la couleur de la fonction Se connecter
+  aussi ». **Règle à garder : pas de gris moyen pour un texte que Rayan doit lire sur cet écran.** Fait :
+  - Les trois phrases de la frise et la ligne au-dessus passent en blanc lumineux (`#EBEBF0`, au lieu de `#B4B4BA`
+    et `#D6D6DC`).
+  - Le sélecteur « Se connecter / Créer un compte » n'est plus gris : fond de verre sombre comme les champs ; la
+    touche choisie porte le dégradé d'ARC (filet orange → rose → violet, fond teinté, lueur ; `.auth-tabs::before`).
+    Lecture retenue de « la fonction Se connecter » : l'onglet gris (confirmé par Rayan à 3 h 36 : « on laisse
+    comme c'est »).
+  - Tests : entrée-fond 39/39 (un contrôle ajouté), les sept autres suites passent ; contraste le plus faible
+    5,02 : 1 ; 573 `<div` / 573 `</div>`.
+- **« Prêt », pas « En ligne » ; bouton principal clair (même branche, PR #13, 8 octobre 3 h 36)**. Rayan : « on ne
+  peut pas mettre En ligne dans une page dans laquelle on n'est pas encore connecté » ; l'onglet et les phrases :
+  « on laisse comme c'est » (la lecture « onglet gris » était la bonne) ; le bouton « Se connecter » : « plus pro et
+  plus clair avec le thème », à voir. Fait :
+  - **Règle à garder : jamais « En ligne » sur l'écran d'entrée** (on le lit comme « connecté »). La ligne d'état dit
+    « Prêt » tant qu'aucune session n'est ouverte (réseau présent, service de connexion chargé), « Connecté » quand
+    la session existe (étapes mot de passe, premier appareil), « Pas de réseau » sinon (`authEtat`).
+  - Bouton principal (`.auth-btn`) : une touche blanche au libellé presque noir (`#0B0B0F`), comme « Déposer » dans
+    ARC ; c'est la seule grande forme blanche de l'écran. Les couleurs d'ARC restent en lueur autour d'elle (orange,
+    rose, violet) : discrète au repos, pleine quand le bouton est armé ou que la lumière de la boucle arrive. Le
+    dégradé plein orange → rouge → violet du bouton est retiré. **Proposé, à valider par Rayan sur son iPhone.**
+  - Tests : entrée-fond 40/40 (un contrôle ajouté : bouton clair, libellé sombre ; l'état vérifie « Prêt »,
+    « Connecté », « Pas de réseau » et l'absence de « En ligne »), les sept autres suites passent ; contraste le plus
+    faible 5,03 : 1 ; 573 `<div` / 573 `</div>`.
+- **Plus de mot d'état, plus de « Continuer sans connexion » (même branche, PR #13, 8 octobre 4 h 29)**. Rayan :
+  « Prêt ? pourquoi c'est là ?! aucune utilité je pense ; et maintenant supprimons la case Continuer sans connexion
+  puisque je peux me connecter maintenant ! ». Fait :
+  - **Règle à garder : sur l'écran d'entrée, aucun mot d'état quand tout va bien** (« En ligne » puis « Prêt » refusés).
+    La tête de la carte montre la date à gauche (« Jeudi 8 octobre ») et l'heure à la seconde à droite ; « Pas de
+    réseau » remplace la date seulement quand le navigateur n'en a pas (la connexion échouerait). Le point vert et
+    son pouls sont retirés (`authPouls` n'existe plus).
+  - **« Continuer sans connexion » est retiré** (bouton `#auth-skip`, ses styles, `authSkipped()`, la clé
+    `arc_auth_skip`). Le bouton principal ferme la carte (`#auth-email{padding-bottom:10px}`) ; sur iPhone 390 × 844
+    tout l'écran d'entrée tient sans défiler.
+  - **Conséquences, dites à Rayan** : on n'entre plus dans ARC sans compte. Sans session, l'écran d'entrée s'affiche
+    toujours ; se déconnecter (ou une session refusée par le serveur, `SIGNED_OUT`) y ramène ; les données restent
+    sur l'appareil. ARC ne s'ouvre sans session que si la bibliothèque de connexion n'a pas pu se charger (`_sb`
+    absent : pas d'écran d'entrée, usage local, « Service de connexion injoignable » au menu). Donc : pas de réseau
+    ET session expirée = impossible d'entrer tant que le réseau n'est pas revenu.
+  - Le code de l'usage local reste (dépôt « Sur cet appareil seulement », envoi à la connexion suivante) : c'est ce
+    qui sert quand le service est injoignable. Les tests de cet usage referment l'écran eux-mêmes
+    (`entrerSansSession` dans `tests/outils.mjs` et `tests/depot.mjs`).
+  - Tests : connexion 27/27 (le bas de la carte sans la ligne retirée ; un contrôle ajouté : se déconnecter ramène à
+    l'écran d'entrée), entrée-fond 40/40 (tête de la carte : date, heure, aucun mot d'état), mondes 6/6, pôles 9/9,
+    dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible 5,03 : 1 ;
+    573 `<div` / 573 `</div>`.
+- **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
+  (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
+  sur les données à la création de compte (texte à écrire avec lui).
 - **Question de Rayan du 7 octobre, 18 h** (Santé et Juridique « ont totalement changé », iPhone non connecté) :
   la PR #10 ne touche aucune ligne de données (recherche dans le diff : zéro) ; ses captures montrent l'état de
   départ (les quatre habitudes posées par `renderHabitudes`). Reste à vérifier par lui sur son Mac connecté si son
