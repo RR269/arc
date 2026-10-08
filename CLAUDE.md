@@ -454,6 +454,28 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   - Tests : entrée-fond 40/40 (un contrôle ajouté : bouton clair, libellé sombre ; l'état vérifie « Prêt »,
     « Connecté », « Pas de réseau » et l'absence de « En ligne »), les sept autres suites passent ; contraste le plus
     faible 5,03 : 1 ; 573 `<div` / 573 `</div>`.
+- **Plus de mot d'état, plus de « Continuer sans connexion » (même branche, PR #13, 8 octobre 4 h 29)**. Rayan :
+  « Prêt ? pourquoi c'est là ?! aucune utilité je pense ; et maintenant supprimons la case Continuer sans connexion
+  puisque je peux me connecter maintenant ! ». Fait :
+  - **Règle à garder : sur l'écran d'entrée, aucun mot d'état quand tout va bien** (« En ligne » puis « Prêt » refusés).
+    La tête de la carte montre la date à gauche (« Jeudi 8 octobre ») et l'heure à la seconde à droite ; « Pas de
+    réseau » remplace la date seulement quand le navigateur n'en a pas (la connexion échouerait). Le point vert et
+    son pouls sont retirés (`authPouls` n'existe plus).
+  - **« Continuer sans connexion » est retiré** (bouton `#auth-skip`, ses styles, `authSkipped()`, la clé
+    `arc_auth_skip`). Le bouton principal ferme la carte (`#auth-email{padding-bottom:10px}`) ; sur iPhone 390 × 844
+    tout l'écran d'entrée tient sans défiler.
+  - **Conséquences, dites à Rayan** : on n'entre plus dans ARC sans compte. Sans session, l'écran d'entrée s'affiche
+    toujours ; se déconnecter (ou une session refusée par le serveur, `SIGNED_OUT`) y ramène ; les données restent
+    sur l'appareil. ARC ne s'ouvre sans session que si la bibliothèque de connexion n'a pas pu se charger (`_sb`
+    absent : pas d'écran d'entrée, usage local, « Service de connexion injoignable » au menu). Donc : pas de réseau
+    ET session expirée = impossible d'entrer tant que le réseau n'est pas revenu.
+  - Le code de l'usage local reste (dépôt « Sur cet appareil seulement », envoi à la connexion suivante) : c'est ce
+    qui sert quand le service est injoignable. Les tests de cet usage referment l'écran eux-mêmes
+    (`entrerSansSession` dans `tests/outils.mjs` et `tests/depot.mjs`).
+  - Tests : connexion 27/27 (le bas de la carte sans la ligne retirée ; un contrôle ajouté : se déconnecter ramène à
+    l'écran d'entrée), entrée-fond 40/40 (tête de la carte : date, heure, aucun mot d'état), mondes 6/6, pôles 9/9,
+    dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible 5,03 : 1 ;
+    573 `<div` / 573 `</div>`.
 - **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
   (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
   sur les données à la création de compte (texte à écrire avec lui).

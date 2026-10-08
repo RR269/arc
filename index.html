@@ -1339,7 +1339,8 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* La carte : un verre sombre, le fond passe derrière elle, adouci */
 .auth-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02)),rgba(9,9,12,.62);-webkit-backdrop-filter:blur(26px) saturate(1.5);backdrop-filter:blur(26px) saturate(1.5)}
 /* Le bas de la carte (7 octobre au soir) : une connexion normale. « Mot de passe oublié ? » est un lien sous le champ,
-   le bouton principal suit sans trou, « Continuer sans connexion » est une ligne discrète sous un filet. */
+   le bouton principal suit sans trou. « Continuer sans connexion » a été retiré le 8 octobre (décision de Rayan :
+   « je peux me connecter maintenant ») : le bouton principal ferme la carte. */
 .auth-passrow .auth-input{margin-bottom:0}
 .auth-passrow{margin-bottom:6px}
 .auth-forgot{display:block;margin:0 -8px 0 auto;min-height:44px;padding:0 8px;border:none;background:none;font-family:inherit;font-size:14px;font-weight:500;color:#C4C4CC;cursor:pointer;border-radius:10px}
@@ -1349,11 +1350,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #auth-email .auth-err:empty{margin-bottom:6px}
 #auth-email .auth-forgot[hidden]+.auth-err{margin-top:20px} /* onglet « Créer un compte » : pas de lien, le bouton garde sa distance */
 #auth-pass .auth-passrow,#auth-pass .auth-err:empty{margin-bottom:16px}
-.auth-skip{position:relative;display:grid;grid-template-columns:1fr auto;column-gap:12px;align-items:center;width:100%;min-height:60px;margin-top:18px;padding:14px 2px 2px;border:none;border-top:1px solid rgba(255,255,255,.1);background:none;text-align:left;font-family:inherit;cursor:pointer;color:var(--t1)}
-.auth-skip-t{font-size:15px;font-weight:600;color:#E8E8EC}
-.auth-skip-s{grid-column:1;font-size:13px;line-height:1.45;color:#B4B4BC;margin-top:2px}
-.auth-skip-go{grid-row:1/3;grid-column:2;font-size:22px;line-height:1;color:#B4B4BC}
-.auth-skip:hover .auth-skip-t{color:#fff}
 /* Champs remplis par le trousseau : le navigateur les peint en jaune pâle, ARC les garde sombres */
 .auth-input:-webkit-autofill,.auth-input:-webkit-autofill:hover,.auth-input:-webkit-autofill:active{-webkit-text-fill-color:#F5F5F7;caret-color:#F5F5F7;-webkit-box-shadow:0 0 0 1000px #0B0B0F inset;box-shadow:0 0 0 1000px #0B0B0F inset;transition:background-color 99999s ease-out,color 99999s ease-out}
 .auth-input:-webkit-autofill:focus{-webkit-text-fill-color:#F5F5F7;caret-color:#F5F5F7;-webkit-box-shadow:0 0 0 1000px #0B0B0F inset,0 0 0 3px rgba(0,143,200,.2);box-shadow:0 0 0 1000px #0B0B0F inset,0 0 0 3px rgba(0,143,200,.2);transition:background-color 99999s ease-out,color 99999s ease-out}
@@ -1364,7 +1360,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
    - Typographie : sous le titre, tout le texte passe dans la police du système (San Francisco sur iPhone et Mac ;
      Plus Jakarta Sans ailleurs). Plus de petites capitales ni de police à chasse fixe dans la carte.
    - Le cadran : sélecteur à curseur glissant, deux champs groupés à libellé flottant, œil au trait, bouton plein de
-     50 px, ligne « Continuer sans connexion » à chevron. Cibles de 44 px au moins, champs à 17 px.
+     50 px. Cibles de 44 px au moins, champs à 17 px.
    - Couleurs : l'horizon qui porte la carte est vert (« le reste prend vie ici »), le violet ferme le bas ; les
      points de la frise sont jaune poussin, orange, rouge, comme les trois arcs du coin.
    - Mouvement, un seul récit : à l'arrivée, le jour se lève, la frise se pose, l'horizon s'allume, la carte se pose.
@@ -1412,22 +1408,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-field .auth-eye{top:7px;right:6px;width:44px;min-width:44px;height:44px;border-radius:12px;font-size:0}
 .auth-field .auth-eye::before{content:"";position:absolute;inset:0;background:#C9C9CF;-webkit-mask:var(--ico) center/22px 22px no-repeat;mask:var(--ico) center/22px 22px no-repeat;--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3C/svg%3E")}
 .auth-field .auth-eye[aria-pressed="true"]::before{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 4l16 16 M9.9 5.8A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-2.6 3.4 M6.3 7.6A15.600 15.600 0 0 0 2.500 12s3.500 6.500 9.500 6.500a9.300 9.300 0 0 0 3.900-.9 M9.900 9.900a2.800 2.800 0 0 0 4 4'/%3E%3C/svg%3E")}
-.auth-eye:focus-visible,.auth-tab:focus-visible,.auth-forgot:focus-visible,.auth-skip:focus-visible,.auth-btn:focus-visible,.auth-link:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+.auth-eye:focus-visible,.auth-tab:focus-visible,.auth-forgot:focus-visible,.auth-btn:focus-visible,.auth-link:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 .auth-hint{font-size:13px;line-height:18px;color:#A6A6AE;margin:8px 4px 0}
 .auth-hint[hidden]{display:none}
 .auth-forgot{margin-top:2px;font-size:15px;font-weight:400;letter-spacing:-.15px;color:#D6D6DC}
 #auth-email .auth-err{font-size:13px;line-height:18px;margin:0 4px 12px}
 #auth-email .auth-forgot[hidden]+.auth-err{margin-top:16px}
+#auth-email{padding-bottom:10px} /* le bouton principal est le dernier élément : même marge en bas que sur les côtés */
 #auth-pass .auth-fields{margin-bottom:0}
 #auth-pass .auth-hint{margin-bottom:14px}
 #auth-pass .auth-err:empty{margin-bottom:2px}
 .auth-btn{min-height:50px;border-radius:14px;font-size:17px;font-weight:600;letter-spacing:-.25px;margin-top:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 14px 32px -12px rgba(218,13,35,.6);transition:transform .2s cubic-bezier(.2,.8,.2,1),filter .2s,opacity .2s}
 .auth-btn:active{transform:scale(.975);filter:brightness(.92)}
-.auth-skip{margin-top:14px;min-height:62px;padding:10px 4px 6px;border-top-color:rgba(255,255,255,.1)}
-.auth-skip-t{font-size:17px;font-weight:400;letter-spacing:-.25px;color:#F5F5F7}
-.auth-skip-s{font-size:13px;line-height:18px;color:#A6A6AE;margin-top:1px}
-.auth-skip-go{font-size:0;width:9px;height:9px;margin-right:8px;border-top:1.7px solid #9A9AA2;border-right:1.7px solid #9A9AA2;transform:rotate(45deg);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
-.auth-skip:active .auth-skip-go{transform:translateX(3px) rotate(45deg)}
 .auth-title{font-size:22px;font-weight:700;letter-spacing:-.45px;margin:6px 4px 6px}
 .auth-text{font-size:15px;line-height:1.45;letter-spacing:-.1px;color:#C9C9CF;margin:0 4px 16px}
 .auth-input.code{font-family:var(--fa);font-variant-numeric:tabular-nums;font-weight:600;letter-spacing:9px;border-radius:16px;min-height:60px;background:rgba(4,4,6,.5)}
@@ -1446,8 +1438,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
      son bord ; puis le bouton s'éclaire : l'énergie est arrivée à l'action.
    - La carte répond : bouton « armé » quand l'adresse et le mot de passe sont complets (#auth-go.is-ready), lumière
      sous le pointeur sur Mac (--mx, --my).
-   - La ligne d'état, en tête de la carte : « Prêt », « Connecté » ou « Pas de réseau », la date, l'heure à la
-     seconde (authEtat). Jamais « En ligne » : on n'est pas encore connecté sur cet écran.
+   - La ligne d'état, en tête de la carte : la date à gauche, l'heure à la seconde à droite (authEtat). Aucun mot
+     d'état quand tout va bien (« En ligne » puis « Prêt » ont été refusés par Rayan : sans utilité) ; « Pas de
+     réseau » prend la place de la date seulement quand le navigateur n'a pas de réseau.
    - On entre dans ARC : la carte s'efface, le fond plonge vers l'horizon, l'accueil apparaît (.leaving).
    Toujours transform, opacity et la position d'un fond ; aucun mode de fusion ; rien ne bouge si l'appareil demande
    moins d'animations (les points, les mots et l'état restent allumés, fixes). */
@@ -1465,11 +1458,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;box-shadow:0 0 0 1px #fff,-64px 6px 30px -16px rgba(255,149,0,.8),0 8px 34px -8px rgba(255,45,85,.8),64px 6px 30px -16px rgba(175,82,222,.9)}
 #auth-go.is-ready::after{opacity:.9}
 .auth-btn:disabled::after{display:none}
-.auth-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-2px 6px 12px;min-height:18px;font-family:var(--fa);font-size:13px;line-height:18px;color:#B4B4BC;font-variant-numeric:tabular-nums}
-.auth-status-etat{display:inline-flex;align-items:center;gap:8px;color:#D6D6DC}
+.auth-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-2px 6px 12px;min-height:18px;font-family:var(--fa);font-size:13px;line-height:18px;color:#D6D6DC;font-variant-numeric:tabular-nums}
+.auth-status-etat{display:inline-flex;align-items:center;gap:8px}
 .auth-status-etat i{position:relative;width:7px;height:7px;border-radius:50%;background:#8E8E95}
-.auth-status[data-etat="on"] .auth-status-etat i{background:color-mix(in srgb,var(--a-vert) 82%,#fff);box-shadow:0 0 8px var(--a-vert)}
-.auth-status[data-etat="on"] .auth-status-etat i::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid color-mix(in srgb,var(--a-vert) 70%,#fff);opacity:0}
+.auth-status[data-etat="on"] .auth-status-etat i{display:none}
 #auth-screen.leaving{pointer-events:none}
 /* Le mouvement */
 @keyframes authLever{from{opacity:0}to{opacity:1}}
@@ -1491,7 +1483,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 @keyframes authReflet{0%,44.7%{opacity:0;background-position:-28% 0,-28% 0}46%,54.8%{opacity:1}56.1%,100%{opacity:0;background-position:128% 0,128% 0}}
 @keyframes authAppel{0%,55%{opacity:0;transform:scale(.985)}63%{opacity:1;transform:scale(1)}82%,100%{opacity:0;transform:scale(1.012)}}
 @keyframes authPret{from{opacity:.5}to{opacity:1}}
-@keyframes authPouls{0%{opacity:.85;transform:scale(.4)}70%,100%{opacity:0;transform:scale(1)}}
 @media(prefers-reduced-motion:no-preference){
   #auth-screen.active .auth-world{animation:authLever 1.5s cubic-bezier(.2,.7,.2,1) both}
   #auth-screen.active .w-orange{animation-delay:.1s}
@@ -1526,13 +1517,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .auth-card::before{animation:authReflet 8s linear 2s infinite backwards}
   .auth-btn::after{animation:authAppel 8s ease-out 2s infinite backwards}
   #auth-go.is-ready::after{animation:authPret 1.6s ease-in-out infinite alternate}
-  .auth-status[data-etat="on"] .auth-status-etat i::after{animation:authPouls 2.4s ease-out infinite}
   /* On entre dans ARC */
   #auth-screen.leaving{opacity:0;transition:opacity .44s ease-in .28s}
   #auth-screen.leaving .auth-box{opacity:0;transform:translateY(-8px) scale(.985);transition:opacity .22s ease,transform .4s cubic-bezier(.3,0,.2,1)}
   #auth-screen.leaving .auth-glow{transform:scale(2.2);transform-origin:30% calc(var(--card-y) + 2px);transition:transform .72s cubic-bezier(.4,0,.6,1)}
 }
-@media(prefers-reduced-motion:reduce){.auth-tabs::before,.auth-field .auth-lbl,.auth-btn,.auth-skip-go{transition:none}}
+@media(prefers-reduced-motion:reduce){.auth-tabs::before,.auth-field .auth-lbl,.auth-btn{transition:none}}
 /* Mac et tablette large : le fond tient à l'écran. Les arcs se règlent sur la largeur libre de chaque côté de la
    colonne de texte (440 px au centre) et s'arrêtent 30 à 40 px avant elle : aucun arc ne passe sous un texte. */
 @media(min-width:861px){
@@ -2589,7 +2579,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <button class="auth-forgot" id="auth-send" type="button">Mot de passe oubli&eacute; ?</button>
       <div class="auth-err" id="auth-email-err" role="alert"></div>
       <button class="auth-btn" id="auth-go">Se connecter</button>
-      <button class="auth-skip" id="auth-skip" type="button"><span class="auth-skip-t">Continuer sans connexion</span><span class="auth-skip-s">Sur cet appareil seulement.</span><span class="auth-skip-go" aria-hidden="true">&rsaquo;</span></button>
     </div>
     <div class="auth-step" id="auth-pass">
       <div class="auth-title">Ton mot de passe</div>
@@ -2696,9 +2685,11 @@ function sbInit() {
         if(curId !== 'auth-pass' && curId !== 'auth-ref') authDone();
         setTimeout(pullFromCloud, 0);
       }
-      else if(event === 'INITIAL_SESSION' && !authSkipped()) showAuthScreen('auth-email');
+      else if(event === 'INITIAL_SESSION') showAuthScreen('auth-email');
     }
-    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; _authAskPass = false; _authPendingPass = ''; _authNewAccount = false; }
+    // Déconnecté (par Rayan, ou session refusée par le serveur) : retour à l'écran d'entrée. Il n'y a plus d'usage
+    // « sans connexion » choisi : ARC ne s'ouvre sans session que si le service de connexion est injoignable.
+    if(event === 'SIGNED_OUT') { _refAsked = false; _syncPaused = false; _authAskPass = false; _authPendingPass = ''; _authNewAccount = false; showAuthScreen('auth-email'); }
   });
 }
 
@@ -2723,9 +2714,6 @@ function isLinked() {
 }
 function linkDevice() {
   try { localStorage.setItem(LINK_KEY, getUID()); localStorage.removeItem('arc_uid'); } catch(e) {}
-}
-function authSkipped() {
-  try { return sessionStorage.getItem('arc_auth_skip') === '1'; } catch(e) { return false; }
 }
 
 function showAuthScreen(step) {
@@ -2769,8 +2757,7 @@ function hideAuthScreen() {
   _authLeave = setTimeout(function() { _authLeave = null; scr.classList.remove('active', 'leaving'); }, AUTH_LEAVE_MS);
 }
 // L'écran d'entrée vit, sans rien inventer : chaque signe dit un état vrai.
-// - la ligne d'état : « Prêt » si le navigateur a le réseau et que le service de connexion est chargé (« Connecté »
-//   une fois la session ouverte, « Pas de réseau » sinon), la date,
+// - la ligne d'état : la date (ou « Pas de réseau » quand il n'y en a pas),
 //   l'heure à la seconde ; elle s'arrête d'elle-même quand l'écran est fermé ;
 // - le bouton principal est « armé » (is-ready) quand l'adresse est valide et le mot de passe assez long ;
 // - sur Mac, une lumière suit le pointeur sur la carte (--mx, --my).
@@ -2782,13 +2769,14 @@ function authArme() {
 function authEtat() {
   var el = document.getElementById('auth-status'); if(!el) return;
   var on = !!_sb && navigator.onLine !== false, d = new Date();
-  // « En ligne » ne se dit pas sur un écran où l'on n'est pas encore connecté (Rayan, 8 octobre) : « Prêt » tant
-  // qu'aucune session n'est ouverte, « Connecté » ensuite, « Pas de réseau » si le navigateur n'en a pas.
-  var etat = !on ? 'Pas de réseau' : (_session ? 'Connecté' : 'Prêt');
-  var heure = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  // Aucun mot d'état quand tout va bien (« En ligne », « Prêt » : refusés par Rayan le 8 octobre, sans utilité).
+  // À gauche la date ; « Pas de réseau » la remplace seulement quand il n'y en a pas, car la connexion échouerait.
+  var jour = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  var gauche = on ? jour.charAt(0).toUpperCase() + jour.slice(1) : 'Pas de réseau';
+  var heure = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   var a = document.getElementById('auth-status-txt'), b = document.getElementById('auth-status-time');
   if(el.getAttribute('data-etat') !== (on ? 'on' : 'off')) el.setAttribute('data-etat', on ? 'on' : 'off');
-  if(a.textContent !== etat) a.textContent = etat;
+  if(a.textContent !== gauche) a.textContent = gauche;
   if(b.textContent !== heure) b.textContent = heure;
   authArme();   // le trousseau du navigateur remplit parfois les champs sans prévenir
 }
@@ -3012,6 +3000,8 @@ async function authSignOut() {
   if(!confirm('Se déconnecter ? Les données restent sur cet appareil ; la synchronisation s\'arrête.')) return;
   try { await _sb.auth.signOut(); } catch(e) { console.warn('Déconnexion :', e.message); }
   _session = null; renderAuthUI();
+  try { sessionStorage.removeItem('arc_auth_skip'); } catch(e) {}   // ancien passage « sans connexion », plus utilisé
+  showAuthScreen('auth-email');
   toast('Déconnecté · données gardées sur cet appareil');
 }
 
@@ -4637,7 +4627,6 @@ document.addEventListener("click",function(ev){
   if(t.id==="auth-pass-later"){ _authAskPass=false; hideAuthScreen(); return; }
   if(t.closest&&t.closest("#btn-pass")){ var dd=document.getElementById("h-menu-dd"); if(dd) dd.classList.remove("open"); if(_session){ authErr("auth-pass-err",""); showAuthScreen("auth-pass"); } return; }
   if(t.id==="auth-back"){ _authPendingPass=""; authErr("auth-email-err",""); showAuthScreen("auth-email"); return; }
-  if(t.id==="auth-skip"||t.closest("#auth-skip")){ try{ sessionStorage.setItem("arc_auth_skip","1"); }catch(e){} hideAuthScreen(); renderAuthUI(); return; }
   if(t.id==="auth-ref-yes"){ authMakeReference(); return; }
   if(t.id==="auth-ref-no"){ _syncPaused=true; authDone(); renderAuthUI(); toast("Rien n'a été envoyé · question au prochain lancement"); return; }
   if(t.id==="sante-export-btn"){ exportSante(); return; }

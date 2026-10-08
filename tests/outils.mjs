@@ -111,11 +111,19 @@ export async function openPage(browser, url, { session = true, viewport = { widt
   page.on('requestfailed', r => { if (!r.url().startsWith(SB)) errors.push('réseau : ' + r.failure().errorText + ' ' + r.url().slice(0, 80)); });
   await page.goto(url, { waitUntil: 'load' });
   await page.waitForTimeout(700);
-  if (!session && await page.isVisible('#auth-screen')) await page.click('#auth-skip');
+  if (!session) await entrerSansSession(page);
   // Après 8 h, le point du matin s'affiche à l'ouverture : les tests qui ne portent pas sur lui le ferment
   if (!keepMatin) await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   return { ctx, page, fk, sbHits, errors };
 }
 
+// L'écran d'entrée n'a plus de « Continuer sans connexion » (décision de Rayan, 8 octobre). ARC ne s'ouvre sans
+// session que si le service de connexion est injoignable ; les tests de cet usage local referment donc l'écran
+// eux-mêmes, par la fonction de la page, et attendent la fin du passage.
+export async function entrerSansSession(page) {
+  if (!(await page.evaluate(() => document.getElementById('auth-screen').classList.contains('active')))) return;
+  await page.evaluate(() => hideAuthScreen());
+  for (let i = 0; i < 60 && await page.evaluate(() => document.getElementById('auth-screen').classList.contains('active')); i++) await page.waitForTimeout(50);
+}
 export const deposit = async (page, text) => { await page.fill('#depot-ta', text); await page.click('#depot-send'); };
 export const idOf = (page, text) => page.evaluate(t => (Object.values(_depot.thoughts).find(x => x.body === t) || {}).id, text);

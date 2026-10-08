@@ -216,13 +216,13 @@ Validé par Rayan le 8 octobre à 1 h 21 : « là on y est !!! ». À 1 h 41, il
 Penser en rouge, Développer en orange, Entreprendre en vert, chacun ne s'allumant que lorsque le fil de lumière
 l'atteint (des feux de départ : ARC est le point de départ).
 
-### La ligne d'état de la carte (8 octobre, 2 h)
+### La tête de la carte (8 octobre)
 
-En tête de la carte : « Prêt », puis la date et l'heure (« jeu. 8 oct. · 03:48:04 »). « Connecté » quand la session
-est ouverte, « Pas de réseau » quand le navigateur n'en a pas.
-Règles : cet écran ne montre que des états vrais, jamais un chiffre ou un signal inventé pour faire « connecté » ;
-et jamais « En ligne » avant la connexion (Rayan, 8 octobre, 3 h 36 : « on ne peut pas mettre En ligne dans une page
-dans laquelle on n'est pas encore connecté »).
+À gauche la date (« Jeudi 8 octobre »), à droite l'heure à la seconde. Aucun mot d'état quand tout va bien :
+« En ligne » (3 h 36 : « on ne peut pas mettre En ligne dans une page dans laquelle on n'est pas encore connecté »)
+puis « Prêt » (4 h 29 : « aucune utilité ») ont été refusés par Rayan. « Pas de réseau » prend la place de la date
+seulement quand il n'y en a pas.
+Règle : cet écran ne montre que des états vrais et utiles, jamais un mot ou un signal posé pour faire « connecté ».
 
 ### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
 
@@ -233,6 +233,9 @@ dans laquelle on n'est pas encore connecté »).
 | Note en pied « Sans connexion · cet appareil seulement · sans synchronisation ni Claude » | retirée (elle se lisait comme un état d'ARC) |
 
 Le mot « code » n'est plus sur l'écran d'entrée : Rayan veut une connexion normale (adresse et mot de passe).
+
+8 octobre, 4 h 29 : la ligne « Continuer sans connexion · Sur cet appareil seulement. » est retirée (Rayan : « je peux
+me connecter maintenant »). La carte se termine par le bouton principal.
 
 ## 5. Ce que ces mots engagent
 

@@ -187,9 +187,9 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
     const s = document.getElementById('auth-screen'), b = document.getElementById('auth-go').getBoundingClientRect();
     s.scrollTo(0, 0); const dessus = document.elementFromPoint(innerWidth - 20, 20);
     return { fond: !!dessus && (dessus === s || !!dessus.closest('.auth-box') || getComputedStyle(dessus).pointerEvents !== 'none'), bouton: b.height, hauteur: s.scrollHeight,
-             contenu: Math.round(document.querySelector('.auth-box').getBoundingClientRect().height) + 48 };
+             contenu: Math.max(innerHeight, Math.round(document.querySelector('.auth-box').getBoundingClientRect().height) + 48) };
   });
-  ok(geste.fond && geste.bouton >= 44 && Math.abs(geste.hauteur - geste.contenu) <= 2, 'Le fond ne prend aucun toucher et n\'allonge pas le défilement', `défilement ${geste.hauteur} px, contenu ${geste.contenu} px`);
+  ok(geste.fond && geste.bouton >= 44 && Math.abs(geste.hauteur - geste.contenu) <= 2, 'Le fond ne prend aucun toucher et n\'allonge pas le défilement', `défilement ${geste.hauteur} px, contenu ou écran ${geste.contenu} px`);
   await ctx.close();
 }
 
@@ -294,19 +294,19 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
       sur la carte et halo du bouton dans l'ordre, mots éteints encore lisibles, passage vers ARC. */
 {
   const { ctx, page, errors } = await open({ width: 390, height: 844 }, 1);
-  const lire = () => page.evaluate(() => { const d = new Date(), el = document.getElementById('auth-status'), h = document.getElementById('auth-status-time').textContent, m = h.match(/(\d\d):(\d\d):(\d\d)$/);
+  const lire = () => page.evaluate(() => { const d = new Date(), el = document.getElementById('auth-status'), h = document.getElementById('auth-status-time').textContent, m = h.match(/^(\d\d):(\d\d):(\d\d)$/);
     return { etat: el.getAttribute('data-etat'), txt: document.getElementById('auth-status-txt').textContent, heure: h, dansCarte: !!document.querySelector('.auth-card > #auth-status'), vu: el.offsetParent !== null,
-             ecart: m ? Math.abs((+m[1] * 3600 + +m[2] * 60 + +m[3]) - (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds())) : 99999, pouls: getComputedStyle(el.querySelector('i'), '::after').content !== 'none' }; });
+             ecart: m ? Math.abs((+m[1] * 3600 + +m[2] * 60 + +m[3]) - (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds())) : 99999, point: getComputedStyle(el.querySelector('i')).display !== 'none' }; });
   const e1 = await lire(); await page.waitForTimeout(1300); const e2 = await lire();
   await ctx.setOffline(true); await page.waitForTimeout(250); const e3 = await lire();
   await ctx.setOffline(false); await page.waitForTimeout(250); const e4 = await lire();
-  // session ouverte (étape « Ton mot de passe ») : « Connecté » ; jamais « En ligne », qu'on lirait comme « connecté » avant de l'être
-  const e5 = await page.evaluate(() => { const avant = _session; _session = { user: { id: 'x', email: 'rayan@test.fr' } }; authEtat(); const t = document.getElementById('auth-status-txt').textContent; _session = avant; authEtat(); return t; });
-  const enLigne = await page.evaluate(() => /en ligne/i.test(document.getElementById('auth-screen').textContent));
+  // aucun mot d'état quand tout va bien : « En ligne » puis « Prêt » ont été refusés par Rayan (8 octobre)
+  const mots = await page.evaluate(() => (document.getElementById('auth-screen').textContent.match(/en ligne|prêt|connecté\b/gi) || []).join(', '));
   const juste = e => e.ecart <= 2 || e.ecart >= 86398;
-  ok(e1.dansCarte && e1.vu && e1.etat === 'on' && e1.txt === 'Prêt' && /^\S+ \d{1,2} \S+ · \d\d:\d\d:\d\d$/.test(e1.heure) && juste(e1) && juste(e2) && e2.heure !== e1.heure
-     && e3.etat === 'off' && e3.txt === 'Pas de réseau' && !e3.pouls && e4.etat === 'on' && e4.txt === 'Prêt' && e5 === 'Connecté' && !enLigne,
-     'État réel en tête de la carte : « Prêt » avant la connexion (jamais « En ligne »), « Connecté » après, « Pas de réseau » sinon ; la date, l\'heure vraie à la seconde', `${e1.txt} · ${e1.heure} → ${e2.heure} ; réseau coupé : ${e3.txt} ; revenu : ${e4.txt} ; session ouverte : ${e5}`);
+  const DATE = /^[A-ZÉ][a-zéû]+ \d{1,2}(er)? [a-zéû]+$/;
+  ok(e1.dansCarte && e1.vu && e1.etat === 'on' && DATE.test(e1.txt) && !e1.point && e1.heure && juste(e1) && juste(e2) && e2.heure !== e1.heure
+     && e3.etat === 'off' && e3.txt === 'Pas de réseau' && e3.point && e4.etat === 'on' && DATE.test(e4.txt) && !mots,
+     'Tête de la carte : la date et l\'heure vraie à la seconde, aucun mot d\'état (ni « En ligne » ni « Prêt ») ; « Pas de réseau » seulement quand il n\'y en a pas', `${e1.txt} · ${e1.heure} → ${e2.heure} ; réseau coupé : ${e3.txt} ; revenu : ${e4.txt}${mots ? ' ; mots en trop : ' + mots : ''}`);
   const arme = () => page.evaluate(() => { const go = document.getElementById('auth-go'); return go.classList.contains('is-ready') ? +getComputedStyle(go, '::after').opacity : 0; });
   const a0 = await arme(); await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.fill('#auth-pass-inp', '1234567'); const a1 = await arme();
   await page.fill('#auth-pass-inp', '12345678'); const a2 = await arme(); await page.evaluate(() => document.activeElement.blur()); await page.waitForTimeout(150);
@@ -316,7 +316,7 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
      'Bouton armé seulement quand l\'adresse est valide et le mot de passe complet ; son halo ne gêne aucun texte', `vide ${a0} · 7 caractères ${a1} · complet ${a2} · adresse incomplète ${a3} ; contraste le plus faible, bouton armé : ${dit(pret.pire)}`);
   await page.fill('#auth-email-inp', '');
   // Sans animation : le passage est immédiat
-  await page.click('#auth-skip'); const direct = await page.evaluate(() => document.getElementById('auth-screen').className);
+  const direct = await page.evaluate(() => { hideAuthScreen(); return document.getElementById('auth-screen').className; });
   await ctx.close();
 
   const ctx3 = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'no-preference' });
@@ -336,7 +336,7 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   ok(eteint.pire.ratio >= SEUIL, 'Contraste ≥ 4,5 : 1 quand les points sont éteints et les mots en retrait', `${eteint.n} morceaux, le plus faible : ${dit(eteint.pire)}`);
   await p3.evaluate(() => { for (const a of document.getAnimations()) a.play(); });
   // On entre dans ARC : l'écran s'efface en un peu plus d'une demi-seconde, sans plus rien recevoir, puis il est retiré
-  await p3.click('#auth-skip');
+  await p3.evaluate(() => hideAuthScreen());
   const pendant = await p3.evaluate(() => { const s = document.getElementById('auth-screen'); return { cls: s.className, gestes: getComputedStyle(s).pointerEvents, dessous: (document.elementFromPoint(195, 400) || {}).id !== 'auth-screen' && !document.elementFromPoint(195, 400).closest('#auth-screen') }; });
   await p3.waitForTimeout(900);
   const apres = await p3.evaluate(() => document.getElementById('auth-screen').className);

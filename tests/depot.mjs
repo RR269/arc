@@ -88,6 +88,14 @@ const browser = await chromium.launch();
 const results = [];
 const ok = (cond, name, detail = '') => results.push({ ok: !!cond, name, detail });
 
+// L'écran d'entrée n'a plus de « Continuer sans connexion » (8 octobre) : sans session, le test referme l'écran
+// lui-même (c'est l'état d'ARC quand le service de connexion est injoignable) et attend la fin du passage.
+async function entrerSansSession(page) {
+  if (!(await page.evaluate(() => document.getElementById('auth-screen').classList.contains('active')))) return;
+  await page.evaluate(() => hideAuthScreen());
+  for (let i = 0; i < 60 && await page.evaluate(() => document.getElementById('auth-screen').classList.contains('active')); i++) await page.waitForTimeout(50);
+}
+
 async function open({ session = true, viewport = { width: 1440, height: 900 }, fk = fakeSupabase() } = {}) {
   const ctx = await browser.newContext({ viewport, serviceWorkers: 'block' });
   const sbHits = [];
@@ -100,7 +108,7 @@ async function open({ session = true, viewport = { width: 1440, height: 900 }, f
   page.on('requestfailed', r => { if (!r.url().startsWith(SB)) errors.push('réseau : ' + r.failure().errorText + ' ' + r.url().slice(0, 80)); });
   await page.goto(URL0, { waitUntil: 'load' });
   await page.waitForTimeout(700);
-  if (!session && await page.isVisible('#auth-screen')) await page.click('#auth-skip');
+  if (!session) await entrerSansSession(page);
   // Après 8 h, le point du matin s'affiche à l'ouverture : ces tests ne portent pas sur lui, on le ferme
   await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   return { ctx, page, fk, sbHits, errors };
@@ -191,7 +199,7 @@ const stateOf = (page, text) => page.evaluate(t => {
   const T = 'Pensée sans connexion';
   await deposit(page, T); await page.waitForTimeout(300);
   await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(700);
-  if (await page.isVisible('#auth-screen')) await page.click('#auth-skip');
+  await entrerSansSession(page);
   await page.click('#depot-open');
   const st = await stateOf(page, T);
   ok(sbHits.length === 0 && st === 'Sur cet appareil seulement', 'Sans session : aucune requête vers Supabase, pensée gardée',

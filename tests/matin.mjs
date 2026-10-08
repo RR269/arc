@@ -4,7 +4,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { chromium, ROOT, startServer, openPage } from './outils.mjs';
+import { chromium, ROOT, startServer, openPage, entrerSansSession } from './outils.mjs';
 
 const { server, url: URL0 } = await startServer();
 const browser = await chromium.launch();
@@ -20,11 +20,11 @@ const isOpen = page => page.evaluate(() => document.getElementById('matin-screen
 const leapClosed = async (page, ms) => {
   await page.goto('about:blank'); await page.clock.fastForward(ms);
   await page.goto(URL0, { waitUntil: 'load' }); await page.waitForTimeout(600);
-  if (await page.isVisible('#auth-screen')) await page.click('#auth-skip');
+  await entrerSansSession(page);
 };
 const reload = async page => {
   await page.reload({ waitUntil: 'load' }); await page.waitForTimeout(600);
-  if (await page.isVisible('#auth-screen')) await page.click('#auth-skip');
+  await entrerSansSession(page);
 };
 // Pensées et rangements locaux : { body, step, space, moment, status, created }
 const seed = (page, items) => page.evaluate(items => {
