@@ -4,7 +4,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 840 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 750 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
@@ -18,6 +18,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   nombre d'espaces, ville par la position avec un faux appareil et un faux service),
   `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
   `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
+  `cockpit.mjs` (cockpit d'une tâche : mêmes mesures, réponse de Claude visible sur iPhone, notes, journal, « C'est fait », minuteur, Échap),
+  `recherche.mjs` (recherche : pensées, tâches et notes, projets, journal, Juridique ; ouverture au bon endroit ; clavier ; charte),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
@@ -33,7 +35,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Ma ville (option, menu « ··· ») : ville et pays d'après la position de l'appareil ; réglage et dernière ville dans
   `arc_lieu_v1` sur l'appareil (jamais dans `S`) ; nom de la ville demandé à BigDataCloud (`lieuCheck`, `lieuDemander`,
   `lieuNom`, `lieuBascule`).
-- Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
+- Cockpit par tâche (avec minuteur), recherche (`searchQuery`), import/export JSON. La War Room et les tiroirs n'existent plus (8 octobre).
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
 - Connexion : adresse + mot de passe (`authGo`), ou code à 6 chiffres / lien par e-mail (`authSendCode`, `authVerifyCode`) ; `showAuthScreen` ; `getUID` = identifiant du compte.
 - Synchronisation Supabase : table `arc_data`, une ligne par compte (`pushToCloud`, `pullFromCloud`). Sans session, rien n'est lu ni écrit.
@@ -54,7 +56,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -692,6 +694,108 @@ Mondes et pôles, l'écriture de l'accueil (branche `interieur-mondes`, 8 octobr
 - **Décisions que Rayan doit encore prendre** : la War Room dans la barre du haut ; le contenu de Santé (curseurs,
   ou mémoire, échéances et rendez-vous) ; sa position envoyée à BigDataCloud pour afficher sa ville ; « Ce soir »
   après 23 h ; une ligne sur les données à la création de compte.
+
+Cockpit d'une tâche (branche `interieur-cockpit`, 8 octobre 9 h 20, partie de `main` à `f70984c`) :
+- **État au départ** : PR #14 et #15 fusionnées par Rayan à 9 h 12 ; l'accueil, les mondes et les pôles sont en ligne.
+- Rayan (9 h 19) : « on enchaîne ! pour quoi as-tu opté en termes de fonction et de design ? ». Réponse donnée avant
+  de construire : un cockpit = une tâche, de haut en bas ; le design des mondes.
+- **Mesuré avant, sur iPhone 390** (Chromium) : le nom de la tâche réduit à « E » ; le bouton d'envoi à Claude hors de
+  l'écran ; la réponse de Claude envoyée dans `#cockpit-right`, caché sous 481 px ; en mode « Chat », la réponse part
+  dans le panneau du monde (`cpSend` → `#cp-msgs`), recouvert par le cockpit (preuve : `elementFromPoint` sur la
+  réponse tombe dans `#cockpit`), et caché sur iPhone ; mission et journal cachés. Sur Mac : Échap ne fermait pas le
+  cockpit (le code testait `style.display==="flex"`, jamais posé : le cockpit s'ouvre par la classe `open`).
+  « Claude actif — contexte complet chargé » était un faux signal (seul le nom de la tâche partait). « Sauvegarde »
+  n'apparaissait jamais (aucun code ne posait sa classe). Le compteur du monde ne suivait pas « Marquer accomplie ».
+- **Fonction, dans l'ordre** :
+  1. La tâche dans la carte de « Prochaine étape » de l'accueil, posée sur l'horizon du projet ; au-dessus, l'état
+     (« Tâche à faire » / « Tâche faite ») ; l'échéance et « Focus du jour » s'il y a lieu (`#cockpit-meta`) ;
+     **« C'est fait »**, la seule touche blanche (même mot que l'accueil). Faite, la tâche propose « Rouvrir la
+     tâche », sans blanc. « C'est fait » ferme le cockpit et redessine le monde (`renderWorld`).
+  2. **Mes notes** (`#cockpit-textarea`, `S.taskNotes`) : enregistrées 1,5 s après la frappe ; « Enregistré » ne
+     s'affiche qu'après l'écriture (`saveCockpitWork`), et s'efface à la frappe suivante.
+  3. **Demander à Claude** : un seul champ (`#ccb-inp`, devenu un champ qui grandit jusqu'à 160 px, `ccbTaille`) ;
+     la question préparée d'une tâche (`task.prompt`) y est posée, jamais envoyée d'office ; la réponse arrive juste
+     dessous (`.ck-ans`), avec « Ajouter à mes notes » → « Ajouté à tes notes ». **Le choix Injecter / Chat est
+     retiré** (« Chat » répondait derrière le cockpit). Claude reçoit le nom du projet, sa mission, la tâche et la
+     question (ligne vraie sous le champ). En cas d'erreur : le message dans le cockpit, et la question remise dans
+     le champ (`cockpitState.lastQ`). Les réponses ne sont pas gardées : une autre tâche repart d'une liste vide.
+  4. **Le projet** (mission, action prioritaire) et **Journal du projet** (`S.journal`, Entrée ajoute), visibles
+     aussi sur iPhone.
+  5. **Le minuteur** (Pomodoro) : un pictogramme et « Minuteur » dans la barre du haut ; pendant qu'il tourne, le
+     bouton montre le temps restant ; « Démarrer », « Pause », « Reprendre », « Remettre à zéro », « Session 1 sur 4 ».
+- **Design** : celui des mondes. Barre du haut : « ‹ [pictogramme] ARYAN » (retour au projet, `#cockpit-back-lbl`) et
+  « Minuteur ». Police du système partout, titres de section à 17 px, aucune chasse fixe ni capitale, aucun emoji
+  (« ✓ », « ↺ », « ⬆ », « ✦ », « 🍅 » retirés). Touche d'envoi en verre, flèche à la couleur du projet. Sur iPhone,
+  une colonne qui défile (`#cockpit-body`) ; sur Mac (≥ 861 px), deux colonnes : la tâche, les notes et Claude à
+  gauche, le projet et le journal à droite (380 px). Toutes les anciennes règles `#cockpit…`, `#ccb…`, `#pomo…` sont
+  retirées (69 lignes) au profit d'un seul bloc « COCKPIT D'UNE TÂCHE » en fin de feuille.
+- **Test intermittent réparé, cause prouvée** : `tests/accueil.mjs`, « Ma ville », échouait une fois sur trois
+  (ERR_ABORTED vers BigDataCloud). Journal des requêtes : l'autorisation rendue, la page encore ouverte redemande la
+  ville (voulu) et le test rechargeait 12 ms plus tard, coupant la demande. Le test attend 600 ms : 5 sur 5 ensuite.
+  ARC n'est pas en cause.
+- Tests : cockpit 17/17 (nouveau ; sur la version en ligne il bloque dès la première réponse de Claude, qui
+  n'apparaît jamais), accueil 17/17, entrée-fond 41/41, connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19,
+  rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible dans le cockpit 7,98 : 1 ; 360 à 430 px sans
+  débordement ; 520 `<div` / 520 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone**
+  (San Francisco, verre, clavier qui monte sur le champ de Claude).
+- **Pas touché** : la croix qui supprime une tâche ajoutée, sans confirmation (monde) ; la War Room, les tiroirs, la
+  recherche (suite de la liste) ; sur iPhone, Claude reste inaccessible depuis l'écran d'un monde (seulement depuis
+  le cockpit d'une tâche).
+- **Décisions que Rayan doit encore prendre** : la War Room dans la barre du haut ; le contenu de Santé ; sa position
+  envoyée à BigDataCloud ; « Ce soir » après 23 h ; une ligne sur les données à la création de compte.
+
+Tiroirs, War Room, recherche (branche `interieur-tiroirs`, 8 octobre 10 h, partie de `interieur-cockpit` à `39be1c5`) :
+- **État au départ** : PR #16 (cockpit) ouverte, pas fusionnée. **La PR #16 se fusionne d'abord, celle-ci ensuite.**
+- Rayan (9 h 57) : « CHOISIS LE MEILLEUR POUR ARC ». Lecture retenue : continuer sa liste (tiroirs, War Room,
+  recherche) en décidant moi-même, y compris la place de la War Room ; rien n'est en ligne avant qu'il fusionne.
+  **Pas décidé à sa place** : sa position envoyée à BigDataCloud (donnée personnelle ; l'option reste coupée par
+  défaut, donc rien ne part tant qu'il ne l'active pas), le contenu de Santé, « Ce soir » après 23 h, la ligne sur
+  les données à la création de compte.
+- **Tiroirs : retirés.** Mesuré sur iPhone : les six tiroirs (En cours, Bloquants, Journal, Mission, Action prioritaire,
+  Contexte) recopiaient la page du monde ; le « + » du tiroir Bloquants ne faisait rien (`dr-add-blocker` n'avait
+  aucun gestionnaire : 0 bloquant avant, 0 après, la phrase restée dans le champ) ; le tiroir de l'action prioritaire
+  s'intitulait « ARYAN — Mission » ; le tiroir « task-work » n'était plus jamais ouvert (aucun appel). À la place,
+  chaque compteur du monde mène à sa section (`allerA`, `data-aller` : `taches`, `faites` qui déplie les tâches
+  faites, `bloquants`, `journal`, ids `wsec-…`), au doigt et au clavier. La mission, l'action prioritaire et les
+  bloquants ne s'ouvrent plus (flèches retirées). Le bouton « Contexte » (Mac) est retiré. Aucune donnée touchée.
+- **War Room : retirée**, avec son bouton de la barre du haut de l'accueil. Elle refaisait le cockpit en moins bien :
+  une tâche choisie d'office (la première non faite d'ARYAN, écrite en avril), les mêmes notes (`S.taskNotes`), un
+  Claude qui répondait dans le panneau du monde, caché derrière elle, et un « Analyse War Room en cours… » qui
+  n'envoyait rien. Le cockpit garde tout ce qu'elle faisait (tâche, notes, Claude, minuteur, « C'est fait »), et le
+  focus du jour (étoile d'une tâche) ouvre déjà le cockpit. L'accueil de bienvenue ne la nomme plus.
+- **Recherche : construite. Elle n'avait jamais marché** : la page appelait `searchQuery`, jamais écrite (aucune
+  définition dans aucune version depuis le premier envoi du 13 avril, `781a00f`) ; chaque lettre tapée levait une
+  exception (preuve : 8 « searchQuery is not defined » pour « boutique »). Maintenant (`searchQuery`, `srNorm`,
+  `srMark`, `srChoisir`) : pensées (sauf annulées, avec leur espace et leur date), tâches par titre ou par les notes
+  du cockpit, projets (nom, catégorie, mission, description), journal des projets, Juridique ; sans accents ni casse,
+  tous les mots ; six lignes par groupe ; mots trouvés surlignés ; texte posé sans `innerHTML`. Une ligne ouvre la
+  chose là où elle vit : la pensée dans « Déposé », la tâche dans son cockpit, l'entrée au journal du projet, la
+  démarche dans Juridique (la recherche y est reprise). ⌘K ouvre, flèches et Entrée sur Mac, « Fermer » et Échap.
+  Même écriture que l'accueil (verre sombre, police du système, titres de groupe à 17 px).
+- Tests : recherche 8/8 (nouveau ; échoue sur la version en ligne), mondes 7/7 (un contrôle ajouté : les compteurs
+  mènent à leur section, plus de tiroir ni de flèche), accueil 17/17 (la War Room n'existe plus : ni bouton, ni
+  écran, ni mot), cockpit 17/17, entrée-fond 41/41, connexion 27/27, pôles 9/9, dépôt 19/19, rangement 25/25,
+  matin 27/27, proxy 41/41 ; 449 `<div` / 449 `</div>` (le code des tiroirs écrivait beaucoup de `<div` dans des
+  chaînes). Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone** (clavier de l'iPhone sur la
+  recherche, défilement doux vers une section).
+- **Vu, pas touché** : l'accueil de bienvenue des nouveaux comptes (`#onboarding`, montré si `S.seen` est neuf) a
+  des emoji, « ARC v2 » et « 5 mondes » ; Santé n'est pas dans la recherche (curseurs, en attente de sa décision).
+
+Écran de bienvenue retiré (branche `interieur-bienvenue`, 8 octobre 18 h, partie de `interieur-tiroirs` à `6ad124c`) :
+- **État au départ** : PR #16 (cockpit) et #17 (tiroirs, War Room, recherche) ouvertes, pas fusionnées.
+  **Ordre de fusion : #16, puis #17, puis celle-ci.**
+- Rayan (18 h 01) : « on attaque ». Chantier proposé à 10 h 20 : l'écran de bienvenue des nouveaux comptes.
+- **Preuve : il ne s'affichait jamais.** L'état de départ porte déjà une date « vu » (`var S = {…, seen: new
+  Date().toISOString()}`), et l'écran ne s'ouvrait que si `S.seen` était vide ou valait « new ». Mesuré : compte neuf
+  connecté et sans session, `#onboarding` jamais actif. Son contenu datait d'avril (emoji, « ARC v2 », « 5 mondes »).
+- **Choix : retiré** (balisage, style, `obNext`, `obFinish`, `obStep`). L'écran d'entrée présente déjà ARC (Penser,
+  Développer, Entreprendre) et l'accueil vide dit quoi faire. Le champ `S.seen` reste dans l'état (donnée inchangée).
+- Tests : accueil 17/17 (le contrôle de la barre du haut vérifie aussi que l'écran de bienvenue n'existe plus),
+  les dix autres suites passent ; 427 `<div` / 427 `</div>`.
+- **Vu pendant les tests, à éclaircir** : le 8 octobre à 18 h 12, une connexion vers le vrai Supabase
+  (`zcelpyexerxlhwtfpcbf.supabase.co`) a été tentée pendant `tests/depot.mjs` ou `tests/rangement.mjs` ; le réseau de
+  l'environnement de travail l'a refusée, rien n'a été lu ni écrit. Source non trouvée (le code d'ARC n'ouvre aucune
+  connexion « temps réel ») : à chercher avant de faire tourner les tests sur une machine qui a accès au réseau.
 
 ### Décisions de Rayan (5 octobre)
 

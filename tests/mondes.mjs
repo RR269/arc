@@ -27,7 +27,7 @@ const releve = () => {
     if (b.content !== 'none' && b.position === 'absolute') { dx = Math.max(0, -parseFloat(b.left) || 0) + Math.max(0, -parseFloat(b.right) || 0); dy = Math.max(0, -parseFloat(b.top) || 0) + Math.max(0, -parseFloat(b.bottom) || 0); }
     return { w: r.width + dx, h: r.height + dy }; };
   const nom = e => (e.id ? '#' + e.id : '.' + String(e.className).split(' ')[0]);
-  const cibles = [...root.querySelectorAll('button, a[href], input, textarea, select, [data-drawer], [data-open-focus], .wtask-cb, .wblk, .wtool-card, .wtool-add')].filter(vis)
+  const cibles = [...root.querySelectorAll('button, a[href], input, textarea, select, [data-aller], [data-open-focus], .wtask-cb, .wtool-card, .wtool-add')].filter(vis)
     .map(e => ({ ...zone(e), n: nom(e) })).filter(c => c.h < 43.5 || c.w < 43.5).map(c => `${c.n} ${Math.round(c.w)}×${Math.round(c.h)}`);
   const petits = [], tailles = new Set(); const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let nd; (nd = tw.nextNode());) { const e = nd.parentElement; if (!nd.nodeValue.trim() || !vis(e)) continue; const s = parseFloat(getComputedStyle(e).fontSize); if (s === 0) continue; tailles.add(s); if (s < 12) petits.push(`${nom(e)} ${s}px`); }
@@ -88,6 +88,30 @@ for (const vp of ECRANS) {
   ok(noms.length === 5 && !defauts.length, `${vp.n} : les cinq mondes respectent la charte (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon ; écriture de l'accueil : police du système, ni chasse fixe ni capitales, sections à 17 px, un seul repère de progression, description en trois lignes au plus)`, defauts.slice(0, 4).join(' ; ') || noms.join(', '));
   ok(n > 300 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout, dans les cinq mondes`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   ok(errors.length === 0, `${vp.n} : aucune erreur de console`, errors.join(' | '));
+  await ctx.close();
+}
+
+// Les compteurs mènent à leur section (les tiroirs qui recopiaient la page sont retirés, le 8 octobre)
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  await ctx.addInitScript(sessionScript());
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.evaluate(() => enterWorld(0)); await page.waitForTimeout(400);
+  const vus = {};
+  for (const [quoi, sel] of [['taches', '#wsec-taches'], ['bloquants', '#wsec-bloquants'], ['journal', '#wsec-journal'], ['faites', '#done-grp']]) {
+    await page.evaluate(() => { document.getElementById('wmain').scrollTop = 0; });
+    await page.tap(`[data-aller="${quoi}"]`); await page.waitForTimeout(250);
+    vus[quoi] = await page.evaluate(s => { const e = document.querySelector(s), r = e.getBoundingClientRect(), m = document.getElementById('wmain').getBoundingClientRect(); return { visible: e.offsetParent !== null, haut: Math.round(r.top - m.top), place: Math.round(m.height * 0.6) }; }, sel);
+  }
+  await page.focus('[data-aller="journal"]'); await page.evaluate(() => { document.getElementById('wmain').scrollTop = 0; });
+  await page.keyboard.press('Enter'); await page.waitForTimeout(250);
+  const clavier = await page.evaluate(() => Math.round(document.getElementById('wsec-journal').getBoundingClientRect().top - document.getElementById('wmain').getBoundingClientRect().top));
+  const reste = await page.evaluate(() => ({ tiroir: !!document.getElementById('tdrawer'), contexte: !!document.getElementById('btn-ctx'), fleches: document.querySelectorAll('#S2 .wblk-arr').length, mission: getComputedStyle(document.querySelector('#S2 .wmission'), '::after').content }));
+  // la section arrive en haut de l'écran, ou, tout en bas de la page, au moins dans les 60 % du haut
+  const ok4 = Object.values(vus).every(v => v.visible && v.haut > -5 && v.haut < v.place) && clavier === vus.journal.haut;
+  ok(ok4 && !reste.tiroir && !reste.contexte && !reste.fleches && reste.mission === 'none' && !errors.length,
+     'iPhone : chaque compteur mène à sa section (Accomplies déplie les tâches faites), au doigt comme au clavier ; plus de tiroir qui recopiait la page, ni de flèche sur la mission et les bloquants',
+     JSON.stringify({ ...vus, clavier, ...reste }));
   await ctx.close();
 }
 
