@@ -543,49 +543,6 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .dr-ws-jou-btn{padding:9px 14px;border-radius:9px;font-size:11px;font-weight:700;border:none;color:#000;cursor:pointer;flex-shrink:0}
 
 /* === COCKPIT === */
-#cockpit{position:fixed;inset:0;z-index:100;background:var(--bg);display:none;flex-direction:column}
-#cockpit.open{display:flex}
-#cockpit-top{height:54px;display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;background:rgba(0,0,0,.8);backdrop-filter:blur(24px);border-bottom:1px solid var(--b1);position:relative;z-index:2}
-#cockpit-back{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--t2);padding:7px 13px;border-radius:9px;border:1px solid var(--b1);background:var(--bg2);transition:all .18s;flex-shrink:0}
-#cockpit-back svg{width:12px;height:12px}
-#cockpit-task-name{flex:1;font-size:15px;font-weight:800;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#cockpit-top-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
-#cockpit-done-btn{padding:8px 18px;border-radius:10px;font-size:12px;font-weight:700;color:#000;border:none;transition:all .18s;cursor:pointer}
-#cockpit-done-btn.done-state{background:rgba(255,55,95,.1);color:var(--red);border:1px solid rgba(255,55,95,.3)}
-#cockpit-pomo-btn{font-size:11px;font-weight:700;padding:6px 13px;border-radius:8px;border:1px solid var(--b2);color:var(--t3);background:var(--bg2);transition:all .15s;flex-shrink:0;cursor:pointer}
-#cockpit-pomo-btn.active{color:var(--green);border-color:rgba(48,209,88,.4)}
-#cockpit-body{flex:1;display:flex;overflow:hidden}
-#cockpit-left{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:20px 20px 0}
-#cockpit-left-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-shrink:0}
-#cockpit-left-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);font-family:var(--fm)}
-#cockpit-word-count{font-size:10px;color:var(--t3);font-family:var(--fm);margin-left:auto;opacity:.6}
-#cockpit-saved-badge{font-size:10px;font-weight:700;color:var(--green);font-family:var(--fm);opacity:0;transition:opacity .3s}
-#cockpit-saved-badge.on{opacity:1}
-#cockpit-textarea{flex:1;background:var(--bg1);border:1px solid var(--b1);border-radius:14px;padding:20px 22px;font-size:14px;color:var(--t1);resize:none;line-height:1.85;transition:all .2s;font-family:var(--f)}
-#cockpit-textarea:focus{border-color:var(--ck-c,#888);outline:none}
-#cockpit-textarea::placeholder{color:var(--t3)}
-#cockpit-claude-bar{flex-shrink:0;padding:14px 0 16px}
-#ccb-inner{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--b2);border-radius:14px;padding:8px 10px 8px 14px;transition:border-color .2s}
-#ccb-inner:focus-within{border-color:var(--ck-c,#fff)}
-#ccb-logo{width:26px;height:26px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;font-style:italic;color:#000}
-#ccb-inp{flex:1;background:none;border:none;font-size:13px;color:var(--t1);padding:4px 0}
-#ccb-inp::placeholder{color:var(--t3)}
-#ccb-mode-wrap{display:flex;gap:4px;flex-shrink:0}
-.ccb-mode{font-size:10px;font-weight:700;padding:5px 10px;border-radius:8px;border:1px solid var(--b2);color:var(--t3);background:transparent;transition:all .15s;cursor:pointer}
-.ccb-mode.active{color:var(--ck-c,#fff);border-color:var(--ck-c,#fff)}
-#ccb-send{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#000;border:none;transition:all .18s;cursor:pointer}
-#ccb-send svg{width:14px;height:14px}
-#ccb-send.pulse-ready{animation:ccbPulse 1.5s ease-in-out 3}
-@keyframes ccbPulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,255,255,.3)}50%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(255,255,255,0)}}
-#ccb-prompt-badge{border-radius:7px 7px 0 0;background:color-mix(in srgb,var(--ck-c,#ff6b35) 8%,transparent);border:1px solid color-mix(in srgb,var(--ck-c,#ff6b35) 20%,transparent);border-bottom:none;margin:0 0 -1px;font-family:var(--fm)}
-#ccb-status{font-size:10px;color:var(--t3);padding:6px 4px 0;font-family:var(--fm);display:flex;align-items:center;gap:6px}
-#ccb-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--teal);flex-shrink:0;animation:pulse 2s infinite}
-#cockpit-right{width:300px;flex-shrink:0;border-left:1px solid var(--b1);overflow-y:auto;padding:18px 16px;display:flex;flex-direction:column;gap:14px;background:var(--bg1)}
-.ck-sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--t3);font-family:var(--fm);margin-bottom:10px}
-#cockpit-ctx-card,#cockpit-claude-msgs,#cockpit-jou-card{background:var(--bg2);border:1px solid var(--b1);border-radius:12px;padding:14px 15px}
-#cockpit-ctx-mission{font-size:12px;color:var(--t2);line-height:1.65;margin-bottom:10px}
-#cockpit-ctx-prio{font-size:11px;font-weight:700;padding:8px 11px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid var(--b1);line-height:1.5}
-#cockpit-msgs-list{display:flex;flex-direction:column;gap:10px;max-height:300px;overflow-y:auto}
 .ck-msg h1,.ck-msg h2,.ck-msg h3{font-size:13px;font-weight:700;color:var(--t1);margin:8px 0 4px}
 .ck-msg p{margin:0 0 6px}
 .ck-msg ul,.ck-msg ol{margin:4px 0 6px;padding-left:18px}
@@ -600,32 +557,6 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .msg.assistant code{background:rgba(255,255,255,.08);padding:1px 5px;border-radius:4px;font-family:var(--fm);font-size:11px}
 .msg.assistant strong{font-weight:700}
 .ck-msg{font-size:12px;line-height:1.7;color:var(--t2);padding:10px 12px;background:var(--bg3);border-radius:10px;border:1px solid var(--b1)}
-.ck-inject-btn{margin-top:8px}
-.ck-inject-btn-el{font-size:10px;font-weight:700;padding:4px 11px;border-radius:7px;border:1px solid;cursor:pointer;transition:all .15s;font-family:var(--f)}
-.ck-typing{display:none;padding:10px 12px;background:var(--bg3);border-radius:10px;border:1px solid var(--b1)}
-.ck-typing.vis{display:block}
-.ck-tdots{display:flex;gap:3px}
-.ck-tdots span{width:4px;height:4px;border-radius:50%;background:var(--t3);animation:td 1.2s ease-in-out infinite}
-.ck-tdots span:nth-child(2){animation-delay:.2s}.ck-tdots span:nth-child(3){animation-delay:.4s}
-#cockpit-jou-rows{display:flex;flex-direction:column;gap:6px;max-height:160px;overflow-y:auto}
-.ck-jou-row{font-size:11px;color:var(--t2);padding:7px 10px;background:var(--bg3);border-radius:8px;border:1px solid var(--b1);line-height:1.5}
-.ck-jou-ts{font-size:9px;color:var(--t3);font-family:var(--fm);margin-bottom:2px}
-.ck-inp{flex:1;background:var(--bg3);border:1px solid var(--b2);border-radius:8px;padding:8px 11px;font-size:12px;color:var(--t1);transition:border-color .15s}
-.ck-inp:focus{border-color:var(--b3);outline:none}
-.ck-inp::placeholder{color:var(--t3)}
-.ck-btn{width:34px;height:34px;border-radius:9px;flex-shrink:0;font-size:18px;display:flex;align-items:center;justify-content:center;color:#000;border:none;cursor:pointer;transition:all .15s}
-#pomo-widget{position:absolute;top:58px;right:14px;z-index:60;background:var(--bg2);border:1px solid var(--b2);border-radius:14px;padding:16px;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none}
-#pomo-widget.open{display:block;animation:searchIn .2s ease}
-#pomo-ring-wrap{position:relative;width:80px;height:80px;margin:0 auto 12px}
-#pomo-ring-wrap svg{transform:rotate(-90deg)}
-.pomo-track{fill:none;stroke:var(--bg4);stroke-width:5}
-.pomo-fill{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:220;transition:stroke-dashoffset .5s linear;stroke:var(--green)}
-#pomo-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:18px;font-weight:700}
-#pomo-lbl{font-size:9px;text-align:center;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--t3);font-family:var(--fm);margin-bottom:10px}
-.pomo-btns{display:flex;gap:6px;justify-content:center}
-.pomo-btn{font-size:11px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--b2);color:var(--t2);background:var(--bg3);transition:all .15s;cursor:pointer}
-.pomo-btn.start{background:rgba(48,209,88,.1);border-color:rgba(48,209,88,.3);color:var(--green)}
-.pomo-sessions{font-size:10px;color:var(--t3);font-family:var(--fm);text-align:center;margin-top:8px}
 
 /* === WAR ROOM === */
 #war-room{position:fixed;inset:0;z-index:150;background:#000;display:none;flex-direction:column}
@@ -839,9 +770,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .wtask-del,.task-focus-btn{opacity:1!important}
   .wtask-open-hint{display:none}
   /* Cockpit */
-  #cockpit-body{flex-direction:column}
-  #cockpit-right{width:100%;border-left:none;border-top:1px solid var(--b1);padding:12px 14px;max-height:200px;overflow-y:auto}
-  #cockpit-top{height:48px;padding:0 12px;gap:8px}
   /* Drawer */
   .tdrawer{width:100%!important}
   /* Poles S3 S4 */
@@ -926,12 +854,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .wcp{display:none!important}
   /* FAB visible */
   #fab-claude{display:flex}
-  /* Cockpit */
-  #cockpit-right{display:none}
-  #cockpit-left{padding:14px 14px 0}
-  #cockpit-top{padding:0 12px;gap:8px}
-  #cockpit-top-right .cockpit-status-dot,
-  #cockpit-top-right #cockpit-status-lbl{display:none}
   /* Drawer full width */
   .tdrawer{width:100%!important}
   /* War room */
@@ -2092,6 +2014,141 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #S3 .checkin-wrap,#S3 .sante-chart-wrap{padding:20px}
 }
 @media(prefers-reduced-motion:reduce){:is(#S2 :is(.wm,.wmission,.wtask-row,.wblk,.waction,.w-focus-banner,.w-back,.w-act),:is(#S3,#S4) :is(.p-back,.p-act,.hab-card,.jur-sec-head,.checkin-save-btn)):active{transform:none}}
+/* ═══ COCKPIT D'UNE TÂCHE : l'écriture de l'accueil (branche interieur-cockpit, 8 octobre) ═══
+   Un cockpit = une tâche, de haut en bas : la tâche (la carte de « Prochaine étape », posée sur l'horizon du projet,
+   « C'est fait » = la seule touche blanche), Mes notes, Demander à Claude (la réponse arrive juste en dessous), le
+   projet (mission, action prioritaire) et son journal. Sur Mac : deux colonnes. Contrôle : tests/cockpit.mjs. */
+:root{--ico-minuteur:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5.500a7.500 7.500 0 1 0 0 15 7.500 7.500 0 0 0 0-15z M12 9.500V13l2.200 1.600 M9.500 2.500h5'/%3E%3C/svg%3E")}
+#cockpit{--f:var(--fa);--fm:var(--fa);--bord:16px;--t2:#C4C4CC;--t3:#A6A6AE;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);--carte:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),#0E0E11;--relief:inset 0 1px 0 rgba(255,255,255,.07);
+  position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:#000;color:var(--t1);font-family:var(--fa);letter-spacing:-.1px;font-variant-numeric:tabular-nums;padding-top:env(safe-area-inset-top)}
+#cockpit.open{display:flex}
+#cockpit button{font-family:var(--fa)}
+#cockpit .ck-ico{flex-shrink:0;width:20px;height:20px;background:color-mix(in srgb,var(--ck-c,#fff) 78%,#fff);-webkit-mask:var(--ico,var(--ico-monde)) center/contain no-repeat;mask:var(--ico,var(--ico-monde)) center/contain no-repeat}
+#cockpit[data-wid="0"]{--ico:var(--ico-w0)}
+#cockpit[data-wid="1"]{--ico:var(--ico-w1)}
+#cockpit[data-wid="2"]{--ico:var(--ico-w2)}
+#cockpit[data-wid="3"]{--ico:var(--ico-w3)}
+#cockpit[data-wid="4"]{--ico:var(--ico-w4)}
+/* Barre du haut : retour au projet, minuteur */
+#cockpit-top{position:relative;z-index:3;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:8px;height:60px;padding:0 var(--bord);background:rgba(0,0,0,.82);-webkit-backdrop-filter:blur(28px) saturate(1.6);backdrop-filter:blur(28px) saturate(1.6);border-bottom:1px solid var(--b1)}
+#cockpit-back,#cockpit-pomo-btn{display:flex;align-items:center;gap:7px;min-height:44px;min-width:44px;padding:0 14px 0 11px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-size:15px;font-weight:500;letter-spacing:-.15px;color:#E8E8EC;white-space:nowrap;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+#cockpit-back{min-width:0;max-width:62%}
+#cockpit-back svg{flex-shrink:0;width:14px;height:14px}
+#cockpit-back-lbl{overflow:hidden;text-overflow:ellipsis;font-weight:600;color:color-mix(in srgb,var(--ck-c,#fff) 80%,#fff)}
+#cockpit-pomo-btn{padding:0 14px 0 12px}
+#cockpit-pomo-btn .ck-pomo-ico{flex-shrink:0;width:18px;height:18px;background:currentColor;-webkit-mask:var(--ico-minuteur) center/contain no-repeat;mask:var(--ico-minuteur) center/contain no-repeat}
+#cockpit-pomo-btn.active{color:#7EE29A;border-color:rgba(48,209,88,.4)}
+:is(#cockpit-back,#cockpit-pomo-btn):active{transform:scale(.97)}
+/* Minuteur, ouvert sous son bouton */
+#pomo-widget{position:absolute;top:56px;right:var(--bord);z-index:60;display:none;min-width:230px;padding:16px;border-radius:18px;background:#141417;border:1px solid var(--b2);box-shadow:0 24px 60px -12px rgba(0,0,0,.9)}
+#pomo-widget.open{display:block;animation:searchIn .2s ease}
+#pomo-ring-wrap{position:relative;width:88px;height:88px;margin:0 auto 10px}
+#pomo-ring-wrap svg{width:88px;height:88px;transform:rotate(-90deg)}
+.pomo-track{fill:none;stroke:rgba(255,255,255,.1);stroke-width:5}
+.pomo-fill{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:213.6;transition:stroke-dashoffset .5s linear;stroke:var(--green)}
+#pomo-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;letter-spacing:-.4px}
+#pomo-lbl{margin-bottom:12px;text-align:center;font-size:14px;color:var(--t2)}
+.pomo-btns{display:flex;gap:8px}
+.pomo-btn{flex:1;min-height:44px;padding:0 12px;border-radius:12px;border:1px solid var(--b2);background:rgba(255,255,255,.06);font-size:15px;font-weight:500;color:#E8E8EC}
+.pomo-btn.start{color:#0B0B0F;border:none;background:linear-gradient(180deg,#fff,#ECECF1)}
+.pomo-sessions{margin-top:10px;text-align:center;font-size:13px;color:var(--t2)}
+/* Le corps : une colonne qui défile sur iPhone ; deux colonnes sur Mac */
+#cockpit-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#cockpit-left,#cockpit-right{padding:0 var(--bord)}
+#cockpit-right{padding-bottom:calc(env(safe-area-inset-bottom) + 36px)}
+/* La tâche */
+#cockpit .ck-hero{position:relative;padding-top:20px;margin-bottom:26px}
+#cockpit .ck-hero::before{content:"";position:absolute;z-index:-1;left:calc(var(--bord) * -1);right:calc(var(--bord) * -1);top:-60px;height:420px;pointer-events:none;background:radial-gradient(60% 45% at 14% 0%,color-mix(in srgb,var(--ck-c,#fff) 15%,transparent),transparent 70%)}
+#cockpit .ck-hero{isolation:isolate}
+#cockpit .ck-proj{display:flex;align-items:center;gap:8px;font-size:15px;line-height:22px;color:#D6D6DC}
+#cockpit .x-horizon{margin:8px calc(var(--bord) * -1) 0;--c1:color-mix(in srgb,var(--ck-c,#fff) 62%,#fff);--c2:var(--ck-c,#fff);--c3:color-mix(in srgb,var(--ck-c,#fff) 78%,#fff);--hc:linear-gradient(90deg,var(--c1) 0%,var(--c2) 42%,var(--c3) 100%)}
+#cockpit .ck-card{position:relative;isolation:isolate;overflow:hidden;margin-top:2px;padding:16px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(10,10,13,.7);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 30px 60px -34px #000}
+#cockpit .ck-card::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(95% 80% at 10% 0%,color-mix(in srgb,var(--ck-c,#fff) 20%,transparent),transparent 70%)}
+#cockpit .ck-card::after{content:"";position:absolute;left:24px;right:24px;top:0;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--ck-c,#fff),transparent);opacity:.9}
+#cockpit-task-name{margin:0;font-size:21px;line-height:1.25;font-weight:600;letter-spacing:-.45px;color:#fff;overflow-wrap:anywhere}
+#cockpit-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#cockpit-meta[hidden]{display:none}
+#cockpit .ck-chip{padding:4px 10px;border-radius:9px;font-size:13px;font-weight:500;color:var(--t2);background:rgba(255,255,255,.06);border:1px solid var(--b1)}
+#cockpit .ck-chip-focus{color:#FFC46B;background:rgba(255,179,64,.08);border-color:rgba(255,179,64,.26)}
+#cockpit-done-btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:50px;margin-top:16px;padding:0 18px;border:none;border-radius:14px;font-size:17px;font-weight:600;letter-spacing:-.2px;color:#0B0B0F;background:linear-gradient(180deg,#fff,#ECECF1);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.1),-50px 14px 28px -24px color-mix(in srgb,var(--ck-c,#fff) 60%,transparent),50px 14px 28px -24px color-mix(in srgb,var(--ck-c,#fff) 60%,transparent);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+#cockpit-done-btn.done-state{color:#F5F5F7;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);box-shadow:none;font-weight:500}
+#cockpit-done-btn:active{transform:scale(.975)}
+/* Sections */
+#cockpit .ck-sec{margin:0 0 28px}
+#cockpit .ck-sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 2px 10px}
+#cockpit .ck-h2{margin:0;font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.35px;color:#F5F5F7}
+#cockpit .ck-h2 label{cursor:inherit}
+#cockpit .ck-sec-info{display:flex;gap:10px;font-size:14px;color:var(--t2)}
+#cockpit-saved-badge{color:#7EE29A;opacity:0;transition:opacity .3s}
+#cockpit-saved-badge.on{opacity:1}
+/* Mes notes */
+#cockpit-textarea{display:block;width:100%;min-height:200px;padding:14px 16px;border-radius:18px;border:1px solid var(--b2);background:rgba(255,255,255,.04);font-family:var(--fa);font-size:17px;line-height:1.47;letter-spacing:-.2px;color:var(--t1);resize:vertical;transition:border-color .2s,box-shadow .2s}
+#cockpit-textarea::placeholder{color:var(--t3)}
+#cockpit :is(#cockpit-textarea,#ccb-inp,.ck-inp):focus{outline:none;border-color:color-mix(in srgb,var(--ck-c,#fff) 70%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--ck-c,#fff) 18%,transparent)}
+/* Demander à Claude */
+#ccb-prompt-badge{display:flex;align-items:center;gap:10px;margin:0 0 8px;padding:4px 4px 4px 14px;border-radius:14px;background:color-mix(in srgb,var(--ck-c,#fff) 8%,transparent);border:1px solid color-mix(in srgb,var(--ck-c,#fff) 26%,transparent);font-size:14px;line-height:1.35;color:#E8E8EC}
+#ccb-prompt-badge[hidden]{display:none}
+#ccb-prompt-badge span{flex:1;min-width:0}
+#ccb-prompt-clear{flex-shrink:0;min-height:40px;padding:0 12px;border-radius:10px;font-size:14px;font-weight:500;color:#E8E8EC;background:rgba(255,255,255,.06)}
+#ccb-prompt-clear::before{content:"";position:absolute;inset:-2px}
+#ccb-prompt-clear{position:relative}
+#ccb-inner{display:flex;align-items:flex-end;gap:8px}
+#ccb-inp{flex:1;min-width:0;min-height:48px;max-height:160px;padding:12px 16px;border-radius:16px;border:1px solid var(--b2);background:rgba(255,255,255,.04);font-family:var(--fa);font-size:16px;line-height:1.4;letter-spacing:-.2px;color:var(--t1);resize:none;overflow-y:auto}
+#ccb-inp::placeholder{color:var(--t3)}
+#ccb-send{flex-shrink:0;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:16px;border:1px solid color-mix(in srgb,var(--ck-c,#fff) 40%,var(--b2));color:color-mix(in srgb,var(--ck-c,#fff) 80%,#fff);background:color-mix(in srgb,var(--ck-c,#fff) 12%,rgba(255,255,255,.04));transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+#ccb-send svg{width:18px;height:18px}
+#ccb-send:active{transform:scale(.94)}
+#ccb-status{margin:8px 2px 0;font-size:13px;line-height:1.4;color:var(--t2)}
+#cockpit .ck-typing{display:none;align-items:center;gap:10px;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--carte);border:1px solid var(--b1);font-size:15px;color:var(--t2)}
+#cockpit .ck-typing.vis{display:flex}
+#cockpit .ck-tdots{display:flex;gap:4px}
+#cockpit .ck-tdots span{width:5px;height:5px;border-radius:50%;background:var(--t2);animation:td 1.2s ease-in-out infinite}
+#cockpit .ck-tdots span:nth-child(2){animation-delay:.2s}#cockpit .ck-tdots span:nth-child(3){animation-delay:.4s}
+#cockpit-claude-msgs{margin-top:12px}
+#cockpit-claude-msgs[hidden]{display:none}
+#cockpit-msgs-list{display:flex;flex-direction:column;gap:10px}
+#cockpit .ck-ans{padding:14px 16px 12px;border-radius:18px;background:var(--carte);border:1px solid var(--b1);box-shadow:var(--relief)}
+#cockpit .ck-msg{padding:0;background:none;border:0;font-size:16px;line-height:1.47;letter-spacing:-.2px;color:#E8E8EC;overflow-wrap:anywhere}
+#cockpit .ck-msg :is(h1,h2,h3){margin:10px 0 4px;font-size:17px;font-weight:600;color:#F5F5F7}
+#cockpit .ck-msg p{margin:0 0 8px}
+#cockpit .ck-msg :is(ul,ol){margin:4px 0 8px;padding-left:22px}
+#cockpit .ck-msg li{margin-bottom:4px}
+#cockpit .ck-msg strong{font-weight:600;color:#F5F5F7}
+#cockpit .ck-msg code{padding:1px 5px;border-radius:5px;background:rgba(255,255,255,.08);font-family:ui-monospace,Menlo,monospace;font-size:14px}
+#cockpit .ck-msg pre{margin:6px 0;padding:10px;border-radius:10px;background:rgba(255,255,255,.05);overflow-x:auto}
+#cockpit .ck-msg pre code{padding:0;background:none}
+#cockpit .ck-err{padding:12px 14px;border-radius:16px;background:rgba(255,179,64,.07);border:1px solid rgba(255,179,64,.26);font-size:15px;color:#F5F5F7}
+.ck-inject-btn-el{margin-top:10px;min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--b2);background:rgba(255,255,255,.06);font-size:15px;font-weight:500;letter-spacing:-.15px;color:#E8E8EC}
+.ck-inject-btn-el:disabled{color:#7EE29A;border-color:rgba(48,209,88,.3);background:rgba(48,209,88,.06)}
+/* Le projet et son journal */
+#cockpit .ck-ctx{padding:14px 16px;border-radius:18px;background:var(--carte);border:1px solid var(--b1);box-shadow:var(--relief)}
+#cockpit .ck-ctx-lbl{margin:0 0 3px;font-size:13px;font-weight:500;color:var(--t2)}
+#cockpit .ck-ctx-lbl + div{font-size:16px;line-height:1.4;letter-spacing:-.2px;color:#F5F5F7}
+#cockpit-ctx-mission{margin-bottom:14px}
+#cockpit .ck-jou-add{display:flex;gap:8px;margin-bottom:8px}
+#cockpit .ck-inp{flex:1;min-width:0;min-height:48px;padding:0 16px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.04);font-family:var(--fa);font-size:16px;letter-spacing:-.2px;color:var(--t1);text-overflow:ellipsis}
+#cockpit .ck-inp::placeholder{color:var(--t3)}
+#cockpit .ck-btn{flex-shrink:0;min-height:48px;padding:0 16px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.07);font-size:15px;font-weight:500;letter-spacing:-.15px;color:#E8E8EC}
+#cockpit-jou-rows{display:flex;flex-direction:column}
+#cockpit .ck-jou-row{padding:10px 2px;border-top:1px solid var(--b1);font-size:16px;line-height:1.4;letter-spacing:-.2px;color:#E8E8EC}
+#cockpit .ck-jou-ts{margin-bottom:2px;font-size:13px;color:var(--t3)}
+#cockpit .ck-empty{padding:4px 2px;font-size:15px;color:var(--t3)}
+#cockpit :is(#cockpit-back,#cockpit-pomo-btn,#cockpit-done-btn,#ccb-send,#ccb-prompt-clear,.ck-btn,.pomo-btn,.ck-inject-btn-el):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+@media(min-width:861px){
+  #cockpit{--bord:28px}
+  #cockpit-body{display:grid;grid-template-columns:minmax(0,1fr) 380px;overflow:hidden}
+  #cockpit-left,#cockpit-right{overflow-y:auto;overscroll-behavior:contain}
+  #cockpit-left{padding-bottom:40px}
+  #cockpit-right{padding:24px 24px 40px;border-left:1px solid var(--b1);background:#050506}
+  #cockpit .ck-hero{padding-top:30px}
+  #cockpit .x-horizon{--hr:4400px;--hx:42%;--hc:linear-gradient(90deg,transparent 0,var(--c1) 9%,var(--c2) 46%,var(--c3) 90%,transparent 100%)}
+  #cockpit .ck-card{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:32px;align-items:center;padding:20px 22px}
+  #cockpit-task-name{grid-column:1;font-size:24px;letter-spacing:-.55px}
+  #cockpit-meta{grid-column:1}
+  #cockpit-done-btn{grid-column:2;grid-row:1 / span 2;width:auto;min-width:220px;margin:0}
+  #cockpit-textarea{min-height:280px}
+}
+@media(prefers-reduced-motion:reduce){:is(#cockpit-back,#cockpit-pomo-btn,#cockpit-done-btn,#ccb-send):active{transform:none}#cockpit .ck-tdots span{animation:none}}
 </style>
 </head>
 <body>
@@ -2673,35 +2730,59 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 </div>
 
 <!-- OVERLAYS -->
-<div id="cockpit">
-  <div id="cockpit-top" style="position:relative">
-    <button id="cockpit-back"><svg viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cockpit-back-lbl">Retour</span></button>
-    <div id="cockpit-task-name">-</div>
-    <div id="cockpit-top-right">
-      <button id="cockpit-pomo-btn">Pomodoro</button>
-      <button id="cockpit-done-btn">Accomplir</button>
-    </div>
+<div id="cockpit" role="dialog" aria-modal="true" aria-labelledby="cockpit-task-name">
+  <div id="cockpit-top">
+    <button id="cockpit-back" type="button"><svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ck-ico" aria-hidden="true"></span><span id="cockpit-back-lbl">Retour</span></button>
+    <button id="cockpit-pomo-btn" type="button" aria-label="Minuteur" aria-expanded="false"><span class="ck-pomo-ico" aria-hidden="true"></span><span id="cockpit-pomo-lbl">Minuteur</span></button>
     <div id="pomo-widget">
-      <div id="pomo-ring-wrap"><svg viewBox="0 0 80 80" width="80" height="80"><circle class="pomo-track" cx="40" cy="40" r="34"/><circle class="pomo-fill" id="pomo-fill" cx="40" cy="40" r="34" stroke-dashoffset="0"/></svg><div id="pomo-time">25:00</div></div>
+      <div id="pomo-ring-wrap"><svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true"><circle class="pomo-track" cx="40" cy="40" r="34"/><circle class="pomo-fill" id="pomo-fill" cx="40" cy="40" r="34" stroke-dashoffset="0"/></svg><div id="pomo-time">25:00</div></div>
       <div id="pomo-lbl">Travail</div>
-      <div class="pomo-btns"><button class="pomo-btn start" id="pomo-start" data-action="pomo-main">Start</button><button class="pomo-btn" data-action="pomo-reset">Reset</button></div>
-      <div class="pomo-sessions" id="pomo-sessions">Session 1 / 4</div>
+      <div class="pomo-btns"><button class="pomo-btn start" id="pomo-start" type="button" data-action="pomo-main">Démarrer</button><button class="pomo-btn" type="button" data-action="pomo-reset">Remettre à zéro</button></div>
+      <div class="pomo-sessions" id="pomo-sessions">Session 1 sur 4</div>
     </div>
   </div>
   <div id="cockpit-body">
     <div id="cockpit-left">
-      <div id="cockpit-left-head"><div id="cockpit-left-lbl">Zone de travail</div><div id="cockpit-word-count">0 mots</div><div id="cockpit-saved-badge">Sauvegarde</div></div>
-      <textarea id="cockpit-textarea" placeholder="Travaille ici..."></textarea>
-      <div id="cockpit-claude-bar">
-        <div id="ccb-prompt-badge" style="display:none;align-items:center;gap:6px;padding:5px 10px 2px;font-size:10px;color:var(--text3);letter-spacing:.04em"><span style="color:var(--ck-c,#ff6b35);font-size:11px">✦</span>Prompt préparé pour cette tâche — modifie ou envoie<span id="ccb-prompt-clear" style="margin-left:auto;cursor:pointer;opacity:.6;font-size:10px" data-action="ccb-clear-prompt">✕ Effacer</span></div>
-      <div id="ccb-inner"><div id="ccb-logo">C</div><input id="ccb-inp" placeholder="Demande à Claude..." autocomplete="off"><div id="ccb-mode-wrap"><button class="ccb-mode active" data-mode="inject">Injecter</button><button class="ccb-mode" data-mode="chat">Chat</button></div><button id="ccb-send"><svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button></div>
-        <div id="ccb-status">Claude actif — contexte complet chargé</div>
+      <!-- La tâche : la carte de « Prochaine étape », posée sur l'horizon du projet -->
+      <div class="ck-hero">
+        <div class="ck-proj"><span id="cockpit-etat">Tâche à faire</span></div>
+        <div class="x-horizon" aria-hidden="true"></div>
+        <div class="ck-card">
+          <h1 id="cockpit-task-name">-</h1>
+          <div id="cockpit-meta" hidden></div>
+          <button id="cockpit-done-btn" type="button">C&#8217;est fait</button>
+        </div>
       </div>
+      <!-- Mes notes -->
+      <section class="ck-sec">
+        <div class="ck-sec-head"><h2 class="ck-h2"><label for="cockpit-textarea">Mes notes</label></h2><span class="ck-sec-info"><span id="cockpit-saved-badge">Enregistré</span><span id="cockpit-word-count">0 mot</span></span></div>
+        <textarea id="cockpit-textarea" placeholder="Ce que tu fais, ce que tu trouves, ce qui reste."></textarea>
+      </section>
+      <!-- Demander à Claude : la réponse arrive juste en dessous -->
+      <section class="ck-sec" id="cockpit-claude-bar">
+        <div class="ck-sec-head"><h2 class="ck-h2"><label for="ccb-inp">Demander à Claude</label></h2></div>
+        <div id="ccb-prompt-badge" hidden><span>Question préparée pour cette tâche. Modifie-la ou envoie-la.</span><button id="ccb-prompt-clear" type="button" data-action="ccb-clear-prompt">Effacer</button></div>
+        <div id="ccb-inner"><textarea id="ccb-inp" rows="1" placeholder="Ta question sur cette tâche" autocomplete="off"></textarea><button id="ccb-send" type="button" aria-label="Envoyer à Claude"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 13V3.5M3.5 8 8 3.5 12.5 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+        <div id="ccb-status">Claude reçoit le projet, sa mission et cette tâche.</div>
+        <div class="ck-typing" id="ck-typing" aria-live="polite"><div class="ck-tdots"><span></span><span></span><span></span></div><span>Claude réfléchit…</span></div>
+        <div id="cockpit-claude-msgs" hidden><div id="cockpit-msgs-list" aria-live="polite"></div></div>
+      </section>
     </div>
     <div id="cockpit-right">
-      <div id="cockpit-ctx-card"><div class="ck-sec-lbl">Contexte</div><div id="cockpit-ctx-mission"></div><div id="cockpit-ctx-prio"></div></div>
-      <div id="cockpit-claude-msgs" style="display:none"><div class="ck-sec-lbl">Claude</div><div id="cockpit-msgs-list"></div><div class="ck-typing" id="ck-typing"><div class="ck-tdots"><span></span><span></span><span></span></div></div></div>
-      <div id="cockpit-jou-card"><div class="ck-sec-lbl">Journal</div><div id="cockpit-jou-rows"></div><div style="display:flex;gap:7px;margin-top:8px"><input id="cockpit-jou-inp" class="ck-inp" placeholder="Avancée..."><button id="cockpit-jou-btn" class="ck-btn">+</button></div></div>
+      <section class="ck-sec" id="cockpit-ctx-card">
+        <div class="ck-sec-head"><h2 class="ck-h2">Le projet</h2></div>
+        <div class="ck-ctx">
+          <div class="ck-ctx-lbl">Mission</div>
+          <div id="cockpit-ctx-mission"></div>
+          <div class="ck-ctx-lbl">Action prioritaire</div>
+          <div id="cockpit-ctx-prio"></div>
+        </div>
+      </section>
+      <section class="ck-sec" id="cockpit-jou-card">
+        <div class="ck-sec-head"><h2 class="ck-h2"><label for="cockpit-jou-inp">Journal du projet</label></h2></div>
+        <div class="ck-jou-add"><input id="cockpit-jou-inp" class="ck-inp" placeholder="Une avancée, une décision" autocomplete="off"><button id="cockpit-jou-btn" class="ck-btn" type="button">Ajouter</button></div>
+        <div id="cockpit-jou-rows"></div>
+      </section>
     </div>
   </div>
 </div>
@@ -4845,12 +4926,12 @@ document.addEventListener("click",function(ev){
   // Cockpit back
   if(t.id==="cockpit-back"||t.closest("#cockpit-back")){ closeCockpit(); return; }
   // Cockpit done
-  if(t.id==="cockpit-done-btn"){ var wid=cockpitState.wid; var tid=cockpitState.tid; if(wid>=0&&tid){ S.tasks[wid][tid]=!S.tasks[wid][tid]; saveS(); renderTasks(); closeCockpit(); toast(S.tasks[wid][tid]?"✓ Accomplie !":"Réouverte"); } return; }
+  if(t.closest("#cockpit-done-btn")){ var wid=cockpitState.wid; var tid=cockpitState.tid; if(wid>=0&&tid){ if(!S.tasks[wid]) S.tasks[wid]={}; S.tasks[wid][tid]=!S.tasks[wid][tid]; saveS(); closeCockpit(); if(CUR.wid===wid) renderWorld(); else renderTasks(); toast(S.tasks[wid][tid]?"C\u2019est fait":"Tâche rouverte"); } return; }
   // Pomodoro toggle
-  if(t.id==="cockpit-pomo-btn"||t.closest("#cockpit-pomo-btn")){ var pw=document.getElementById("pomo-widget"); pw.classList.toggle("open"); return; }
+  if(t.closest("#cockpit-pomo-btn")){ var pw=document.getElementById("pomo-widget"); var ouvre=!pw.classList.contains("open"); pw.classList.toggle("open",ouvre); t.closest("#cockpit-pomo-btn").setAttribute("aria-expanded",ouvre?"true":"false"); return; }
   if(t.getAttribute&&t.getAttribute("data-action")==="pomo-toggle"&&t.id==="cockpit-pomo-btn"){ var pw=document.getElementById("pomo-widget"); pw.classList.toggle("open"); return; }
   if(t.getAttribute&&t.getAttribute("data-action")==="pomo-main"){ togglePomo(); return; }
-  if(t.getAttribute&&t.getAttribute("data-action")==="pomo-reset"){ clearInterval(cockpitState.pomoIv); cockpitState.pomoActive=false; cockpitState.pomoS=25*60; cockpitState.pomoBreak=false; document.getElementById("pomo-time").textContent="25:00"; document.getElementById("pomo-lbl").textContent="Travail"; document.getElementById("pomo-fill").style.strokeDashoffset="0"; var b=document.getElementById("cockpit-pomo-btn"); if(b) b.classList.remove("active"); return; }
+  if(t.getAttribute&&t.getAttribute("data-action")==="pomo-reset"){ clearInterval(cockpitState.pomoIv); cockpitState.pomoActive=false; cockpitState.pomoS=25*60; cockpitState.pomoBreak=false; document.getElementById("pomo-time").textContent="25:00"; document.getElementById("pomo-lbl").textContent="Travail"; document.getElementById("pomo-fill").style.strokeDashoffset="0"; var b=document.getElementById("cockpit-pomo-btn"); if(b) b.classList.remove("active"); var ps=document.getElementById("pomo-start"); if(ps) ps.textContent="Démarrer"; var pl=document.getElementById("cockpit-pomo-lbl"); if(pl) pl.textContent="Minuteur"; var se=document.getElementById("pomo-sessions"); if(se) se.textContent="Session "+(cockpitState.pomoSessions+1)+" sur 4"; return; }
   // War Room pomo
   if(t.getAttribute&&t.getAttribute("data-action")==="wr-pomo"){
     if(wrState.pomoActive){ clearInterval(wrState.pomoIv); wrState.pomoActive=false; t.textContent="▶"; }
@@ -4889,12 +4970,13 @@ document.addEventListener("click",function(ev){
   if(t.id==="wr-ccb-send"){ var inp=document.getElementById("wr-ccb-inp"); if(inp&&inp.value.trim()){ cpSend(wrState.wid>=0?wrState.wid:CUR.wid,inp.value.trim()); inp.value=""; } return; }
   // Cockpit CCB — effacer prompt
   if(t.getAttribute&&t.getAttribute("data-action")==="ccb-clear-prompt"){
-    var ci=document.getElementById("ccb-inp"); if(ci) ci.value="";
-    var pb=document.getElementById("ccb-prompt-badge"); if(pb) pb.style.display="none";
+    var ci=document.getElementById("ccb-inp"); if(ci){ ci.value=""; ccbTaille(); ci.focus(); }
+    var pb=document.getElementById("ccb-prompt-badge"); if(pb) pb.hidden=true;
     return;
   }
   // Cockpit CCB send
-  if(t.id==="ccb-send"){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt) return; inp.value=""; var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.style.display="none"; var cs2=document.getElementById("ccb-send"); if(cs2) cs2.classList.remove("pulse-ready"); var mode=cockpitState.mode||"inject"; if(mode==="inject"){ var prompt="Pour la tâche: "+cockpitState.task.t+"\n\nDemande: "+txt+"\n\nRéponds directement avec du contenu utilisable — pas d'intro."; claudeCall(prompt,CUR.wid,"cockpit"); } else cpSend(CUR.wid,txt); return; }
+  // Cockpit : une question à Claude, la réponse arrive dans le cockpit (le choix « Chat » répondait derrière lui)
+  if(t.closest("#ccb-send")){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt||!cockpitState.task) return; inp.value=""; ccbTaille(); var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.hidden=true; var cw=WORLDS[cockpitState.wid]||{}; var prompt="Projet : "+(cw.name||"")+"\nMission du projet : "+(cw.mission||"")+"\nTâche : "+cockpitState.task.t+"\n\nDemande : "+txt+"\n\nRéponds en français, directement, avec du contenu utilisable — pas d'introduction."; cockpitState.lastQ=txt; claudeCall(prompt,cockpitState.wid,"cockpit"); return; }
   // CCB mode
   if(t.closest("[data-mode]")){ var mode=t.closest("[data-mode]").getAttribute("data-mode"); cockpitState.mode=mode; document.querySelectorAll(".ccb-mode").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mode")===mode); }); return; }
   // QA project select
@@ -4956,7 +5038,7 @@ document.addEventListener("click",function(ev){
   // Journal add
   if(t.id==="jou-add-btn"){ var inp=document.getElementById("jou-inp"); if(inp&&inp.value.trim()){ var wid=CUR.wid; S.journal[wid].push({ts:Date.now(),t:inp.value.trim()}); inp.value=""; saveS(); renderJournal(); renderWorld(); } return; }
   // Cockpit journal
-  if(t.id==="cockpit-jou-btn"){ var inp=document.getElementById("cockpit-jou-inp"); if(inp&&inp.value.trim()){ var wid=cockpitState.wid>=0?cockpitState.wid:CUR.wid; S.journal[wid].push({ts:Date.now(),t:inp.value.trim()}); inp.value=""; saveS(); renderCockpitJou(wid); } return; }
+  if(t.closest("#cockpit-jou-btn")){ var inp=document.getElementById("cockpit-jou-inp"); if(inp&&inp.value.trim()){ var wid=cockpitState.wid>=0?cockpitState.wid:CUR.wid; S.journal[wid].push({ts:Date.now(),t:inp.value.trim()}); inp.value=""; saveS(); renderCockpitJou(wid); } return; }
   // DR journal add
   if(t.getAttribute&&t.getAttribute("data-action")==="dr-jou-add"){ var wid=parseInt(t.getAttribute("data-wid")); var inp=document.getElementById("dr-jou-inp"); if(inp&&inp.value.trim()){ S.journal[wid].push({ts:Date.now(),t:inp.value.trim()}); inp.value=""; saveS(); closeDrawer(); toast("Entrée ajoutée ✓"); } return; }
   // WS journal add
@@ -5021,7 +5103,7 @@ document.addEventListener("keydown",function(ev){
   if(k==="Escape"){
     if(document.getElementById("search-modal").classList.contains("open")){ closeSearch(); return; }
     if(document.getElementById("war-room").classList.contains("open")){ closeWarRoom(); return; }
-    if(document.getElementById("cockpit").style.display==="flex"){ closeCockpit(); return; }
+    if(document.getElementById("cockpit").classList.contains("open")){ closeCockpit(); return; }
     if(document.getElementById("tdrawer").classList.contains("open")){ closeDrawer(); return; }
     return;
   }
@@ -5044,7 +5126,8 @@ document.addEventListener("keydown",function(ev){
 document.addEventListener("input",function(ev){
   var t=ev.target;
   if(t.id==="search-inp"){ searchQuery(t.value.trim()); return; }
-  if(t.id==="cockpit-textarea"){ updateCockpitWordCount(); clearTimeout(t._saveT); t._saveT=setTimeout(saveCockpitWork,1500); return; }
+  if(t.id==="cockpit-textarea"){ updateCockpitWordCount(); var sb=document.getElementById("cockpit-saved-badge"); if(sb) sb.classList.remove("on"); clearTimeout(t._saveT); t._saveT=setTimeout(saveCockpitWork,1500); return; }
+  if(t.id==="ccb-inp"){ ccbTaille(); return; }
   if(t.id==="notes-ta"){ updateNotesChars(); clearTimeout(t._saveT); t._saveT=setTimeout(function(){ S.notes[CUR.wid]=t.value; saveS(); },1500); return; }
   if(t.id==="jur-notes"){ clearTimeout(t._saveT); t._saveT=setTimeout(function(){ S.jurNotes=t.value; saveS(); },1500); return; }
   if(t.id==="cp-ta"){ t.style.height="auto"; t.style.height=Math.min(t.scrollHeight,100)+"px"; return; }
@@ -5063,6 +5146,7 @@ document.addEventListener("keydown",function(ev){
     if(ev.target.id==="obj-inp"){ document.getElementById("obj-add-btn").click(); return; }
     if(ev.target.id==="sante-jou-inp"){ document.getElementById("sante-jou-btn").click(); return; }
     if(ev.target.id==="ccb-inp"&&!ev.shiftKey){ ev.preventDefault(); document.getElementById("ccb-send").click(); return; }
+    if(ev.target.id==="cockpit-jou-inp"){ ev.preventDefault(); document.getElementById("cockpit-jou-btn").click(); return; }
     if(ev.target.id==="wr-ccb-inp"&&!ev.shiftKey){ ev.preventDefault(); document.getElementById("wr-ccb-send").click(); return; }
   }
 });
@@ -5126,48 +5210,58 @@ function openCockpit(wid, tid){
   var allT = w.tasks_done.concat(w.tasks_todo).concat((S.custom[wid]||[]).map(function(t){ return {id:t.id,t:t.t}; }));
   var task = tid ? allT.find(function(t){ return t.id===tid; }) : allT.find(function(t){ return !S.tasks[wid][t.id]; });
   if(!task) return;
-  cockpitState.wid = wid; cockpitState.tid = tid; cockpitState.task = task;
+  var memeTache = cockpitState.wid===wid && cockpitState.tid===task.id;
+  cockpitState.wid = wid; cockpitState.tid = task.id; cockpitState.task = task;
   var ck = document.getElementById('cockpit'); if(!ck) return;
-  ck.classList.add('open');
+  ck.setAttribute('data-wid', wid);
   ck.style.setProperty('--ck-c', w.color);
+  ck.classList.add('open');
+  var body = document.getElementById('cockpit-body'); if(body) body.scrollTop = 0;
+  var left = document.getElementById('cockpit-left'); if(left) left.scrollTop = 0;
+  // On revient au projet : le bouton de retour porte son nom
+  var bl = document.getElementById('cockpit-back-lbl'); if(bl) bl.textContent = w.name;
   var tn = document.getElementById('cockpit-task-name'); if(tn) tn.textContent = task.t;
+  var isDone = !!(S.tasks[wid] && S.tasks[wid][task.id]);
+  var et = document.getElementById('cockpit-etat'); if(et) et.textContent = isDone ? 'Tâche faite' : 'Tâche à faire';
   var db = document.getElementById('cockpit-done-btn');
-  if(db){
-    db.style.background = w.color; db.dataset.tid = task.id;
-    var isDone = S.tasks[wid] && S.tasks[wid][task.id];
-    db.textContent = isDone ? '↺ Réouvrir' : '✓ Marquer accomplie';
-    db.classList.toggle('done-state', !!isDone);
+  if(db){ db.textContent = isDone ? 'Rouvrir la tâche' : 'C’est fait'; db.classList.toggle('done-state', isDone); }
+  // Échéance et focus du jour : un fait chacun, dit avec des mots
+  var meta = document.getElementById('cockpit-meta');
+  if(meta){
+    meta.innerHTML = '';
+    var bits = [];
+    if(S.focus && S.focus[wid]===task.id) bits.push(['focus','Focus du jour']);
+    var dl = S.deadlines && S.deadlines[wid+':'+task.id];
+    if(dl && !isDone){ var n = Math.ceil((new Date(dl) - new Date())/86400000); bits.push(['dl', n<0 ? 'Échéance passée de '+(-n)+' j' : n===0 ? 'Échéance aujourd’hui' : 'Échéance dans '+n+' j']); }
+    bits.forEach(function(b){ var sp = document.createElement('span'); sp.className = 'ck-chip ck-chip-'+b[0]; sp.textContent = b[1]; meta.appendChild(sp); });
+    meta.hidden = !bits.length;
   }
-  var cl = document.getElementById('ccb-logo'); if(cl) cl.style.background = w.color;
-  var cs = document.getElementById('ccb-send'); if(cs) cs.style.background = w.color;
   var ta = document.getElementById('cockpit-textarea');
-  var saved = (S.taskNotes[wid] && S.taskNotes[wid][task.id]) || '';
-  if(ta) ta.value = saved;
+  if(ta) ta.value = (S.taskNotes[wid] && S.taskNotes[wid][task.id]) || '';
+  var sb = document.getElementById('cockpit-saved-badge'); if(sb) sb.classList.remove('on');
   updateCockpitWordCount();
-  // ── Prompt pré-injecté dans la zone Claude (pas d'envoi auto) ───────────
+  // Les réponses de Claude ne sont pas gardées : une autre tâche repart d'une liste vide
+  if(!memeTache){ var ml = document.getElementById('cockpit-msgs-list'); if(ml) ml.innerHTML = ''; var mw = document.getElementById('cockpit-claude-msgs'); if(mw) mw.hidden = true; }
+  // Question préparée pour cette tâche (écrite dans le monde) : posée dans le champ, jamais envoyée d'office
   var ccbInp = document.getElementById('ccb-inp');
-  if(ccbInp && task.prompt){
-    ccbInp.value = task.prompt;
-    ccbInp.dataset.promptReady = '1';
-  }
-  var promptBadge = document.getElementById('ccb-prompt-badge');
-  if(promptBadge){
-    promptBadge.style.display = task.prompt ? 'flex' : 'none';
-  }
-  // Pulse le bouton d'envoi pour signaler que le prompt est prêt
-  var ccbSendBtn = document.getElementById('ccb-send');
-  if(ccbSendBtn && task.prompt){ ccbSendBtn.classList.add('pulse-ready'); }
+  if(ccbInp){ ccbInp.value = task.prompt || ''; ccbTaille(); }
+  var promptBadge = document.getElementById('ccb-prompt-badge'); if(promptBadge) promptBadge.hidden = !task.prompt;
   var cm = document.getElementById('cockpit-ctx-mission'); if(cm) cm.textContent = w.mission;
-  var cp = document.getElementById('cockpit-ctx-prio');
-  if(cp) cp.innerHTML = '<strong style="color:'+w.color+'">'+w.priority.badge+'</strong> — '+w.priority.title;
+  var cp = document.getElementById('cockpit-ctx-prio'); if(cp) cp.textContent = w.priority ? w.priority.title : '';
   renderCockpitJou(wid);
   var pf = document.querySelector('.pomo-fill'); if(pf) pf.style.stroke = w.color;
-  var pb = document.getElementById('cockpit-pomo-btn'); if(pb) pb.style.setProperty('--ck-c',w.color);
-  // Prompt prêt dans ccb-inp — envoi à la demande de l'utilisateur
 }
 function closeCockpit(){
-  var ck = document.getElementById('cockpit'); if(ck) ck.classList.remove('open');
+  var ck = document.getElementById('cockpit'); if(!ck || !ck.classList.contains('open')) return;
   saveCockpitWork();
+  ck.classList.remove('open');
+  var pw = document.getElementById('pomo-widget'); if(pw) pw.classList.remove('open');
+  var pb = document.getElementById('cockpit-pomo-btn'); if(pb) pb.setAttribute('aria-expanded','false');
+}
+// Le champ de question grandit avec le texte (une question préparée se lit en entier), 160 px au plus
+function ccbTaille(){
+  var t = document.getElementById('ccb-inp'); if(!t) return;
+  t.style.height = 'auto'; t.style.height = Math.min(t.scrollHeight + 2, 160) + 'px';
 }
 
 
@@ -5312,7 +5406,7 @@ function updateCockpitWordCount(){
 function renderCockpitJou(wid){
   var list=document.getElementById("cockpit-jou-rows"); if(!list) return;
   var jou=(S.journal[wid]||[]).slice().reverse().slice(0,5);
-  if(jou.length===0){ list.innerHTML='<div style="font-size:11px;color:var(--t3);padding:4px 0">Pas encore d\'entrée</div>'; return; }
+  if(jou.length===0){ list.innerHTML='<div class="ck-empty">Rien pour l\u2019instant.</div>'; return; }
   var html="";
   jou.forEach(function(j){
     html+='<div class="ck-jou-row"><div class="ck-jou-ts">'+fmtTs(j.ts)+'</div>'+esc(j.t)+'</div>';
@@ -5328,7 +5422,7 @@ function saveCockpitWork(){
   var wid = cockpitState.wid; var tid = cockpitState.tid;
   if(wid < 0 || !tid) return;
   var ta = document.getElementById('cockpit-textarea');
-  if(ta){ if(!S.taskNotes[wid]) S.taskNotes[wid]={}; S.taskNotes[wid][tid]=ta.value; saveS(); }
+  if(ta){ if(!S.taskNotes[wid]) S.taskNotes[wid]={}; S.taskNotes[wid][tid]=ta.value; saveS(); var sb=document.getElementById('cockpit-saved-badge'); if(sb&&ta.value) sb.classList.add('on'); }
 }
 
 
@@ -5357,19 +5451,21 @@ function updatePomoRingWR(){
 /* ===== DRAWER ===== */
 
 function togglePomo(){
-  if(cockpitState.pomoActive){ clearInterval(cockpitState.pomoIv); cockpitState.pomoActive=false; var b=document.getElementById("cockpit-pomo-btn"); if(b) b.classList.remove("active"); }
+  var ps=document.getElementById("pomo-start"), pl=document.getElementById("cockpit-pomo-lbl");
+  if(cockpitState.pomoActive){ clearInterval(cockpitState.pomoIv); cockpitState.pomoActive=false; var b=document.getElementById("cockpit-pomo-btn"); if(b) b.classList.remove("active"); if(ps) ps.textContent="Reprendre"; if(pl) pl.textContent="Minuteur"; }
   else{
-    cockpitState.pomoActive=true; var b=document.getElementById("cockpit-pomo-btn"); if(b) b.classList.add("active");
+    cockpitState.pomoActive=true; var b=document.getElementById("cockpit-pomo-btn"); if(b) b.classList.add("active"); if(ps) ps.textContent="Pause";
     cockpitState.pomoIv=setInterval(function(){
       cockpitState.pomoS=Math.max(0,cockpitState.pomoS-1);
       var m=Math.floor(cockpitState.pomoS/60); var s=cockpitState.pomoS%60;
       document.getElementById("pomo-time").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
+      if(pl) pl.textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s;
       var total=cockpitState.pomoBreak?5*60:25*60; var pct=1-(cockpitState.pomoS/total);
       var c=2*Math.PI*34; var fill=document.getElementById("pomo-fill"); if(fill) fill.style.strokeDashoffset=c*pct;
       if(cockpitState.pomoS===0){
-        if(!cockpitState.pomoBreak){ cockpitState.pomoSessions++; cockpitState.pomoBreak=true; cockpitState.pomoS=5*60; document.getElementById("pomo-lbl").textContent="Pause"; toast("🍅 Pomodoro terminé ! Pause 5 min"); }
+        if(!cockpitState.pomoBreak){ cockpitState.pomoSessions++; cockpitState.pomoBreak=true; cockpitState.pomoS=5*60; document.getElementById("pomo-lbl").textContent="Pause"; toast("Minuteur terminé : pause de 5 min"); }
         else{ cockpitState.pomoBreak=false; cockpitState.pomoS=25*60; document.getElementById("pomo-lbl").textContent="Travail"; }
-        document.getElementById("pomo-sessions").textContent="Session "+(cockpitState.pomoSessions+1)+" / 4";
+        document.getElementById("pomo-sessions").textContent="Session "+(cockpitState.pomoSessions+1)+" sur 4";
       }
     },1000);
   }
@@ -5404,7 +5500,7 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
     msgsEl=document.getElementById("cp-msgs");
   } else if(type==="sante"){ typing=document.getElementById("cp-typing-sante"); msgsEl=document.getElementById("cp-msgs-sante"); }
   else if(type==="juridique"){ typing=document.getElementById("cp-typing-jur"); msgsEl=document.getElementById("cp-msgs-jur"); }
-  else if(type==="cockpit"){ var ckT=document.getElementById("ck-typing"); if(ckT) ckT.classList.add("vis"); }
+  else if(type==="cockpit"){ var ckT=document.getElementById("ck-typing"); if(ckT){ ckT.classList.add("vis"); ckT.scrollIntoView({block:"nearest"}); } }
   var sub=document.getElementById("cp-sub"); if(sub) sub.textContent="Réflexion en cours…";
   if(typing) typing.classList.add("vis");
   if(msgsEl) msgsEl.scrollTop=msgsEl.scrollHeight;
@@ -5452,25 +5548,21 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
       var ckMsgList=document.getElementById("cockpit-msgs-list");
       var ckMsgs=document.getElementById("cockpit-claude-msgs");
       if(ckMsgList&&ckMsgs){
-        ckMsgs.style.display="block";
+        ckMsgs.hidden=false;
+        var item=document.createElement("div"); item.className="ck-ans";
         var div=document.createElement("div");
         div.className="ck-msg"; div.innerHTML=mdSafe(txt);
-        ckMsgList.appendChild(div);
-        var inj=document.createElement("div");
-        inj.className="ck-inject-btn";
+        item.appendChild(div);
         var injBtn=document.createElement("button");
-        injBtn.className="ck-inject-btn-el";
-        injBtn.textContent="⬆ Injecter";
-        var ckC=document.documentElement.style.getPropertyValue("--ck-c")||"#fff";
-        injBtn.style.background="color-mix(in srgb,"+ckC+" 15%,transparent)";
-        injBtn.style.color=ckC; injBtn.style.borderColor="color-mix(in srgb,"+ckC+" 30%,transparent)";
+        injBtn.type="button"; injBtn.className="ck-inject-btn-el";
+        injBtn.textContent="Ajouter à mes notes";
         injBtn.addEventListener("click",function(){
           var ta=document.getElementById("cockpit-textarea");
-          if(ta){ ta.value+=(ta.value?"\n\n":"")+txt; saveCockpitWork(); }
+          if(ta){ ta.value+=(ta.value?"\n\n":"")+txt; updateCockpitWordCount(); saveCockpitWork(); injBtn.textContent="Ajouté à tes notes"; injBtn.disabled=true; }
         });
-        inj.appendChild(injBtn);
-        ckMsgList.appendChild(inj);
-        ckMsgList.scrollTop=ckMsgList.scrollHeight;
+        item.appendChild(injBtn);
+        ckMsgList.appendChild(item);
+        item.scrollIntoView({block:"nearest",behavior:"smooth"});
       }
       return;
     }
@@ -5509,6 +5601,13 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
     if(sub) sub.textContent="Erreur";
     var errMsg=createMsgEl("assistant","Erreur: "+e.message,"#ff375f");
     var ckTe=document.getElementById("ck-typing"); if(ckTe) ckTe.classList.remove("vis");
+    if(type==="cockpit"){
+      var ckL=document.getElementById("cockpit-msgs-list"), ckW=document.getElementById("cockpit-claude-msgs");
+      if(ckL&&ckW){ ckW.hidden=false; var er=document.createElement("div"); er.className="ck-msg ck-err"; er.textContent="Claude n\u2019a pas répondu ("+e.message+"). Ta question est remise dans le champ : renvoie-la quand tu veux."; ckL.appendChild(er);
+        var qi=document.getElementById("ccb-inp"); if(qi&&!qi.value.trim()&&cockpitState.lastQ){ qi.value=cockpitState.lastQ; ccbTaille(); }
+        er.scrollIntoView({block:"nearest"}); }
+      return;
+    }
     if(msgsEl){
       // "typing" est l'indicateur du panneau en cours (monde, Santé ou Juridique) : l'erreur s'affiche au bon endroit
       if(typing&&typing.parentNode===msgsEl) msgsEl.insertBefore(errMsg,typing); else msgsEl.appendChild(errMsg);

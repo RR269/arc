@@ -241,7 +241,9 @@ for (const vp of ECRANS) {
   await a.page.reload(); await a.page.waitForTimeout(1100); await a.page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   const a4 = await vu(a.page);
   // l'option coupée : plus rien, rien de gardé
-  await a.ctx.grantPermissions(['geolocation']);
+  // L'autorisation rendue, la page encore ouverte le voit et redemande la ville (voulu) : on laisse cette demande
+  // finir avant de recharger, sinon le rechargement la coupe (ERR_ABORTED), une fois sur trois (prouvé le 8 octobre)
+  await a.ctx.grantPermissions(['geolocation']); await a.page.waitForTimeout(600);
   await a.page.reload(); await a.page.waitForTimeout(1100); await a.page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   const a5 = await vu(a.page);
   await choisir(a.page);
