@@ -176,7 +176,7 @@ let ids;
   await leapClosed(page, 24 * 3600e3);
   const disabledNextDay = await isOpen(page);
   const entry = await page.textContent('#matin-entry-n');
-  ok(!at830 && at905 && label === 'Point du matin · 09 h 00', 'Heure modifiée à 9 h : rien à 8 h 30, affiché à 9 h 05', `8 h 30 : ${at830}, 9 h 05 : ${at905}, menu : « ${label} »`);
+  ok(!at830 && at905 && label.replace(/\u00A0/g, ' ') === 'Point du matin · 09 h 00', 'Heure modifiée à 9 h : rien à 8 h 30, affiché à 9 h 05', `8 h 30 : ${at830}, 9 h 05 : ${at905}, menu : « ${label} »`);
   ok(!disabledNextDay && entry === 'Désactivé', 'Désactivé : plus d\'affichage, l\'accueil le dit', `affiché : ${disabledNextDay}, accueil : « ${entry} »`);
   await ctx.close();
 }

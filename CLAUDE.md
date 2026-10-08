@@ -4,7 +4,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 480 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 840 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
@@ -13,6 +13,9 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
   `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `entree-fond.mjs` (fond de l'écran d'entrée : contraste mesuré dans l'image, six couleurs dans le fond et pas dans les lettres),
+  `accueil.mjs` (accueil, vide et rempli : mêmes mesures, barre du haut de 360 à 430 px, moment de la journée ;
+  ordre de l'accueil, prochaine étape, « Ensuite », projets endormis et réveillés, cases à leur juste taille,
+  nombre d'espaces, ville par la position avec un faux appareil et un faux service),
   `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
   `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
@@ -24,7 +27,12 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Cinq mondes (tableau `WORLDS`, l'`id` est l'index) : ARYAN, FBA, KITCHEN, TELENEUF, ATLAS.
 - Le contenu d'un monde (tâches, bloquants, mission) est écrit en dur dans `WORLDS` ; ce que Rayan coche vit dans `S`.
 - Changer la liste des mondes ou marquer des tâches comme faites : incrémenter `WORLDS_V` et compléter `migrateWorlds`.
+- Un projet peut être « endormi » : `S.sleep[id]` (`mondeDort`, `mondeSommeil`, `renderSommeil`) ; c'est la seule
+  source, pour l'accueil comme pour la note « Endormi. » envoyée au proxy de rangement (`rangeSpaces`).
 - Deux pôles personnels : Santé et Juridique.
+- Ma ville (option, menu « ··· ») : ville et pays d'après la position de l'appareil ; réglage et dernière ville dans
+  `arc_lieu_v1` sur l'appareil (jamais dans `S`) ; nom de la ville demandé à BigDataCloud (`lieuCheck`, `lieuDemander`,
+  `lieuNom`, `lieuBascule`).
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
 - Connexion : adresse + mot de passe (`authGo`), ou code à 6 chiffres / lien par e-mail (`authSendCode`, `authVerifyCode`) ; `showAuthScreen` ; `getUID` = identifiant du compte.
@@ -46,7 +54,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -476,6 +484,8 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     l'écran d'entrée), entrée-fond 40/40 (tête de la carte : date, heure, aucun mot d'état), mondes 6/6, pôles 9/9,
     dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible 5,03 : 1 ;
     573 `<div` / 573 `</div>`.
+- **PR #13 fusionnée par Rayan le 8 octobre à 4 h 59** (« go c'est fait ») : l'écran d'entrée est en ligne dans son
+  état final (frise en feux de départ, effet, bouton blanc, date et heure, plus de « Continuer sans connexion »).
 - **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
   (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
   sur les données à la création de compte (texte à écrire avec lui).
@@ -485,6 +495,203 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   compte contient du contenu Santé ou Juridique. Vu dans ses captures : la barre du haut de l'accueil déborde à
   droite sur iPhone (« Non connecté » et « War Room » sur deux lignes), pas corrigé.
 - **À suivre, demandé par Rayan** : « finir de modifier cette page » (l'écran d'entrée), après la connexion.
+
+Accueil, l'intérieur (branche `interieur-accueil`, 8 octobre 5 h, partie de `main` à `4bb5daf`) :
+- Rayan : « on attaque l'intérieur d'ARC ». Premier écran après la connexion : l'accueil (`#S1`). Même contenu, même
+  ordre, mêmes fonctions ; le dessin change, dans l'identité de l'écran d'entrée (bloc de style « ACCUEIL,
+  l'intérieur » à la fin de la feuille, après celui d'`accueil-v2`).
+- **Mesuré avant** (iPhone 390, `main`) : 9 cibles sous 44 px (état de synchronisation 36 px, Recherche et War Room
+  40 px, menu 40 px, boutons de projet 34 px), 9 textes sous 12 px, 33 emoji, la barre du haut sortait de l'écran
+  (« War Room » sur deux lignes, menu « ··· » coupé à droite), deux identifiants `hgrid`. **Après** : zéro partout.
+- **L'écriture** : police du système pour tout le texte de l'accueil (`#S1{--f:var(--fa)}` ; San Francisco sur iPhone
+  et Mac), Plus Jakarta Sans pour les titres seulement (`--ft` : titre, noms des mondes et des pôles), chasse fixe
+  pour les petits libellés en capitales et les chiffres. `--fa` et `--ft` sont maintenant sur `:root`.
+- **L'horizon d'ARC** (`.h-horizon`, un élément ajouté sous le titre) : un arc net orange → rose → violet avec sa
+  lueur, qui porte le poste de commande (Déposé, Point du jour, compteurs), comme l'horizon vert porte la carte de
+  l'entrée. Un dégradé masqué par un anneau (`mask`, déjà utilisé pour les pictogrammes) ; aucun mode de fusion. Il
+  s'allume à l'arrivée sur l'accueil (`hHorizon`, une fois, rien si l'appareil demande moins d'animations). Sur
+  grand écran l'arc est plus plat et ses bouts se fondent dans le noir.
+- **Barre du haut** : son contenu s'aligne sur celui de la page, son fond va d'un bord à l'autre (`.hn::before`) ;
+  boutons de 44 px ; sur téléphone, Recherche et War Room n'ont plus que leur pictogramme (le nom reste pour les
+  lecteurs d'écran, `aria-label`) ; l'état de synchronisation se raccourcit au lieu de pousser les boutons dehors.
+  Tient de 360 à 430 px, quel que soit l'état. Menu « ··· » : lignes de 48 px.
+- **Pictogrammes au trait** (une famille, trait de 1,7, masque teinté) à la place des emoji : fusée, boîte, poêle,
+  écran, boussole pour les cinq mondes (par `data-wid` ; un monde inconnu a un pictogramme « monde ») ; cœur et
+  balance pour les pôles ; lune, soleil, soleil couchant pour le moment de la journée ; flèches « Actualiser » et
+  « Ouvrir ». L'emoji des mondes et des pôles reste dans les données, masqué (taille 0). Les emoji écrits par le code
+  de l'accueil sont retirés (« ⚡ 3 bloquants », « 🔴 CRITIQUE », « ▶ », boutons de projet).
+- **Mots, petites corrections** : la date n'est plus écrite deux fois (la pastille dit le moment : « Nuit », « Matin »,
+  « Après-midi », « Soirée » ; la date reste sous le titre) ; « Offline » → « Hors ligne » ; l'heure ne se coupe plus
+  (« 08 h 00 » avec des espaces insécables posées par le code, charte règle 4 ; `tests/matin.mjs` en tient compte) ;
+  section vide « Tes 5 projets » et son doublon `#hgrid` retirés du balisage.
+- `tests/mesure.mjs` : un texte coupé par son propre bloc (lignes masquées, points de suspension) n'est plus mesuré
+  hors de ce bloc.
+- **Pas touché, à décider par Rayan** : l'ordre de l'accueil (« Prochaines étapes » n'arrive qu'au deuxième écran,
+  après les compteurs et la progression, alors que c'est le cœur de la vision) ; FBA, KITCHEN et TELENEUF, déclarés
+  « endormis » le 5 octobre, s'affichent encore « CRITIQUE » avec leurs bloquants ; « 14 bloquants. Résous
+  maintenant. » (ton pressant, la vision dit sans reproche) ; « Valence » et « Sept espaces » écrits en dur.
+- **Pas touché, à faire ensuite** : le cockpit d'une tâche, les tiroirs, la War Room, la recherche ; les mondes et
+  les pôles gardent Plus Jakarta Sans pour le texte (à passer à la police du système quand l'accueil sera validé).
+- Tests : accueil 8/8 (nouveau), entrée-fond 40/40, connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
+  25/25, matin 27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 4,89 : 1 ; 571 `<div` / 571 `</div>`.
+  Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone** (police San Francisco, horizon masqué).
+
+Accueil, le poste de commande (même branche `interieur-accueil`, PR #14, 8 octobre 6 h) :
+- Rayan (5 h 50) : « on se veut en expert design et en expert fonctionnalité », « revoir ce qu'on propose, ce qu'on
+  est censé proposer en respectant la vision », « nos objectifs, les vrais, sans se perdre avec tout ce qui a été
+  dit » ; le design qu'il a apprécié se maintient et se continue dans les chantiers suivants.
+- **Règle à garder : l'accueil a UN but, la prochaine étape** (vision : le geste central et « la valeur est dans le
+  retour » ; étude complète, écran « Aujourd'hui »). Tout ce qui s'y ajoute passe en dessous ou n'y entre pas.
+- **L'ordre** : barre du haut ; moment, titre, « Valence · date » ; l'horizon d'ARC ; **« Prochaine étape »** (une
+  carte de verre à la couleur de son espace, « C'est fait » = la seule touche blanche de l'écran, « Fixer un moment »
+  si elle n'en a pas) ; **« Ensuite »** (une ligne par étape, toute la ligne ouvre la pensée dans « Déposé ») ;
+  « N pensées à ranger » ; « Déposé » et « Point du jour » ; **« Projets »** (ceux qui avancent, puis la liste
+  « Endormis ») ; **« Ma vie »** (Santé, Juridique, cartes plus calmes) ; pied. Sur iPhone 390 × 844 la prochaine
+  étape et sa touche sont dans le premier écran ; l'accueil passe de 4 744 px à 2 277 px de haut.
+- **Sortis de l'accueil** (verdict « supprimer » de l'inventaire de `docs/ETUDE-COMPLETE.md`) : les quatre compteurs,
+  la progression globale et sa phrase tirée au sort, « N bloquants. Résous maintenant. », « CRITIQUE » et
+  « URGENCE », les étiquettes techniques des cartes, « Check-in du jour manquant » et le point qui clignote, l'ajout
+  rapide de tâche (le dépôt le remplace), « Veille & Sources » (figée depuis avril ; `renderIntel`, `INTEL_STATIC`,
+  `renderQA`, `animateCount` retirés, 129 lignes de style mortes aussi). Aucune donnée n'est effacée : `S.intel` et
+  les tâches restent dans l'état.
+- **Projets endormis** (décision du 5 octobre, enfin dans la page) : `WORLDS_V` = 3, `migrateWorlds` endort FBA,
+  KITCHEN et TELENEUF une fois (`S.sleep`) ; ensuite c'est Rayan qui décide. Un projet endormi quitte les cartes :
+  une ligne sous « Endormis » (anneau, nom, « Réveiller ») ; la ligne ouvre toujours le monde. Dans chaque monde, en
+  bas : « Endormir ce projet » / « Réveiller ce projet » (`.w-sommeil`). `RANGE_DORMANT` n'existe plus : la note
+  « Endormi. » envoyée au proxy suit `S.sleep`. Piège connu : un appareil resté sur une ancienne version de la page
+  renvoie un état sans `sleep` ; à la lecture suivante les trois projets se rendorment.
+- Carte d'un projet : pictogramme, « N bloquants » avec un point ambre (un fait, sans rouge ni ordre), nom,
+  description sur deux lignes, progression, prochaine tâche. Le titre « Sept espaces. » est calculé (mondes + pôles).
+- Mots : « Prochaine étape », « Ensuite », « Projets », « Ma vie », « Endormis », « Réveiller », « 2 en cours ·
+  3 endormis » ; état vide : « Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine
+  étape. » ; Santé : « Ton suivi du jour, tes habitudes et tes objectifs. » (ce que l'écran fait aujourd'hui ;
+  l'ancienne phrase promettait « performance, accompagnement »).
+- Mac : la prochaine étape prend toute la largeur, sa touche à droite. Le raccourci « K recherche » du pied ne se
+  montre que là où il y a un clavier.
+- **À décider par Rayan (signalé, pas touché)** : « Valence » et le titre « Un cerveau. Sept espaces. » (vision :
+  plus rien en dur) ; la War Room dans la barre du haut (elle s'ouvre sur ARYAN, tâches écrites en avril) ; le
+  contenu de Santé (suivi à curseurs) ; les tâches et bloquants d'ARYAN et d'ATLAS affichés sur les cartes datent
+  de l'état reconstitué, pas des pensées déposées (le lien pensée → projet reste à construire).
+- Tests : accueil 12/12 (quatre contrôles ajoutés : ordre et retraits, prochaine étape dans le premier écran,
+  « Ensuite » et « C'est fait », endormir et réveiller avec rechargement ; le moment de la journée pose l'heure au
+  lieu de l'avancer, l'avance échouait parfois sous charge), entrée-fond 40/40, connexion 27/27, mondes 6/6, pôles
+  9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 5,41 : 1 ;
+  538 `<div` / 538 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
+
+Entrée, accueil épuré, ville (même branche `interieur-accueil`, PR #14, 8 octobre 7 h) :
+- Rayan (6 h 41, dicté) : le nombre d'espaces du titre suit les espaces réels ; « Valence » vient de la position de
+  l'appareil, ville et pays, et rien si la position n'est pas activée ou a été retirée ; sur l'écran d'entrée, « Garde
+  en tête le strict nécessaire. Le reste prend vie ici. » prend la place de « Tu as une idée. Elle devient réelle. »
+  (couleur à mon choix, « ça permettra à tout le reste de remonter ») ; sur l'accueil, « certaines choses doivent être
+  supprimées sans même te dire », « la typographie doit être reprise immédiatement », « certaines cases sont assez
+  grosses pour ce qu'elles sont » ; il invite à ajouter une idée de design ou de fonction.
+- **Écran d'entrée, le titre** : « Garde en tête / le strict nécessaire. » en blanc, « Le reste prend vie ici. » dans
+  le dégradé d'ARC ; trois lignes, coupées là où la phrase respire (`white-space:nowrap`, `<br>`), de 30 à 42 px ;
+  `.auth-pitch` n'existe plus. Sur iPhone 390 × 844 la carte finit à 793 px (elle remonte). Contraste le plus faible
+  4,94 : 1. `tests/entree-fond.mjs` : 41 contrôles (un ajouté : le titre de 360 à 1440 px).
+- **Le nombre d'espaces** : déjà compté (`WORLDS.length + POLES.length`), maintenant vérifié (« Six espaces. »,
+  « Un espace. »). **Ajouter ou retirer un espace depuis ARC n'existe pas encore** (les mondes sont écrits dans le
+  code) : c'est le chantier « faire naître un monde depuis une pensée » ; le titre suivra tout seul.
+- **Ma ville** (module « MA VILLE » dans `index.html`) : menu « ··· » › « Afficher ma ville ». Coupée par défaut : rien
+  ne s'affiche et rien n'est demandé. Activée : le navigateur demande la position ; ARC affiche « ville, pays » après
+  la date. Position refusée, autorisation retirée ou option coupée : rien, et la ville gardée est oubliée ; si
+  l'autorisation revient, la ville revient seule. Vérifiée au lancement et au retour au premier plan (dix minutes au
+  moins entre deux lectures).
+  - **Donnée, à connaître** : pour trouver le nom de la ville, la position arrondie à 3 décimales (une centaine de
+    mètres) part du navigateur vers `api.bigdatacloud.net` (service gratuit, sans clé, prévu pour le navigateur), au
+    plus une fois tant que l'appareil n'a pas bougé d'un kilomètre. Jamais appelé sans coordonnées (il localiserait
+    par l'adresse IP). Rien n'est écrit dans `S` ni dans Supabase ; `sw.js` ne garde pas la réponse en cache.
+    Le pays s'écrit avec `Intl.DisplayNames` (« Royaume-Uni », pas la forme longue).
+  - **Pas essayé avec le vrai service ni sur un vrai téléphone** : prouvé contre un faux appareil et un faux service.
+    Sans session (écran d'entrée), ARC ne demande jamais la position ; après un refus, pas de nouvelle demande
+    avant dix minutes.
+    Sur iPhone, Safari peut redemander l'autorisation à chaque ouverture tant que le site n'est pas sur « Autoriser »
+    (Réglages › Apps › Safari › Position).
+- **Accueil épuré** (bloc de style unique « ACCUEIL : un seul but… » ; les règles de contenu des trois couches
+  précédentes sont retirées, 150 lignes de style en moins) :
+  - Le haut : une ligne (pictogramme du moment, date, ville) puis le titre sur UNE ligne (25 à 31 px, 40 px sur
+    Mac ; dégradé éclairci `#FFA51F → #FF6B81 → #D596F7` car le titre est plus petit et plus près de l'horizon).
+    La pastille « Matin / Nuit » et la ligne « Valence · date » n'existent plus (`#h-quand`, `#h-date`, `#h-lieu`).
+  - Écriture du système partout ; titres de section en 17 px demi-gras (« Prochaine étape », « Ensuite »,
+    « Projets », « Ma vie ») ; plus aucune petite capitale à chasse fixe sur l'accueil.
+  - « N pensées à ranger » : une ligne fine avec un point ambre. « Déposé » et « Point du jour » : deux tuiles côte à
+    côte (58 px au lieu de deux cases de 60 px empilées).
+  - Projets en cours : une ligne chacun (`.pj` : pictogramme, nom, prochaine tâche, pourcentage, trait de progression
+    en bas), 66 px au lieu de 255 px. Retirés de l'accueil : la description et « N bloquants » (ils sont dans le projet).
+  - Endormis : repliés en une ligne (« Endormis · FBA, KITCHEN, TELENEUF », `#h-dort-tog`, `_dortOuvert`) ; dépliés,
+    une ligne chacun avec « Réveiller ».
+  - Ma vie : deux tuiles côte à côte (`.vie`), sans description ; une seconde ligne seulement s'il y a quelque chose
+    à dire (« Check-in fait », « 3 éléments »).
+  - Retirés : « ARC v2 · K recherche » en pied, « RAYAN · VALENCE » sous le logo.
+  - Lignes de projet et tuiles se touchent au clavier (`role="button"`, Entrée ou Espace).
+  - Hauteur de l'accueil sur iPhone 390 × 844 : 872 px vide (un écran), 1 171 px rempli (4 744 px en ligne le matin).
+- Tests : accueil 17/17 (cinq contrôles ajoutés : cases à leur juste taille, nombre d'espaces, ville autorisée,
+  ville refusée, aucune demande de position sans session), entrée-fond 41/41, connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19, rangement 25/25, matin
+  27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 5,96 : 1 ; 519 `<div` / 519 `</div>`. Vérifié dans
+  Chromium seulement : **à voir par Rayan sur son iPhone.**
+- **Toujours à décider par Rayan** : la War Room dans la barre du haut ; le contenu de Santé ; « RAYAN » et « Valence »
+  restent dans les contenus des projets et dans les consignes envoyées à Claude (ce sont ses projets, pas l'écran).
+
+Mondes et pôles, l'écriture de l'accueil (branche `interieur-mondes`, 8 octobre 8 h, partie de `interieur-accueil` à `4684c0a`) :
+- **État au départ** : PR #14 ouverte, pas fusionnée (vérifié à 7 h 55, « mergeable » sans conflit) ; `main` à `4bb5daf`.
+  La branche part donc de `interieur-accueil` : **la PR #14 se fusionne d'abord, celle-ci ensuite.**
+- Rayan (7 h 54) : « on continue l'intérieur d'ARC, dans le même design : les mondes et les pôles (même écriture que
+  l'accueil), puis le cockpit d'une tâche, les tiroirs, la War Room, la recherche » ; garder « fond noir, horizons de
+  couleur, verre sombre, police d'Apple, une seule touche blanche par écran, pictogrammes au trait, pas d'emoji ».
+- Même contenu, même ordre, mêmes fonctions. Un seul bloc de style à la fin de la feuille (« MONDES ET PÔLES :
+  l'écriture de l'accueil ») ; les règles d'en-tête des deux passes du 7 octobre sont retirées.
+- **L'écriture** : police du système partout sur `#S2`, `#S3`, `#S4` (`--f` et `--fm` y valent `--fa`) ; Plus Jakarta
+  Sans pour le nom du monde et le titre du pôle seulement (`--ft`) ; plus de chasse fixe ni de petites capitales ;
+  titres de section à 17 px demi-gras, sans filet, comme « Projets » et « Ma vie ».
+- **L'en-tête n'est plus une carte** : sur le noir, une ligne (la catégorie), le nom dans sa couleur, l'anneau, la
+  description, puis **l'horizon de l'espace d'un bord à l'autre** (`.x-horizon`, un élément ajouté ; la même règle
+  que `.h-horizon` de l'accueil, couleurs par `--c1`, `--c2`, `--c3`). Plus calme pour Santé et Juridique (couleurs
+  à demi éteintes). **Piège prouvé : ne jamais mettre d'`opacity` sur `.x-horizon`** : elle en fait un plan à part et
+  sa lueur passe au-dessus des cartes (le texte d'attente de la recherche juridique tombait à 3,39 : 1).
+- **Pictogrammes** : ceux des espaces sont des variables sur `:root` (`--ico-w0` à `--ico-w4`, `--ico-monde`,
+  `--ico-sante`, `--ico-juridique`), partagées par l'accueil et la barre du haut des mondes et des pôles
+  (`#S2[data-wid]`, posé par `enterWorld`) ; étoile, étoile pleine et croix au trait à la place de ★ et ✕
+  (`--ico-etoile`, `--ico-etoile-pleine`, `--ico-croix`) ; chevrons dessinés à la place de → et ↗.
+- **Les cases à leur juste taille** (iPhone 390) : compteurs en une bande de quatre (60 px au lieu de quatre tuiles),
+  lignes de 54 px, description repliée à trois lignes avec « Lire la suite » / « Réduire » (`descRepli`, le bouton ne
+  se montre que si le texte dépasse). ARYAN : 4 078 → 3 408 px de haut, l'action prioritaire remonte de 953 à 650 px
+  (elle entre dans le premier écran). Santé : 2 636 → 2 129 px. Juridique : 1 208 → 1 023 px.
+- **Un seul repère de progression** : l'anneau (« 66 % fait », espace fine insécable) ; la pastille de la barre du
+  haut est masquée. **Un bloquant est un fait** : ambre, comme sur l'accueil (plus de rouge sur le compteur, les
+  cartes et le bouton d'ajout).
+- **La touche blanche** : « Sauvegarder le check-in » sur Santé (le vert plein est retiré). Les mondes n'ont pas de
+  touche blanche propre : la seule est « Déposer ». **À décider avec Rayan** quand le lien pensée → projet existera.
+- Mots : « Accueil » sur le bouton de retour des mondes (« Mondes » avant ; les pôles disaient déjà « Accueil ») ;
+  « Focus », « Lire la suite », « Réduire », « Aucun bloquant. » ; accents : « Mettre à jour », « Fatigue détectée ».
+- **Trois défauts déjà en ligne, prouvés puis réparés** :
+  1. La poignée ↕ de chaque tâche ne déplaçait rien : aucun code de glisser-déposer, `S.taskOrder` est lu
+     (`renderTasks`) et jamais écrit. Elle est masquée.
+  2. La croix ✕ ne supprime que les tâches ajoutées à la main (`del-task` filtre `S.custom`) ; sur une tâche écrite
+     dans le monde elle ne faisait rien de visible. Elle ne s'affiche plus que sur les tâches ajoutées. **Toujours
+     vrai : elle supprime sans confirmation ni annulation** (charte, règle 11) ; à traiter avec le cockpit.
+  3. On revenait dans un monde ou un pôle à l'endroit où on l'avait quitté (`showScreen` ne remonte rien) : on y
+     arrive maintenant par le haut (charte, règle 8).
+- **Vu, pas touché** : sur iPhone, Claude n'est pas accessible depuis un monde ni un pôle (le panneau est masqué sous
+  768 px et le bouton `#fab-claude` n'existe pas dans le balisage) ; les étiquettes « CHEMIN CRITIQUE », « BLOQUÉ »,
+  « URGENT » et « Journalise maintenant. » sont des contenus pressants ; le minuteur de la barre du haut (Mac) ;
+  `wbg` n'est plus lu (le fond des mondes est noir, la couleur vient de l'en-tête) ; « Aides » et les suggestions
+  juridiques nomment toujours Valence et ARYAN ; le contenu de Santé (curseurs, score, « jour de suite »).
+- Tests : `tests/mondes.mjs` et `tests/poles.mjs` contrôlent en plus l'écriture (police du système, ni chasse fixe ni
+  capitales, sections à 17 px), l'horizon d'un bord à l'autre, un seul repère de progression, la description en
+  trois lignes, le retour par le haut. `tests/accueil.mjs` : le contrôle du menu attend la fin de son ouverture
+  (il échouait une fois sur six : mesuré pendant le fondu de 180 ms). Résultats : accueil 17/17, entrée-fond 41/41,
+  connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus
+  faible : 5,28 : 1 (mondes), 5,68 : 1 (pôles) ; largeurs 360, 375, 393 et 430 px sans débordement ni libellé coupé ;
+  522 `<div` / 522 `</div>`. Vérifié dans Chromium seulement, où la police du système est Inter : **San Francisco,
+  le verre et les horizons masqués restent à voir par Rayan sur son iPhone.**
+- **Outillage de cette session** : les serveurs des bibliothèques (cdnjs, jsdelivr, Google Fonts) étaient
+  injoignables depuis l'environnement de travail ; les tests ont tourné avec les mêmes bibliothèques et polices
+  installées par npm et servies localement (rien n'est ajouté au dépôt ni à la page).
+- **Suite, dans l'ordre demandé** : le cockpit d'une tâche, les tiroirs, la War Room, la recherche (ils gardent
+  l'ancienne écriture ; un tiroir ouvert depuis un monde se voit donc encore « d'avant »).
+- **Décisions que Rayan doit encore prendre** : la War Room dans la barre du haut ; le contenu de Santé (curseurs,
+  ou mémoire, échéances et rendez-vous) ; sa position envoyée à BigDataCloud pour afficher sa ville ; « Ce soir »
+  après 23 h ; une ligne sur les données à la création de compte.
 
 ### Décisions de Rayan (5 octobre)
 

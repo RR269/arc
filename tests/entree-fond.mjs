@@ -289,6 +289,25 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
      'Frise : trois phrases complètes, une ligne chacune sur iPhone (375 à 430 px)', a390.map(v => `${v.mot} · ${v.phrase}`).join(' | ') + (trop.length ? ` ; sur deux lignes : ${trop.map(v => v.mot + ' à ' + v.w + ' px').join(', ')}` : ''));
 }
 
+/* 7 bis. Le titre (demande de Rayan, 8 octobre 6 h 41) : sa phrase, « Garde en tête le strict nécessaire. Le reste
+   prend vie ici. », a pris la place de « Tu as une idée. Elle devient réelle. » ; plus de ligne sous le titre.
+   Trois lignes, jamais coupées ailleurs, de 360 à 1440 px ; toute la carte tient dans le premier écran de l'iPhone. */
+{
+  const vus = [];
+  for (const [w, h] of [[360, 800], [375, 812], [390, 844], [430, 932], [1440, 900]]) {
+    const { ctx, page } = await open({ width: w, height: h }, 1);
+    vus.push(await page.evaluate(w => { const t = document.querySelector('#auth-screen .auth-h1'), box = document.querySelector('.auth-box').getBoundingClientRect(), g = document.createRange();
+      const lignes = el => { g.selectNodeContents(el); return [...g.getClientRects()].filter(x => x.width > 1); };
+      const a = lignes(t.querySelector('.auth-h1-light')), b = lignes(t.querySelector('.auth-h1-gradient')), carte = document.querySelector('.auth-card').getBoundingClientRect();
+      return { w, texte: t.innerText.replace(/\s+/g, ' ').trim(), blanc: new Set(a.map(x => Math.round(x.top / 4))).size, couleur: new Set(b.map(x => Math.round(x.top / 4))).size, deborde: [...a, ...b].some(x => x.right > box.right + 0.5 || x.left < box.left - 0.5),
+               taille: parseFloat(getComputedStyle(t).fontSize), dessous: !!document.querySelector('#auth-screen .auth-pitch'), carteBas: Math.round(carte.bottom), ecran: innerHeight }; }, w));
+    await ctx.close();
+  }
+  const faux = vus.filter(v => v.texte !== 'Garde en tête le strict nécessaire. Le reste prend vie ici.' || v.blanc !== 2 || v.couleur !== 1 || v.deborde || v.dessous || v.taille < 28 || (v.w <= 430 && v.carteBas > v.ecran));
+  ok(vus.length === 5 && !faux.length, 'Titre : « Garde en tête le strict nécessaire. » en blanc sur deux lignes, « Le reste prend vie ici. » en dégradé sur une ligne, sans ligne dessous, de 360 à 1440 px ; la carte tient dans le premier écran du téléphone',
+     vus.map(v => `${v.w} px : ${v.taille.toFixed(0)} px, carte jusqu'à ${v.carteBas} sur ${v.ecran}`).join(' ; ') + (faux.length ? ` ; en défaut : ${faux.map(v => v.w + ' px « ' + v.texte + ' » ' + v.blanc + '+' + v.couleur + ' lignes').join(', ')}` : ''));
+}
+
 /* 8. L'effet (demande de Rayan, 8 octobre 2 h) : la lumière arrive quelque part et l'écran répond, sans rien inventer.
       État réel en tête de la carte, bouton armé quand les identifiants sont complets, étincelle, onde, comète, reflet
       sur la carte et halo du bouton dans l'ordre, mots éteints encore lisibles, passage vers ARC. */

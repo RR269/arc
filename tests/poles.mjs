@@ -41,7 +41,7 @@ const releve = ({ id, main, hero }) => {
   const champs = [...root.querySelectorAll('input, textarea, select')].filter(vis).filter(e => e.type !== 'range' && parseFloat(getComputedStyle(e).fontSize) < 16).map(nom);
   const fusion = []; for (const e of root.querySelectorAll('*')) for (const ps of [null, '::before', '::after']) { const m = getComputedStyle(e, ps).mixBlendMode; if (m && m !== 'normal') fusion.push(nom(e)); }
   const m = root.querySelector(main), barre = [...root.querySelectorAll('.ptop button')].every(b => { const r = b.getBoundingClientRect(); return r.left >= 0 && r.right <= innerWidth; });
-  return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], champs, picto, fusion, barre, horizon: /radial-gradient/.test(getComputedStyle(root.querySelector(hero)).backgroundImage),
+  return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], champs, picto, fusion, barre, horizon: (h => /radial-gradient/.test(h.maskImage || h.webkitMaskImage || '') && /gradient/.test(h.backgroundImage))(getComputedStyle(root.querySelector('.x-horizon'), '::before')), ecriture: (() => { const mono = new Set(), capit = new Set(); const tw3 = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); for (let nd; (nd = tw3.nextNode());) { const e = nd.parentElement; if (!nd.nodeValue.trim() || !vis(e)) continue; const cs = getComputedStyle(e); if (parseFloat(cs.fontSize) === 0) continue; if (/mono/i.test(cs.fontFamily)) mono.add(nom(e)); if (cs.textTransform === 'uppercase') capit.add(nom(e)); } const f = e => { const x = root.querySelector(e); return x ? getComputedStyle(x).fontFamily.split(',')[0].trim() : '-apple-system'; }; return { mono: [...mono], capit: [...capit], systeme: [f('.psec-lbl'), f('.p-back'), f('.wnotes-ta, .hab-inp')], section: getComputedStyle(root.querySelector('.psec-lbl')).fontSize }; })(),
            large: document.documentElement.scrollWidth <= innerWidth && m.scrollWidth <= m.clientWidth + 1, ouvert: !root.classList.contains('off') };
 };
 
@@ -89,6 +89,7 @@ for (const vp of ECRANS) {
       if (r.picto.length) defauts.push(`${ou} emoji : ${r.picto.join('')}`);
       if (r.fusion.length) defauts.push(`${ou} mode de fusion : ${r.fusion.join(', ')}`);
       if (!r.horizon) defauts.push(`${ou} : pas d'horizon dans l'en-tête`);
+      { const e = r.ecriture; if (e.mono.length || e.capit.length || e.section !== '17px' || e.systeme.some(f => !/apple-system|BlinkMacSystemFont/i.test(f))) defauts.push(`${ou} : écriture (chasse fixe ${e.mono.slice(0, 4).join(', ') || 'aucune'} ; capitales ${e.capit.slice(0, 4).join(', ') || 'aucune'} ; sections ${e.section} ; ${e.systeme.join(' / ')})`); }
       if (!r.large || !r.barre) defauts.push(`${ou} : débordement (page ${r.large}, barre ${r.barre})`);
       // contraste : la barre du haut, puis tout ce qui défile, écran par écran ; sur Mac, le panneau Claude aussi
       const zones = [{ racine: `#${p.id} .ptop` }]; if (!vp.tel) zones.push({ racine: `#${p.id} .pcp` });
@@ -104,7 +105,7 @@ for (const vp of ECRANS) {
     await page.evaluate(() => goHome()); await page.waitForTimeout(150);
   }
   if (contrastes.length) { const g = {}; for (const m of contrastes) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0 }; e.nb++; e.min = Math.min(e.min, m.ratio); } detail[vp.n] = Object.entries(g).map(([k, e]) => `${e.min.toFixed(2)}  ${k}  (${e.nb})`); }
-  ok(!defauts.length, `${vp.n} : Santé et Juridique respectent la charte, vides et remplis (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon)`, defauts.slice(0, 4).join(' ; '));
+  ok(!defauts.length, `${vp.n} : Santé et Juridique respectent la charte, vides et remplis (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon ; écriture de l'accueil : police du système, ni chasse fixe ni capitales, sections à 17 px)`, defauts.slice(0, 4).join(' ; '));
   ok(n > 150 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout, dans les deux pôles`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   ok(reste, `${vp.n} : Santé, un objectif se coche, une habitude aussi, une note s'ajoute ; Juridique, la section reste ouverte quand on y ajoute un élément ou qu'on le marque fait`);
   ok(errors.length === 0, `${vp.n} : aucune erreur de console`, errors.join(' | '));

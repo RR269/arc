@@ -35,8 +35,15 @@ const releve = () => {
   const picto = [...root.querySelectorAll('.wtop, .w-hero, #cp-welcome')].filter(vis).flatMap(z => { const o = []; const t = document.createTreeWalker(z, NodeFilter.SHOW_TEXT);
     for (let nd; (nd = t.nextNode());) { const e = nd.parentElement; if (!vis(e) || parseFloat(getComputedStyle(e).fontSize) === 0) continue; const m = nd.nodeValue.match(/\p{Extended_Pictographic}/gu); if (m) o.push(...m.filter(c => !'↗↕★✕'.includes(c))); } return o; });
   const fusion = []; for (const e of root.querySelectorAll('*')) for (const ps of [null, '::before', '::after']) { const m = getComputedStyle(e, ps).mixBlendMode; if (m && m !== 'normal') fusion.push(nom(e)); }
-  const hero = getComputedStyle(root.querySelector('.w-hero'));
-  return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], champs, picto, fusion, horizon: /radial-gradient/.test(hero.backgroundImage), fait: root.querySelector('.wband-ring-lbl').textContent,
+  const hz = getComputedStyle(root.querySelector('.x-horizon'), '::before');
+  const police = e => { const x = root.querySelector(e); return x ? getComputedStyle(x).fontFamily.split(',')[0].trim() : ''; };
+  // L'écriture de l'accueil : ni chasse fixe ni petites capitales, titres de section à 17 px, un seul repère de progression
+  const mono = [], capit = []; const tw2 = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  for (let nd; (nd = tw2.nextNode());) { const e = nd.parentElement; if (!nd.nodeValue.trim() || !vis(e)) continue; const cs = getComputedStyle(e); if (parseFloat(cs.fontSize) === 0) continue; if (/mono/i.test(cs.fontFamily)) mono.push(nom(e)); if (cs.textTransform === 'uppercase') capit.push(nom(e)); }
+  const desc = root.querySelector('.w-hero-desc'), lh = parseFloat(getComputedStyle(desc).lineHeight);
+  return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], champs, fusion, horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), mono: [...new Set(mono)], capit: [...new Set(capit)], systeme: [police('.w-hero-desc'), police('.wsec-lbl'), police('.wtask-txt'), police('.wm-l'), police('.w-back')], titre: police('.w-hero-name'), section: getComputedStyle(root.querySelector('.wsec-lbl')).fontSize,
+           reperes: [...root.querySelectorAll('.w-pct-b, .wband-ring-pct')].filter(vis).length, pct: root.querySelector('.wband-ring-pct').textContent, lignesDesc: Math.round(desc.getBoundingClientRect().height / lh), suite: !root.querySelector('.w-hero-more').hidden, deborde: desc.scrollHeight > desc.clientHeight + 1,
+           picto: picto.concat([...root.querySelectorAll('.wtask-row button, .wblk-arr, .w-focus-open')].filter(vis).filter(e => parseFloat(getComputedStyle(e).fontSize) > 0 && /[★✕↕→↗]/.test(e.textContent)).map(e => e.textContent.trim())), poignee: [...root.querySelectorAll('.drag-handle')].filter(vis).length, fait: root.querySelector('.wband-ring-lbl').textContent,
            large: document.documentElement.scrollWidth <= innerWidth && document.getElementById('wmain').scrollWidth <= document.getElementById('wmain').clientWidth + 1,
            nom: document.getElementById('wband-name').textContent, ouvert: !root.classList.contains('off') };
 };
@@ -60,6 +67,10 @@ for (const vp of ECRANS) {
     if (r.fusion.length) defauts.push(`${r.nom} mode de fusion : ${r.fusion.join(', ')}`);
     if (!r.horizon || r.fait !== 'fait') defauts.push(`${r.nom} : horizon ${r.horizon}, libellé « ${r.fait} »`);
     if (!r.large) defauts.push(`${r.nom} : débordement horizontal`);
+    if (r.mono.length || r.capit.length) defauts.push(`${r.nom} : chasse fixe ${r.mono.slice(0, 4).join(', ') || 'aucune'}, capitales ${r.capit.slice(0, 4).join(', ') || 'aucune'}`);
+    if (r.systeme.some(f => !/apple-system|BlinkMacSystemFont/i.test(f)) || !/Plus Jakarta Sans/.test(r.titre) || r.section !== '17px') defauts.push(`${r.nom} : écriture ${r.systeme.join(' / ')}, titre ${r.titre}, section ${r.section}`);
+    if (r.reperes !== 1 || !/^\d+[\u00A0\u202F]%$/.test(r.pct)) defauts.push(`${r.nom} : ${r.reperes} repères de progression, « ${r.pct} »`);
+    if (r.lignesDesc > 3 || r.suite !== r.deborde || r.poignee) defauts.push(`${r.nom} : description sur ${r.lignesDesc} lignes, « Lire la suite » ${r.suite}, dépasse ${r.deborde}, poignée ${r.poignee}`);
     // contraste : la barre du haut, puis tout ce qui défile, écran par écran ; sur Mac, le panneau Claude aussi
     const zones = [{ racine: '#S2 .wtop' }]; if (!vp.tel) zones.push({ racine: '#wcp' });
     for (const z of zones) { const m = await mesurer(page, z); n += m.n; contrastes.push(...m.sous.map(x => ({ ...x, t: r.nom + ' › ' + x.t }))); if (m.pire.ratio < pire.ratio) pire = { ...m.pire, t: r.nom + ' › ' + m.pire.t }; }
@@ -70,9 +81,11 @@ for (const vp of ECRANS) {
       n += m.n; contrastes.push(...m.sous.map(x => ({ ...x, t: r.nom + ' › ' + x.t }))); if (m.pire.ratio < pire.ratio) pire = { ...m.pire, t: r.nom + ' › ' + m.pire.t };
     }
     await page.evaluate(() => goHome()); await page.waitForTimeout(150);
+    // on y revient : la page s'affiche par le haut (elle avait défilé jusqu'en bas pour la mesure)
+    if (w === 0) { await page.evaluate(() => enterWorld(0)); await page.waitForTimeout(200); const haut = await page.evaluate(() => document.getElementById('wmain').scrollTop); if (haut !== 0) defauts.push(`ARYAN : au retour, la page est à ${haut} px du haut`); await page.evaluate(() => goHome()); await page.waitForTimeout(150); }
   }
   if (contrastes.length) { const g = {}; for (const m of contrastes) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0 }; e.nb++; e.min = Math.min(e.min, m.ratio); } detail[vp.n] = Object.entries(g).map(([k, e]) => `${e.min.toFixed(2)}  ${k}  (${e.nb})`); }
-  ok(noms.length === 5 && !defauts.length, `${vp.n} : les cinq mondes respectent la charte (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon)`, defauts.slice(0, 4).join(' ; ') || noms.join(', '));
+  ok(noms.length === 5 && !defauts.length, `${vp.n} : les cinq mondes respectent la charte (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon ; écriture de l'accueil : police du système, ni chasse fixe ni capitales, sections à 17 px, un seul repère de progression, description en trois lignes au plus)`, defauts.slice(0, 4).join(' ; ') || noms.join(', '));
   ok(n > 300 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout, dans les cinq mondes`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   ok(errors.length === 0, `${vp.n} : aucune erreur de console`, errors.join(' | '));
   await ctx.close();

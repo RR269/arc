@@ -19,6 +19,7 @@ self.addEventListener('fetch', function(e){
   if(req.method !== 'GET') return;                       // jamais les envois (sync, Claude)
   var url = new URL(req.url);
   if(url.hostname.indexOf('supabase.co') !== -1) return; // données et Claude : toujours en direct
+  if(url.hostname.indexOf('bigdatacloud.net') !== -1) return; // nom de la ville : en direct, jamais gardé en cache (l'adresse contient la position)
   e.respondWith(
     fetch(req).then(function(resp){
       if(resp && (resp.ok || resp.type === 'opaque')){

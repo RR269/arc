@@ -237,6 +237,40 @@ Le mot « code » n'est plus sur l'écran d'entrée : Rayan veut une connexion n
 8 octobre, 4 h 29 : la ligne « Continuer sans connexion · Sur cet appareil seulement. » est retirée (Rayan : « je peux
 me connecter maintenant »). La carte se termine par le bouton principal.
 
+### Le titre : la phrase de Rayan (8 octobre, 6 h 41)
+
+Rayan : « j'aimerais qu'on mette "Garde en tête le strict nécessaire, le reste prend vie ici" à la place de "Tu as
+une idée, elle devient réelle" […] ça permettra à tout le reste de remonter. »
+
+| Endroit | Avant | Maintenant |
+|---|---|---|
+| Titre, blanc | Tu as une idée. | **Garde en tête le strict nécessaire.** (deux lignes) |
+| Titre, dégradé d'ARC | Elle devient réelle. | **Le reste prend vie ici.** (une ligne) |
+| Ligne sous le titre | Garde en tête le strict nécessaire. Le reste prend vie ici. | retirée : elle est devenue le titre |
+
+La consigne est en blanc, la promesse dans le dégradé orange → rose → violet (le même que « Un cerveau. » sur
+l'accueil). « Tu as une idée. Elle devient réelle. » n'est plus sur l'écran.
+
+### Les mots de l'accueil (8 octobre)
+
+- Au-dessus du titre, une ligne : la date, puis la ville et le pays si la personne a choisi de les afficher
+  (« Jeudi 8 octobre · Valence, France »). Plus de « Valence » ni de « Rayan » écrits en dur.
+- Titre : « Un cerveau. » puis le nombre d'espaces, compté (« Sept espaces. », « Un espace. »).
+- Sections : « Prochaine étape », « Ensuite », « Projets », « Endormis », « Ma vie ».
+- Menu « ··· » : « Afficher ma ville » / « Ne plus afficher ma ville ».
+- Messages : « Ta ville : Valence, France », « Ta ville n'est plus affichée », « Position refusée par le navigateur :
+  rien ne s'affiche. », « Position introuvable pour l'instant. ARC réessaiera. »
+
+### Les mots des mondes et des pôles (8 octobre, 8 h)
+
+- Bouton de retour : « Accueil », partout (les mondes disaient « Mondes », les pôles « Accueil »).
+- Sous la description d'un monde : « Lire la suite » / « Réduire ».
+- Bandeau de la tâche choisie : « Focus » (plus de capitales).
+- État vide : « Aucun bloquant. »
+- Accents : « Mettre à jour », « Fatigue détectée ».
+- Laissés tels quels, à revoir avec Rayan : « CHEMIN CRITIQUE », « BLOQUÉ », « URGENT » (étiquettes écrites dans les
+  projets), « Journalise maintenant. », « Sauvegarder le check-in ».
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par

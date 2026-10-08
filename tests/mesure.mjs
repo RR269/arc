@@ -71,7 +71,15 @@ const morceaux = ({ racine, cadre, hors }) => {
     const range = document.createRange(); range.selectNodeContents(node);
     const fill = cs.webkitTextFillColor || cs.color;
     const L = (op < 1 || /text/.test(cs.webkitBackgroundClip || cs.backgroundClip || '')) ? null : lum(fill);
-    for (const r of range.getClientRects()) add(r, nom(el), txt.slice(0, 28), L);
+    // texte coupé par son propre bloc (-webkit-line-clamp, overflow:hidden, points de suspension) : ce qui dépasse
+    // du bloc n'est pas à l'écran, on ne le mesure pas
+    const coupe = cs.overflow !== 'visible' || cs.webkitLineClamp !== 'none' ? el.getBoundingClientRect() : null;
+    for (const r of range.getClientRects()) {
+      if (!coupe) { add(r, nom(el), txt.slice(0, 28), L); continue; }
+      if (r.bottom > coupe.bottom + 1 || r.top < coupe.top - 1) continue;
+      const g = Math.max(r.left, coupe.left), d = Math.min(r.right, coupe.right); if (d - g < 2) continue;
+      add(new DOMRect(g, r.top, d - g, r.height), nom(el), txt.slice(0, 28), L);
+    }
   }
   for (const inp of scr.querySelectorAll('input, textarea')) {
     if (inp.offsetParent === null || inp.type === 'checkbox' || inp.type === 'range') continue;
