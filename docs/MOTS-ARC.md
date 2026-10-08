@@ -261,6 +261,16 @@ l'accueil). « Tu as une idée. Elle devient réelle. » n'est plus sur l'écran
 - Messages : « Ta ville : Valence, France », « Ta ville n'est plus affichée », « Position refusée par le navigateur :
   rien ne s'affiche. », « Position introuvable pour l'instant. ARC réessaiera. »
 
+### Les mots des mondes et des pôles (8 octobre, 8 h)
+
+- Bouton de retour : « Accueil », partout (les mondes disaient « Mondes », les pôles « Accueil »).
+- Sous la description d'un monde : « Lire la suite » / « Réduire ».
+- Bandeau de la tâche choisie : « Focus » (plus de capitales).
+- État vide : « Aucun bloquant. »
+- Accents : « Mettre à jour », « Fatigue détectée ».
+- Laissés tels quels, à revoir avec Rayan : « CHEMIN CRITIQUE », « BLOQUÉ », « URGENT » (étiquettes écrites dans les
+  projets), « Journalise maintenant. », « Sauvegarder le check-in ».
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par

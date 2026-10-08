@@ -4,7 +4,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 5 480 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 840 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
@@ -631,6 +631,67 @@ Entrée, accueil épuré, ville (même branche `interieur-accueil`, PR #14, 8 oc
   Chromium seulement : **à voir par Rayan sur son iPhone.**
 - **Toujours à décider par Rayan** : la War Room dans la barre du haut ; le contenu de Santé ; « RAYAN » et « Valence »
   restent dans les contenus des projets et dans les consignes envoyées à Claude (ce sont ses projets, pas l'écran).
+
+Mondes et pôles, l'écriture de l'accueil (branche `interieur-mondes`, 8 octobre 8 h, partie de `interieur-accueil` à `4684c0a`) :
+- **État au départ** : PR #14 ouverte, pas fusionnée (vérifié à 7 h 55, « mergeable » sans conflit) ; `main` à `4bb5daf`.
+  La branche part donc de `interieur-accueil` : **la PR #14 se fusionne d'abord, celle-ci ensuite.**
+- Rayan (7 h 54) : « on continue l'intérieur d'ARC, dans le même design : les mondes et les pôles (même écriture que
+  l'accueil), puis le cockpit d'une tâche, les tiroirs, la War Room, la recherche » ; garder « fond noir, horizons de
+  couleur, verre sombre, police d'Apple, une seule touche blanche par écran, pictogrammes au trait, pas d'emoji ».
+- Même contenu, même ordre, mêmes fonctions. Un seul bloc de style à la fin de la feuille (« MONDES ET PÔLES :
+  l'écriture de l'accueil ») ; les règles d'en-tête des deux passes du 7 octobre sont retirées.
+- **L'écriture** : police du système partout sur `#S2`, `#S3`, `#S4` (`--f` et `--fm` y valent `--fa`) ; Plus Jakarta
+  Sans pour le nom du monde et le titre du pôle seulement (`--ft`) ; plus de chasse fixe ni de petites capitales ;
+  titres de section à 17 px demi-gras, sans filet, comme « Projets » et « Ma vie ».
+- **L'en-tête n'est plus une carte** : sur le noir, une ligne (la catégorie), le nom dans sa couleur, l'anneau, la
+  description, puis **l'horizon de l'espace d'un bord à l'autre** (`.x-horizon`, un élément ajouté ; la même règle
+  que `.h-horizon` de l'accueil, couleurs par `--c1`, `--c2`, `--c3`). Plus calme pour Santé et Juridique (couleurs
+  à demi éteintes). **Piège prouvé : ne jamais mettre d'`opacity` sur `.x-horizon`** : elle en fait un plan à part et
+  sa lueur passe au-dessus des cartes (le texte d'attente de la recherche juridique tombait à 3,39 : 1).
+- **Pictogrammes** : ceux des espaces sont des variables sur `:root` (`--ico-w0` à `--ico-w4`, `--ico-monde`,
+  `--ico-sante`, `--ico-juridique`), partagées par l'accueil et la barre du haut des mondes et des pôles
+  (`#S2[data-wid]`, posé par `enterWorld`) ; étoile, étoile pleine et croix au trait à la place de ★ et ✕
+  (`--ico-etoile`, `--ico-etoile-pleine`, `--ico-croix`) ; chevrons dessinés à la place de → et ↗.
+- **Les cases à leur juste taille** (iPhone 390) : compteurs en une bande de quatre (60 px au lieu de quatre tuiles),
+  lignes de 54 px, description repliée à trois lignes avec « Lire la suite » / « Réduire » (`descRepli`, le bouton ne
+  se montre que si le texte dépasse). ARYAN : 4 078 → 3 408 px de haut, l'action prioritaire remonte de 953 à 650 px
+  (elle entre dans le premier écran). Santé : 2 636 → 2 129 px. Juridique : 1 208 → 1 023 px.
+- **Un seul repère de progression** : l'anneau (« 66 % fait », espace fine insécable) ; la pastille de la barre du
+  haut est masquée. **Un bloquant est un fait** : ambre, comme sur l'accueil (plus de rouge sur le compteur, les
+  cartes et le bouton d'ajout).
+- **La touche blanche** : « Sauvegarder le check-in » sur Santé (le vert plein est retiré). Les mondes n'ont pas de
+  touche blanche propre : la seule est « Déposer ». **À décider avec Rayan** quand le lien pensée → projet existera.
+- Mots : « Accueil » sur le bouton de retour des mondes (« Mondes » avant ; les pôles disaient déjà « Accueil ») ;
+  « Focus », « Lire la suite », « Réduire », « Aucun bloquant. » ; accents : « Mettre à jour », « Fatigue détectée ».
+- **Trois défauts déjà en ligne, prouvés puis réparés** :
+  1. La poignée ↕ de chaque tâche ne déplaçait rien : aucun code de glisser-déposer, `S.taskOrder` est lu
+     (`renderTasks`) et jamais écrit. Elle est masquée.
+  2. La croix ✕ ne supprime que les tâches ajoutées à la main (`del-task` filtre `S.custom`) ; sur une tâche écrite
+     dans le monde elle ne faisait rien de visible. Elle ne s'affiche plus que sur les tâches ajoutées. **Toujours
+     vrai : elle supprime sans confirmation ni annulation** (charte, règle 11) ; à traiter avec le cockpit.
+  3. On revenait dans un monde ou un pôle à l'endroit où on l'avait quitté (`showScreen` ne remonte rien) : on y
+     arrive maintenant par le haut (charte, règle 8).
+- **Vu, pas touché** : sur iPhone, Claude n'est pas accessible depuis un monde ni un pôle (le panneau est masqué sous
+  768 px et le bouton `#fab-claude` n'existe pas dans le balisage) ; les étiquettes « CHEMIN CRITIQUE », « BLOQUÉ »,
+  « URGENT » et « Journalise maintenant. » sont des contenus pressants ; le minuteur de la barre du haut (Mac) ;
+  `wbg` n'est plus lu (le fond des mondes est noir, la couleur vient de l'en-tête) ; « Aides » et les suggestions
+  juridiques nomment toujours Valence et ARYAN ; le contenu de Santé (curseurs, score, « jour de suite »).
+- Tests : `tests/mondes.mjs` et `tests/poles.mjs` contrôlent en plus l'écriture (police du système, ni chasse fixe ni
+  capitales, sections à 17 px), l'horizon d'un bord à l'autre, un seul repère de progression, la description en
+  trois lignes, le retour par le haut. `tests/accueil.mjs` : le contrôle du menu attend la fin de son ouverture
+  (il échouait une fois sur six : mesuré pendant le fondu de 180 ms). Résultats : accueil 17/17, entrée-fond 41/41,
+  connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus
+  faible : 5,28 : 1 (mondes), 5,68 : 1 (pôles) ; largeurs 360, 375, 393 et 430 px sans débordement ni libellé coupé ;
+  522 `<div` / 522 `</div>`. Vérifié dans Chromium seulement, où la police du système est Inter : **San Francisco,
+  le verre et les horizons masqués restent à voir par Rayan sur son iPhone.**
+- **Outillage de cette session** : les serveurs des bibliothèques (cdnjs, jsdelivr, Google Fonts) étaient
+  injoignables depuis l'environnement de travail ; les tests ont tourné avec les mêmes bibliothèques et polices
+  installées par npm et servies localement (rien n'est ajouté au dépôt ni à la page).
+- **Suite, dans l'ordre demandé** : le cockpit d'une tâche, les tiroirs, la War Room, la recherche (ils gardent
+  l'ancienne écriture ; un tiroir ouvert depuis un monde se voit donc encore « d'avant »).
+- **Décisions que Rayan doit encore prendre** : la War Room dans la barre du haut ; le contenu de Santé (curseurs,
+  ou mémoire, échéances et rendez-vous) ; sa position envoyée à BigDataCloud pour afficher sa ville ; « Ce soir »
+  après 23 h ; une ligne sur les données à la création de compte.
 
 ### Décisions de Rayan (5 octobre)
 

@@ -100,7 +100,8 @@ for (const vp of ECRANS) {
     const c = await contraste(page, etat); n += c.n; contrastes.push(...c.sous); if (c.pire.ratio < pire.ratio) pire = c.pire;
   }
   // le menu ouvert : chaque ligne se touche
-  await page.click('#btn-menu'); await page.waitForTimeout(200);
+  // attendre la fin de l'ouverture du menu (180 ms) : mesuré pendant le fondu, son texte est à demi transparent
+  await page.click('#btn-menu'); await page.evaluate(() => Promise.all(document.getElementById('h-menu-dd').getAnimations().map(a => a.finished))); await page.waitForTimeout(200);
   const menu = await page.evaluate(() => [...document.querySelectorAll('#h-menu-dd .h-menu-item')].filter(e => e.offsetParent !== null).map(e => Math.round(e.getBoundingClientRect().height)));
   const cm = await mesurer(page, { racine: '#h-menu-dd', ...MASQUE }); n += cm.n; contrastes.push(...cm.sous.map(x => ({ ...x, t: 'menu › ' + x.t }))); if (cm.pire.ratio < pire.ratio) pire = { ...cm.pire, t: 'menu › ' + cm.pire.t };
   if (menu.some(h => h < 44) || menu.length < 4) defauts.push(`menu : lignes de ${menu.join(', ')} px`);
