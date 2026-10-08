@@ -228,6 +228,10 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   ok(cadran.points.join() === cadran.attendu.join(), 'Frise : Penser en rouge, Développer en orange, Entreprendre en vert', cadran.points.join(' · '));
   ok(!cadran.maj.length && !cadran.fixe.length && !cadran.petits.length && cadran.champs.every(v => v >= 17) && /apple-system/.test(cadran.police),
      'Carte : police du système (San Francisco sur iPhone et Mac), ni capitales ni chasse fixe, aucun texte sous 13 px, champs à 17 px', `police ${cadran.police}, champs ${cadran.champs.join(' / ')} px${cadran.maj.length ? ', capitales : ' + cadran.maj.join(', ') : ''}${cadran.fixe.length ? ', chasse fixe : ' + cadran.fixe.join(', ') : ''}`);
+  const vif = await page.evaluate(() => { const sat = c => { const m = c.match(/[\d.]+/g).map(Number), un = /^color\(/.test(c), v = m.slice(0, 3).map(x => un ? x * 255 : x); return Math.max(...v) - Math.min(...v); };
+    const th = getComputedStyle(document.querySelector('.auth-tabs'), '::before'), ph = [...document.querySelectorAll('.auth-proof li span')].map(e => getComputedStyle(e).color);
+    return { touche: /gradient/.test(th.backgroundImage), phrases: ph, clair: ph.every(c => Math.min(...c.match(/\d+/g).slice(0, 3).map(Number)) >= 225), neutre: ph.every(c => sat(c) <= 8) }; });
+  ok(vif.touche && vif.clair && vif.neutre, 'Plus de gris fade : phrases de la frise en blanc lumineux, touche choisie du sélecteur aux couleurs d\'ARC', `phrases ${vif.phrases[0]}, touche en dégradé : ${vif.touche}`);
   ok(cadran.avant === 0 && Math.abs(cadran.apres - cadran.largeur) <= 4 && cadran.monte >= 8, 'Sélecteur : le curseur suit l\'onglet ; champ rempli : le libellé monte au-dessus de la valeur', `curseur ${cadran.avant} → ${cadran.apres} px, libellé monté de ${cadran.monte} px`);
   const calme = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running' && a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('#auth-screen')).length);
   await ctx.close();
@@ -320,9 +324,9 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   const t4 = await voir(0.04), t10 = await voir(0.10), t50 = await voir(0.50), t63 = await voir(0.63), t97 = await voir(0.97);
   const eteint = await mesure(p3, 1);   // à 97 % : points éteints, mots en retrait — ils doivent rester lisibles
   const dit6 = v => Object.entries(v).map(([k, x]) => k + ' ' + x).join(' ');
-  ok(t4.onde >= 0.8 && t4.comete === 0 && t4.reflet === 0 && t10.pointe === 1 && t10.mot2 < 0.7 && t10.halo === 0
+  ok(t4.onde >= 0.8 && t4.comete === 0 && t4.reflet === 0 && t10.pointe === 1 && t10.mot2 < 0.9 && t10.halo === 0
      && t50.comete === 1 && t50.reflet === 1 && t50.mot2 === 1 && t50.pointe === 0 && t63.halo >= 0.95 && t63.comete === 0 && t63.reflet === 0
-     && Object.entries(t97).every(([k, x]) => k === 'mot2' ? x < 0.7 : x === 0),
+     && Object.entries(t97).every(([k, x]) => k === 'mot2' ? x < 0.9 : x === 0),
      'Effet, dans l\'ordre : onde à l\'allumage, étincelle sur le fil, comète sur l\'horizon et son reflet sur la carte, halo du bouton, puis tout s\'éteint', `4 % : ${dit6(t4)} | 10 % : ${dit6(t10)} | 50 % : ${dit6(t50)} | 63 % : ${dit6(t63)} | 97 % : ${dit6(t97)}`);
   ok(eteint.pire.ratio >= SEUIL, 'Contraste ≥ 4,5 : 1 quand les points sont éteints et les mots en retrait', `${eteint.n} morceaux, le plus faible : ${dit(eteint.pire)}`);
   await p3.evaluate(() => { for (const a of document.getAnimations()) a.play(); });

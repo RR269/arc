@@ -410,8 +410,8 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   choses qui font ressentir le monde connecté qui prône le contrôle total pour une productivité totale ».
   **Règle à garder : sur cet écran, aucun faux chiffre ni faux signal ; chaque signe dit un état vrai.** Fait :
   - La frise : une étincelle court au bout du fil (`li span::after`, `authPointe1/2`) ; à l'allumage chaque point
-    lance une onde (`li i::before`, `authOnde1/2/3`) ; son mot s'allume avec lui (`li b`, de 62 % à 100 %,
-    `authMot1/2/3`).
+    lance une onde (`li i::before`, `authOnde1/2/3`) ; son mot et sa phrase s'allument avec lui (`li b` et
+    `li span`, de 80 % à 100 %, `authMot1/2/3`).
   - L'horizon : la lumière est une comète (tête blanche, traîne de 72 px, `.w-vert::after`) ; la carte, juste dessous,
     en garde le reflet sur son bord, calé sur la position de la comète (`.auth-card::before`, `authReflet`) ; puis le
     bouton s'éclaire (`.auth-btn::after`, `authAppel`). Boucle de 8 s : feux éteints de 84 à 94 %.
@@ -429,6 +429,17 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     effets image par image, contraste quand les mots sont en retrait, passage vers ARC), connexion 26/26, mondes 6/6,
     pôles 9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible 4,90 : 1 ;
     573 `<div` / 573 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
+- **Plus de gris fade (même branche, PR #13, 8 octobre 2 h 49)**. Rayan, après avoir vu l'effet (« très bien ») : « le
+  gris des descriptifs sous les trois points ne me plaît pas, il fait fade, et la couleur de la fonction Se connecter
+  aussi ». **Règle à garder : pas de gris moyen pour un texte que Rayan doit lire sur cet écran.** Fait :
+  - Les trois phrases de la frise et la ligne au-dessus passent en blanc lumineux (`#EBEBF0`, au lieu de `#B4B4BA`
+    et `#D6D6DC`).
+  - Le sélecteur « Se connecter / Créer un compte » n'est plus gris : fond de verre sombre comme les champs ; la
+    touche choisie porte le dégradé d'ARC (filet orange → rose → violet, fond teinté, lueur ; `.auth-tabs::before`).
+    Lecture retenue de « la fonction Se connecter » : l'onglet gris. Le gros bouton en dégradé n'est pas touché ;
+    **à confirmer par Rayan** (s'il parlait du bouton, c'est lui qu'il faudra reprendre).
+  - Tests : entrée-fond 39/39 (un contrôle ajouté), les sept autres suites passent ; contraste le plus faible
+    5,02 : 1 ; 573 `<div` / 573 `</div>`.
 - **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
   (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
   sur les données à la création de compte (texte à écrire avec lui).

@@ -1373,23 +1373,27 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
      moins d'animations. */
 #auth-screen{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Plus Jakarta Sans",sans-serif;--g0:-10deg;--g1:24deg}
 .auth-pitch,.auth-proof,.auth-card{font-family:var(--fa)}
-.auth-pitch{font-size:17px;line-height:1.4;letter-spacing:-.2px}
+.auth-pitch{font-size:17px;line-height:1.4;letter-spacing:-.2px;color:#EBEBF0}
 /* La frise (8 octobre, 1 h 41, demande de Rayan) : typographie façon Apple bien visible (le mot en grand, serré, la
    phrase en gris dessous) ; points rouge, orange, vert, comme des feux de départ. Chaque point a deux états : éteint
    (le <i>) et allumé (son ::after, avec la lueur). Le fil a de même un trait éteint (::after du <li>) et un trait de
-   lumière (::before) qui descend. Sans animation, tout est allumé. */
+   lumière (::before) qui descend. Sans animation, tout est allumé.
+   8 octobre, 2 h 49, Rayan : « le gris des descriptifs fait fade » → les phrases sont en blanc lumineux (#EBEBF0),
+   comme la ligne au-dessus ; mot et phrase passent de 80 % à 100 % quand leur point s'allume. « La couleur de la
+   fonction Se connecter aussi » → le sélecteur n'est plus gris : fond de verre sombre comme les champs, et la touche
+   choisie porte le dégradé d'ARC (filet orange → rose → violet, fond teinté, lueur). */
 .auth-proof{gap:18px}
 .auth-proof li{grid-template-columns:12px 1fr;column-gap:14px;row-gap:2px}
 .auth-proof li b{font-size:20px;font-weight:600;line-height:24px;letter-spacing:-.45px}
-.auth-proof li span{font-size:16px;line-height:21px;letter-spacing:-.2px;color:#B4B4BA}
+.auth-proof li span{font-size:16px;line-height:21px;letter-spacing:-.2px;color:#EBEBF0}
 .auth-proof li i{position:relative;width:12px;height:12px;background:color-mix(in srgb,var(--c) 30%,#0E0E10);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 50%,transparent)}
 .auth-proof li i::after{content:"";position:absolute;inset:0;border-radius:50%;background:color-mix(in srgb,var(--c) 86%,#fff);box-shadow:0 0 6px var(--c),0 0 14px var(--c),0 0 30px color-mix(in srgb,var(--c) 70%,transparent)}
 .auth-proof li:not(:last-child)::after{left:5px;width:2px;top:23px;bottom:-19px;background:linear-gradient(color-mix(in srgb,var(--c) 30%,transparent),color-mix(in srgb,var(--n) 30%,transparent))}
 .auth-proof li:not(:last-child)::before{content:"";position:absolute;left:5px;width:2px;top:23px;bottom:-19px;border-radius:1px;background:linear-gradient(color-mix(in srgb,var(--c) 90%,#fff),color-mix(in srgb,var(--n) 90%,#fff));box-shadow:0 0 6px color-mix(in srgb,var(--c) 70%,transparent),0 0 12px color-mix(in srgb,var(--n) 60%,transparent);transform-origin:50% 0}
 /* La carte */
 .auth-card{padding:16px 16px 6px;border-radius:28px;border-color:rgba(255,255,255,.13);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -40px rgba(0,0,0,.95);letter-spacing:-.1px}
-.auth-tabs{position:relative;gap:0;padding:2px;border-radius:13px;background:rgba(120,120,128,.26);border:none;margin-bottom:14px}
-.auth-tabs::before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc(50% - 2px);border-radius:11px;background:rgba(255,255,255,.17);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 3px 8px rgba(0,0,0,.3);transition:transform .34s cubic-bezier(.3,1.25,.4,1)}
+.auth-tabs{position:relative;gap:0;padding:2px;border-radius:13px;background:rgba(4,4,6,.5);border:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);margin-bottom:14px}
+.auth-tabs::before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc(50% - 2px);box-sizing:border-box;border-radius:11px;border:1px solid transparent;background:linear-gradient(90deg,color-mix(in srgb,var(--a-orange) 34%,#121216),color-mix(in srgb,var(--a-rouge) 32%,#121216) 42%,color-mix(in srgb,var(--a-violet) 44%,#121216)) padding-box,linear-gradient(90deg,#FF9500,#FF2D55 50%,#AF52DE) border-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 20px -5px color-mix(in srgb,var(--a-rouge) 80%,transparent),0 3px 8px rgba(0,0,0,.3);transition:transform .34s cubic-bezier(.3,1.25,.4,1)}
 .auth-tabs[data-mode="up"]::before{transform:translateX(100%)}
 .auth-tab{position:relative;min-height:44px;border-radius:11px;font-size:15px;font-weight:500;letter-spacing:-.15px;color:#C9C9CF;transition:color .2s}
 .auth-tab.on{background:none;box-shadow:none;color:#fff;font-weight:600}
@@ -1471,9 +1475,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 @keyframes authOnde1{0%,2%{opacity:0;transform:scale(.3)}4%{opacity:.85}17%,100%{opacity:0;transform:scale(1)}}
 @keyframes authOnde2{0%,21%{opacity:0;transform:scale(.3)}23%{opacity:.85}36%,100%{opacity:0;transform:scale(1)}}
 @keyframes authOnde3{0%,39%{opacity:0;transform:scale(.3)}41%{opacity:.85}54%,100%{opacity:0;transform:scale(1)}}
-@keyframes authMot1{0%{opacity:.62}5%,84%{opacity:1}94%,100%{opacity:.62}}
-@keyframes authMot2{0%,19%{opacity:.62}24%,84%{opacity:1}94%,100%{opacity:.62}}
-@keyframes authMot3{0%,37%{opacity:.62}42%,84%{opacity:1}94%,100%{opacity:.62}}
+@keyframes authMot1{0%{opacity:.8}5%,84%{opacity:1}94%,100%{opacity:.8}}
+@keyframes authMot2{0%,19%{opacity:.8}24%,84%{opacity:1}94%,100%{opacity:.8}}
+@keyframes authMot3{0%,37%{opacity:.8}42%,84%{opacity:1}94%,100%{opacity:.8}}
 @keyframes authFil1{0%,4%{opacity:1;transform:scaleY(0)}19%,84%{opacity:1;transform:scaleY(1)}94%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
 @keyframes authFil2{0%,23%{opacity:1;transform:scaleY(0)}37%,84%{opacity:1;transform:scaleY(1)}94%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
 @keyframes authPointe1{0%,4%{opacity:0;transform:translateY(calc(-100% + 22px))}5.5%{opacity:1}19%{opacity:1;transform:translateY(0)}21%,100%{opacity:0;transform:translateY(0)}}
@@ -1505,9 +1509,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .auth-proof li i::before{animation:authOnde1 8s cubic-bezier(.2,.7,.3,1) 2s infinite backwards}
   .auth-proof li:nth-child(2) i::before{animation-name:authOnde2}
   .auth-proof li:nth-child(3) i::before{animation-name:authOnde3}
-  .auth-proof li b{animation:authMot1 8s ease-out 2s infinite backwards}
-  .auth-proof li:nth-child(2) b{animation-name:authMot2}
-  .auth-proof li:nth-child(3) b{animation-name:authMot3}
+  .auth-proof li :is(b,span){animation:authMot1 8s ease-out 2s infinite backwards}
+  .auth-proof li:nth-child(2) :is(b,span){animation-name:authMot2}
+  .auth-proof li:nth-child(3) :is(b,span){animation-name:authMot3}
   .auth-proof li:not(:last-child)::before{animation:authFil1 8s linear 2s infinite backwards}
   .auth-proof li:nth-child(2)::before{animation-name:authFil2}
   .auth-proof li:not(:last-child) span::after{animation:authPointe1 8s linear 2s infinite backwards}
