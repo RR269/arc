@@ -405,6 +405,30 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     s'éteint et repart. `authFlux` et `authPoint` sont retirés. Sans animation, les trois points restent allumés.
   - Tests : entrée-fond 33/33 (deux contrôles ajoutés : l'ordre d'allumage image par image, et l'état sans
     animation) ; contraste le plus faible 4,84 : 1 ; les sept autres suites passent ; 572 `<div` / 572 `</div>`.
+- **L'effet : la lumière arrive, l'écran répond (même branche `mots-frise`, PR #13, 8 octobre 2 h)**. Rayan : « c'est
+  bien, mais j'aimerais que dans cette fluidité il y ait de l'effet, et qu'on ajoute dans le design ce genre de
+  choses qui font ressentir le monde connecté qui prône le contrôle total pour une productivité totale ».
+  **Règle à garder : sur cet écran, aucun faux chiffre ni faux signal ; chaque signe dit un état vrai.** Fait :
+  - La frise : une étincelle court au bout du fil (`li span::after`, `authPointe1/2`) ; à l'allumage chaque point
+    lance une onde (`li i::before`, `authOnde1/2/3`) ; son mot s'allume avec lui (`li b`, de 62 % à 100 %,
+    `authMot1/2/3`).
+  - L'horizon : la lumière est une comète (tête blanche, traîne de 72 px, `.w-vert::after`) ; la carte, juste dessous,
+    en garde le reflet sur son bord, calé sur la position de la comète (`.auth-card::before`, `authReflet`) ; puis le
+    bouton s'éclaire (`.auth-btn::after`, `authAppel`). Boucle de 8 s : feux éteints de 84 à 94 %.
+  - La carte répond : bouton « armé » (`#auth-go.is-ready`, `authArme`) quand l'adresse est valide et le mot de passe
+    fait 8 caractères ; sur Mac, une lumière suit le pointeur (`--mx`, `--my`, `.auth-card::after`, sous le contenu).
+  - Ligne d'état en tête de la carte (`#auth-status`, `authEtat`, `authVie`) : « En ligne » (réseau présent et service
+    de connexion chargé) ou « Hors ligne », la date, l'heure à la seconde, chiffres à chasse fixe ; l'horloge s'arrête
+    d'elle-même quand l'écran est fermé. La carte gagne 28 px : le bouton reste dans le premier écran (844 px).
+  - On entre dans ARC (`hideAuthScreen`, classe `leaving`, `AUTH_LEAVE_MS` = 730 ms) : la carte s'efface, le fond
+    plonge vers l'horizon vert, l'accueil apparaît dessous ; pendant le passage l'écran ne prend plus aucun geste.
+    `showAuthScreen` annule un passage en cours. Immédiat si l'appareil demande moins d'animations. **Un test qui
+    attend la fermeture doit attendre que la classe `active` parte** (ne pas compter 300 ms).
+  - Toujours `transform`, `opacity` et la position d'un fond ; aucun mode de fusion ; aucune bibliothèque.
+  - Tests : entrée-fond 38/38 (cinq contrôles ajoutés : état réel avec réseau coupé puis revenu, bouton armé, ordre des
+    effets image par image, contraste quand les mots sont en retrait, passage vers ARC), connexion 26/26, mondes 6/6,
+    pôles 9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible 4,90 : 1 ;
+    573 `<div` / 573 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
 - **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
   (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
   sur les données à la création de compte (texte à écrire avec lui).

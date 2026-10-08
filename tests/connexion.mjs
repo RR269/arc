@@ -253,7 +253,8 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   await page.waitForSelector('#auth-code.active', { timeout: 5000 }).catch(() => {});
   await page.fill('#auth-code-inp', '654321'); await page.click('#auth-verify');
   await page.waitForSelector('#auth-pass.active', { timeout: 5000 }).catch(() => {});
-  await page.click('#auth-pass-later'); await page.waitForTimeout(300);
+  await page.click('#auth-pass-later');
+  await page.waitForFunction(() => !document.getElementById('auth-screen').classList.contains('active'), null, { timeout: 5000 }).catch(() => {});   // le passage vers ARC dure une demi-seconde
   ok(!(await page.isVisible('#auth-screen')) && !calls.some(c => c.method === 'PUT'), '« Plus tard » : l\'écran se ferme, aucun mot de passe enregistré, la connexion reste');
   await ctx.close();
 }

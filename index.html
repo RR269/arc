@@ -1432,15 +1432,57 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #auth-code .auth-err:empty,#auth-ref .auth-err:empty{margin-bottom:2px}
 .auth-link{font-size:17px;font-weight:400;letter-spacing:-.25px}
 .auth-link.soft{font-size:15px;color:#A6A6AE}
+/* ═══ ÉCRAN D'ENTRÉE : l'effet (demande de Rayan, 8 octobre, 2 h) ═══
+   « Que dans cette fluidité il y ait de l'effet », et ce qui fait ressentir le monde connecté, le poste de commande.
+   Règle : la lumière ne fait pas que passer, elle ARRIVE quelque part, et l'écran répond. Rien d'inventé : chaque
+   signe dit un état vrai (en ligne, l'heure, identifiants complets).
+   - La frise : une étincelle court au bout du fil ; quand elle atteint un point, il s'allume et lance une onde ;
+     son mot s'allume avec lui.
+   - L'horizon : la lumière y file en comète (une tête, une traîne) ; la carte, juste dessous, en garde le reflet sur
+     son bord ; puis le bouton s'éclaire : l'énergie est arrivée à l'action.
+   - La carte répond : bouton « armé » quand l'adresse et le mot de passe sont complets (#auth-go.is-ready), lumière
+     sous le pointeur sur Mac (--mx, --my).
+   - La ligne d'état, en tête de la carte : en ligne ou hors ligne, la date, l'heure à la seconde (authEtat).
+   - On entre dans ARC : la carte s'efface, le fond plonge vers l'horizon, l'accueil apparaît (.leaving).
+   Toujours transform, opacity et la position d'un fond ; aucun mode de fusion ; rien ne bouge si l'appareil demande
+   moins d'animations (les points, les mots et l'état restent allumés, fixes). */
+.auth-proof li i::before{content:"";position:absolute;inset:-15px;border-radius:50%;border:1.25px solid color-mix(in srgb,var(--c) 80%,#fff);opacity:0;pointer-events:none}
+.auth-proof li:not(:last-child) span::after{content:"";position:absolute;left:-5px;width:22px;top:12px;bottom:-30px;background:radial-gradient(circle at 50% calc(100% - 11px),#fff 0,#fff 1.5px,color-mix(in srgb,var(--n) 85%,#fff) 3.2px,color-mix(in srgb,var(--n) 55%,transparent) 5.5px,transparent 11px) no-repeat;opacity:0;pointer-events:none}
+.auth-card{position:relative;isolation:isolate}
+.auth-card::before{content:"";position:absolute;left:26px;right:26px;top:-1px;height:18px;pointer-events:none;opacity:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--a-vert) 35%,#fff) 50%,transparent) -28% 0/36% 2px no-repeat,radial-gradient(50% 100% at 50% 0,color-mix(in srgb,var(--a-vert) 34%,transparent),transparent) -28% 0/36% 100% no-repeat}
+.auth-card::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity .45s;background:radial-gradient(320px circle at var(--mx,50%) var(--my,0px),rgba(255,255,255,.075),transparent 70%)}
+@media(hover:hover){.auth-card:hover::after{opacity:1}}
+.auth-btn{position:relative}
+.auth-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;box-shadow:0 0 0 1px rgba(255,255,255,.38),0 0 18px 1px color-mix(in srgb,var(--a-rouge) 70%,transparent),0 0 44px 4px color-mix(in srgb,var(--a-violet) 60%,transparent)}
+#auth-go.is-ready::after{opacity:.9}
+.auth-btn:disabled::after{display:none}
+.auth-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-2px 6px 12px;min-height:18px;font-family:var(--fa);font-size:13px;line-height:18px;color:#B4B4BC;font-variant-numeric:tabular-nums}
+.auth-status-etat{display:inline-flex;align-items:center;gap:8px;color:#D6D6DC}
+.auth-status-etat i{position:relative;width:7px;height:7px;border-radius:50%;background:#8E8E95}
+.auth-status[data-etat="on"] .auth-status-etat i{background:color-mix(in srgb,var(--a-vert) 82%,#fff);box-shadow:0 0 8px var(--a-vert)}
+.auth-status[data-etat="on"] .auth-status-etat i::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid color-mix(in srgb,var(--a-vert) 70%,#fff);opacity:0}
+#auth-screen.leaving{pointer-events:none}
 /* Le mouvement */
 @keyframes authLever{from{opacity:0}to{opacity:1}}
 @keyframes authPoser{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes authFeu1{0%{opacity:0;transform:scale(.6)}4%{opacity:1;transform:scale(1.5)}10%,78%{opacity:1;transform:scale(1)}90%,100%{opacity:0;transform:scale(1)}}
-@keyframes authFeu2{0%,19%{opacity:0;transform:scale(.6)}23%{opacity:1;transform:scale(1.5)}29%,78%{opacity:1;transform:scale(1)}90%,100%{opacity:0;transform:scale(1)}}
-@keyframes authFeu3{0%,37%{opacity:0;transform:scale(.6)}41%{opacity:1;transform:scale(1.5)}47%,78%{opacity:1;transform:scale(1)}90%,100%{opacity:0;transform:scale(1)}}
-@keyframes authFil1{0%,4%{opacity:1;transform:scaleY(0)}19%,78%{opacity:1;transform:scaleY(1)}90%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
-@keyframes authFil2{0%,23%{opacity:1;transform:scaleY(0)}37%,78%{opacity:1;transform:scaleY(1)}90%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
-@keyframes authEclat{0%,41%{opacity:0;transform:rotate(var(--g0)) translateY(calc(var(--r) * -1))}44%,76%{opacity:1}80%,100%{opacity:0;transform:rotate(var(--g1)) translateY(calc(var(--r) * -1))}}
+@keyframes authFeu1{0%{opacity:0;transform:scale(.6)}4%{opacity:1;transform:scale(1.5)}10%,84%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(1)}}
+@keyframes authFeu2{0%,19%{opacity:0;transform:scale(.6)}23%{opacity:1;transform:scale(1.5)}29%,84%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(1)}}
+@keyframes authFeu3{0%,37%{opacity:0;transform:scale(.6)}41%{opacity:1;transform:scale(1.5)}47%,84%{opacity:1;transform:scale(1)}94%,100%{opacity:0;transform:scale(1)}}
+@keyframes authOnde1{0%,2%{opacity:0;transform:scale(.3)}4%{opacity:.85}17%,100%{opacity:0;transform:scale(1)}}
+@keyframes authOnde2{0%,21%{opacity:0;transform:scale(.3)}23%{opacity:.85}36%,100%{opacity:0;transform:scale(1)}}
+@keyframes authOnde3{0%,39%{opacity:0;transform:scale(.3)}41%{opacity:.85}54%,100%{opacity:0;transform:scale(1)}}
+@keyframes authMot1{0%{opacity:.62}5%,84%{opacity:1}94%,100%{opacity:.62}}
+@keyframes authMot2{0%,19%{opacity:.62}24%,84%{opacity:1}94%,100%{opacity:.62}}
+@keyframes authMot3{0%,37%{opacity:.62}42%,84%{opacity:1}94%,100%{opacity:.62}}
+@keyframes authFil1{0%,4%{opacity:1;transform:scaleY(0)}19%,84%{opacity:1;transform:scaleY(1)}94%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
+@keyframes authFil2{0%,23%{opacity:1;transform:scaleY(0)}37%,84%{opacity:1;transform:scaleY(1)}94%{opacity:0;transform:scaleY(1)}100%{opacity:0;transform:scaleY(0)}}
+@keyframes authPointe1{0%,4%{opacity:0;transform:translateY(calc(-100% + 22px))}5.5%{opacity:1}19%{opacity:1;transform:translateY(0)}21%,100%{opacity:0;transform:translateY(0)}}
+@keyframes authPointe2{0%,23%{opacity:0;transform:translateY(calc(-100% + 22px))}24.5%{opacity:1}37%{opacity:1;transform:translateY(0)}39%,100%{opacity:0;transform:translateY(0)}}
+@keyframes authEclat{0%,41%{opacity:0;transform:rotate(var(--g0)) translateY(calc(var(--r) * -1))}43%,60%{opacity:1}63%,100%{opacity:0;transform:rotate(var(--g1)) translateY(calc(var(--r) * -1))}}
+@keyframes authReflet{0%,44.7%{opacity:0;background-position:-28% 0,-28% 0}46%,54.8%{opacity:1}56.1%,100%{opacity:0;background-position:128% 0,128% 0}}
+@keyframes authAppel{0%,55%{opacity:0;transform:scale(.985)}63%{opacity:1;transform:scale(1)}82%,100%{opacity:0;transform:scale(1.012)}}
+@keyframes authPret{from{opacity:.5}to{opacity:1}}
+@keyframes authPouls{0%{opacity:.85;transform:scale(.4)}70%,100%{opacity:0;transform:scale(1)}}
 @media(prefers-reduced-motion:no-preference){
   #auth-screen.active .auth-world{animation:authLever 1.5s cubic-bezier(.2,.7,.2,1) both}
   #auth-screen.active .w-orange{animation-delay:.1s}
@@ -1453,15 +1495,33 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #auth-screen.active .auth-proof li:nth-child(2){animation-delay:.54s}
   #auth-screen.active .auth-proof li:nth-child(3){animation-delay:.66s}
   #auth-screen.active .auth-card{animation:authPoser .9s cubic-bezier(.16,1,.3,1) .8s both}
-  /* Le récit qui revient, en continu (8 s) : le point rouge s'allume, le fil de lumière descend, l'orange s'allume
-     quand il l'atteint, puis le vert ; la lumière file alors le long de l'horizon vert ; tout s'éteint et repart.
+  /* Le récit qui revient, en continu (8 s) : le point rouge s'allume et lance une onde, l'étincelle descend le fil,
+     l'orange s'allume quand elle l'atteint, puis le vert ; la lumière file alors en comète le long de l'horizon
+     vert, la carte en garde le reflet sur son bord, le bouton s'éclaire ; tout s'éteint et repart.
      Les animations attendent la fin de l'arrivée (2 s) dans leur état de départ : éteint. */
   .auth-proof li i::after{animation:authFeu1 8s ease-out 2s infinite backwards}
   .auth-proof li:nth-child(2) i::after{animation-name:authFeu2}
   .auth-proof li:nth-child(3) i::after{animation-name:authFeu3}
+  .auth-proof li i::before{animation:authOnde1 8s cubic-bezier(.2,.7,.3,1) 2s infinite backwards}
+  .auth-proof li:nth-child(2) i::before{animation-name:authOnde2}
+  .auth-proof li:nth-child(3) i::before{animation-name:authOnde3}
+  .auth-proof li b{animation:authMot1 8s ease-out 2s infinite backwards}
+  .auth-proof li:nth-child(2) b{animation-name:authMot2}
+  .auth-proof li:nth-child(3) b{animation-name:authMot3}
   .auth-proof li:not(:last-child)::before{animation:authFil1 8s linear 2s infinite backwards}
   .auth-proof li:nth-child(2)::before{animation-name:authFil2}
-  .w-vert::after{content:"";position:absolute;left:var(--x);top:var(--y);width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:radial-gradient(circle,#fff 0,color-mix(in srgb,var(--a-vert) 55%,#fff) 40%,transparent 72%);box-shadow:0 0 14px 3px color-mix(in srgb,var(--a-vert) 60%,transparent);opacity:0;animation:authEclat 8s linear 2s infinite backwards}
+  .auth-proof li:not(:last-child) span::after{animation:authPointe1 8s linear 2s infinite backwards}
+  .auth-proof li:nth-child(2) span::after{animation-name:authPointe2}
+  /* la comète : une tête blanche et sa traîne, tangente à l'horizon ; elle tourne autour du centre du monde vert */
+  .w-vert::after{content:"";position:absolute;left:var(--x);top:var(--y);width:92px;height:40px;margin:-20px 0 0 -72px;transform-origin:72px 20px;background:radial-gradient(circle at 72px 20px,#fff 0,#fff 1.6px,color-mix(in srgb,var(--a-vert) 45%,#fff) 3.2px,color-mix(in srgb,var(--a-vert) 62%,transparent) 7px,color-mix(in srgb,var(--a-vert) 22%,transparent) 13px,transparent 20px),linear-gradient(90deg,transparent,rgba(255,255,255,.5) 60%,#fff) 0 18.5px/72px 3px no-repeat;opacity:0;animation:authEclat 8s linear 2s infinite backwards}
+  .auth-card::before{animation:authReflet 8s linear 2s infinite backwards}
+  .auth-btn::after{animation:authAppel 8s ease-out 2s infinite backwards}
+  #auth-go.is-ready::after{animation:authPret 1.6s ease-in-out infinite alternate}
+  .auth-status[data-etat="on"] .auth-status-etat i::after{animation:authPouls 2.4s ease-out infinite}
+  /* On entre dans ARC */
+  #auth-screen.leaving{opacity:0;transition:opacity .44s ease-in .28s}
+  #auth-screen.leaving .auth-box{opacity:0;transform:translateY(-8px) scale(.985);transition:opacity .22s ease,transform .4s cubic-bezier(.3,0,.2,1)}
+  #auth-screen.leaving .auth-glow{transform:scale(2.2);transform-origin:30% calc(var(--card-y) + 2px);transition:transform .72s cubic-bezier(.4,0,.6,1)}
 }
 @media(prefers-reduced-motion:reduce){.auth-tabs::before,.auth-field .auth-lbl,.auth-btn,.auth-skip-go{transition:none}}
 /* Mac et tablette large : le fond tient à l'écran. Les arcs se règlent sur la largeur libre de chaque côté de la
@@ -1471,6 +1531,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   .auth-box{align-self:auto;margin:auto}
   .auth-glow{position:fixed;inset:0;margin:0;background:#000}
   .auth-proof{margin-bottom:24px}
+  #auth-screen.leaving .auth-glow{transform-origin:0 100%}
   .w-rouge{--x:calc(100% + 70px);--y:-90px;--r:var(--jour)}
   .w-orange{--x:calc(100% + 40px);--y:-110px;--r:calc(var(--jour) * .7)}
   .w-jaune{--x:calc(100% + 10px);--y:-70px;--r:calc(var(--jour) * .4)}
@@ -2498,6 +2559,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <li style="--c:var(--a-vert)"><i></i><b>Entreprendre</b><span>Passe &agrave; l&rsquo;action et pilote tout d&rsquo;ici.</span></li>
     </ul>
     <div class="auth-card">
+    <div class="auth-status" id="auth-status" data-etat="off"><span class="auth-status-etat"><i></i><span id="auth-status-txt">Hors ligne</span></span><span id="auth-status-time"></span></div>
     <div class="auth-step active" id="auth-email">
       <div class="auth-tabs" data-mode="in" role="tablist" aria-label="Connexion ou création de compte">
         <button class="auth-tab on" id="auth-tab-in" type="button" role="tab" aria-selected="true">Se connecter</button>
@@ -2659,8 +2721,11 @@ function authSkipped() {
 
 function showAuthScreen(step) {
   var scr = document.getElementById('auth-screen'); if(!scr) return;
+  if(_authLeave) { clearTimeout(_authLeave); _authLeave = null; }
+  scr.classList.remove('leaving');
   document.querySelectorAll('.auth-step').forEach(function(el) { el.classList.toggle('active', el.id === step); });
   scr.classList.add('active');
+  authVie();
   if(step === 'auth-email') {
     var inp = document.getElementById('auth-email-inp');
     try { if(!inp.value) inp.value = localStorage.getItem('arc_auth_email') || ''; } catch(e) {}
@@ -2683,8 +2748,56 @@ function authFond() {
   if(scr.style.getPropertyValue('--card-y') !== y) scr.style.setProperty('--card-y', y);
   if(scr.style.getPropertyValue('--card-h') !== h) scr.style.setProperty('--card-h', h);
 }
+// On entre dans ARC : la carte s'efface, le fond plonge vers l'horizon, l'accueil apparaît dessous. Pendant ce passage
+// l'écran ne reçoit plus aucun geste ; il est retiré à la fin. Sans animation (réglage de l'appareil) : retiré tout de suite.
+var _authLeave = null, AUTH_LEAVE_MS = 730;
 function hideAuthScreen() {
-  var scr = document.getElementById('auth-screen'); if(scr) scr.classList.remove('active');
+  var scr = document.getElementById('auth-screen'); if(!scr || !scr.classList.contains('active') || _authLeave) return;
+  var calme = true; try { calme = !window.matchMedia || matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e) {}
+  if(calme) { scr.classList.remove('active'); return; }
+  try { if(document.activeElement && scr.contains(document.activeElement)) document.activeElement.blur(); } catch(e) {}
+  scr.classList.add('leaving');
+  _authLeave = setTimeout(function() { _authLeave = null; scr.classList.remove('active', 'leaving'); }, AUTH_LEAVE_MS);
+}
+// L'écran d'entrée vit, sans rien inventer : chaque signe dit un état vrai.
+// - la ligne d'état : « En ligne » si le navigateur a le réseau et que le service de connexion est chargé, la date,
+//   l'heure à la seconde ; elle s'arrête d'elle-même quand l'écran est fermé ;
+// - le bouton principal est « armé » (is-ready) quand l'adresse est valide et le mot de passe assez long ;
+// - sur Mac, une lumière suit le pointeur sur la carte (--mx, --my).
+var _authVieOn = false, _authHorloge = null;
+function authArme() {
+  var go = document.getElementById('auth-go'), pass = document.getElementById('auth-pass-inp'); if(!go || !pass) return;
+  go.classList.toggle('is-ready', !!authReadEmail() && pass.value.length >= AUTH_PASS_MIN);
+}
+function authEtat() {
+  var el = document.getElementById('auth-status'); if(!el) return;
+  var on = !!_sb && navigator.onLine !== false, d = new Date();
+  var etat = on ? 'En ligne' : 'Hors ligne';
+  var heure = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  var a = document.getElementById('auth-status-txt'), b = document.getElementById('auth-status-time');
+  if(el.getAttribute('data-etat') !== (on ? 'on' : 'off')) el.setAttribute('data-etat', on ? 'on' : 'off');
+  if(a.textContent !== etat) a.textContent = etat;
+  if(b.textContent !== heure) b.textContent = heure;
+  authArme();   // le trousseau du navigateur remplit parfois les champs sans prévenir
+}
+function authVie() {
+  authEtat();
+  if(!_authHorloge) (function tic() {
+    _authHorloge = setTimeout(function() {
+      var scr = document.getElementById('auth-screen');
+      if(!scr || !scr.classList.contains('active')) { _authHorloge = null; return; }
+      authEtat(); tic();
+    }, 1000 - (Date.now() % 1000) + 5);
+  })();
+  if(_authVieOn) return; _authVieOn = true;
+  window.addEventListener('online', authEtat); window.addEventListener('offline', authEtat);
+  var etape = document.getElementById('auth-email'); if(etape) etape.addEventListener('input', authArme);
+  var carte = document.querySelector('#auth-screen .auth-card'), souris = false;
+  try { souris = !!window.matchMedia && matchMedia('(hover:hover)').matches; } catch(e) {}
+  if(carte && souris) carte.addEventListener('pointermove', function(ev) {
+    var r = carte.getBoundingClientRect();
+    carte.style.setProperty('--mx', Math.round(ev.clientX - r.left) + 'px'); carte.style.setProperty('--my', Math.round(ev.clientY - r.top) + 'px');
+  });
 }
 function authErr(id, msg) { var el = document.getElementById(id); if(el) el.textContent = msg || ''; }
 
@@ -2781,6 +2894,7 @@ function authSetMode(mode) {
   document.querySelector('.auth-tabs').setAttribute('data-mode', _authMode);
   _authPendingPass = '';
   authErr('auth-email-err', '');
+  authArme();
 }
 // « Créer un compte » avec une adresse qui a déjà un compte : on essaie d'abord d'entrer avec ce mot de passe (la
 // personne s'est trompée d'onglet) ; sinon un code confirme que c'est bien elle et le mot de passe choisi est enregistré.
@@ -2841,7 +2955,7 @@ async function authGo() {
     }
     document.getElementById('auth-pass-inp').value = '';
   } catch(e) { authErr('auth-email-err', authErrorText(e)); }
-  btn.disabled = false;
+  btn.disabled = false; authArme();
 }
 // Une fois connecté : créer ou changer son mot de passe (menu « ··· » › Mon mot de passe)
 async function authSavePass() {

@@ -283,6 +283,62 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
      'Frise : trois phrases complètes, une ligne chacune sur iPhone (375 à 430 px)', a390.map(v => `${v.mot} · ${v.phrase}`).join(' | ') + (trop.length ? ` ; sur deux lignes : ${trop.map(v => v.mot + ' à ' + v.w + ' px').join(', ')}` : ''));
 }
 
+/* 8. L'effet (demande de Rayan, 8 octobre 2 h) : la lumière arrive quelque part et l'écran répond, sans rien inventer.
+      État réel en tête de la carte, bouton armé quand les identifiants sont complets, étincelle, onde, comète, reflet
+      sur la carte et halo du bouton dans l'ordre, mots éteints encore lisibles, passage vers ARC. */
+{
+  const { ctx, page, errors } = await open({ width: 390, height: 844 }, 1);
+  const lire = () => page.evaluate(() => { const d = new Date(), el = document.getElementById('auth-status'), h = document.getElementById('auth-status-time').textContent, m = h.match(/(\d\d):(\d\d):(\d\d)$/);
+    return { etat: el.getAttribute('data-etat'), txt: document.getElementById('auth-status-txt').textContent, heure: h, dansCarte: !!document.querySelector('.auth-card > #auth-status'), vu: el.offsetParent !== null,
+             ecart: m ? Math.abs((+m[1] * 3600 + +m[2] * 60 + +m[3]) - (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds())) : 99999, pouls: getComputedStyle(el.querySelector('i'), '::after').content !== 'none' }; });
+  const e1 = await lire(); await page.waitForTimeout(1300); const e2 = await lire();
+  await ctx.setOffline(true); await page.waitForTimeout(250); const e3 = await lire();
+  await ctx.setOffline(false); await page.waitForTimeout(250); const e4 = await lire();
+  const juste = e => e.ecart <= 2 || e.ecart >= 86398;
+  ok(e1.dansCarte && e1.vu && e1.etat === 'on' && e1.txt === 'En ligne' && /^\S+ \d{1,2} \S+ · \d\d:\d\d:\d\d$/.test(e1.heure) && juste(e1) && juste(e2) && e2.heure !== e1.heure
+     && e3.etat === 'off' && e3.txt === 'Hors ligne' && !e3.pouls && e4.etat === 'on' && e4.txt === 'En ligne',
+     'État réel en tête de la carte : en ligne ou hors ligne selon le réseau, la date, l\'heure vraie à la seconde', `${e1.txt} · ${e1.heure} → ${e2.heure} ; réseau coupé : ${e3.txt} ; revenu : ${e4.txt}`);
+  const arme = () => page.evaluate(() => { const go = document.getElementById('auth-go'); return go.classList.contains('is-ready') ? +getComputedStyle(go, '::after').opacity : 0; });
+  const a0 = await arme(); await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.fill('#auth-pass-inp', '1234567'); const a1 = await arme();
+  await page.fill('#auth-pass-inp', '12345678'); const a2 = await arme(); await page.evaluate(() => document.activeElement.blur()); await page.waitForTimeout(150);
+  const pret = await mesure(page, 1);
+  await page.fill('#auth-email-inp', 'rayan@'); const a3 = await arme();
+  ok(a0 === 0 && a1 === 0 && a2 >= 0.8 && a3 === 0 && pret.pire.ratio >= SEUIL && !errors.length,
+     'Bouton armé seulement quand l\'adresse est valide et le mot de passe complet ; son halo ne gêne aucun texte', `vide ${a0} · 7 caractères ${a1} · complet ${a2} · adresse incomplète ${a3} ; contraste le plus faible, bouton armé : ${dit(pret.pire)}`);
+  await page.fill('#auth-email-inp', '');
+  // Sans animation : le passage est immédiat
+  await page.click('#auth-skip'); const direct = await page.evaluate(() => document.getElementById('auth-screen').className);
+  await ctx.close();
+
+  const ctx3 = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'no-preference' });
+  await ctx3.route(SB + '/**', route => route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '[]' }));
+  const p3 = await ctx3.newPage(); const err3 = []; p3.on('pageerror', e => err3.push(String(e.message)));
+  await p3.goto(url); await p3.waitForSelector('#auth-screen.active'); await p3.evaluate(() => document.fonts.ready); await p3.waitForTimeout(600);
+  const voir = part => p3.evaluate(part => { for (const a of document.getAnimations()) { a.pause(); a.currentTime = 2000 + part * 8000; }
+    const o = (sel, ps) => { const e = document.querySelector(sel); return e ? +parseFloat(getComputedStyle(e, ps).opacity).toFixed(2) : -1; };
+    return { onde: o('.auth-proof li:nth-child(1) i', '::before'), pointe: o('.auth-proof li:nth-child(1) span', '::after'), mot2: o('.auth-proof li:nth-child(2) b'), comete: o('.w-vert', '::after'), reflet: o('.auth-card', '::before'), halo: o('#auth-go', '::after') }; }, part);
+  const t4 = await voir(0.04), t10 = await voir(0.10), t50 = await voir(0.50), t63 = await voir(0.63), t97 = await voir(0.97);
+  const eteint = await mesure(p3, 1);   // à 97 % : points éteints, mots en retrait — ils doivent rester lisibles
+  const dit6 = v => Object.entries(v).map(([k, x]) => k + ' ' + x).join(' ');
+  ok(t4.onde >= 0.8 && t4.comete === 0 && t4.reflet === 0 && t10.pointe === 1 && t10.mot2 < 0.7 && t10.halo === 0
+     && t50.comete === 1 && t50.reflet === 1 && t50.mot2 === 1 && t50.pointe === 0 && t63.halo >= 0.95 && t63.comete === 0 && t63.reflet === 0
+     && Object.entries(t97).every(([k, x]) => k === 'mot2' ? x < 0.7 : x === 0),
+     'Effet, dans l\'ordre : onde à l\'allumage, étincelle sur le fil, comète sur l\'horizon et son reflet sur la carte, halo du bouton, puis tout s\'éteint', `4 % : ${dit6(t4)} | 10 % : ${dit6(t10)} | 50 % : ${dit6(t50)} | 63 % : ${dit6(t63)} | 97 % : ${dit6(t97)}`);
+  ok(eteint.pire.ratio >= SEUIL, 'Contraste ≥ 4,5 : 1 quand les points sont éteints et les mots en retrait', `${eteint.n} morceaux, le plus faible : ${dit(eteint.pire)}`);
+  await p3.evaluate(() => { for (const a of document.getAnimations()) a.play(); });
+  // On entre dans ARC : l'écran s'efface en un peu plus d'une demi-seconde, sans plus rien recevoir, puis il est retiré
+  await p3.click('#auth-skip');
+  const pendant = await p3.evaluate(() => { const s = document.getElementById('auth-screen'); return { cls: s.className, gestes: getComputedStyle(s).pointerEvents, dessous: (document.elementFromPoint(195, 400) || {}).id !== 'auth-screen' && !document.elementFromPoint(195, 400).closest('#auth-screen') }; });
+  await p3.waitForTimeout(900);
+  const apres = await p3.evaluate(() => document.getElementById('auth-screen').className);
+  // Rouvert pendant le passage (question « Premier appareil ») : il reste ouvert
+  const rouvert = await p3.evaluate(async () => { showAuthScreen('auth-email'); hideAuthScreen(); showAuthScreen('auth-ref'); await new Promise(r => setTimeout(r, 900)); const s = document.getElementById('auth-screen'); return s.className + ' / ' + (document.querySelector('.auth-step.active') || {}).id; });
+  ok(direct === '' && /active/.test(pendant.cls) && /leaving/.test(pendant.cls) && pendant.gestes === 'none' && pendant.dessous && apres === '' && rouvert === 'active / auth-ref' && !err3.length,
+     'On entre dans ARC : passage d\'une demi-seconde, l\'écran ne prend plus aucun geste puis disparaît ; immédiat si l\'appareil demande moins d\'animations ; rouvert en cours de route, il reste',
+     `pendant « ${pendant.cls} », gestes ${pendant.gestes} ; après « ${apres} » ; mode calme « ${direct} » ; rouvert : ${rouvert}`);
+  await ctx3.close();
+}
+
 await browser.close(); server.close();
 if (process.env.DETAIL) for (const [k, v] of Object.entries(detail)) console.log(k + '\n  ' + v.join('\n  '));
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);

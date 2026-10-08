@@ -216,6 +216,11 @@ Validé par Rayan le 8 octobre à 1 h 21 : « là on y est !!! ». À 1 h 41, il
 Penser en rouge, Développer en orange, Entreprendre en vert, chacun ne s'allumant que lorsque le fil de lumière
 l'atteint (des feux de départ : ARC est le point de départ).
 
+### La ligne d'état de la carte (8 octobre, 2 h)
+
+En tête de la carte : « En ligne » ou « Hors ligne », puis la date et l'heure (« jeu. 8 oct. · 02:13:16 »).
+Règle : cet écran ne montre que des états vrais, jamais un chiffre ou un signal inventé pour faire « connecté ».
+
 ### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
 
 | Avant | Après |
