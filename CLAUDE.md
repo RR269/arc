@@ -13,6 +13,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `outils.mjs` (serveur local, faux Supabase, faux proxy),
   `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `entree-fond.mjs` (fond de l'écran d'entrée : contraste mesuré dans l'image, six couleurs dans le fond et pas dans les lettres),
+  `accueil.mjs` (accueil, vide et rempli : mêmes mesures, barre du haut de 360 à 430 px, moment de la journée),
   `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
   `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
@@ -46,7 +47,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -476,6 +477,8 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     l'écran d'entrée), entrée-fond 40/40 (tête de la carte : date, heure, aucun mot d'état), mondes 6/6, pôles 9/9,
     dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible 5,03 : 1 ;
     573 `<div` / 573 `</div>`.
+- **PR #13 fusionnée par Rayan le 8 octobre à 4 h 59** (« go c'est fait ») : l'écran d'entrée est en ligne dans son
+  état final (frise en feux de départ, effet, bouton blanc, date et heure, plus de « Continuer sans connexion »).
 - **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
   (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
   sur les données à la création de compte (texte à écrire avec lui).
@@ -485,6 +488,46 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
   compte contient du contenu Santé ou Juridique. Vu dans ses captures : la barre du haut de l'accueil déborde à
   droite sur iPhone (« Non connecté » et « War Room » sur deux lignes), pas corrigé.
 - **À suivre, demandé par Rayan** : « finir de modifier cette page » (l'écran d'entrée), après la connexion.
+
+Accueil, l'intérieur (branche `interieur-accueil`, 8 octobre 5 h, partie de `main` à `4bb5daf`) :
+- Rayan : « on attaque l'intérieur d'ARC ». Premier écran après la connexion : l'accueil (`#S1`). Même contenu, même
+  ordre, mêmes fonctions ; le dessin change, dans l'identité de l'écran d'entrée (bloc de style « ACCUEIL,
+  l'intérieur » à la fin de la feuille, après celui d'`accueil-v2`).
+- **Mesuré avant** (iPhone 390, `main`) : 9 cibles sous 44 px (état de synchronisation 36 px, Recherche et War Room
+  40 px, menu 40 px, boutons de projet 34 px), 9 textes sous 12 px, 33 emoji, la barre du haut sortait de l'écran
+  (« War Room » sur deux lignes, menu « ··· » coupé à droite), deux identifiants `hgrid`. **Après** : zéro partout.
+- **L'écriture** : police du système pour tout le texte de l'accueil (`#S1{--f:var(--fa)}` ; San Francisco sur iPhone
+  et Mac), Plus Jakarta Sans pour les titres seulement (`--ft` : titre, noms des mondes et des pôles), chasse fixe
+  pour les petits libellés en capitales et les chiffres. `--fa` et `--ft` sont maintenant sur `:root`.
+- **L'horizon d'ARC** (`.h-horizon`, un élément ajouté sous le titre) : un arc net orange → rose → violet avec sa
+  lueur, qui porte le poste de commande (Déposé, Point du jour, compteurs), comme l'horizon vert porte la carte de
+  l'entrée. Un dégradé masqué par un anneau (`mask`, déjà utilisé pour les pictogrammes) ; aucun mode de fusion. Il
+  s'allume à l'arrivée sur l'accueil (`hHorizon`, une fois, rien si l'appareil demande moins d'animations). Sur
+  grand écran l'arc est plus plat et ses bouts se fondent dans le noir.
+- **Barre du haut** : son contenu s'aligne sur celui de la page, son fond va d'un bord à l'autre (`.hn::before`) ;
+  boutons de 44 px ; sur téléphone, Recherche et War Room n'ont plus que leur pictogramme (le nom reste pour les
+  lecteurs d'écran, `aria-label`) ; l'état de synchronisation se raccourcit au lieu de pousser les boutons dehors.
+  Tient de 360 à 430 px, quel que soit l'état. Menu « ··· » : lignes de 48 px.
+- **Pictogrammes au trait** (une famille, trait de 1,7, masque teinté) à la place des emoji : fusée, boîte, poêle,
+  écran, boussole pour les cinq mondes (par `data-wid` ; un monde inconnu a un pictogramme « monde ») ; cœur et
+  balance pour les pôles ; lune, soleil, soleil couchant pour le moment de la journée ; flèches « Actualiser » et
+  « Ouvrir ». L'emoji des mondes et des pôles reste dans les données, masqué (taille 0). Les emoji écrits par le code
+  de l'accueil sont retirés (« ⚡ 3 bloquants », « 🔴 CRITIQUE », « ▶ », boutons de projet).
+- **Mots, petites corrections** : la date n'est plus écrite deux fois (la pastille dit le moment : « Nuit », « Matin »,
+  « Après-midi », « Soirée » ; la date reste sous le titre) ; « Offline » → « Hors ligne » ; l'heure ne se coupe plus
+  (« 08 h 00 » avec des espaces insécables posées par le code, charte règle 4 ; `tests/matin.mjs` en tient compte) ;
+  section vide « Tes 5 projets » et son doublon `#hgrid` retirés du balisage.
+- `tests/mesure.mjs` : un texte coupé par son propre bloc (lignes masquées, points de suspension) n'est plus mesuré
+  hors de ce bloc.
+- **Pas touché, à décider par Rayan** : l'ordre de l'accueil (« Prochaines étapes » n'arrive qu'au deuxième écran,
+  après les compteurs et la progression, alors que c'est le cœur de la vision) ; FBA, KITCHEN et TELENEUF, déclarés
+  « endormis » le 5 octobre, s'affichent encore « CRITIQUE » avec leurs bloquants ; « 14 bloquants. Résous
+  maintenant. » (ton pressant, la vision dit sans reproche) ; « Valence » et « Sept espaces » écrits en dur.
+- **Pas touché, à faire ensuite** : le cockpit d'une tâche, les tiroirs, la War Room, la recherche ; les mondes et
+  les pôles gardent Plus Jakarta Sans pour le texte (à passer à la police du système quand l'accueil sera validé).
+- Tests : accueil 8/8 (nouveau), entrée-fond 40/40, connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19, rangement
+  25/25, matin 27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 4,89 : 1 ; 571 `<div` / 571 `</div>`.
+  Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone** (police San Francisco, horizon masqué).
 
 ### Décisions de Rayan (5 octobre)
 
