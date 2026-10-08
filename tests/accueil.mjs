@@ -297,11 +297,11 @@ for (const vp of ECRANS) {
   }
   {
     const { page } = await openPage(browser, url, { fk: fakeSupabase() });
-    const wr = await page.evaluate(() => ({ bouton: !!document.getElementById('btn-warroom'), ecran: !!document.getElementById('war-room'), fonction: typeof window.openWarRoom, mot: /War Room/i.test(document.body.innerText + document.getElementById('onboarding').textContent) }));
-    vus.push(...(wr.bouton || wr.ecran || wr.fonction !== 'undefined' || wr.mot ? ['War Room encore présente : ' + JSON.stringify(wr)] : []));
+    const wr = await page.evaluate(() => ({ bouton: !!document.getElementById('btn-warroom'), ecran: !!document.getElementById('war-room'), fonction: typeof window.openWarRoom, mot: /War Room/i.test(document.body.innerText), bienvenue: !!document.getElementById('onboarding') }));
+    vus.push(...(wr.bouton || wr.ecran || wr.fonction !== 'undefined' || wr.mot || wr.bienvenue ? ['War Room ou écran de bienvenue encore présents : ' + JSON.stringify(wr)] : []));
     await page.context().close();
   }
-  ok(!vus.length, 'Barre du haut : aucun bouton ne sort de l\'écran ni ne se chevauche, de 360 à 430 px, quel que soit l\'état de synchronisation ; la War Room n\'existe plus (ni bouton, ni écran, ni mot)', vus.slice(0, 4).join(' ; ') || '4 largeurs × 5 états');
+  ok(!vus.length, 'Barre du haut : aucun bouton ne sort de l\'écran ni ne se chevauche, de 360 à 430 px, quel que soit l\'état de synchronisation ; la War Room n\'existe plus (ni bouton, ni écran, ni mot), ni l\'écran de bienvenue jamais affiché', vus.slice(0, 4).join(' ; ') || '4 largeurs × 5 états');
 }
 
 /* Le moment de la journée : un mot et un pictogramme, jamais d'emoji */

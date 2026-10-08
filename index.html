@@ -497,20 +497,7 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .msg.assistant strong{font-weight:700}
 .ck-msg{font-size:12px;line-height:1.7;color:var(--t2);padding:10px 12px;background:var(--bg3);border-radius:10px;border:1px solid var(--b1)}
 
-/* === ONBOARDING === */
-#onboarding{position:fixed;inset:0;z-index:500;background:#000;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-#onboarding.active{display:flex}
-.ob-step{display:none;text-align:center;max-width:360px}
-.ob-step.active{display:block;animation:slideUp .4s ease}
-.ob-icon{font-size:52px;margin-bottom:20px;display:block}
-.ob-title{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:10px;background:linear-gradient(135deg,#FF9500,#FF2D55,#AF52DE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.ob-text{font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:28px}
-.ob-next{padding:13px 32px;border-radius:12px;font-size:14px;font-weight:700;background:#f5f5f7;color:#000;border:none;cursor:pointer;transition:all .2s}
-.ob-dots{display:flex;gap:6px;justify-content:center;margin-top:20px}
-.ob-dot{width:6px;height:6px;border-radius:50%;background:var(--bg4);transition:all .3s}
-.ob-dot.active{background:var(--t1);width:18px}
-.ob-skip{font-size:11px;color:var(--t3);margin-top:14px;cursor:pointer;background:none;border:none}
-/* Écran de connexion : au-dessus de l'accueil et de l'onboarding */
+/* Écran de connexion : au-dessus de l'accueil */
 /* ═══ ÉCRAN D'ENTRÉE (branche entree, 7 octobre) : les couleurs d'ARC — noir, orange, rose, violet ═══ */
 #auth-screen{position:fixed;inset:0;z-index:600;background:#070709;display:none;align-items:flex-start;justify-content:center;padding:calc(24px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text',system-ui,sans-serif;color:var(--t1)}
 #auth-screen.active{display:flex}
@@ -2700,11 +2687,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div id="search-footer">Flèches pour choisir · Entrée pour ouvrir · Échap pour fermer</div>
   </div>
 </div>
-<div id="onboarding">
-  <div class="ob-step active" id="ob-0"><span class="ob-icon">&#128640;</span><div class="ob-title">Bienvenue dans ARC v2</div><div class="ob-text">5 mondes + 2 pôles personnels (Santé et Juridique). Claude intégré partout.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot active"></div><div class="ob-dot"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
-  <div class="ob-step" id="ob-1"><span class="ob-icon">&#9889;</span><div class="ob-title">Cockpit par tâche</div><div class="ob-text">Clique sur n'importe quelle tâche pour ton espace de travail dédié avec Claude.</div><button class="ob-next" data-action="ob-next">Continuer</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot active"></div><div class="ob-dot"></div></div><button class="ob-skip" data-action="ob-finish">Passer</button></div>
-  <div class="ob-step" id="ob-2"><span class="ob-icon">&#127919;</span><div class="ob-title">Ma vie</div><div class="ob-text">Santé et Juridique, à part de tes projets.</div><button class="ob-next" data-action="ob-finish">Cest parti</button><div class="ob-dots"><div class="ob-dot"></div><div class="ob-dot"></div><div class="ob-dot active"></div></div></div>
-</div>
 <!-- DÉPÔT : liste des pensées déposées (sous la barre, au-dessus des écrans) -->
 <div id="depot-screen" aria-hidden="true">
   <div class="depot-wrap">
@@ -4831,9 +4813,6 @@ document.addEventListener("click",function(ev){
   // CCB mode
   if(t.closest("[data-mode]")){ var mode=t.closest("[data-mode]").getAttribute("data-mode"); cockpitState.mode=mode; document.querySelectorAll(".ccb-mode").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mode")===mode); }); return; }
   // QA project select
-  // Onboarding
-  if(t.getAttribute&&t.getAttribute("data-action")==="ob-next"){ obNext(); return; }
-  if(t.getAttribute&&t.getAttribute("data-action")==="ob-finish"){ obFinish(); return; }
   // Add tool
   var addToolEl=t.closest("[data-action='add-tool']");
   if(addToolEl){ var wid=addToolEl.getAttribute("data-wid"); addTool(wid); return; }
@@ -5303,20 +5282,7 @@ function togglePomo(){
   }
 }
 
-/* ===== ONBOARDING ===== */
-var obStep=0;
 
-function obNext(){
-  var steps=document.querySelectorAll(".ob-step");
-  obStep=Math.min(obStep+1,steps.length-1);
-  steps.forEach(function(s,i){ s.classList.toggle("active",i===obStep); });
-}
-
-function obFinish(){
-  document.getElementById("onboarding").classList.remove("active");
-  S.seen=new Date().toISOString();
-  saveS();
-}
 
 /* ===== INTEL REFRESH ===== */
 var intelRefreshed=false;
@@ -6740,8 +6706,6 @@ function init(){
   matinInit();
   lieuInit();
 
-  // Onboarding
-  if(!S.seen||S.seen==="new"){ document.getElementById("onboarding").classList.add("active"); }
   renderHome();
   // La synchronisation démarre quand Supabase annonce la session (onAuthStateChange, dans sbInit)
   renderAuthUI();

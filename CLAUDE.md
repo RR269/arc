@@ -4,7 +4,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 770 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 750 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
@@ -780,6 +780,22 @@ Tiroirs, War Room, recherche (branche `interieur-tiroirs`, 8 octobre 10 h, parti
   recherche, défilement doux vers une section).
 - **Vu, pas touché** : l'accueil de bienvenue des nouveaux comptes (`#onboarding`, montré si `S.seen` est neuf) a
   des emoji, « ARC v2 » et « 5 mondes » ; Santé n'est pas dans la recherche (curseurs, en attente de sa décision).
+
+Écran de bienvenue retiré (branche `interieur-bienvenue`, 8 octobre 18 h, partie de `interieur-tiroirs` à `6ad124c`) :
+- **État au départ** : PR #16 (cockpit) et #17 (tiroirs, War Room, recherche) ouvertes, pas fusionnées.
+  **Ordre de fusion : #16, puis #17, puis celle-ci.**
+- Rayan (18 h 01) : « on attaque ». Chantier proposé à 10 h 20 : l'écran de bienvenue des nouveaux comptes.
+- **Preuve : il ne s'affichait jamais.** L'état de départ porte déjà une date « vu » (`var S = {…, seen: new
+  Date().toISOString()}`), et l'écran ne s'ouvrait que si `S.seen` était vide ou valait « new ». Mesuré : compte neuf
+  connecté et sans session, `#onboarding` jamais actif. Son contenu datait d'avril (emoji, « ARC v2 », « 5 mondes »).
+- **Choix : retiré** (balisage, style, `obNext`, `obFinish`, `obStep`). L'écran d'entrée présente déjà ARC (Penser,
+  Développer, Entreprendre) et l'accueil vide dit quoi faire. Le champ `S.seen` reste dans l'état (donnée inchangée).
+- Tests : accueil 17/17 (le contrôle de la barre du haut vérifie aussi que l'écran de bienvenue n'existe plus),
+  les dix autres suites passent ; 427 `<div` / 427 `</div>`.
+- **Vu pendant les tests, à éclaircir** : le 8 octobre à 18 h 12, une connexion vers le vrai Supabase
+  (`zcelpyexerxlhwtfpcbf.supabase.co`) a été tentée pendant `tests/depot.mjs` ou `tests/rangement.mjs` ; le réseau de
+  l'environnement de travail l'a refusée, rien n'a été lu ni écrit. Source non trouvée (le code d'ARC n'ouvre aucune
+  connexion « temps réel ») : à chercher avant de faire tourner les tests sur une machine qui a accès au réseau.
 
 ### Décisions de Rayan (5 octobre)
 
