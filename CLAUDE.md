@@ -417,8 +417,8 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     bouton s'éclaire (`.auth-btn::after`, `authAppel`). Boucle de 8 s : feux éteints de 84 à 94 %.
   - La carte répond : bouton « armé » (`#auth-go.is-ready`, `authArme`) quand l'adresse est valide et le mot de passe
     fait 8 caractères ; sur Mac, une lumière suit le pointeur (`--mx`, `--my`, `.auth-card::after`, sous le contenu).
-  - Ligne d'état en tête de la carte (`#auth-status`, `authEtat`, `authVie`) : « En ligne » (réseau présent et service
-    de connexion chargé) ou « Hors ligne », la date, l'heure à la seconde, chiffres à chasse fixe ; l'horloge s'arrête
+  - Ligne d'état en tête de la carte (`#auth-status`, `authEtat`, `authVie`) : un état vrai (« En ligne » au premier
+    jet, remplacé à 3 h 36 par « Prêt », voir plus bas), la date, l'heure à la seconde, chiffres à chasse fixe ; l'horloge s'arrête
     d'elle-même quand l'écran est fermé. La carte gagne 28 px : le bouton reste dans le premier écran (844 px).
   - On entre dans ARC (`hideAuthScreen`, classe `leaving`, `AUTH_LEAVE_MS` = 730 ms) : la carte s'efface, le fond
     plonge vers l'horizon vert, l'accueil apparaît dessous ; pendant le passage l'écran ne prend plus aucun geste.
@@ -436,10 +436,24 @@ Connexion guidée (branche `connexion-guide`, 7 octobre 20 h, partie de `main` �
     et `#D6D6DC`).
   - Le sélecteur « Se connecter / Créer un compte » n'est plus gris : fond de verre sombre comme les champs ; la
     touche choisie porte le dégradé d'ARC (filet orange → rose → violet, fond teinté, lueur ; `.auth-tabs::before`).
-    Lecture retenue de « la fonction Se connecter » : l'onglet gris. Le gros bouton en dégradé n'est pas touché ;
-    **à confirmer par Rayan** (s'il parlait du bouton, c'est lui qu'il faudra reprendre).
+    Lecture retenue de « la fonction Se connecter » : l'onglet gris (confirmé par Rayan à 3 h 36 : « on laisse
+    comme c'est »).
   - Tests : entrée-fond 39/39 (un contrôle ajouté), les sept autres suites passent ; contraste le plus faible
     5,02 : 1 ; 573 `<div` / 573 `</div>`.
+- **« Prêt », pas « En ligne » ; bouton principal clair (même branche, PR #13, 8 octobre 3 h 36)**. Rayan : « on ne
+  peut pas mettre En ligne dans une page dans laquelle on n'est pas encore connecté » ; l'onglet et les phrases :
+  « on laisse comme c'est » (la lecture « onglet gris » était la bonne) ; le bouton « Se connecter » : « plus pro et
+  plus clair avec le thème », à voir. Fait :
+  - **Règle à garder : jamais « En ligne » sur l'écran d'entrée** (on le lit comme « connecté »). La ligne d'état dit
+    « Prêt » tant qu'aucune session n'est ouverte (réseau présent, service de connexion chargé), « Connecté » quand
+    la session existe (étapes mot de passe, premier appareil), « Pas de réseau » sinon (`authEtat`).
+  - Bouton principal (`.auth-btn`) : une touche blanche au libellé presque noir (`#0B0B0F`), comme « Déposer » dans
+    ARC ; c'est la seule grande forme blanche de l'écran. Les couleurs d'ARC restent en lueur autour d'elle (orange,
+    rose, violet) : discrète au repos, pleine quand le bouton est armé ou que la lumière de la boucle arrive. Le
+    dégradé plein orange → rouge → violet du bouton est retiré. **Proposé, à valider par Rayan sur son iPhone.**
+  - Tests : entrée-fond 40/40 (un contrôle ajouté : bouton clair, libellé sombre ; l'état vérifie « Prêt »,
+    « Connecté », « Pas de réseau » et l'absence de « En ligne »), les sept autres suites passent ; contraste le plus
+    faible 5,03 : 1 ; 573 `<div` / 573 `</div>`.
 - **Avis donné à Rayan (1 h 21), sans suite pour l'instant** : l'écran d'entrée promet plus que l'intérieur ne tient
   (priorité : le premier écran après connexion) ; la devise est écrite deux fois sur l'écran ; il manque une ligne
   sur les données à la création de compte (texte à écrire avec lui).

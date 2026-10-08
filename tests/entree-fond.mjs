@@ -231,6 +231,8 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   const vif = await page.evaluate(() => { const sat = c => { const m = c.match(/[\d.]+/g).map(Number), un = /^color\(/.test(c), v = m.slice(0, 3).map(x => un ? x * 255 : x); return Math.max(...v) - Math.min(...v); };
     const th = getComputedStyle(document.querySelector('.auth-tabs'), '::before'), ph = [...document.querySelectorAll('.auth-proof li span')].map(e => getComputedStyle(e).color);
     return { touche: /gradient/.test(th.backgroundImage), phrases: ph, clair: ph.every(c => Math.min(...c.match(/\d+/g).slice(0, 3).map(Number)) >= 225), neutre: ph.every(c => sat(c) <= 8) }; });
+  const bouton = await page.evaluate(() => { const c = getComputedStyle(document.getElementById('auth-go')), n = v => v.match(/[\d.]+/g).slice(0, 3).map(Number); return { texte: c.color, sombre: Math.max(...n(c.color)) <= 40, fond: c.backgroundImage, clair: /rgb\(255, 255, 255\)/.test(c.backgroundImage) }; });
+  ok(bouton.sombre && bouton.clair, 'Bouton principal : une touche claire au libellé sombre, la seule grande forme blanche de l\'écran', `libellé ${bouton.texte}`);
   ok(vif.touche && vif.clair && vif.neutre, 'Plus de gris fade : phrases de la frise en blanc lumineux, touche choisie du sélecteur aux couleurs d\'ARC', `phrases ${vif.phrases[0]}, touche en dégradé : ${vif.touche}`);
   ok(cadran.avant === 0 && Math.abs(cadran.apres - cadran.largeur) <= 4 && cadran.monte >= 8, 'Sélecteur : le curseur suit l\'onglet ; champ rempli : le libellé monte au-dessus de la valeur', `curseur ${cadran.avant} → ${cadran.apres} px, libellé monté de ${cadran.monte} px`);
   const calme = await page.evaluate(() => document.getAnimations().filter(a => a.playState === 'running' && a.effect && a.effect.target && a.effect.target.closest && a.effect.target.closest('#auth-screen')).length);
@@ -298,10 +300,13 @@ for (const [w, h] of [[390, 844], [1440, 900]]) {
   const e1 = await lire(); await page.waitForTimeout(1300); const e2 = await lire();
   await ctx.setOffline(true); await page.waitForTimeout(250); const e3 = await lire();
   await ctx.setOffline(false); await page.waitForTimeout(250); const e4 = await lire();
+  // session ouverte (étape « Ton mot de passe ») : « Connecté » ; jamais « En ligne », qu'on lirait comme « connecté » avant de l'être
+  const e5 = await page.evaluate(() => { const avant = _session; _session = { user: { id: 'x', email: 'rayan@test.fr' } }; authEtat(); const t = document.getElementById('auth-status-txt').textContent; _session = avant; authEtat(); return t; });
+  const enLigne = await page.evaluate(() => /en ligne/i.test(document.getElementById('auth-screen').textContent));
   const juste = e => e.ecart <= 2 || e.ecart >= 86398;
-  ok(e1.dansCarte && e1.vu && e1.etat === 'on' && e1.txt === 'En ligne' && /^\S+ \d{1,2} \S+ · \d\d:\d\d:\d\d$/.test(e1.heure) && juste(e1) && juste(e2) && e2.heure !== e1.heure
-     && e3.etat === 'off' && e3.txt === 'Hors ligne' && !e3.pouls && e4.etat === 'on' && e4.txt === 'En ligne',
-     'État réel en tête de la carte : en ligne ou hors ligne selon le réseau, la date, l\'heure vraie à la seconde', `${e1.txt} · ${e1.heure} → ${e2.heure} ; réseau coupé : ${e3.txt} ; revenu : ${e4.txt}`);
+  ok(e1.dansCarte && e1.vu && e1.etat === 'on' && e1.txt === 'Prêt' && /^\S+ \d{1,2} \S+ · \d\d:\d\d:\d\d$/.test(e1.heure) && juste(e1) && juste(e2) && e2.heure !== e1.heure
+     && e3.etat === 'off' && e3.txt === 'Pas de réseau' && !e3.pouls && e4.etat === 'on' && e4.txt === 'Prêt' && e5 === 'Connecté' && !enLigne,
+     'État réel en tête de la carte : « Prêt » avant la connexion (jamais « En ligne »), « Connecté » après, « Pas de réseau » sinon ; la date, l\'heure vraie à la seconde', `${e1.txt} · ${e1.heure} → ${e2.heure} ; réseau coupé : ${e3.txt} ; revenu : ${e4.txt} ; session ouverte : ${e5}`);
   const arme = () => page.evaluate(() => { const go = document.getElementById('auth-go'); return go.classList.contains('is-ready') ? +getComputedStyle(go, '::after').opacity : 0; });
   const a0 = await arme(); await page.fill('#auth-email-inp', 'rayan@test.fr'); await page.fill('#auth-pass-inp', '1234567'); const a1 = await arme();
   await page.fill('#auth-pass-inp', '12345678'); const a2 = await arme(); await page.evaluate(() => document.activeElement.blur()); await page.waitForTimeout(150);

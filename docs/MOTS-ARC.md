@@ -218,8 +218,11 @@ l'atteint (des feux de départ : ARC est le point de départ).
 
 ### La ligne d'état de la carte (8 octobre, 2 h)
 
-En tête de la carte : « En ligne » ou « Hors ligne », puis la date et l'heure (« jeu. 8 oct. · 02:13:16 »).
-Règle : cet écran ne montre que des états vrais, jamais un chiffre ou un signal inventé pour faire « connecté ».
+En tête de la carte : « Prêt », puis la date et l'heure (« jeu. 8 oct. · 03:48:04 »). « Connecté » quand la session
+est ouverte, « Pas de réseau » quand le navigateur n'en a pas.
+Règles : cet écran ne montre que des états vrais, jamais un chiffre ou un signal inventé pour faire « connecté » ;
+et jamais « En ligne » avant la connexion (Rayan, 8 octobre, 3 h 36 : « on ne peut pas mettre En ligne dans une page
+dans laquelle on n'est pas encore connecté »).
 
 ### Le bas de la carte (7 octobre, 22 h 20, demande de Rayan : « on modifie la page d'accueil, le bas »)
 

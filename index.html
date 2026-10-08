@@ -1446,7 +1446,8 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
      son bord ; puis le bouton s'éclaire : l'énergie est arrivée à l'action.
    - La carte répond : bouton « armé » quand l'adresse et le mot de passe sont complets (#auth-go.is-ready), lumière
      sous le pointeur sur Mac (--mx, --my).
-   - La ligne d'état, en tête de la carte : en ligne ou hors ligne, la date, l'heure à la seconde (authEtat).
+   - La ligne d'état, en tête de la carte : « Prêt », « Connecté » ou « Pas de réseau », la date, l'heure à la
+     seconde (authEtat). Jamais « En ligne » : on n'est pas encore connecté sur cet écran.
    - On entre dans ARC : la carte s'efface, le fond plonge vers l'horizon, l'accueil apparaît (.leaving).
    Toujours transform, opacity et la position d'un fond ; aucun mode de fusion ; rien ne bouge si l'appareil demande
    moins d'animations (les points, les mots et l'état restent allumés, fixes). */
@@ -1456,8 +1457,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-card::before{content:"";position:absolute;left:26px;right:26px;top:-1px;height:18px;pointer-events:none;opacity:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--a-vert) 35%,#fff) 50%,transparent) -28% 0/36% 2px no-repeat,radial-gradient(50% 100% at 50% 0,color-mix(in srgb,var(--a-vert) 34%,transparent),transparent) -28% 0/36% 100% no-repeat}
 .auth-card::after{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;transition:opacity .45s;background:radial-gradient(320px circle at var(--mx,50%) var(--my,0px),rgba(255,255,255,.075),transparent 70%)}
 @media(hover:hover){.auth-card:hover::after{opacity:1}}
-.auth-btn{position:relative}
-.auth-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;box-shadow:0 0 0 1px rgba(255,255,255,.38),0 0 18px 1px color-mix(in srgb,var(--a-rouge) 70%,transparent),0 0 44px 4px color-mix(in srgb,var(--a-violet) 60%,transparent)}
+/* Le bouton principal (8 octobre, 3 h 36, Rayan : « plus pro et plus clair avec le thème ») : une touche de lumière
+   blanche, libellé presque noir (comme « Déposer » dans ARC). Sur un fond déjà plein de couleurs, c'est la seule
+   grande forme blanche : on voit tout de suite où appuyer. Les couleurs d'ARC restent autour d'elle, en lueur
+   (orange, rose, violet), discrète au repos, pleine quand le bouton est armé ou que la lumière de la boucle arrive. */
+.auth-btn{position:relative;color:#0B0B0F;background:linear-gradient(180deg,#fff,#ECECF1);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.1),-56px 14px 28px -24px rgba(255,149,0,.5),0 16px 30px -20px rgba(255,45,85,.6),56px 14px 28px -24px rgba(175,82,222,.6)}
+.auth-btn::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;box-shadow:0 0 0 1px #fff,-64px 6px 30px -16px rgba(255,149,0,.8),0 8px 34px -8px rgba(255,45,85,.8),64px 6px 30px -16px rgba(175,82,222,.9)}
 #auth-go.is-ready::after{opacity:.9}
 .auth-btn:disabled::after{display:none}
 .auth-status{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-2px 6px 12px;min-height:18px;font-family:var(--fa);font-size:13px;line-height:18px;color:#B4B4BC;font-variant-numeric:tabular-nums}
@@ -2563,7 +2568,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <li style="--c:var(--a-vert)"><i></i><b>Entreprendre</b><span>Passe &agrave; l&rsquo;action et pilote tout d&rsquo;ici.</span></li>
     </ul>
     <div class="auth-card">
-    <div class="auth-status" id="auth-status" data-etat="off"><span class="auth-status-etat"><i></i><span id="auth-status-txt">Hors ligne</span></span><span id="auth-status-time"></span></div>
+    <div class="auth-status" id="auth-status" data-etat="off"><span class="auth-status-etat"><i></i><span id="auth-status-txt">Pas de réseau</span></span><span id="auth-status-time"></span></div>
     <div class="auth-step active" id="auth-email">
       <div class="auth-tabs" data-mode="in" role="tablist" aria-label="Connexion ou création de compte">
         <button class="auth-tab on" id="auth-tab-in" type="button" role="tab" aria-selected="true">Se connecter</button>
@@ -2764,7 +2769,8 @@ function hideAuthScreen() {
   _authLeave = setTimeout(function() { _authLeave = null; scr.classList.remove('active', 'leaving'); }, AUTH_LEAVE_MS);
 }
 // L'écran d'entrée vit, sans rien inventer : chaque signe dit un état vrai.
-// - la ligne d'état : « En ligne » si le navigateur a le réseau et que le service de connexion est chargé, la date,
+// - la ligne d'état : « Prêt » si le navigateur a le réseau et que le service de connexion est chargé (« Connecté »
+//   une fois la session ouverte, « Pas de réseau » sinon), la date,
 //   l'heure à la seconde ; elle s'arrête d'elle-même quand l'écran est fermé ;
 // - le bouton principal est « armé » (is-ready) quand l'adresse est valide et le mot de passe assez long ;
 // - sur Mac, une lumière suit le pointeur sur la carte (--mx, --my).
@@ -2776,7 +2782,9 @@ function authArme() {
 function authEtat() {
   var el = document.getElementById('auth-status'); if(!el) return;
   var on = !!_sb && navigator.onLine !== false, d = new Date();
-  var etat = on ? 'En ligne' : 'Hors ligne';
+  // « En ligne » ne se dit pas sur un écran où l'on n'est pas encore connecté (Rayan, 8 octobre) : « Prêt » tant
+  // qu'aucune session n'est ouverte, « Connecté » ensuite, « Pas de réseau » si le navigateur n'en a pas.
+  var etat = !on ? 'Pas de réseau' : (_session ? 'Connecté' : 'Prêt');
   var heure = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   var a = document.getElementById('auth-status-txt'), b = document.getElementById('auth-status-time');
   if(el.getAttribute('data-etat') !== (on ? 'on' : 'off')) el.setAttribute('data-etat', on ? 'on' : 'off');
