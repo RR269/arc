@@ -288,14 +288,20 @@ for (const vp of ECRANS) {
     const { page } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
     await page.waitForTimeout(400);
     for (const lbl of ['ARC', '✓ Sync', 'Reconnexion…', 'Non connecté', 'À confirmer']) {
-      const r = await page.evaluate(l => { setSyncUI('busy', l); const nav = document.querySelector('#S1 .hn'), els = [...nav.querySelectorAll('.h-logo-mark, .h-logo-name, #sync-pill, #btn-search, #btn-warroom, #btn-menu')].map(e => e.getBoundingClientRect());
-        return { droite: Math.max(...els.map(x => x.right)), gauche: Math.min(...els.map(x => x.left)), haut: Math.min(...els.slice(2).map(x => x.height)), large: Math.min(...els.slice(2).map(x => x.width)), lignes: Math.round(document.getElementById('btn-warroom').getBoundingClientRect().height),
+      const r = await page.evaluate(l => { setSyncUI('busy', l); const nav = document.querySelector('#S1 .hn'), els = [...nav.querySelectorAll('.h-logo-mark, .h-logo-name, #sync-pill, #btn-search, #btn-menu')].map(e => e.getBoundingClientRect());
+        return { droite: Math.max(...els.map(x => x.right)), gauche: Math.min(...els.map(x => x.left)), haut: Math.min(...els.slice(2).map(x => x.height)), large: Math.min(...els.slice(2).map(x => x.width)),
                  chevauche: els.some((a, i) => els.some((b, j) => j > i && a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom && a.bottom > b.top && !(i === 0 && j === 1))) }; }, lbl);
       if (r.droite > w + 0.5 || r.gauche < 0 || r.haut < 43.5 || r.large < 43.5 || r.chevauche) vus.push(`${w} px « ${lbl} » : droite ${Math.round(r.droite)}, cible ${Math.round(r.large)}×${Math.round(r.haut)}${r.chevauche ? ', chevauchement' : ''}`);
     }
     await ctx.close();
   }
-  ok(!vus.length, 'Barre du haut : aucun bouton ne sort de l\'écran ni ne se chevauche, de 360 à 430 px, quel que soit l\'état de synchronisation', vus.slice(0, 4).join(' ; ') || '4 largeurs × 5 états');
+  {
+    const { page } = await openPage(browser, url, { fk: fakeSupabase() });
+    const wr = await page.evaluate(() => ({ bouton: !!document.getElementById('btn-warroom'), ecran: !!document.getElementById('war-room'), fonction: typeof window.openWarRoom, mot: /War Room/i.test(document.body.innerText + document.getElementById('onboarding').textContent) }));
+    vus.push(...(wr.bouton || wr.ecran || wr.fonction !== 'undefined' || wr.mot ? ['War Room encore présente : ' + JSON.stringify(wr)] : []));
+    await page.context().close();
+  }
+  ok(!vus.length, 'Barre du haut : aucun bouton ne sort de l\'écran ni ne se chevauche, de 360 à 430 px, quel que soit l\'état de synchronisation ; la War Room n\'existe plus (ni bouton, ni écran, ni mot)', vus.slice(0, 4).join(' ; ') || '4 largeurs × 5 états');
 }
 
 /* Le moment de la journée : un mot et un pictogramme, jamais d'emoji */

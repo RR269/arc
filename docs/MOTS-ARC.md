@@ -271,6 +271,18 @@ l'accueil). « Tu as une idée. Elle devient réelle. » n'est plus sur l'écran
 - Laissés tels quels, à revoir avec Rayan : « CHEMIN CRITIQUE », « BLOQUÉ », « URGENT » (étiquettes écrites dans les
   projets), « Journalise maintenant. », « Sauvegarder le check-in ».
 
+### Les mots du cockpit, de la recherche (8 octobre, 9 h 20 et 10 h)
+
+- Cockpit : « ‹ ARYAN » (retour au projet), « Minuteur », « Tâche à faire » / « Tâche faite », « C'est fait »,
+  « Rouvrir la tâche », « Mes notes », « Enregistré », « Demander à Claude », « Ta question sur cette tâche »,
+  « Question préparée pour cette tâche. Modifie-la ou envoie-la. », « Claude reçoit le projet, sa mission et cette
+  tâche. », « Ajouter à mes notes » / « Ajouté à tes notes », « Le projet », « Mission », « Action prioritaire »,
+  « Journal du projet », « Une avancée, une décision », « Rien pour l'instant. » ; minuteur : « Démarrer », « Pause »,
+  « Reprendre », « Remettre à zéro », « Session 1 sur 4 », « Minuteur terminé : pause de 5 min ».
+- Recherche : « Rechercher dans ARC », « Fermer », groupes « Pensées », « Tâches », « Projets », « Journal »,
+  « Juridique » ; « Dans tes notes de « … » » ; « Rien pour « … ». » ; « Et N de plus : précise ta recherche. »
+- Retirés : « War Room », « Injecter » / « Chat », « Claude actif — contexte complet chargé », « Contexte » (Mac).
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par
