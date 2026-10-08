@@ -14,7 +14,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `connexion.mjs` (écran d'entrée : identifiants, création de compte, mot de passe),
   `entree-fond.mjs` (fond de l'écran d'entrée : contraste mesuré dans l'image, six couleurs dans le fond et pas dans les lettres),
   `accueil.mjs` (accueil, vide et rempli : mêmes mesures, barre du haut de 360 à 430 px, moment de la journée ;
-  ordre de l'accueil, prochaine étape, « Ensuite », projets endormis et réveillés),
+  ordre de l'accueil, prochaine étape, « Ensuite », projets endormis et réveillés, cases à leur juste taille,
+  nombre d'espaces, ville par la position avec un faux appareil et un faux service),
   `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
   `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
@@ -29,6 +30,9 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Un projet peut être « endormi » : `S.sleep[id]` (`mondeDort`, `mondeSommeil`, `renderSommeil`) ; c'est la seule
   source, pour l'accueil comme pour la note « Endormi. » envoyée au proxy de rangement (`rangeSpaces`).
 - Deux pôles personnels : Santé et Juridique.
+- Ma ville (option, menu « ··· ») : ville et pays d'après la position de l'appareil ; réglage et dernière ville dans
+  `arc_lieu_v1` sur l'appareil (jamais dans `S`) ; nom de la ville demandé à BigDataCloud (`lieuCheck`, `lieuDemander`,
+  `lieuNom`, `lieuBascule`).
 - Cockpit par tâche, War Room, Pomodoro, recherche, veille, import/export JSON.
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
 - Connexion : adresse + mot de passe (`authGo`), ou code à 6 chiffres / lien par e-mail (`authSendCode`, `authVerifyCode`) ; `showAuthScreen` ; `getUID` = identifiant du compte.
@@ -573,6 +577,60 @@ Accueil, le poste de commande (même branche `interieur-accueil`, PR #14, 8 octo
   lieu de l'avancer, l'avance échouait parfois sous charge), entrée-fond 40/40, connexion 27/27, mondes 6/6, pôles
   9/9, dépôt 19/19, rangement 25/25, matin 27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 5,41 : 1 ;
   538 `<div` / 538 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
+
+Entrée, accueil épuré, ville (même branche `interieur-accueil`, PR #14, 8 octobre 7 h) :
+- Rayan (6 h 41, dicté) : le nombre d'espaces du titre suit les espaces réels ; « Valence » vient de la position de
+  l'appareil, ville et pays, et rien si la position n'est pas activée ou a été retirée ; sur l'écran d'entrée, « Garde
+  en tête le strict nécessaire. Le reste prend vie ici. » prend la place de « Tu as une idée. Elle devient réelle. »
+  (couleur à mon choix, « ça permettra à tout le reste de remonter ») ; sur l'accueil, « certaines choses doivent être
+  supprimées sans même te dire », « la typographie doit être reprise immédiatement », « certaines cases sont assez
+  grosses pour ce qu'elles sont » ; il invite à ajouter une idée de design ou de fonction.
+- **Écran d'entrée, le titre** : « Garde en tête / le strict nécessaire. » en blanc, « Le reste prend vie ici. » dans
+  le dégradé d'ARC ; trois lignes, coupées là où la phrase respire (`white-space:nowrap`, `<br>`), de 30 à 42 px ;
+  `.auth-pitch` n'existe plus. Sur iPhone 390 × 844 la carte finit à 793 px (elle remonte). Contraste le plus faible
+  4,94 : 1. `tests/entree-fond.mjs` : 41 contrôles (un ajouté : le titre de 360 à 1440 px).
+- **Le nombre d'espaces** : déjà compté (`WORLDS.length + POLES.length`), maintenant vérifié (« Six espaces. »,
+  « Un espace. »). **Ajouter ou retirer un espace depuis ARC n'existe pas encore** (les mondes sont écrits dans le
+  code) : c'est le chantier « faire naître un monde depuis une pensée » ; le titre suivra tout seul.
+- **Ma ville** (module « MA VILLE » dans `index.html`) : menu « ··· » › « Afficher ma ville ». Coupée par défaut : rien
+  ne s'affiche et rien n'est demandé. Activée : le navigateur demande la position ; ARC affiche « ville, pays » après
+  la date. Position refusée, autorisation retirée ou option coupée : rien, et la ville gardée est oubliée ; si
+  l'autorisation revient, la ville revient seule. Vérifiée au lancement et au retour au premier plan (dix minutes au
+  moins entre deux lectures).
+  - **Donnée, à connaître** : pour trouver le nom de la ville, la position arrondie à 3 décimales (une centaine de
+    mètres) part du navigateur vers `api.bigdatacloud.net` (service gratuit, sans clé, prévu pour le navigateur), au
+    plus une fois tant que l'appareil n'a pas bougé d'un kilomètre. Jamais appelé sans coordonnées (il localiserait
+    par l'adresse IP). Rien n'est écrit dans `S` ni dans Supabase ; `sw.js` ne garde pas la réponse en cache.
+    Le pays s'écrit avec `Intl.DisplayNames` (« Royaume-Uni », pas la forme longue).
+  - **Pas essayé avec le vrai service ni sur un vrai téléphone** : prouvé contre un faux appareil et un faux service.
+    Sans session (écran d'entrée), ARC ne demande jamais la position ; après un refus, pas de nouvelle demande
+    avant dix minutes.
+    Sur iPhone, Safari peut redemander l'autorisation à chaque ouverture tant que le site n'est pas sur « Autoriser »
+    (Réglages › Apps › Safari › Position).
+- **Accueil épuré** (bloc de style unique « ACCUEIL : un seul but… » ; les règles de contenu des trois couches
+  précédentes sont retirées, 150 lignes de style en moins) :
+  - Le haut : une ligne (pictogramme du moment, date, ville) puis le titre sur UNE ligne (25 à 31 px, 40 px sur
+    Mac ; dégradé éclairci `#FFA51F → #FF6B81 → #D596F7` car le titre est plus petit et plus près de l'horizon).
+    La pastille « Matin / Nuit » et la ligne « Valence · date » n'existent plus (`#h-quand`, `#h-date`, `#h-lieu`).
+  - Écriture du système partout ; titres de section en 17 px demi-gras (« Prochaine étape », « Ensuite »,
+    « Projets », « Ma vie ») ; plus aucune petite capitale à chasse fixe sur l'accueil.
+  - « N pensées à ranger » : une ligne fine avec un point ambre. « Déposé » et « Point du jour » : deux tuiles côte à
+    côte (58 px au lieu de deux cases de 60 px empilées).
+  - Projets en cours : une ligne chacun (`.pj` : pictogramme, nom, prochaine tâche, pourcentage, trait de progression
+    en bas), 66 px au lieu de 255 px. Retirés de l'accueil : la description et « N bloquants » (ils sont dans le projet).
+  - Endormis : repliés en une ligne (« Endormis · FBA, KITCHEN, TELENEUF », `#h-dort-tog`, `_dortOuvert`) ; dépliés,
+    une ligne chacun avec « Réveiller ».
+  - Ma vie : deux tuiles côte à côte (`.vie`), sans description ; une seconde ligne seulement s'il y a quelque chose
+    à dire (« Check-in fait », « 3 éléments »).
+  - Retirés : « ARC v2 · K recherche » en pied, « RAYAN · VALENCE » sous le logo.
+  - Lignes de projet et tuiles se touchent au clavier (`role="button"`, Entrée ou Espace).
+  - Hauteur de l'accueil sur iPhone 390 × 844 : 872 px vide (un écran), 1 171 px rempli (4 744 px en ligne le matin).
+- Tests : accueil 17/17 (cinq contrôles ajoutés : cases à leur juste taille, nombre d'espaces, ville autorisée,
+  ville refusée, aucune demande de position sans session), entrée-fond 41/41, connexion 27/27, mondes 6/6, pôles 9/9, dépôt 19/19, rangement 25/25, matin
+  27/27, proxy 41/41 ; contraste le plus faible sur l'accueil 5,96 : 1 ; 519 `<div` / 519 `</div>`. Vérifié dans
+  Chromium seulement : **à voir par Rayan sur son iPhone.**
+- **Toujours à décider par Rayan** : la War Room dans la barre du haut ; le contenu de Santé ; « RAYAN » et « Valence »
+  restent dans les contenus des projets et dans les consignes envoyées à Claude (ce sont ses projets, pas l'écran).
 
 ### Décisions de Rayan (5 octobre)
 

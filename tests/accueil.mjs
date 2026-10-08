@@ -1,5 +1,6 @@
 // Tests de l'accueil (#S1), le premier écran après la connexion (8 octobre : identité de l'écran d'entrée, charte
-// appliquée, et l'accueil ramené à UN but, la prochaine étape ; projets endormis à part ; « Ma vie » à part).
+// appliquée, l'accueil ramené à UN but, la prochaine étape ; projets endormis repliés ; « Ma vie » à part ; cases à
+// leur juste taille ; nombre d'espaces compté ; ville et pays par la position de l'appareil, si la personne le veut).
 // Lancement depuis la racine du dépôt (voir tests/depot.mjs pour installer Playwright) :
 //   NODE_PATH=/tmp/arc-outils/node_modules node tests/accueil.mjs
 // Supabase est remplacé par un faux serveur : aucune requête ne part vers le vrai projet.
@@ -11,6 +12,7 @@
 // L'ordre de l'accueil (prochaine étape, Déposé et point du jour, Projets, Ma vie), ce qui en est sorti, la
 // prochaine étape et sa touche dans le premier écran de l'iPhone, « C'est fait », « Ensuite » qui ouvre « Déposé »,
 // endormir et réveiller un projet (gardé dans S.sleep, relu au lancement suivant).
+// La ville : la position vient d'un faux appareil et son nom d'un faux service (aucune requête ne part vers le vrai).
 
 import { chromium, startServer, fakeSupabase, openPage, sessionScript, deposit } from './outils.mjs';
 import { mesurer } from './mesure.mjs';
@@ -48,9 +50,9 @@ const releve = () => {
   const ids = [...document.querySelectorAll('[id]')].map(e => e.id).filter((x, i, a) => a.indexOf(x) !== i);
   return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], emoji, champs, fusion, hors: [...new Set(hors)], ids, polices: [...polices],
            large: document.documentElement.scrollWidth <= innerWidth && root.scrollWidth <= root.clientWidth + 1,
-           horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), systeme: [texte('.h-sub'), texte('.depot-entry-t'), texte('.pc-monde-desc')], titre: texte('.h-h1'),
-           mondes: root.querySelectorAll('.pc-monde').length, dort: root.querySelectorAll('.h-dort-row').length, poles: root.querySelectorAll('.pole-card').length, etapes: root.querySelectorAll('#next-list .next-item').length,
-           date: (root.textContent.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) \d{1,2} /g) || []).length };
+           horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), systeme: [texte('#h-date'), texte('.depot-entry-t'), texte('.pj-f'), texte('.pj-n'), texte('.h-section-lbl'), texte('.vie-n')], titre: texte('.h-h1'),
+           mondes: root.querySelectorAll('.pj').length, dort: root.querySelectorAll('.h-dort-row').length, poles: root.querySelectorAll('.vie').length, etapes: root.querySelectorAll('#next-list .next-item').length,
+           date: (root.textContent.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) \d{1,2} /gi) || []).length };
 };
 const contraste = async (page, nom) => {
   const sous = []; let pire = { ratio: Infinity }, n = 0;
@@ -109,9 +111,9 @@ for (const vp of ECRANS) {
   ok(n > 300 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout sur l'accueil, vide et rempli, menu compris`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   // les cinq mondes et les deux pôles s'ouvrent depuis l'accueil, et on en revient
   const ouverts = [];
-  for (let w = 0; w < 5; w++) { await page.evaluate(i => document.querySelector(`#S1 :is(.pc-monde, .h-dort-row)[data-wid="${i}"]`).click(), w); await page.waitForTimeout(650);
+  for (let w = 0; w < 5; w++) { await page.evaluate(i => document.querySelector(`#S1 :is(.pj, .h-dort-row)[data-wid="${i}"]`).click(), w); await page.waitForTimeout(650);
     ouverts.push(await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && document.getElementById('S1').classList.contains('off'))); await page.evaluate(() => goHome()); await page.waitForTimeout(450); }
-  for (const p of ['sante', 'juridique']) { await page.evaluate(i => document.querySelector(`#S1 .pole-card[data-pole="${i}"]`).click(), p); await page.waitForTimeout(650);
+  for (const p of ['sante', 'juridique']) { await page.evaluate(i => document.querySelector(`#S1 .vie[data-pole="${i}"]`).click(), p); await page.waitForTimeout(650);
     ouverts.push(await page.evaluate(i => !document.getElementById(i === 'sante' ? 'S3' : 'S4').classList.contains('off'), p)); await page.evaluate(() => goHome()); await page.waitForTimeout(450); }
   ok(ouverts.length === 7 && ouverts.every(Boolean) && errors.length === 0, `${vp.n} : les cinq mondes (en cours ou endormis) et les deux pôles s'ouvrent depuis l'accueil, aucune erreur de console`, ouverts.map(o => o ? 'oui' : 'NON').join(' ') + (errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''));
   await ctx.close();
@@ -127,8 +129,9 @@ for (const vp of ECRANS) {
   const plan = () => page.evaluate(() => { const root = document.getElementById('S1'), y = s => { const e = root.querySelector(s); return e && e.offsetParent !== null ? Math.round(e.getBoundingClientRect().top) : null; };
     const txt = root.querySelector('.hw').innerText, bar = document.getElementById('depot-bar').getBoundingClientRect().top, go = root.querySelector('.is-now .rg-btn.main');
     return { ordre: [y('.h-h1'), y('.h-horizon'), y('#next-steps'), y('.h-entries'), y('#hgrid'), y('#h-dort'), y('#poles-grid')],
-             sortis: ['.h-stats', '.h-prog', '#h-critical-badge', '#quick-add-bar', '.intel-card', '.pc-monde-tag', '.pc-monde-prio', '.pole-dot'].filter(s => root.querySelector(s)),
-             mots: ['Résous', 'CRITIQUE', 'URGENCE', 'manquant', 'Veille', 'bien-être complet'].filter(m => txt.includes(m)),
+             sortis: ['.h-stats', '.h-prog', '#h-critical-badge', '#quick-add-bar', '.intel-card', '.pc-monde', '.pole-card', '.pole-dot', '.h-context-badge', '.h-sub', '.h-pied', '.h-logo-sub'].filter(s => root.querySelector(s)),
+             mots: ['Résous', 'CRITIQUE', 'URGENCE', 'manquant', 'Veille', 'bien-être', 'bloquant', 'Valence', 'VALENCE', 'RAYAN', 'ARC v2'].filter(m => (txt + ' ' + root.querySelector('.hn').innerText).includes(m)),
+             haut: (() => { const c = [root, root.querySelector('.hw')].find(e => e.scrollHeight > e.clientHeight + 4) || root; return c.scrollHeight; })(), titreH: Math.round(root.querySelector('.h-h1').getBoundingClientRect().height), entrees: [...root.querySelectorAll('.h-entries .depot-entry')].map(e => Math.round(e.getBoundingClientRect().top)), vie: [...root.querySelectorAll('.vie')].map(e => Math.round(e.getBoundingClientRect().top)), mono: [...root.querySelectorAll('.hw > :not(.hn) *')].filter(e => e.offsetParent !== null && e.childNodes.length && [...e.childNodes].some(n => n.nodeType === 3 && n.nodeValue.trim()) && /Mono/.test(getComputedStyle(e).fontFamily)).map(e => e.className).slice(0, 3),
              titre: document.getElementById('h-espaces').textContent, sous: document.getElementById('h-projets-sub').textContent,
              lbl: [...root.querySelectorAll('.next-lbl')].map(e => e.textContent), vide: !document.getElementById('next-empty').hidden,
              now: root.querySelector('.is-now .next-step')?.textContent || null, touche: go ? { bas: Math.round(go.getBoundingClientRect().bottom), barre: Math.round(bar), blanc: getComputedStyle(go).color } : null,
@@ -136,7 +139,7 @@ for (const vp of ECRANS) {
   const vide = await plan();
   const croissant = a => a.every((v, i) => v !== null && (i === 0 || v > a[i - 1]));
   ok(croissant(vide.ordre) && !vide.sortis.length && !vide.mots.length && vide.titre === 'Sept espaces.' && vide.sous === '2 en cours · 3 endormis' && vide.vide && !vide.now,
-     'Accueil : dans l\'ordre, titre, horizon, prochaine étape, Déposé et point du jour, Projets, Endormis, Ma vie ; compteurs, progression globale, ajout rapide, veille et mots pressants n\'y sont plus',
+     'Accueil : dans l\'ordre, titre, horizon, prochaine étape, Déposé et point du jour, Projets, Endormis, Ma vie ; compteurs, progression globale, ajout rapide, veille, descriptions, « Valence » en dur et mots pressants n\'y sont plus',
      `positions ${vide.ordre.join(', ')} ; « ${vide.titre} » ; « ${vide.sous} »${vide.sortis.length ? ' ; restent ' + vide.sortis.join(', ') : ''}${vide.mots.length ? ' ; mots ' + vide.mots.join(', ') : ''}`);
 
   for (const t of ['Appeler la comptable pour la TVA', 'Relire les CGV d\'Atlas', 'idée de nom pour la boutique']) { await deposit(page, t); await page.waitForTimeout(250); }
@@ -146,6 +149,12 @@ for (const vp of ECRANS) {
   ok(plein.now === 'Appeler la comptable pour la TVA' && plein.lbl.join('|') === 'Prochaine étape|Ensuite' && plein.principaux === 1 && plein.touche && plein.touche.bas < plein.touche.barre && plein.touche.blanc === 'rgb(11, 11, 15)' && plein.lignes.length === 1 && !plein.vide,
      'Accueil : la prochaine étape est une carte avec la seule touche principale de l\'écran, « C\'est fait », visible dans le premier écran de l\'iPhone ; la suite est sous « Ensuite »',
      `« ${plein.now} » ; libellés ${plein.lbl.join(', ')} ; ${plein.principaux} touche principale, bas à ${plein.touche?.bas} px (barre de dépôt à ${plein.touche?.barre} px) ; ensuite : ${plein.lignes.join(' / ')}`);
+
+  // À leur juste taille : le titre sur une ligne, Déposé et Point du jour côte à côte, Santé et Juridique côte à côte,
+  // aucune petite capitale à chasse fixe, et tout l'accueil rempli en moins de deux écrans d'iPhone
+  ok(plein.titreH <= 40 && plein.entrees.length === 2 && plein.entrees[0] === plein.entrees[1] && plein.vie.length === 2 && plein.vie[0] === plein.vie[1] && !plein.mono.length && plein.haut <= 1300 && vide.haut <= 1000,
+     'Accueil épuré : titre sur une ligne, Déposé et Point du jour côte à côte, Santé et Juridique côte à côte, écriture du système sans chasse fixe, moins de deux écrans d\'iPhone',
+     `titre ${plein.titreH} px de haut ; tuiles à ${plein.entrees.join(' et ')} px, Ma vie à ${plein.vie.join(' et ')} px ; hauteur de l'accueil : ${vide.haut} px vide, ${plein.haut} px rempli${plein.mono.length ? ' ; chasse fixe : ' + plein.mono.join(', ') : ''}`);
 
   // « Ensuite » : toute la ligne ouvre la pensée dans « Déposé » ; « C'est fait » fait monter la suivante
   const tid = await page.evaluate(() => document.querySelector('#S1 .next-row').getAttribute('data-id'));
@@ -159,12 +168,14 @@ for (const vp of ECRANS) {
      `Déposé ouvert ${dep.ouvert}, pensée présente ${dep.la} ; après « C'est fait » : « ${apres.now} », libellés ${apres.lbl.join(', ')}`);
 
   // Endormir, réveiller : depuis l'accueil et depuis le monde ; gardé dans S.sleep, relu au lancement suivant
-  const etat = () => page.evaluate(() => ({ cours: [...document.querySelectorAll('#S1 .pc-monde')].map(e => +e.dataset.wid), dort: [...document.querySelectorAll('#S1 .h-dort-row')].map(e => +e.dataset.wid),
+  const etat = () => page.evaluate(() => ({ cours: [...document.querySelectorAll('#S1 .pj')].map(e => +e.dataset.wid), plie: document.getElementById('h-dort-list').hidden, noms: document.getElementById('h-dort-n').textContent, dort: [...document.querySelectorAll('#S1 .h-dort-row')].map(e => +e.dataset.wid),
     garde: (JSON.parse(localStorage.getItem('arc_v2') || '{}').sleep) || {}, v: S._worldsV, sous: document.getElementById('h-projets-sub').textContent, chez: !document.getElementById('S1').classList.contains('off') }));
   const e0 = await etat();
+  await page.click('#h-dort-tog'); await page.waitForTimeout(150);
+  const deplie = await page.evaluate(() => ({ etat: document.getElementById('h-dort-tog').getAttribute('aria-expanded'), vus: [...document.querySelectorAll('#S1 .h-dort-row')].filter(e => e.offsetParent !== null).length }));
   await page.click('#S1 .h-dort-btn[data-wid="1"]'); await page.waitForTimeout(250);
   const e1 = await etat();
-  await page.evaluate(() => document.querySelector('#S1 .pc-monde[data-wid="0"]').click()); await page.waitForTimeout(650);
+  await page.evaluate(() => document.querySelector('#S1 .pj[data-wid="0"]').click()); await page.waitForTimeout(650);
   const dans = await page.evaluate(() => ({ t: document.getElementById('w-sommeil-btn').textContent, h: Math.round(document.getElementById('w-sommeil-btn').getBoundingClientRect().height) }));
   await page.evaluate(() => document.getElementById('w-sommeil-btn').click()); await page.waitForTimeout(200);
   const dans2 = await page.evaluate(() => document.getElementById('w-sommeil-btn').textContent);
@@ -173,12 +184,96 @@ for (const vp of ECRANS) {
   await page.reload(); await page.waitForTimeout(900);
   await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   const e3 = await etat();
-  ok(e0.cours.join() === '0,4' && e0.dort.join() === '1,2,3' && e0.v === 3 && e1.chez && e1.cours.join() === '0,1,4' && e1.dort.join() === '2,3' && e1.garde[1] === false && e1.sous === '3 en cours · 2 endormis'
+  ok(e0.cours.join() === '0,4' && e0.dort.join() === '1,2,3' && e0.v === 3 && e0.plie && e0.noms === 'FBA, KITCHEN, TELENEUF' && deplie.etat === 'true' && deplie.vus === 3 && e3.plie && e1.chez && e1.cours.join() === '0,1,4' && e1.dort.join() === '2,3' && e1.garde[1] === false && e1.sous === '3 en cours · 2 endormis'
      && dans.t === 'Endormir ce projet' && dans.h >= 44 && dans2 === 'Réveiller ce projet' && e2.cours.join() === '1,4' && e2.dort.join() === '0,2,3' && e2.garde[0] === true
      && e3.cours.join() === '1,4' && e3.dort.join() === '0,2,3' && errors.length === 0,
-     'Projets endormis : FBA, KITCHEN et TELENEUF le sont au départ ; « Réveiller » depuis l\'accueil sans quitter l\'accueil, « Endormir ce projet » depuis le monde ; le choix est gardé et relu au lancement suivant',
+     'Projets endormis : FBA, KITCHEN et TELENEUF le sont au départ, repliés en une ligne ; dépliés, « Réveiller » depuis l\'accueil sans quitter l\'accueil, « Endormir ce projet » depuis le monde ; le choix est gardé et relu au lancement suivant',
      `départ ${e0.cours.join()} | ${e0.dort.join()} ; après « Réveiller » FBA ${e1.cours.join()} | ${e1.dort.join()} (« ${e1.sous} ») ; ARYAN endormi ${e2.cours.join()} | ${e2.dort.join()} ; après rechargement ${e3.cours.join()} | ${e3.dort.join()}${errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''}`);
   await ctx.close();
+}
+
+/* Le titre compte les espaces de la personne */
+{
+  const { ctx, page } = await openPage(browser, url, { fk: fakeSupabase() });
+  const lire = () => page.evaluate(() => { renderHome(); return document.getElementById('h-espaces').textContent; });
+  const vus = [await lire()];
+  vus.push(await page.evaluate(() => { const w = WORLDS.pop(); renderHome(); const t = document.getElementById('h-espaces').textContent; WORLDS.push(w); return t; }));
+  vus.push(await page.evaluate(() => { const w = WORLDS.splice(1, 4), p = POLES.pop(); renderHome(); const t = document.getElementById('h-espaces').textContent; WORLDS.push(...w); POLES.push(p); return t; }));
+  vus.push(await page.evaluate(() => { const w = WORLDS.splice(0, 5), p = POLES.pop(); renderHome(); const t = document.getElementById('h-espaces').textContent; WORLDS.push(...w); POLES.push(p); return t; }));
+  vus.push(await lire());
+  ok(vus.join(' | ') === 'Sept espaces. | Six espaces. | Deux espaces. | Un espace. | Sept espaces.', 'Le titre compte les espaces : un de moins, il le dit ; un seul, il s\'accorde', vus.join(' | '));
+  await ctx.close();
+}
+
+/* La ville et le pays : par la position de l'appareil, seulement si la personne l'a choisi et que le navigateur l'autorise */
+{
+  const CORS = { 'access-control-allow-origin': '*' };
+  const monter = async (opts) => {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce', ...opts });
+    await ctx.addInitScript(sessionScript());
+    const appels = [];
+    await ctx.route('https://api.bigdatacloud.net/**', r => { appels.push(r.request().url());
+      const u = new URL(r.request().url()), la = +u.searchParams.get('latitude');
+      return r.fulfill({ status: 200, contentType: 'application/json', headers: CORS, body: JSON.stringify(la > 45 ? { city: 'Londres', locality: 'Westminster', countryName: "Royaume-Uni de Grande-Bretagne et d'Irlande du Nord (le)", countryCode: 'GB' } : { city: 'Valence', locality: 'Valence', countryName: 'France', countryCode: 'FR' }) }); });
+    const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+    await page.waitForTimeout(400);
+    return { ctx, page, errors, appels };
+  };
+  const vu = page => page.evaluate(() => { const l = document.getElementById('h-lieu'); return { txt: l.hidden ? '' : l.textContent, ligne: document.getElementById('h-quand').innerText.replace(/\s+/g, ' ').trim(), menu: document.getElementById('btn-lieu-lbl').textContent,
+    garde: JSON.parse(localStorage.getItem('arc_lieu_v1') || 'null'), dansS: /Valence|Londres|"lat"/.test(localStorage.getItem('arc_v2') || ''), large: document.documentElement.scrollWidth <= innerWidth }; });
+  const choisir = async page => { await page.click('#btn-menu'); await page.waitForTimeout(120); const h = await page.evaluate(() => Math.round(document.getElementById('btn-lieu').getBoundingClientRect().height)); await page.click('#btn-lieu'); await page.waitForTimeout(700); return h; };
+
+  // 1. Autorisée : rien tant que l'option n'est pas choisie ; ensuite la ville et le pays, gardés sur l'appareil seulement
+  const a = await monter({ geolocation: { latitude: 44.93345, longitude: 4.89236 }, permissions: ['geolocation'] });
+  const a0 = await vu(a.page), avant = a.appels.length;
+  const hMenu = await choisir(a.page);
+  await a.page.evaluate(() => saveS());
+  const a1 = await vu(a.page), u1 = a.appels[0] ? new URL(a.appels[0]).searchParams : new URLSearchParams();
+  await a.page.reload(); await a.page.waitForTimeout(900); await a.page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
+  const a2 = await vu(a.page), apresRechargement = a.appels.length;
+  // l'appareil a bougé de plusieurs centaines de kilomètres : la ville suit, le pays s'écrit simplement
+  await a.ctx.setGeolocation({ latitude: 51.5072, longitude: -0.1276 });
+  await a.page.evaluate(() => lieuCheck(true)); await a.page.waitForTimeout(700);
+  const a3 = await vu(a.page);
+  // l'autorisation est retirée : plus rien, et la ville gardée est oubliée
+  await a.ctx.clearPermissions();
+  await a.page.reload(); await a.page.waitForTimeout(1100); await a.page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
+  const a4 = await vu(a.page);
+  // l'option coupée : plus rien, rien de gardé
+  await a.ctx.grantPermissions(['geolocation']);
+  await a.page.reload(); await a.page.waitForTimeout(1100); await a.page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
+  const a5 = await vu(a.page);
+  await choisir(a.page);
+  const a6 = await vu(a.page);
+  ok(a0.txt === '' && avant === 0 && a0.menu === 'Afficher ma ville' && hMenu >= 44
+     && a1.txt === 'Valence, France' && /^\S+ \d{1,2} \S+ Valence, France$/.test(a1.ligne) && a1.menu === 'Ne plus afficher ma ville' && a1.garde.on === true && a1.garde.city === 'Valence' && !a1.dansS && a1.large
+     && u1.get('latitude') === '44.933' && u1.get('longitude') === '4.892' && u1.get('localityLanguage') === 'fr'
+     && a2.txt === 'Valence, France' && apresRechargement === 1
+     && a3.txt === 'Londres, Royaume-Uni'
+     && a4.txt === '' && !a4.garde.city && a4.garde.on === true
+     && a5.txt === 'Londres, Royaume-Uni'
+     && a6.txt === '' && a6.garde.on === false && !a6.garde.city && a6.menu === 'Afficher ma ville' && a.errors.length === 0,
+     'Ma ville : rien tant que l\'option n\'est pas choisie ; ensuite « ville, pays » d\'après la position (arrondie, envoyée une seule fois tant qu\'on ne bouge pas), gardée sur l\'appareil et jamais dans l\'état synchronisé ; elle suit l\'appareil ; autorisation retirée ou option coupée : plus rien',
+     `sans option « ${a0.txt} » (${avant} appel) ; choisie « ${a1.ligne} », position envoyée ${u1.get('latitude')}, ${u1.get('longitude')} ; rechargée « ${a2.txt} » (${apresRechargement} appel en tout) ; déplacée « ${a3.txt} » ; autorisation retirée « ${a4.txt} » ; rendue « ${a5.txt} » ; option coupée « ${a6.txt} »${a.errors.length ? ' ; ' + a.errors.slice(0, 2).join(' | ') : ''}`);
+  await a.ctx.close();
+
+  // 2. Refusée par le navigateur : rien ne s'affiche, l'option revient à « Afficher ma ville », aucun appel au service
+  const b = await monter({});
+  await choisir(b.page); await b.page.waitForTimeout(400);
+  const b1 = await vu(b.page), dit = await b.page.evaluate(() => document.getElementById('toast-el').textContent);
+  ok(b1.txt === '' && b1.menu === 'Afficher ma ville' && b1.garde && b1.garde.on === false && b.appels.length === 0 && /refusée/.test(dit) && b.errors.length === 0,
+     'Ma ville, position refusée par le navigateur : rien ne s\'affiche, ARC le dit, et aucune position ne part', `« ${b1.txt} », menu « ${b1.menu} », ${b.appels.length} appel, message « ${dit} »`);
+  await b.ctx.close();
+
+  // 3. Option choisie mais personne n'est connecté (écran d'entrée) : ARC ne demande pas la position
+  const c = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', locale: 'fr-FR', reducedMotion: 'reduce', geolocation: { latitude: 44.93345, longitude: 4.89236 }, permissions: ['geolocation'] });
+  await c.addInitScript(() => { localStorage.setItem('arc_lieu_v1', JSON.stringify({ on: true })); window.__geo = 0; const g = navigator.geolocation, f = g.getCurrentPosition.bind(g); g.getCurrentPosition = (...x) => { window.__geo++; return f(...x); }; });
+  const appelsC = []; await c.route('https://api.bigdatacloud.net/**', r => { appelsC.push(1); return r.fulfill({ status: 200, contentType: 'application/json', headers: CORS, body: '{"city":"Valence","countryCode":"FR"}' }); });
+  const pc = await openPage(browser, url, { ctx: c, fk: fakeSupabase() });
+  await pc.page.waitForTimeout(900);
+  const c1 = await pc.page.evaluate(() => ({ entree: document.getElementById('auth-screen').classList.contains('active'), geo: window.__geo, lieu: document.getElementById('h-lieu').hidden }));
+  ok(c1.entree && c1.geo === 0 && c1.lieu && appelsC.length === 0, 'Ma ville, sans session : sur l\'écran d\'entrée, ARC ne demande pas la position', `écran d'entrée ${c1.entree}, ${c1.geo} demande de position, ${appelsC.length} appel au service`);
+  await c.close();
 }
 
 /* La barre du haut tient sur tous les téléphones, même quand l'état de synchronisation est long */
@@ -203,11 +298,11 @@ for (const vp of ECRANS) {
 /* Le moment de la journée : un mot et un pictogramme, jamais d'emoji */
 {
   const { ctx, page } = await openPage(browser, url, { fk: fakeSupabase(), clock: '2026-10-08T03:00:00+02:00' });
-  const lire = () => page.evaluate(() => { renderHome(); const b = document.getElementById('h-context-badge'), i = b.querySelector('.h-context-ico'), m = getComputedStyle(i); return b.getAttribute('data-slot') + ':' + document.getElementById('h-context-txt').textContent + ':' + (/url\(/.test(m.maskImage || m.webkitMaskImage || '') ? 'picto' : 'rien'); });
+  const lire = () => page.evaluate(() => { renderHome(); const b = document.getElementById('h-quand'), i = b.querySelector('.h-quand-ico'), m = getComputedStyle(i); return b.getAttribute('data-slot') + ':' + document.getElementById('h-date').textContent + ':' + (/url\(/.test(m.maskImage || m.webkitMaskImage || '') && i.getBoundingClientRect().width >= 14 ? 'picto' : 'rien'); });
   const vus = [await lire()];
   // l'heure est posée, pas avancée : avancer l'horloge de plusieurs heures d'un coup échouait parfois sous charge
   for (const h of ['09', '16', '23']) { await page.clock.setFixedTime(new Date(`2026-10-08T${h}:00:00+02:00`)); vus.push(await lire()); }
-  ok(vus.join(' | ') === 'nuit:Nuit:picto | matin:Matin:picto | aprem:Après-midi:picto | soir:Soirée:picto', 'Le moment de la journée : Nuit, Matin, Après-midi, Soirée, avec un pictogramme au trait', vus.join(' | '));
+  ok(vus.join(' | ') === 'nuit:Jeudi 8 octobre:picto | matin:Jeudi 8 octobre:picto | aprem:Jeudi 8 octobre:picto | soir:Jeudi 8 octobre:picto', 'Au-dessus du titre : le moment de la journée (un pictogramme au trait, quatre moments) et la date, écrite une fois', vus.join(' | '));
   await ctx.close();
 }
 
