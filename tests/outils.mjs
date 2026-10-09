@@ -33,7 +33,8 @@ export function fakeSupabase() {
   const db = { thoughts: new Map(), events: new Map(), filings: new Map() };
   const log = { proxyCalls: [], filingPosts: [], posts: [] };
   // reject[table](ligne) → { status, code } pour refuser une ligne ; transient[table] = nombre de 503 à renvoyer
-  const fk = { mode: 'up', db, log, proxy: null, reject: {}, transient: {} };
+  const fk = { mode: 'up', db, log, proxy: null, reject: {}, transient: {},
+               arc: { state: { _lastAction: 0 }, updated_at: '2026-01-01T00:00:00Z' } };
   const table = { thoughts: db.thoughts, arc_events: db.events, thought_filings: db.filings };
   fk.handler = async route => {
     const req = route.request();
@@ -70,9 +71,29 @@ export function fakeSupabase() {
       const key = name === 'arc_events' ? 'at' : 'created_at';
       return json(200, [...table[name].values()].sort((a, b) => (a[key] < b[key] ? 1 : -1)).slice(0, Number(url.searchParams.get('limit')) || 1000));
     }
-    if (name === 'arc_data' && req.method() === 'GET') {
-      const row = { state: { _lastAction: 0 }, updated_at: '2026-01-01T00:00:00Z' };
-      return json(200, /vnd\.pgrst\.object/.test(req.headers()['accept'] || '') ? row : [row]);
+    // arc_data : une ligne par compte, comme dans Supabase. Par défaut, une ligne vide existe déjà (fk.arc).
+    // fk.arc = null : aucune ligne. La date est rendue comme Postgres la rend (« +00:00 », microsecondes).
+    // PATCH ne modifie la ligne que si le filtre updated_at correspond (écriture conditionnelle).
+    if (name === 'arc_data') {
+      const pgDate = iso => new Date(iso).toISOString().replace('Z', '000+00:00');
+      const one = /vnd\.pgrst\.object/.test(req.headers()['accept'] || '');
+      if (req.method() === 'GET') {
+        log.arcGets = (log.arcGets || 0) + 1;
+        const row = fk.arc ? { state: fk.arc.state, updated_at: pgDate(fk.arc.updated_at) } : null;
+        return json(200, one ? row : (row ? [row] : []));
+      }
+      const body = JSON.parse(req.postData() || '{}');
+      const b = Array.isArray(body) ? body[0] : body;
+      if (fk.beforeArcWrite) await fk.beforeArcWrite(req.method());
+      (log.arcWrites = log.arcWrites || []).push(req.method());
+      if (req.method() === 'POST') { fk.arc = { state: b.state, updated_at: b.updated_at }; return route.fulfill({ status: 201, body: '' }); }
+      if (req.method() === 'PATCH') {
+        const f = url.searchParams.get('updated_at');
+        const okF = !f || (fk.arc && Date.parse(f.replace(/^eq\./, '')) === Date.parse(fk.arc.updated_at));
+        if (!fk.arc || !okF) return json(200, []);
+        fk.arc = { state: b.state, updated_at: b.updated_at };
+        return json(200, [{ updated_at: pgDate(b.updated_at) }]);
+      }
     }
     return json(200, {});
   };
