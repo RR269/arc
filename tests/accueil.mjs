@@ -441,7 +441,7 @@ for (const vp of ECRANS) {
   await ctx.addInitScript(sessionScript());
   const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
   await page.waitForTimeout(500);
-  const T = ['Appeler le fournisseur des sacs', 'Refaire la page produit', 'Vérifier le paiement test', 'Idée annulée', 'Relire les statuts'];
+  const T = ['Appeler le fournisseur des sacs', 'Refaire la page produit', 'Vérifier le paiement test', 'Idée annulée', 'Relire les statuts', 'Relancer la banque'];
   for (const t of T) { await deposit(page, t); await page.waitForTimeout(200); }
   await page.evaluate(T => {
     const id = t => Object.values(_depot.thoughts).find(x => x.body === t).id;
@@ -451,6 +451,7 @@ for (const vp of ECRANS) {
     rangeAdd(id(T[2]), { space: 'aryan', status: 'done', step: T[2] }, 'user');
     rangeAdd(id(T[3]), { space: 'aryan', status: 'cancelled' }, 'user');
     rangeAdd(id(T[4]), { space: 'atlas', status: 'filed', step: T[4] }, 'user');
+    rangeAdd(id(T[5]), { space: 'juridique', status: 'filed', step: T[5] }, 'user');
     if (typeof matinClose === 'function') matinClose();
     document.activeElement && document.activeElement.blur(); enterWorld(0);
   }, T);
@@ -468,14 +469,21 @@ for (const vp of ECRANS) {
   const fba = await lire();
   await page.evaluate(() => enterWorld(4)); await page.waitForTimeout(300);
   const atlas = await lire();
+  await page.evaluate(() => enterPole('juridique')); await page.waitForTimeout(300);
+  const jur = await page.evaluate(() => { const sec = document.getElementById('jsec-pensees');
+    return { vu: !sec.hidden && sec.offsetParent !== null, n: document.getElementById('jpen-n').textContent, lignes: [...document.querySelectorAll('#jpen-list .wpen-t')].map(e => e.textContent) }; });
+  await page.evaluate(() => document.getElementById('jsec-pensees').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const mj = await mesurer(page, { racine: '#jsec-pensees' });
+  await page.evaluate(() => enterPole('sante')); await page.waitForTimeout(300);
+  const sante = await page.evaluate(() => !!document.querySelector('#S3 .wpen'));
   const t = a.lignes.map(l => l.t).join(' | ');
   // sans faux proxy, le faux Supabase répond 500 au rangement (tests/outils.mjs, « pas de faux proxy ») : rangé ici à la main
   const vraies = errors.filter(e => !/status of 500/.test(e));
   ok(a.vu && a.n === '2 à faire' && t === 'Refaire la page produit | Appeler le fournisseur des sacs | Vérifier le paiement test'
      && /^Demain · 09:00 · déposée/.test(a.lignes[1].m) && a.lignes[2].fait && /^Faite · déposée/.test(a.lignes[2].m) && a.lignes.every(l => l.h >= 44)
-     && ouvert && !fba.vu && atlas.vu && atlas.lignes.length === 1 && atlas.lignes[0].t === 'Relire les statuts' && !m.sous.length && m.n >= 6 && !vraies.length,
-     'Projet : ses pensées rangées s\'y retrouvent (à faire puis faites, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section ; contraste ≥ 4,5 : 1',
-     `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.vu ? 'section visible' : 'sans section'} ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
+     && ouvert && !fba.vu && atlas.vu && atlas.lignes.length === 1 && atlas.lignes[0].t === 'Relire les statuts' && jur.vu && jur.n === '1 à faire' && jur.lignes.join() === 'Relancer la banque' && !mj.sous.length && !sante && !m.sous.length && m.n >= 6 && !vraies.length,
+     'Projet et Juridique : leurs pensées rangées s\'y retrouvent (à faire puis faites, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section ; Santé n\'en a pas ; contraste ≥ 4,5 : 1',
+     `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.vu ? 'section visible' : 'sans section'} ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; Juridique « ${jur.n} » ${jur.lignes.join(', ')}, le plus faible ${mj.pire ? fmt(mj.pire.ratio) : '?'} ; Santé ${sante ? 'a la section' : 'sans section'} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
   await ctx.close();
 }
 

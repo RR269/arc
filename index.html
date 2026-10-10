@@ -2091,22 +2091,24 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 .wsec.vide>:not(.wsec-head){display:none}
 /* Les pensées d'un projet (branche projet-pensees, 10 octobre) : le panneau de l'accueil, une ligne par pensée ; le point
    à la couleur du projet pour ce qui reste à faire, un anneau éteint pour ce qui est fait (avec le mot « Faite »). */
-#S2 #wsec-pensees[hidden]{display:none}
-#S2 .wpen{overflow:hidden;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-#S2 .wpen-row{display:grid;grid-template-columns:10px minmax(0,1fr) 10px;column-gap:14px;align-items:center;width:100%;min-height:60px;margin:0;padding:11px 16px 12px;border:0;background:none;font-family:var(--fa);text-align:left;color:inherit;cursor:pointer;transition:background-color .2s}
-#S2 .wpen-row + .wpen-row,#S2 .wpen-plus{border-top:1px solid rgba(255,255,255,.06)}
-#S2 .wpen-row:hover{background:rgba(255,255,255,.03)}
-#S2 .wpen-row:active{background:rgba(255,255,255,.06)}
-#S2 .wpen-pt{width:8px;height:8px;border-radius:50%;background:var(--wc,#fff);box-shadow:0 0 8px color-mix(in srgb,var(--wc,#fff) 60%,transparent)}
-#S2 .wpen-row.fait .wpen-pt{background:none;box-shadow:inset 0 0 0 1.6px #6E6E76}
-#S2 .wpen-txt{display:block;min-width:0}
-#S2 .wpen-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:16px;line-height:21px;font-weight:500;letter-spacing:-.2px;color:#F5F5F7}
-#S2 .wpen-row.fait .wpen-t{font-weight:400;color:#C4C4CC}
-#S2 .wpen-m{display:block;margin-top:2px;font-size:13px;line-height:18px;letter-spacing:-.05px;color:#B4B4BA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S2 .wpen-chev{width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
-#S2 .wpen-plus{display:block;width:100%;min-height:48px;margin:0;padding:0 16px;border-left:0;border-right:0;border-bottom:0;background:none;font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.15px;text-align:left;color:#E8E8EC;cursor:pointer}
-#S2 :is(.wpen-row,.wpen-plus):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
-@media(prefers-reduced-motion:reduce){#S2 .wpen-row{transition:none}}
+#S2 #wsec-pensees[hidden],#S4 #jsec-pensees[hidden]{display:none}
+:is(#S2,#S4) .wpen{overflow:hidden;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+:is(#S2,#S4) .wpen-row{display:grid;grid-template-columns:10px minmax(0,1fr) 10px;column-gap:14px;align-items:center;width:100%;min-height:60px;margin:0;padding:11px 16px 12px;border:0;background:none;font-family:var(--fa);text-align:left;color:inherit;cursor:pointer;transition:background-color .2s}
+:is(#S2,#S4) .wpen-row + .wpen-row,:is(#S2,#S4) .wpen-plus{border-top:1px solid rgba(255,255,255,.06)}
+:is(#S2,#S4) .wpen-row:hover{background:rgba(255,255,255,.03)}
+:is(#S2,#S4) .wpen-row:active{background:rgba(255,255,255,.06)}
+:is(#S2,#S4) .wpen-pt{width:8px;height:8px;border-radius:50%;background:var(--penc,var(--wc,#fff));box-shadow:0 0 8px color-mix(in srgb,var(--penc,var(--wc,#fff)) 60%,transparent)}
+:is(#S2,#S4) .wpen-row.fait .wpen-pt{background:none;box-shadow:inset 0 0 0 1.6px #6E6E76}
+:is(#S2,#S4) .wpen-txt{display:block;min-width:0}
+:is(#S2,#S4) .wpen-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:16px;line-height:21px;font-weight:500;letter-spacing:-.2px;color:#F5F5F7}
+:is(#S2,#S4) .wpen-row.fait .wpen-t{font-weight:400;color:#C4C4CC}
+:is(#S2,#S4) .wpen-m{display:block;margin-top:2px;font-size:13px;line-height:18px;letter-spacing:-.05px;color:#B4B4BA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#S2,#S4) .wpen-chev{width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+:is(#S2,#S4) .wpen-plus{display:block;width:100%;min-height:48px;margin:0;padding:0 16px;border-left:0;border-right:0;border-bottom:0;background:none;font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.15px;text-align:left;color:#E8E8EC;cursor:pointer}
+:is(#S2,#S4) :is(.wpen-row,.wpen-plus):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
+#S4 .wpen{--penc:#0a84ff}
+#S4 .psec-info{font-size:14px;letter-spacing:-.1px;color:var(--t2)}
+@media(prefers-reduced-motion:reduce){:is(#S2,#S4) .wpen-row{transition:none}}
 #S2 .wsec-ouvrir:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 /* ═══ ACCUEIL : LE SOL ET LE CIEL (branche centre-controle, 10 octobre) ═══
    Rayan : « un centre de contrôle de notre vie, hyper connecté, comme dans un film de science-fiction, en supprimant
@@ -2667,6 +2669,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           placeholder="Rechercher dans tout le dossier..."
           oninput="searchJur(this.value)">
         <button class="jur-search-clear" id="jur-search-clear" onclick="document.getElementById('jur-search-inp').value='';searchJur('')">&#10005;</button>
+      </div>
+
+      <!-- PENSÉES rangées dans Juridique (absente s'il n'y en a aucune) -->
+      <div class="psec" id="jsec-pensees" hidden>
+        <div class="psec-head"><span class="psec-lbl">Pensées</span><div class="psec-line"></div><span class="psec-info" id="jpen-n"></span></div>
+        <div class="wpen" id="jpen-list"></div>
       </div>
 
       <!-- SECTIONS ACCORDION -->
@@ -4547,7 +4555,7 @@ function enterPole(poleId){
   if(document.getElementById(s).classList.contains("off")){ var pm=document.getElementById(poleId==="sante"?"pmain-sante":"pmain-jur"); if(pm) pm.scrollTop=0; }
   showScreen(s);
   if(poleId==="sante"){ renderSante(); }
-  else{ if(!S.poles.juridique) S.poles.juridique={}; JUR_SECTIONS.forEach(function(s){ if(!S.poles.juridique[s.id]) S.poles.juridique[s.id]=[]; }); renderJuridique(); }
+  else{ if(!S.poles.juridique) S.poles.juridique={}; JUR_SECTIONS.forEach(function(s){ if(!S.poles.juridique[s.id]) S.poles.juridique[s.id]=[]; }); renderJuridique(); renderPenseesJur(); }
   // Init Claude panel for this pole
   renderPoleTools(poleId);
   saveS();
@@ -6355,9 +6363,10 @@ function espaceCle(w) { return w.key || String(w.name).toLowerCase().replace(/[^
    par le serveur). À faire d'abord, de la plus récente à la plus ancienne ; les faites ensuite. Toucher une pensée
    l'ouvre dans « Déposé », là où elle se modifie. Les textes sont posés par textContent. */
 var WPEN_MAX = 6;
-function penseesDuProjet(w) {
-  if(typeof _depot === 'undefined' || !_depot || typeof _range === 'undefined' || !_range || !w) return [];
-  var key = espaceCle(w), idx = rangeIndex();
+function penseesDuProjet(w) { return w ? penseesDe(espaceCle(w)) : []; }
+function penseesDe(key) {
+  if(typeof _depot === 'undefined' || !_depot || typeof _range === 'undefined' || !_range || !key) return [];
+  var idx = rangeIndex();
   return depotList().map(function(t) { return { t: t, f: idx.latest[t.id] }; })
     .filter(function(x) { return x.t.status !== 'rejected' && x.f && x.f.space === key && (x.f.status === 'filed' || x.f.status === 'done'); })
     .sort(function(a, b) {
@@ -6367,14 +6376,19 @@ function penseesDuProjet(w) {
     });
 }
 function renderPenseesProjet() {
-  var sec = document.getElementById('wsec-pensees'), list = document.getElementById('wpen-list'); if(!sec || !list) return;
   var w = (typeof CUR !== 'undefined' && CUR.wid >= 0) ? monde(CUR.wid) : null;
-  var tout = penseesDuProjet(w);
+  renderPensees('wsec-pensees', 'wpen-list', 'wpen-n', penseesDuProjet(w));
+}
+// Juridique (10 octobre) : la même section, pour les pensées rangées dans l'espace « juridique ». Santé n'en a pas :
+// son contenu attend la décision de Rayan.
+function renderPenseesJur() { renderPensees('jsec-pensees', 'jpen-list', 'jpen-n', penseesDe('juridique')); }
+function renderPensees(secId, listId, nId, tout) {
+  var sec = document.getElementById(secId), list = document.getElementById(listId); if(!sec || !list) return;
   sec.hidden = !tout.length;
   list.innerHTML = '';
   if(!tout.length) return;
   var afaire = tout.filter(function(x) { return x.f.status !== 'done'; }).length;
-  document.getElementById('wpen-n').textContent = afaire ? (afaire + ' à faire') : (tout.length > 1 ? 'Toutes faites' : 'Faite');
+  document.getElementById(nId).textContent = afaire ? (afaire + ' à faire') : (tout.length > 1 ? 'Toutes faites' : 'Faite');
   tout.slice(0, WPEN_MAX).forEach(function(x) {
     var fait = x.f.status === 'done', row = document.createElement('button');
     row.type = 'button'; row.className = 'wpen-row' + (fait ? ' fait' : ''); row.setAttribute('data-tid', x.t.id);
@@ -6945,6 +6959,7 @@ function rangeToSortCount() {
 function rangeHomeRender() {
   // L'écran d'un projet ouvert suit aussi les rangements qui arrivent (ses pensées)
   var s2 = document.getElementById('S2'); if(s2 && !s2.classList.contains('off')) renderPenseesProjet();
+  var s4 = document.getElementById('S4'); if(s4 && !s4.classList.contains('off')) renderPenseesJur();
   if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
   var poste = document.getElementById('h-poste'); if(!poste) return;
   // Plus de liste d'étapes sur l'accueil (Rayan, 10 octobre : « c'est pas un agenda ») : les étapes vivent dans le Point

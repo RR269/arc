@@ -1077,6 +1077,20 @@ Les pensées d'un projet (branche `projet-pensees`, 10 octobre 20 h, partie de `
   écartés nommément), et les douze autres suites passent ; 442 `<div` / 442 `</div>`. Vérifié dans Chromium seulement :
   **à voir par Rayan sur son iPhone.**
 
+- **PR #29 fusionnée par Rayan le 10 octobre à 20 h 36** (`main` à `d617d46`).
+
+Juridique montre ses pensées (branche `juridique-pensees`, 10 octobre 20 h 40, partie de `main` à `d617d46`) :
+- Rayan (20 h 37) : « go on continue », lu comme l'accord pour l'étape proposée avec la PR #29.
+- La section « Pensées » des projets existe aussi dans Juridique (`#jsec-pensees`, sous la recherche du dossier) : les
+  pensées rangées dans l'espace `juridique`, mêmes règles, même dessin (point bleu du pôle). Le code est commun :
+  `penseesDe(clé)`, `renderPensees(section, liste, compte, pensées)` ; `renderPenseesJur` à l'entrée du pôle et quand un
+  rangement arrive.
+- **Santé n'a pas la section, exprès** : son contenu (curseurs, ou mémoire, échéances et rendez-vous) reste une
+  décision de Rayan.
+- Tests : accueil 27/27 (le contrôle des pensées vérifie aussi Juridique, contraste compris, et l'absence de section
+  dans Santé), et les douze autres suites passent ; 446 `<div` / 446 `</div>`. Vérifié dans Chromium seulement :
+  **à voir par Rayan sur son iPhone.**
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
