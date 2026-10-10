@@ -892,6 +892,11 @@ En faire un projet (branche `developper`, 10 octobre 3 h 30, partie de `main` à
   réessayer peut servir. Espaces insécables devant les deux-points (« pensée : » ne commence plus une ligne).
   **Au prochain essai, la phrase de la feuille dira la cause.**
 - Tests : projet 30/30 (quatre contrôles ajoutés), les douze autres suites passent ; 436 `<div` / 436 `</div>`.
+- **PR #21 fusionnée à 4 h 29 ; constaté en réel à 4 h 31 (iPhone)** : la feuille se remplit avec le vrai Claude
+  (« Nettoyage extérieur », une mission, trois étapes concrètes, aucun fait inventé). La cause du premier échec reste
+  non prouvée (lecture trop stricte ou réponse coupée, les deux corrigés). Vu sur sa capture : la mission de trois
+  lignes était coupée dans son champ de deux lignes ; corrigé sur la branche `projet-mission` (la mission grandit
+  comme les étapes ; le contrôle « en entier » échoue sur la version en ligne, passe après).
 
 ### Décisions de Rayan (5 octobre)
 

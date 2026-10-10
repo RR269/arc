@@ -19,7 +19,7 @@ const fmt = r => r.toFixed(2).replace('.', ',') + ' : 1';
 const wait = ms => new Promise(r => setTimeout(r, ms));
 
 const PENSEE = 'Lancer une chaîne YouTube de recettes halal faciles';
-const PROPOSITION = { nom: 'Recettes YouTube', mission: 'Publier des recettes halal faciles sur une chaîne YouTube.',
+const PROPOSITION = { nom: 'Recettes YouTube', mission: 'Publier des recettes halal faciles sur une chaîne YouTube, et la mettre en état d’accueillir ses premiers abonnés fidèles.',
   etapes: ['Noter cinq idées de recettes', 'Filmer une recette test au téléphone', 'Créer la chaîne YouTube'] };
 
 // Faux proxy : rangement (task file) → une note dans ARYAN ; discussion avec la consigne « projet » → la proposition
@@ -64,8 +64,8 @@ const outil = () => { window.pjv = id => document.getElementById(id).value; };
   const avant = await page.evaluate(() => ({ n: WORLDS.length, titre: document.getElementById('h-espaces').textContent }));
   const vu = await ouvrirFeuille(page);
   const c = await champs(page);
-  const coupe = await page.evaluate(() => ['pj-e1', 'pj-e2', 'pj-e3'].filter(id => { const e = document.getElementById(id); return e.scrollHeight > e.clientHeight + 2 || e.scrollWidth > e.clientWidth + 2; }));
-  ok(!coupe.length, 'Les étapes s\'affichent en entier : le champ grandit avec le texte au lieu de le couper', coupe.join(', '));
+  const coupe = await page.evaluate(() => ['pj-mission', 'pj-e1', 'pj-e2', 'pj-e3'].filter(id => { const e = document.getElementById(id); return e.scrollHeight > e.clientHeight + 2 || e.scrollWidth > e.clientWidth + 2; }));
+  ok(!coupe.length, 'La mission et les étapes s\'affichent en entier : le champ grandit avec le texte au lieu de le couper', coupe.join(', '));
   const envoi = px.appels[0] || {};
   const msg = JSON.stringify(envoi.messages || []);
   ok(vu && c.ouvert && c.nom === PROPOSITION.nom && c.mission === PROPOSITION.mission && c.e.join('|') === PROPOSITION.etapes.join('|') && /ARC propose/.test(c.etat),
