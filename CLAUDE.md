@@ -1026,6 +1026,34 @@ Le poste vu sur l'iPhone : deux défauts (branche `poste-iphone`, 10 octobre 18 
   `main`), recherche 8/8, et les dix autres suites passent. Vérifié dans Chromium seulement : **le champ du trousseau
   reste à voir par Rayan sur son iPhone.**
 
+- **PR #27 fusionnée par Rayan le 10 octobre à 18 h 57** (`main` à `fbfd185`).
+
+Accueil, seconde partie : Projets et Ma vie (branche `accueil-projets`, 10 octobre 19 h, partie de `main` à `fbfd185`) :
+- Rayan (18 h 58) : « go on continue », lu comme le « go » de la seconde partie (« sinon go et tu choisis le meilleur
+  pour ARC »).
+- **Constat sur ses captures** : chaque ligne de projet affichait sa prochaine tâche (« Essai « Ma boutique » : Bo… »,
+  « Immatriculer la structure (micro ou… », coupées) : trois étapes listées sur l'accueil, c'est-à-dire l'agenda qu'il
+  a refusé, en plus discret. Trois cartes teintées, chacune dans sa boîte, du même poids que le poste.
+- **Projets, un seul panneau** (`.h-pjs`, qui contient `#hgrid` et `#h-dort`) : une ligne par projet, son pictogramme
+  au trait sans carré, son nom dans sa couleur, **son état vrai** (`projetEtatMots` : « Actif aujourd'hui »,
+  « Actif hier », « Actif il y a 3 j », « Calme depuis 10 j » ; rien s'il n'a jamais bougé), son pourcentage ; la barre
+  de progression, en bas de la ligne, sert de séparation (lueur à la couleur du projet). **Plus aucune tâche.**
+  Ordre : ceux qui bougent devant, du plus récent au plus ancien ; les calmes (7 jours sans mouvement) derrière,
+  plus bas et plus sombres ; à égalité, l'ordre habituel. Les endormis sont la dernière ligne du panneau, repliée.
+  Au toucher, la ligne prend un fond pâle (plus de rétrécissement dans un panneau).
+- **Ma vie** : le même panneau, coupé en deux comme le poste mais sans sa lumière, plus sombre ; mêmes secondes lignes
+  qu'avant (« Check-in fait », « 3 éléments », absentes à zéro).
+- Le pourcentage reste celui de l'anneau du projet (même calcul) : pour les cinq projets d'origine, il compte des
+  tâches écrites en avril. Non changé, signalé.
+- **Pas fait, à proposer** : les pensées rangées dans un projet ne se voient pas dans le projet (l'écran d'un monde ne
+  les liste pas) ; c'est pourquoi la ligne ne dit pas « 3 pensées » : ce chiffre ne mènerait à rien de visible.
+- Tests : accueil 26/26 (un contrôle ajouté : un seul panneau, état vrai, aucune tâche, ordre ; le contrôle
+  « endormir / réveiller » ne dépend plus de l'ordre des lignes ; le seuil de garde « plus de 300 morceaux de texte
+  mesurés » passe à 250, l'accueil en ayant 300 pile sans les lignes de tâches ; le contraste le plus faible reste
+  6,29 : 1), projet 31/31 (la ligne du projet né d'une pensée dit « Actif aujourd'hui » puis « 33 % », sans étape),
+  et les onze autres suites passent ; 438 `<div` / 438 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan
+  sur son iPhone.**
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

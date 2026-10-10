@@ -102,21 +102,21 @@ const outil = () => { window.pjv = id => document.getElementById(id).value; };
   ok(r.rangee === 'recettesyoutube' && r.origine === 'user' && r.titre !== avant.titre && /Huit espaces/.test(r.titre),
      'La pensée est rangée dans son projet, et le titre de l\'accueil compte un espace de plus', `${avant.titre} → ${r.titre}, rangée « ${r.rangee} »`);
 
-  // L'accueil (plus de liste d'étapes depuis le 10 octobre) : le projet est une ligne sous « Projets », avec sa première
-  // étape et son activité du jour ; le poste garde ses chiffres ; le ciel prend la couleur du projet (la pensée y est rangée)
+  // L'accueil (plus de liste d'étapes depuis le 10 octobre) : le projet est une ligne sous « Projets », avec son état
+  // (« Actif aujourd'hui ») et sans aucune étape ; le poste garde ses chiffres ; le ciel prend la couleur du projet (la pensée y est rangée)
   await page.evaluate(() => goHome()); await page.waitForTimeout(300);
   const h1 = await page.evaluate(id => { const l = document.querySelector(`#S1 .pj[data-wid="${id}"]`), s1 = document.getElementById('S1');
     return { la: !!l, nom: l ? l.querySelector('.pj-n').textContent : '', suite: l ? l.querySelector('.pj-f').textContent : '', agenda: !!document.querySelector('#S1 #next-list, #S1 .next-item'),
              ciel: s1.style.getPropertyValue('--ciel').trim().toLowerCase(), couleur: String(monde(id).color).toLowerCase(), n: document.getElementById('depot-n').textContent }; }, r.id);
-  ok(h1.la && h1.nom === 'Recettes YouTube' && /Noter cinq idées/.test(h1.suite) && /aujourd/.test(h1.suite) && !h1.agenda && h1.ciel === h1.couleur && h1.n === '1',
-     'Accueil : le projet né de la pensée est une ligne sous « Projets » (nom, première étape, activité du jour) ; aucune liste d\'étapes ; le ciel prend sa couleur', JSON.stringify(h1));
+  ok(h1.la && h1.nom === 'Recettes YouTube' && h1.suite === 'Actif aujourd\u2019hui' && !/Noter cinq idées/.test(h1.suite) && !h1.agenda && h1.ciel === h1.couleur && h1.n === '1',
+     'Accueil : le projet né de la pensée est une ligne sous « Projets » (nom, « Actif aujourd\'hui », aucune étape : l\'accueil n\'est pas un agenda) ; le ciel prend sa couleur', JSON.stringify(h1));
   await page.evaluate(id => { S.tasks[id] = {}; saveS(); enterWorld(id); }, r.id); await page.waitForTimeout(200);
   // Cocher une étape dans le projet fait avancer l'anneau ; l'accueil montre le projet
   await page.locator('#tasks-container .wtask-cb').first().click(); await page.waitForTimeout(200);
   const an = await page.evaluate(() => document.getElementById('ring-pct').textContent);
   await page.evaluate(() => goHome()); await page.waitForTimeout(300);
   const acc = await page.evaluate(id => { const e = document.querySelector(`#S1 .pj[data-wid="${id}"]`); return e ? e.textContent : ''; }, r.id);
-  ok(/^33/.test(an) && /Recettes YouTube/.test(acc) && /Filmer une recette test/.test(acc), 'Une étape cochée : l\'anneau passe à 33 % ; l\'accueil montre le projet et sa prochaine étape', `anneau ${an} ; accueil « ${acc} »`);
+  ok(/^33/.test(an) && /Recettes YouTube/.test(acc) && /33\u00A0%/.test(acc) && !/Filmer une recette test/.test(acc), 'Une étape cochée : l\'anneau passe à 33 % ; l\'accueil montre le projet à 33 %, sans sa prochaine étape', `anneau ${an} ; accueil « ${acc} »`);
 
   // Rechargement : le projet est reconstruit depuis les données
   await page.reload(); await page.waitForTimeout(900);
