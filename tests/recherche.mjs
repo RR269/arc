@@ -35,7 +35,10 @@ const remplir = async page => {
     saveS();
   });
 };
-const chercher = async (page, q) => { await page.evaluate(() => { if (!document.getElementById('search-modal').classList.contains('open')) openSearch(); }); await page.fill('#search-inp', q); await page.waitForTimeout(150); };
+const chercher = async (page, q) => { await page.evaluate(() => { if (!document.getElementById('search-modal').classList.contains('open')) openSearch(); }); await page.fill('#search-inp', q); await page.waitForTimeout(150);
+  // la recherche s'ouvre en 220 ms avec un léger zoom (searchIn, scale .96) : mesurée avant la fin, une cible de 44 px en
+  // faisait 42 (échec intermittent prouvé le 10 octobre) ; on attend que son animation soit finie
+  await page.evaluate(() => Promise.all(document.getElementById('search-modal').getAnimations().map(a => a.finished))); };
 const vus = page => page.evaluate(() => {
   const g = {}; let cur = null;
   for (const e of document.getElementById('search-results').children) {

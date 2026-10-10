@@ -222,6 +222,14 @@ for (const vp of ECRANS) {
      'Accueil : l\'écho ouvre « Déposé » sur la dernière pensée ; « N pensées à ranger » ouvre « Déposé » ; « C\'est fait » dans « Déposé » compte dans les faits du jour, le poste garde ses chiffres',
      `Déposé ouvert ${dep.ouvert}, pensée présente ${dep.la} et visible ${dep.visible} ; à ranger ouvre ${dep2} ; faits « ${faits} » ; poste ${apres.n}, « ${apres.ranger} »`);
 
+  // Annuler un dépôt : la pensée n'est plus comptée nulle part, ni dans « Déposé » ni dans « N pensées déposées »
+  // (avant le 10 octobre, la ligne du haut la comptait encore : deux chiffres d'un même écran ne suivaient pas la même règle)
+  await page.click('#depot-open'); await page.waitForTimeout(300);
+  await page.evaluate(() => { const b = [...document.querySelectorAll('#depot-list [data-id]')].filter(e => e.textContent.includes('Relire les CGV')).flatMap(e => [...e.querySelectorAll('button')]).find(x => x.textContent === 'Annuler le dépôt'); if (b) b.click(); depotClose(); }); await page.waitForTimeout(300);
+  const annule = await plan(), faits2 = await page.evaluate(() => document.getElementById('h-faits').textContent);
+  ok(annule.n === '2' && /2 pensées déposées/.test(faits2) && !errors.length,
+     'Accueil : une pensée dont le dépôt est annulé quitte les deux chiffres (« Déposé » et « N pensées déposées »)', `poste ${annule.n} ; haut « ${faits2} »`);
+
   // Endormir, réveiller : depuis l'accueil et depuis le monde ; gardé dans S.sleep, relu au lancement suivant
   const etat = () => page.evaluate(() => ({ cours: [...document.querySelectorAll('#S1 .pj')].map(e => +e.dataset.wid), plie: document.getElementById('h-dort-list').hidden, noms: document.getElementById('h-dort-n').textContent, dort: [...document.querySelectorAll('#S1 .h-dort-row')].map(e => +e.dataset.wid),
     garde: (JSON.parse(localStorage.getItem('arc_v2') || '{}').sleep) || {}, v: S._worldsV, sous: document.getElementById('h-projets-sub').textContent, chez: !document.getElementById('S1').classList.contains('off') }));

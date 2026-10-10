@@ -75,6 +75,18 @@ async function open(auth, { withSession = false, viewport = { width: 390, height
   ok(bas.ordre && bas.texte === 'Mot de passe oublié ?' && bas.oubli >= 44 && bas.trou <= 64 && bas.premierEcran && !bas.sansCompte && Math.abs(bas.marge - bas.cote) <= 2 && !bas.pied,
      'Bas de la carte : « Mot de passe oublié ? » sous le champ, bouton principal dans le premier écran de l\'iPhone ; il ferme la carte (plus de « Continuer sans connexion »), même marge en bas que sur les côtés', JSON.stringify(bas));
   ok(bas.sombre, 'Champs remplis par le trousseau du navigateur : une règle les garde sombres (pas de jaune pâle)');
+  // La règle existait, mais une autre l'écrasait quand le champ est sélectionné (jaune vu par Rayan le 10 octobre,
+  // index.html « .auth-field .auth-input:focus{box-shadow:none} »). On rejoue la vraie cascade : chaque règle
+  // « autofill » est recopiée juste après elle avec « .af » à la place, puis on mesure le champ rempli ET sélectionné.
+  const cascade = await page.evaluate(() => {
+    for (const sh of document.styleSheets) { let rs; try { rs = sh.cssRules; } catch (e) { continue; }
+      for (let i = rs.length - 1; i >= 0; i--) if (rs[i].selectorText && /autofill/.test(rs[i].selectorText)) sh.insertRule(rs[i].cssText.replace(/:-webkit-autofill|:autofill/g, '.af'), i + 1); }
+    const mesure = id => { const el = document.getElementById(id); el.classList.add('af'); el.focus(); const cs = getComputedStyle(el);
+      const r = { ombre: cs.boxShadow, encre: cs.webkitTextFillColor }; el.blur(); const repos = getComputedStyle(el).boxShadow; el.classList.remove('af'); return { ...r, repos }; };
+    return { adresse: mesure('auth-email-inp'), passe: mesure('auth-pass-inp') };
+  });
+  const couvert = m => /rgb\(11, 11, 15\) 0px 0px 0px 1000px inset/.test(m.ombre) && /rgb\(11, 11, 15\) 0px 0px 0px 1000px inset/.test(m.repos) && m.encre === 'rgb(245, 245, 247)';
+  ok(couvert(cascade.adresse) && couvert(cascade.passe), 'Champ rempli par le trousseau, sélectionné ou non : l\'ombre sombre couvre toujours le jaune, texte clair', JSON.stringify(cascade));
   await page.click('#auth-tab-up');
   const up = await page.evaluate(() => ({ go: document.getElementById('auth-go').textContent, ac: document.getElementById('auth-pass-inp').autocomplete,
     codeLinks: document.getElementById('auth-send').offsetParent !== null, indication: document.getElementById('auth-pass-hint').offsetParent !== null && /8 caractères/.test(document.getElementById('auth-pass-hint').textContent), ecart: Math.round(document.getElementById('auth-go').getBoundingClientRect().top - document.getElementById('auth-pass-inp').getBoundingClientRect().bottom) }));
