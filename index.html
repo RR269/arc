@@ -2069,7 +2069,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .npj-lbl{font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
 .npj-aide{font-size:13px;line-height:18px;color:var(--t2)}
 #pj-form :is(input,textarea){width:100%;min-height:48px;padding:11px 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.04);font-family:var(--fa);font-size:17px;line-height:1.35;letter-spacing:-.25px;color:#F5F5F7;-webkit-appearance:none;appearance:none;resize:none}
-#pj-form textarea{min-height:72px}
+#pj-form textarea{min-height:72px;overflow:hidden}
 #pj-form .npj-etapes textarea{min-height:48px;overflow:hidden}
 #pj-form :is(input,textarea)::placeholder{color:var(--t3)}
 #pj-form :is(input,textarea):focus{outline:none;border-color:var(--pjc,#64d2ff);box-shadow:0 0 0 3px color-mix(in srgb,var(--pjc,#64d2ff) 22%,transparent)}
@@ -6547,7 +6547,7 @@ function projetEtat(txt, err) {
   document.getElementById('pj-etat-t').textContent = txt || '';
 }
 function projetTaille() {          // les étapes grandissent avec leur texte : rien n'est coupé
-  ['pj-e1', 'pj-e2', 'pj-e3'].forEach(function(id) { var el = document.getElementById(id); el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; });
+  ['pj-mission', 'pj-e1', 'pj-e2', 'pj-e3'].forEach(function(id) { var el = document.getElementById(id); el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; });
 }
 function projetChamps() { return ['pj-nom', 'pj-mission', 'pj-e1', 'pj-e2', 'pj-e3'].map(function(id) { return document.getElementById(id); }); }
 // Pose une proposition dans les champs que Rayan n'a pas encore touchés
@@ -6679,7 +6679,7 @@ function projetCreer() {
   f.addEventListener('input', function(ev) {
     if(ev.target && ev.target.id) _pj.touche[ev.target.id] = true;
     if(ev.target && ev.target.id === 'pj-nom') document.getElementById('pj-err').textContent = '';
-    if(ev.target && /^pj-e/.test(ev.target.id)) projetTaille();
+    if(ev.target && /^pj-(e|mission)/.test(ev.target.id)) projetTaille();
   });
   f.addEventListener('keydown', function(ev) {
     if(ev.key !== 'Enter' || ev.shiftKey || !ev.target || !/^pj-e/.test(ev.target.id)) return;
