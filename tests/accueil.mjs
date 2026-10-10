@@ -51,7 +51,7 @@ const releve = () => {
   const ids = [...document.querySelectorAll('[id]')].map(e => e.id).filter((x, i, a) => a.indexOf(x) !== i);
   return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], emoji, champs, fusion, hors: [...new Set(hors)], ids, polices: [...polices],
            large: document.documentElement.scrollWidth <= innerWidth && root.scrollWidth <= root.clientWidth + 1,
-           horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), systeme: [texte('#h-date'), texte('.h-inst-l'), texte('.pj-f'), texte('.pj-n'), texte('.h-section-lbl'), texte('.vie-n')], titre: texte('.h-h1'),
+           horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), systeme: [texte('#h-date'), texte('.h-inst-l'), texte('.pj-pct'), texte('.pj-n'), texte('.h-section-lbl'), texte('.vie-n')], titre: texte('.h-h1'),
            mondes: root.querySelectorAll('.pj').length, dort: root.querySelectorAll('.h-dort-row').length, poles: root.querySelectorAll('.vie').length, agenda: !!root.querySelector('#next-list, #next-steps, .next-item, .next-lbl') || /Prochaine étape|Ensuite/.test(root.querySelector('.hw').innerText), poste: !!root.querySelector('#h-poste .h-inst'),
            date: (root.textContent.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) \d{1,2} /gi) || []).length };
 };
@@ -110,7 +110,7 @@ for (const vp of ECRANS) {
   if (contrastes.length) { const g = {}; for (const m of contrastes) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0 }; e.nb++; e.min = Math.min(e.min, m.ratio); } detail[vp.n] = Object.entries(g).map(([k, e]) => `${e.min.toFixed(2)}  ${k}  (${e.nb})`); }
   ok(!defauts.length, `${vp.n} : l'accueil respecte la charte, vide et rempli (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion ni débordement, police du système, horizon d'ARC, date écrite une fois)`,
      defauts.slice(0, 4).join(' ; ') || `polices : ${dernier.polices.join(', ')} ; ${dernier.mondes} projets en cours, ${dernier.dort} endormis, ${dernier.poles} pôles`);
-  ok(n > 300 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout sur l'accueil, vide et rempli, menu compris`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
+  ok(n > 250 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout sur l'accueil, vide et rempli, menu compris`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   // Le sol et le ciel (10 octobre) : le ciel prend la couleur de l'espace où la dernière pensée a été rangée (un fait :
   // ici ATLAS, la troisième pensée restant en hésitation), le sol passe sous le poste ; le noir reste noir (pas de voile).
   const sc = await page.evaluate(() => {
@@ -247,11 +247,11 @@ for (const vp of ECRANS) {
   await page.reload(); await page.waitForTimeout(900);
   await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   const e3 = await etat();
-  ok(e0.cours.join() === '0,4' && e0.dort.join() === '1,2,3' && e0.v === 3 && e0.plie && e0.noms === 'FBA, KITCHEN, TELENEUF' && deplie.etat === 'true' && deplie.vus === 3 && e3.plie && e1.chez && e1.cours.join() === '0,1,4' && e1.dort.join() === '2,3' && e1.garde[1] === false && e1.sous === '3 en cours · 2 endormis'
-     && dans.t === 'Endormir ce projet' && dans.h >= 44 && dans2 === 'Réveiller ce projet' && e2.cours.join() === '1,4' && e2.dort.join() === '0,2,3' && e2.garde[0] === true
-     && e3.cours.join() === '1,4' && e3.dort.join() === '0,2,3' && errors.length === 0,
+  ok(e0.cours.slice().sort((a, b) => a - b).join() === '0,4' && e0.dort.join() === '1,2,3' && e0.v === 3 && e0.plie && e0.noms === 'FBA, KITCHEN, TELENEUF' && deplie.etat === 'true' && deplie.vus === 3 && e3.plie && e1.chez && e1.cours.slice().sort((a, b) => a - b).join() === '0,1,4' && e1.dort.join() === '2,3' && e1.garde[1] === false && e1.sous === '3 en cours · 2 endormis'
+     && dans.t === 'Endormir ce projet' && dans.h >= 44 && dans2 === 'Réveiller ce projet' && e2.cours.slice().sort((a, b) => a - b).join() === '1,4' && e2.dort.join() === '0,2,3' && e2.garde[0] === true
+     && e3.cours.slice().sort((a, b) => a - b).join() === '1,4' && e3.dort.join() === '0,2,3' && errors.length === 0,
      'Projets endormis : FBA, KITCHEN et TELENEUF le sont au départ, repliés en une ligne ; dépliés, « Réveiller » depuis l\'accueil sans quitter l\'accueil, « Endormir ce projet » depuis le monde ; le choix est gardé et relu au lancement suivant',
-     `départ ${e0.cours.join()} | ${e0.dort.join()} ; après « Réveiller » FBA ${e1.cours.join()} | ${e1.dort.join()} (« ${e1.sous} ») ; ARYAN endormi ${e2.cours.join()} | ${e2.dort.join()} ; après rechargement ${e3.cours.join()} | ${e3.dort.join()}${errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''}`);
+     `départ ${e0.cours.slice().sort((a, b) => a - b).join()} | ${e0.dort.join()} ; après « Réveiller » FBA ${e1.cours.slice().sort((a, b) => a - b).join()} | ${e1.dort.join()} (« ${e1.sous} ») ; ARYAN endormi ${e2.cours.slice().sort((a, b) => a - b).join()} | ${e2.dort.join()} ; après rechargement ${e3.cours.slice().sort((a, b) => a - b).join()} | ${e3.dort.join()}${errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''}`);
   await ctx.close();
 }
 
@@ -401,6 +401,35 @@ for (const vp of ECRANS) {
   ok(!repos.anims.length && t1.et && t1.anims.includes('hEtincelle') && !t2.et && !t2.anims.length && !t2b.co && t3.co && t3.anims.includes('hComete') && !t4.co && !t4.anims.length && !errors.length,
      'L\'horizon répond : rien au repos ; l\'étincelle monte au dépôt puis s\'éteint ; la comète file sur « C\'est fait » quand « Déposé » se referme (pas avant), puis s\'éteint ; aucune boucle',
      JSON.stringify({ repos, t1, t2, t2b, t3, t4, erreurs: errors }));
+  await ctx.close();
+}
+
+/* Projets, seconde partie de l'accueil (10 octobre) : pas d'agenda non plus. Une ligne par projet dit son état vrai
+   (« Actif aujourd'hui », « Actif il y a 3 j », « Calme depuis 10 j ») et où il en est, jamais une tâche ; ceux qui bougent
+   devant, du plus récent au plus ancien, les calmes derrière ; un seul panneau, les endormis dedans, en bas. */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  await ctx.addInitScript(sessionScript());
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.waitForTimeout(500);
+  const r = await page.evaluate(() => {
+    const now = Date.now(), J = 86400000;
+    S.journal[4] = [{ ts: now - 3600e3, txt: 'a' }];          // ATLAS : il y a une heure
+    S.journal[0] = [{ ts: now - 10 * J, txt: 'b' }];          // ARYAN : dix jours sans mouvement
+    S.journal[1] = [{ ts: now - 3 * J - 3600e3, txt: 'c' }];  // FBA, réveillé : il y a trois jours
+    S.sleep[1] = false; saveS(); renderHome();
+    const lignes = [...document.querySelectorAll('#S1 .pj')].map(e => ({ wid: +e.dataset.wid, etat: (e.querySelector('.pj-f') || {}).textContent || '', calme: e.classList.contains('calme'), txt: e.textContent }));
+    const taches = WORLDS.flatMap(w => w.tasks_todo.concat(w.tasks_done).map(t => t.t)).filter(t => t.length > 6);
+    const pjs = document.querySelector('#S1 .h-pjs');
+    return { lignes, tache: lignes.filter(l => taches.some(t => l.txt.includes(t))).map(l => l.wid),
+             panneau: !!pjs && pjs.contains(document.getElementById('hgrid')) && pjs.contains(document.getElementById('h-dort')),
+             haut: Math.round(pjs.getBoundingClientRect().height), vie: [...document.querySelectorAll('#S1 .vie')].map(e => Math.round(e.getBoundingClientRect().height)) };
+  });
+  const ordre = r.lignes.map(l => l.wid).join(), etats = r.lignes.map(l => l.etat);
+  ok(ordre === '4,1,0' && etats[0] === 'Actif aujourd’hui' && etats[1] === 'Actif il y a 3 j' && etats[2] === 'Calme depuis 10 j' && r.lignes[2].calme && !r.lignes[0].calme
+     && !r.tache.length && r.panneau && r.vie.length === 2 && r.vie.every(h => h >= 44) && !errors.length,
+     'Accueil, Projets : un seul panneau ; chaque ligne dit l\'état vrai du projet (actif, depuis quand, ou calme) et jamais une tâche ; ceux qui bougent devant, les calmes derrière',
+     `ordre ${ordre} ; états ${etats.join(' | ')} ; tâches affichées ${r.tache.join(',') || 'aucune'} ; panneau ${r.panneau} (${r.haut} px) ; Ma vie ${r.vie.join(' et ')} px`);
   await ctx.close();
 }
 

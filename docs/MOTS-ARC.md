@@ -319,6 +319,14 @@ restent dans le Point du jour et dans « Déposé »). À la place, le poste : d
   de la pensée entre guillemets, sur une ligne.
 - « 2 pensées à ranger » (« 1 pensée à ranger »), absent à zéro.
 
+### Les mots de Projets et Ma vie (10 octobre, seconde partie de l'accueil)
+
+- Sous le nom d'un projet, son état, jamais une tâche : « Actif aujourd'hui », « Actif hier », « Actif il y a 3 j »,
+  « Calme depuis 10 j » (« Calme depuis 2 mois ») ; rien s'il n'a jamais bougé.
+- Retirée de l'accueil : la prochaine tâche de chaque projet (« Essai « Ma boutique » : Bo… »), une liste d'étapes déguisée.
+- Inchangés : « Projets », « 3 en cours · 3 endormis », « Endormis », « Réveiller », « Ma vie », « Check-in fait »,
+  « 3 éléments ».
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par

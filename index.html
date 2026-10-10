@@ -1573,44 +1573,56 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S1 .h-ranger .h-ranger-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 .h-ranger .h-chev{flex-shrink:0}
 /* Projets en cours : une ligne chacun. Le pictogramme et le nom portent sa couleur ; le trait du bas dit où il en est */
-#S1 .pj-grid{display:grid;gap:8px}
-#S1 .pj{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:40px minmax(0,1fr) auto;column-gap:12px;align-items:center;min-height:66px;padding:11px 14px 13px 12px;border-radius:18px;border:1px solid var(--b1);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.018)),#0D0D10;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);cursor:pointer;transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .2s}
-#S1 .pj::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(170px 90px at 30px 50%,color-mix(in srgb,var(--pc,#fff) 15%,transparent),transparent 72%)}
-#S1 .pj:hover{border-color:color-mix(in srgb,var(--pc,#fff) 40%,var(--b2))}
-#S1 :is(.pj-ico,.vie-ico){display:grid;place-items:center;width:40px;height:40px;border-radius:12px;font-size:0;background:color-mix(in srgb,var(--pc,#fff) 13%,transparent);border:1px solid color-mix(in srgb,var(--pc,#fff) 32%,transparent)}
+/* PROJETS ET MA VIE (branche accueil-projets, 10 octobre) : deux panneaux sous l'horizon, plus calmes que le poste.
+   Projets : un seul panneau, une ligne par projet (pictogramme au trait, nom, état vrai, où il en est) ; sa barre de
+   progression, en bas de la ligne, sert de séparation. Plus de tâche sous le nom : l'accueil n'est pas un agenda. */
+#S1 .h-pjs,#S1 .vie-grid{position:relative;overflow:hidden;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+#S1 .pj-grid{display:block}
+#S1 .pj{position:relative;display:grid;grid-template-columns:26px minmax(0,1fr) auto;column-gap:14px;align-items:center;min-height:64px;padding:11px 18px 13px 16px;cursor:pointer;transition:background-color .2s}
+#S1 .pj:hover{background:rgba(255,255,255,.03)}
+#S1 .pj:active{transform:none;background:rgba(255,255,255,.06)}
+#S1 :is(.pj-ico,.vie-ico){display:grid;place-items:center;width:26px;height:26px;font-size:0;background:none;border:0;border-radius:0}
+#S1 :is(.pj-ico,.vie-ico)::before{width:24px;height:24px}
 #S1 :is(.pj-txt,.vie-txt){display:block;min-width:0}
-#S1 .pj-n{display:block;font-size:17px;line-height:22px;font-weight:700;letter-spacing:.1px;color:color-mix(in srgb,var(--pc,#fff) 82%,#fff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S1 .pj-f{display:block;font-size:14px;line-height:19px;letter-spacing:-.1px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .pj-n{display:block;font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.2px;color:color-mix(in srgb,var(--pc,#fff) 82%,#fff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .pj-f{display:block;margin-top:1px;font-size:14px;line-height:19px;letter-spacing:-.1px;color:#B4B4BA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 .pj-pct{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.1px;color:#E8E8EC}
-#S1 .pj-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.07)}
-#S1 .pj-bar span{display:block;height:100%;border-radius:0 3px 3px 0;background:var(--pc,#fff)}
-/* Projets endormis : repliés en une ligne ; jamais plus forts que ceux qui avancent */
-#S1 .h-dort{margin-top:8px;border-radius:16px;border:1px solid var(--b1);background:rgba(255,255,255,.02);overflow:hidden}
+#S1 .pj-bar{position:absolute;left:56px;right:18px;bottom:0;height:2px;border-radius:2px;background:rgba(255,255,255,.08)}
+#S1 .pj-bar span{display:block;height:100%;border-radius:2px;background:var(--pc,#fff);box-shadow:0 0 8px color-mix(in srgb,var(--pc,#fff) 55%,transparent)}
+/* Calme : sept jours sans mouvement, la ligne recule (plus basse, plus sombre), le contraste reste lisible */
+#S1 .pj.calme{min-height:56px;padding-top:8px;padding-bottom:10px}
+#S1 .pj.calme .pj-n{font-size:16px;color:color-mix(in srgb,var(--pc,#fff) 62%,#C4C4CC)}
+#S1 .pj.calme .pj-ico{opacity:.6}
+#S1 .pj.calme .pj-pct{color:#B4B4BA}
+#S1 .pj.calme .pj-bar span{opacity:.55;box-shadow:none}
+/* Endormis : la dernière ligne du panneau, repliée ; jamais plus forts que ceux qui avancent */
+#S1 .h-dort{margin:0;border-top:1px solid rgba(255,255,255,.06);background:rgba(0,0,0,.22)}
 #S1 .h-dort[hidden],#S1 #h-dort-list[hidden]{display:none}
-#S1 .h-dort-tog{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 14px;border:0;background:none;font-family:var(--fa);text-align:left;color:inherit;cursor:pointer}
+#S1 .h-dort-tog{display:flex;align-items:center;gap:10px;width:100%;min-height:52px;padding:0 18px 0 16px;border:0;background:none;font-family:var(--fa);text-align:left;color:inherit;cursor:pointer}
 #S1 .h-dort-t{flex-shrink:0;font-size:15px;font-weight:600;letter-spacing:-.2px;color:#D6D6DC}
-#S1 .h-dort-n{flex:1;min-width:0;font-size:14px;letter-spacing:-.1px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .h-dort-n{flex:1;min-width:0;font-size:14px;letter-spacing:-.1px;color:#9E9EA6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 .h-dort-tog i{flex-shrink:0;width:7px;height:7px;margin:0 4px 3px 0;border-right:1.7px solid var(--t3);border-bottom:1.7px solid var(--t3);transform:rotate(45deg);transition:transform .2s}
 #S1 .h-dort-tog[aria-expanded="true"] i{transform:rotate(225deg);margin-bottom:-3px}
 #S1 .h-dort-tog[aria-expanded="true"] .h-dort-n{visibility:hidden}
-#S1 .h-dort-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:6px 6px 6px 16px;border-top:1px solid var(--b1);cursor:pointer}
-#S1 .h-dort-ring{flex-shrink:0;width:11px;height:11px;border-radius:50%;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--pc,#fff) 50%,#4a4a50)}
+#S1 .h-dort-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:6px 8px 6px 16px;border-top:1px solid rgba(255,255,255,.05);cursor:pointer}
+#S1 .h-dort-ring{flex-shrink:0;width:11px;height:11px;margin:0 7px 0 8px;border-radius:50%;box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--pc,#fff) 50%,#4a4a50)}
 #S1 .h-dort-nom{flex:1;min-width:0;font-size:16px;font-weight:600;letter-spacing:.1px;color:#C4C4CC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 .h-dort-btn{flex-shrink:0;min-height:44px;padding:0 16px;border-radius:12px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.15px;color:#E8E8EC;cursor:pointer}
 #S1 .h-dort-btn:active{transform:scale(.97)}
-/* Ma vie : à part, plus calme. Deux tuiles */
-#S1 .vie-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
-#S1 .vie{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:12px;align-items:center;min-height:62px;padding:10px 14px 10px 12px;border-radius:18px;border:1px solid var(--b1);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.014)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);cursor:pointer;transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .2s}
-#S1 .vie:hover{border-color:color-mix(in srgb,var(--pc,#fff) 36%,var(--b2))}
-#S1 .vie-n{display:block;font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.2px;color:color-mix(in srgb,var(--pc,#fff) 80%,#fff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S1 .vie-s{display:block;font-size:13px;line-height:18px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Ma vie : à part, plus calme. Le même panneau, coupé en deux, comme le poste mais sans sa lumière */
+#S1 .vie-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#09090C}
+#S1 .vie{display:grid;grid-template-columns:26px minmax(0,1fr);column-gap:12px;align-items:center;min-height:64px;padding:12px 16px;cursor:pointer;transition:background-color .2s}
+#S1 .vie + .vie{border-left:1px solid rgba(255,255,255,.07)}
+#S1 .vie:hover{background:rgba(255,255,255,.03)}
+#S1 .vie:active{transform:none;background:rgba(255,255,255,.06)}
+#S1 .vie-n{display:block;font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.2px;color:color-mix(in srgb,var(--pc,#fff) 72%,#fff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .vie-s{display:block;margin-top:1px;font-size:13px;line-height:18px;color:#B4B4BA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 :is(.pj,.vie,.h-dort-tog,.h-dort-btn):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 @media(min-width:700px){
   #S1 .h-hero{padding-top:30px}
   #S1 .h-quand{font-size:16px;margin-bottom:8px}
   #S1 .h-h1{font-size:40px;letter-spacing:-1.5px}
   #S1 .h-horizon{margin-top:18px}
-  #S1 :is(.pj-grid,.vie-grid){grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 }
 /* Grand écran : la console garde ses deux instruments côte à côte, les chiffres plus grands */
 @media(min-width:861px){
@@ -2095,16 +2107,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   mask:radial-gradient(circle at 50% calc(var(--sr) + 40px),transparent 0,transparent calc(var(--sr) - 60px),rgba(0,0,0,.12) calc(var(--sr) - 2px),#000 calc(var(--sr) - .6px),#000 calc(var(--sr) + .8px),rgba(0,0,0,.45) calc(var(--sr) + 2px),rgba(0,0,0,.2) calc(var(--sr) + 14px),rgba(0,0,0,.08) calc(var(--sr) + 50px),rgba(0,0,0,.025) calc(var(--sr) + 120px),transparent calc(var(--sr) + 220px))}
 /* La hiérarchie : une seule carte posée sur l'horizon (la console) ; tout ce qui suit est sous le sol, plus sombre */
 #S1 .h-poste{border-color:color-mix(in srgb,var(--ciel,#C77DF0) 40%,rgba(255,255,255,.14))}
-#S1 .pj,#S1 .vie,#S1 .h-dort{border-color:rgba(255,255,255,.06)}
 @media(prefers-reduced-motion:reduce){#S1 .h-ciel::before{transition:none}}
 /* ═══ SIGNAUX VRAIS (branche signaux-vrais, 10 octobre) ═══ Chaque lumière dit un fait ; le vivant devant, le dormant derrière. */
 #S1 .h-faits{margin:8px 0 0;font-size:15px;line-height:20px;letter-spacing:-.15px;color:#D6D6DC}
 #S1 .h-faits[hidden]{display:none}
-#S1 .pj-act{color:#B4B4BA}
-#S1 .pj.calme{min-height:58px;padding-top:8px;padding-bottom:10px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008)),#09090C;box-shadow:none}
-#S1 .pj.calme .pj-n{font-size:16px;color:color-mix(in srgb,var(--pc,#fff) 70%,#E8E8EC)}
-#S1 .pj.calme .pj-ico{opacity:.75}
-#S1 .pj.calme::before{display:none}
 #S1 #sync-lbl{font-variant-numeric:tabular-nums;white-space:nowrap}
 /* ═══ L'HORIZON RÉPOND ═══ transform, opacity, position d'un fond ; aucun mode de fusion ; rien sans événement */
 #S1 .h-horizon{overflow:visible}
@@ -2159,16 +2165,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <button class="h-echo" id="h-echo" type="button" hidden><span class="h-echo-l" id="h-echo-l">Dernière pensée</span><span class="h-echo-t" id="h-echo-t"></span><i class="h-chev" aria-hidden="true"></i></button>
     <button class="h-ranger" id="h-ranger" type="button" hidden><span class="h-ranger-t" id="h-ranger-t"></span><i class="h-chev" aria-hidden="true"></i></button>
   </section>
-  <!-- PROJETS : ceux qui avancent en cartes, ceux qui dorment en lignes éteintes -->
+  <!-- PROJETS : un seul panneau ; ceux qui bougent devant, les calmes derrière, les endormis repliés en bas -->
   <section class="h-section" aria-labelledby="h-projets-lbl">
     <div class="h-section-head">
       <h2 class="h-section-lbl" id="h-projets-lbl">Projets</h2>
       <div class="h-section-sub" id="h-projets-sub"></div>
     </div>
+    <div class="h-pjs">
     <div class="pj-grid" id="hgrid"></div>
     <div class="h-dort" id="h-dort" hidden>
       <button class="h-dort-tog" id="h-dort-tog" type="button" aria-expanded="false" aria-controls="h-dort-list"><span class="h-dort-t">Endormis</span><span class="h-dort-n" id="h-dort-n"></span><i aria-hidden="true"></i></button>
       <div id="h-dort-list" hidden></div>
+    </div>
     </div>
   </section>
   <!-- MA VIE : à part, plus calme -->
@@ -4125,6 +4133,14 @@ function depuisQuand(ts) {
   if(j < 30) return 'il y a ' + j + '\u00A0j';
   var m = Math.floor(j / 30); return 'il y a ' + m + '\u00A0mois';
 }
+// L'état d'un projet en mots : « Actif aujourd'hui », « Actif hier », « Actif il y a 3 j », « Calme depuis 12 j ».
+// Rien s'il n'a jamais bougé (zéro = absent).
+function projetEtatMots(act, calme) {
+  if(!act) return '';
+  if(!calme) return 'Actif ' + depuisQuand(act);
+  var j = Math.floor((Date.now() - act) / 86400000);
+  return 'Calme depuis ' + (j < 30 ? j + '\u00A0j' : Math.floor(j / 30) + '\u00A0mois');
+}
 function renderFaits() {
   var el = document.getElementById('h-faits'); if(!el) return;
   var f = faitsDuJour(), parts = [];
@@ -4191,30 +4207,31 @@ function renderPoles(){
 
 function renderCards(){
   var g=document.getElementById("hgrid"); if(!g) return;
-  var html="", dort=[], actifs=0;
-  WORLDS.forEach(function(wd){
+  var html="", dort=[], actifs=0, lignes=[];
+  WORLDS.forEach(function(wd, rang){
     if(mondeDort(wd.id)){ dort.push(wd); return; }
     actifs++;
     var allT=wd.tasks_done.concat(wd.tasks_todo);
     var done=allT.filter(function(t){ return S.tasks[wd.id]&&S.tasks[wd.id][t.id]; }).length;
     var pct=allT.length>0?Math.round(done/allT.length*100):0;
-    var focusId=S.focus[wd.id];
-    var focusTxt="";
-    if(focusId){
-      var ft=allT.find(function(t){ return t.id===focusId&&!(S.tasks[wd.id]&&S.tasks[wd.id][t.id]); });
-      if(ft) focusTxt=ft.t;
-    }
-    if(!focusTxt){
-      var nt=wd.tasks_todo.find(function(t){ return !S.tasks[wd.id]||!S.tasks[wd.id][t.id]; });
-      if(nt) focusTxt=nt.t;
-    }
-    // Une ligne par projet : son pictogramme, son nom, sa prochaine tâche, où il en est. Le reste est dans le projet.
-    var act=projetActivite(wd), depuis=depuisQuand(act), calme=act&&(Date.now()-act)>7*86400000;
-    html+='<div class="pj'+(calme?' calme':'')+'" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'" role="button" tabindex="0">';
+    var act=projetActivite(wd), calme=!!act&&(Date.now()-act)>7*86400000;
+    lignes.push({ wd: wd, rang: rang, pct: pct, act: act, calme: calme });
+  });
+  // Pas d'agenda sur l'accueil (Rayan, 10 octobre) : plus de prochaine tâche sous le nom, seulement l'état vrai du projet
+  // (sa dernière activité) et où il en est. Le vivant devant : les projets qui bougent d'abord, du plus récent au plus
+  // ancien ; les calmes (sept jours sans mouvement) ensuite ; à égalité, l'ordre habituel.
+  lignes.sort(function(a, b){
+    if(a.calme !== b.calme) return a.calme ? 1 : -1;
+    if(a.act !== b.act) return b.act - a.act;
+    return a.rang - b.rang;
+  });
+  lignes.forEach(function(l){
+    var wd=l.wd, etat=projetEtatMots(l.act, l.calme);
+    html+='<div class="pj'+(l.calme?' calme':'')+'" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'" role="button" tabindex="0">';
     html+='<span class="pj-ico" aria-hidden="true"></span>';
-    html+='<span class="pj-txt"><span class="pj-n">'+esc(wd.name)+'</span>'+(calme?(depuis?'<span class="pj-f pj-act">'+esc(depuis)+'</span>':''):(focusTxt?'<span class="pj-f">'+(depuis?'<span class="pj-act">'+esc(depuis)+' · </span>':'')+esc(focusTxt)+'</span>':(depuis?'<span class="pj-f pj-act">'+esc(depuis)+'</span>':'')))+'</span>';
-    html+='<span class="pj-pct">'+pct+'\u00A0%</span>';
-    html+='<span class="pj-bar" aria-hidden="true"><span style="width:'+pct+'%"></span></span>';
+    html+='<span class="pj-txt"><span class="pj-n">'+esc(wd.name)+'</span>'+(etat?'<span class="pj-f pj-act">'+esc(etat)+'</span>':'')+'</span>';
+    html+='<span class="pj-pct">'+l.pct+'\u00A0%</span>';
+    html+='<span class="pj-bar" aria-hidden="true"><span style="width:'+l.pct+'%"></span></span>';
     html+='</div>';
   });
   g.innerHTML=html;
