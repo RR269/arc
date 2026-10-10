@@ -2098,11 +2098,31 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 .wsec.vide>.wsec-head .wsec-info{display:none}
 #S2 .wsec.vide>:not(.wsec-head){display:none}
 #S2 .wsec-ouvrir:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+/* ═══ ACCUEIL : LE SOL ET LE CIEL (branche centre-controle, 10 octobre) ═══
+   Rayan : « un centre de contrôle de notre vie, hyper connecté, comme dans un film de science-fiction, en supprimant
+   ce fond noir fade seul ». Étude : docs/ETUDE-ACCUEIL.md. Trois couches sous le contenu, aucun mode de fusion :
+   le ciel (une lueur basse à la couleur de l'espace de la prochaine étape, --ciel, posée par rangeHomeRender : un
+   fait, pas un décor), le grain (celui de l'écran d'entrée, noir), le sol (un second arc presque éteint, derrière
+   tout ce qui suit la prochaine étape : ce qui est dessous se lit « sous l'horizon »). Une seule source de lumière. */
+#S1{--ciel:#C77DF0;--sol-y:520px}
+#S1 .hw{isolation:isolate}
+#S1 .h-ciel{position:absolute;left:calc(var(--bord) * -1 - 20px);right:calc(var(--bord) * -1 - 20px);top:0;bottom:0;z-index:-1;pointer-events:none;overflow:hidden}
+#S1 .h-ciel::before{content:"";position:absolute;left:-20%;right:-20%;top:-120px;height:620px;background:radial-gradient(75% 62% at 50% 0%,color-mix(in srgb,var(--ciel) 46%,transparent),color-mix(in srgb,var(--ciel) 14%,transparent) 44%,transparent 72%);transition:background 1.2s ease}
+#S1 .h-ciel::after{content:"";position:absolute;inset:0;opacity:.22;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#S1 .h-sol{position:absolute;left:calc(var(--bord) * -1 - 30px);right:calc(var(--bord) * -1 - 30px);top:var(--sol-y);height:360px;z-index:-1;pointer-events:none;--sr:2600px;
+  background:linear-gradient(90deg,transparent 0,color-mix(in srgb,var(--ciel) 60%,#fff) 28%,color-mix(in srgb,var(--ciel) 75%,#fff) 62%,transparent 100%);opacity:.5;
+  -webkit-mask:radial-gradient(circle at 50% calc(var(--sr) + 40px),transparent 0,transparent calc(var(--sr) - 60px),rgba(0,0,0,.12) calc(var(--sr) - 2px),#000 calc(var(--sr) - .6px),#000 calc(var(--sr) + .8px),rgba(0,0,0,.45) calc(var(--sr) + 2px),rgba(0,0,0,.2) calc(var(--sr) + 14px),rgba(0,0,0,.08) calc(var(--sr) + 50px),rgba(0,0,0,.025) calc(var(--sr) + 120px),transparent calc(var(--sr) + 220px));
+  mask:radial-gradient(circle at 50% calc(var(--sr) + 40px),transparent 0,transparent calc(var(--sr) - 60px),rgba(0,0,0,.12) calc(var(--sr) - 2px),#000 calc(var(--sr) - .6px),#000 calc(var(--sr) + .8px),rgba(0,0,0,.45) calc(var(--sr) + 2px),rgba(0,0,0,.2) calc(var(--sr) + 14px),rgba(0,0,0,.08) calc(var(--sr) + 50px),rgba(0,0,0,.025) calc(var(--sr) + 120px),transparent calc(var(--sr) + 220px))}
+/* La hiérarchie : une seule carte posée sur l'horizon (le but) ; tout ce qui suit est sous le sol, plus sombre */
+#S1 .next-item.is-now{border-color:color-mix(in srgb,var(--rg-c,#fff) 45%,rgba(255,255,255,.14))}
+#S1 .next-item.next-row,#S1 .pj,#S1 .vie,#S1 .h-dort,#S1 .h-tile{border-color:rgba(255,255,255,.06)}
+#S1 .next-item.next-row{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#0B0B0E}
+@media(prefers-reduced-motion:reduce){#S1 .h-ciel::before{transition:none}}
 </style>
 </head>
 <body>
 <!-- S1 HOME -->
-<div class="scr" id="S1"><div class="hw">
+<div class="scr" id="S1"><div class="hw"><div class="h-ciel" aria-hidden="true"></div><div class="h-sol" aria-hidden="true"></div>
   <nav class="hn"><div class="hn-left">
     <div class="h-logo-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><path class="arc-shimmer" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div>
     <div class="h-logo-name">ARC</div>
@@ -6763,6 +6783,7 @@ function rangeHomeRender() {
   tr.hidden = n === 0;
   tr.textContent = n + (n > 1 ? ' pensées à ranger' : ' pensée à ranger');
   var rows = rangeNextSteps();
+  // Le ciel prend la couleur de l'espace de la prochaine étape (posé après le rendu, voir plus bas)
   // Projets nés d'une pensée : leur prochaine étape (une par projet éveillé) suit celles des pensées. Les cinq projets
   // d'origine n'y entrent pas : leurs tâches datent d'avril, l'accueil ne montre que des actions réelles.
   WORLDS.forEach(function(w) {
@@ -6802,6 +6823,20 @@ function rangeHomeRender() {
     }
     list.appendChild(it);
   });
+  homeCiel(rows[0]);
+}
+// Le sol et le ciel : la couleur de la prochaine étape teinte le haut ; le sol passe juste sous sa carte
+var _cielRow = null;
+function homeCiel(r, resize) {
+  var s1 = document.getElementById('S1'); if(!s1) return;
+  if(!resize) _cielRow = r; else r = _cielRow;
+  var c = r ? (r.projet ? r.projet.color : rangeSpaceInfo(r.f.space).color) : '#C77DF0';
+  s1.style.setProperty('--ciel', c);
+  // Le sol passe sous la carte du but : mesuré une fois la page posée (la carte est dessinée juste avant)
+  var hw = s1.querySelector('.hw'), now = s1.querySelector('.next-item.is-now') || s1.querySelector('.next-empty');
+  if(!hw || !now) return;
+  var top = now.getBoundingClientRect().bottom - hw.getBoundingClientRect().top;
+  if(top > 0) s1.style.setProperty('--sol-y', Math.round(top - 40) + 'px');
 }
 
 // Une étape d'un projet né d'une pensée, sur l'accueil : même carte ; « C'est fait » coche la tâche du projet
@@ -7193,6 +7228,7 @@ function depotInit() {
   document.getElementById('next-torange').addEventListener('click', depotOpen);
   document.getElementById('depot-back').addEventListener('click', depotClose);
   window.addEventListener('resize', depotLayout);
+  window.addEventListener('resize', function() { if(typeof homeCiel === 'function') homeCiel(null, true); });
   if(window.visualViewport) { visualViewport.addEventListener('resize', depotLayout); visualViewport.addEventListener('scroll', depotLayout); }
   // Changement d'écran (accueil, monde, pôle) : recalcul de la place du panneau Claude
   var mo = new MutationObserver(function() { depotLayout(); });
