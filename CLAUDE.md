@@ -898,6 +898,19 @@ En faire un projet (branche `developper`, 10 octobre 3 h 30, partie de `main` à
   lignes était coupée dans son champ de deux lignes ; corrigé sur la branche `projet-mission` (la mission grandit
   comme les étapes ; le contrôle « en entier » échoue sur la version en ligne, passe après).
 
+Sections vides repliées (branche `projet-sections`, 10 octobre 5 h, partie de `main` après la PR #22) :
+- Vu sur les captures de Rayan (4 h 49, projet « Nettoyage d'extérieur ») : quatre sections vides (Bloquants, Notes,
+  Journal, Outils) prenaient un écran et demi sous les trois étapes ; « Journalise maintenant. » donnait un ordre.
+  Rayan : « go » (4 h 50).
+- Vide, une section n'est plus qu'une ligne : son titre et une touche (« Ajouter », « Écrire » pour les notes ;
+  `.wsec.vide`, `.wsec-ouvrir`, `sectionsVides`, `sectionOuvrir`, `_secOuvertes` remis à zéro à l'entrée d'un monde).
+  La touche ouvre le champ et y place le curseur ; Outils ouvre directement l'ajout d'un outil. Dès qu'il y a quelque
+  chose, la section reste ouverte. Vaut pour tous les projets. « Pas encore d'entrée. » sans l'ordre.
+- Projet neuf sur iPhone 390 : 1 697 px de haut avant, 1 273 px après. Rien n'est effacé, aucune donnée touchée.
+- `tests/mondes.mjs` : au clavier et au doigt, la position de la section Journal est comparée à 2 px près (elle
+  différait d'un pixel d'arrondi une fois la page plus courte).
+- Tests : projet 31/31 (un contrôle ajouté), mondes 7/7, et les onze autres suites passent ; 436 `<div` / 436 `</div>`.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

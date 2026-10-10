@@ -108,7 +108,7 @@ for (const vp of ECRANS) {
   const clavier = await page.evaluate(() => Math.round(document.getElementById('wsec-journal').getBoundingClientRect().top - document.getElementById('wmain').getBoundingClientRect().top));
   const reste = await page.evaluate(() => ({ tiroir: !!document.getElementById('tdrawer'), contexte: !!document.getElementById('btn-ctx'), fleches: document.querySelectorAll('#S2 .wblk-arr').length, mission: getComputedStyle(document.querySelector('#S2 .wmission'), '::after').content }));
   // la section arrive en haut de l'écran, ou, tout en bas de la page, au moins dans les 60 % du haut
-  const ok4 = Object.values(vus).every(v => v.visible && v.haut > -5 && v.haut < v.place) && clavier === vus.journal.haut;
+  const ok4 = Object.values(vus).every(v => v.visible && v.haut > -5 && v.haut < v.place) && Math.abs(clavier - vus.journal.haut) <= 2;   // arrondi d’un pixel près, au clavier comme au doigt
   ok(ok4 && !reste.tiroir && !reste.contexte && !reste.fleches && reste.mission === 'none' && !errors.length,
      'iPhone : chaque compteur mène à sa section (Accomplies déplie les tâches faites), au doigt comme au clavier ; plus de tiroir qui recopiait la page, ni de flèche sur la mission et les bloquants',
      JSON.stringify({ ...vus, clavier, ...reste }));

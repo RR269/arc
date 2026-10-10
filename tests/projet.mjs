@@ -90,6 +90,15 @@ const outil = () => { window.pjv = id => document.getElementById(id).value; };
      '« Créer le projet » : le projet existe avec son nom, sa mission, ses trois étapes (corrigées par Rayan) et la pensée d\'origine', JSON.stringify(r));
   ok(!r.feuille && !r.depot && r.titreMonde === 'Recettes YouTube' && r.missionVue === PROPOSITION.mission && r.tachesVues.length === 3 && r.prio === true && /^0/.test(r.anneau),
      'Il s\'ouvre aussitôt : nom, mission, trois tâches, anneau à 0 %, pas d\'« Action prioritaire » vide', JSON.stringify(r));
+  // Sections vides repliées : une ligne chacune ; « Ajouter » du journal ouvre le champ ; une entrée ajoutée la garde ouverte
+  const sv = await page.evaluate(() => ['bloquants', 'notes', 'journal', 'outils'].map(k => { const e = document.getElementById('wsec-' + k); return { k, vide: e.classList.contains('vide'), h: Math.round(e.getBoundingClientRect().height) }; }));
+  await page.locator('#wsec-journal .wsec-ouvrir').click(); await page.waitForTimeout(200);
+  const ouvert = await page.evaluate(() => ({ vide: document.getElementById('wsec-journal').classList.contains('vide'), focus: document.activeElement.id, txt: document.getElementById('jou-list').textContent }));
+  await page.fill('#jou-inp', 'Premier appel à un fournisseur'); await page.click('#jou-add-btn'); await page.waitForTimeout(150);
+  const apres = await page.evaluate(() => ({ vide: document.getElementById('wsec-journal').classList.contains('vide'), n: document.querySelectorAll('#jou-list > *').length }));
+  ok(sv.every(x => x.vide && x.h <= 56) && !ouvert.vide && ouvert.focus === 'jou-inp' && ouvert.txt === 'Pas encore d\'entrée.' && !apres.vide && apres.n >= 1,
+     'Projet neuf : Bloquants, Notes, Journal et Outils vides tiennent sur une ligne chacun ; « Ajouter » ouvre le champ ; plus de « Journalise maintenant. »', JSON.stringify({ sv, ouvert, apres }));
+  await page.evaluate(id => { S.journal[id] = []; saveS(); }, r.id);
   ok(r.rangee === 'recettesyoutube' && r.origine === 'user' && r.titre !== avant.titre && /Huit espaces/.test(r.titre),
      'La pensée est rangée dans son projet, et le titre de l\'accueil compte un espace de plus', `${avant.titre} → ${r.titre}, rangée « ${r.rangee} »`);
 
