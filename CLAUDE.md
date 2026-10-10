@@ -21,13 +21,17 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `cockpit.mjs` (cockpit d'une tâche : mêmes mesures, réponse de Claude visible sur iPhone, notes, journal, « C'est fait », minuteur, Échap),
   `recherche.mjs` (recherche : pensées, tâches et notes, projets, journal, Juridique ; ouverture au bon endroit ; clavier ; charte),
   `synchro.mjs` (deux appareils sur le même compte : fusion, hors réseau, suppression, conflit, écriture conditionnelle),
+  `projet.mjs` (« En faire un projet » : proposition de Claude, création, accueil, rechargement, erreurs, autre appareil, charte),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
 ## Ce que fait ARC
 
-- Cinq mondes (tableau `WORLDS`, l'`id` est l'index) : ARYAN, FBA, KITCHEN, TELENEUF, ATLAS.
+- Cinq mondes écrits dans le code (tableau `WORLDS`, `id` 0 à 4 = leur place) : ARYAN, FBA, KITCHEN, TELENEUF, ATLAS.
+  Depuis le 10 octobre, les projets créés depuis ARC (« En faire un projet ») vivent dans `S.mondes` et `WORLDS` les
+  reçoit à la suite (`mondesConstruire`, appelé par `normalizeS`) ; leur `id` est l'heure de création en ms.
+  **Toujours chercher un projet par `monde(id)`, jamais par `WORLDS[id]`.**
 - Le contenu d'un monde (tâches, bloquants, mission) est écrit en dur dans `WORLDS` ; ce que Rayan coche vit dans `S`.
 - Changer la liste des mondes ou marquer des tâches comme faites : incrémenter `WORLDS_V` et compléter `migrateWorlds`.
 - Un projet peut être « endormi » : `S.sleep[id]` (`mondeDort`, `mondeSommeil`, `renderSommeil`) ; c'est la seule
@@ -58,7 +62,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/synchro.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/synchro.mjs`, `tests/projet.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -837,6 +841,43 @@ Synchronisation, fusion au lieu d'écrasement (branche `synchro`, 10 octobre 1 h
 - Tests : synchro 11/11 (nouveau), proxy 41/41, connexion 27/27, dépôt 19/19, rangement 25/25, matin 27/27, accueil
   17/17, mondes 7/7, pôles 9/9, cockpit 17/17, recherche 8/8, entrée-fond 41/41 ; 427 `<div` / 427 `</div>`.
   Vérifié dans Chromium seulement, contre un faux Supabase : **le vrai passage Mac ↔ iPhone reste à constater par Rayan.**
+- **PR #19 fusionnée par Rayan le 10 octobre à 2 h 17 ; constaté en réel à 3 h 25** : une entrée au journal d'ARYAN
+  écrite sur l'iPhone, une autre sur le Mac resté ouvert, les deux restent (« les deux test ok »).
+
+En faire un projet (branche `developper`, 10 octobre 3 h 30, partie de `main` à `0e0bdf0`) :
+- Rayan (3 h 25) : « go » pour « Développer · Fais-en un projet, étape par étape » (promis par l'écran d'entrée, pas
+  construit). Accord donné pour envoyer la pensée à Claude afin qu'il propose le projet.
+- **Socle** : `S.mondes` (une entrée par projet : `id`, `name`, `key`, `color`, `mission`, `desc`, `etapes` [{id, t}],
+  `from` = la pensée d'origine) ; `monde(id)` remplace les 19 `WORLDS[…]` ; la recherche prend l'`id` du projet et
+  non sa place. Les données par projet (`S.tasks`, `S.journal`…) restent rangées par `id`, comme avant. Les cinq projets
+  d'origine ne bougent pas. La synchronisation fusionne `S.mondes` champ par champ (aucun changement dans `sync…`).
+- **Le geste** : sous une pensée (« Déposé »), « En faire un projet » ouvre une feuille ; Claude propose nom, mission
+  et trois étapes (`projetDemander` : chemin de la discussion du proxy, consigne `PJ_SYSTEM`, 500 jetons, rien
+  d'enregistré côté serveur, **aucun redéploiement**) ; la réponse est lue comme du JSON et vérifiée (`projetLire`) ;
+  un champ déjà touché par Rayan n'est jamais remplacé. Panne, réponse illisible ou hors réseau : la feuille le dit et
+  la pensée est mise en première étape. Nom vide, trop court ou déjà pris (même clé de rangement, Santé et Juridique
+  compris) : message sous les champs, rien n'est créé. « Créer le projet » : `S.mondes`, la pensée rangée dans le
+  projet (ligne `origin` user), le projet s'ouvre, bulle « Projet créé · il est dans Projets ». Ensuite, sous la
+  pensée : « Ouvrir le projet … ».
+- **Dans le projet** : catégorie « Projet · né le … », description « Né de ta pensée : « … » », mission, les étapes
+  comme tâches (cockpit, étoile, anneau, recherche : tout marche) ; « Action prioritaire » et « Prochaines actions »
+  sont cachées quand elles sont vides (`wsec-prio`, `wsec-na`). Couleur choisie parmi `MONDE_COULEURS` (vives, aucune
+  brune), la première qu'aucun projet n'a. Pictogramme : celui d'un monde inconnu.
+- **Sur l'accueil** : la prochaine étape d'un projet né d'une pensée (une par projet éveillé) suit celles des pensées
+  (`rangeHomeProjet`) ; « C'est fait » coche la tâche du projet ; « Ouvrir le projet ». Avant ce correctif, l'accueil
+  disait « Rien en cours » juste après la création d'un projet de trois étapes. Les tâches des cinq projets d'origine
+  n'y entrent pas (écrites en avril). `renderHome` redessine aussi la prochaine étape. Le point du matin n'est pas touché.
+- **Rangement** : le nouvel espace est proposé au proxy (`key` gardée à la création, sans accents) ; au-delà de 12
+  espaces (limite du proxy), les projets endormis puis les plus récents ne sont plus proposés ; Santé et Juridique
+  toujours.
+- Corrigé en passant : la bulle « ☁ Sync · heure » (emoji, et posée sur la note du dépôt) est retirée, la pastille du
+  haut suffit ; le nuage est retiré des deux autres bulles.
+- **Pas fait, à décider** : renommer ou supprimer un projet créé (l'endormir marche) ; ses étapes ajoutées ensuite
+  vont dans `S.custom` comme pour les autres projets (l'anneau ne compte pas ces tâches-là, défaut ancien, tous
+  projets) ; la croix qui supprime une tâche ajoutée sans confirmation (ancien).
+- Tests : projet 26/26 (nouveau), synchro 11/11, proxy 41/41, connexion 27/27, dépôt 19/19, accueil 17/17,
+  rangement 25/25, matin 27/27, mondes 7/7, pôles 9/9, cockpit 17/17, recherche 8/8, entrée-fond 41/41 ;
+  436 `<div` / 436 `</div>`. Vérifié dans Chromium seulement : **le vrai Claude et l'iPhone restent à voir par Rayan.**
 
 ### Décisions de Rayan (5 octobre)
 
