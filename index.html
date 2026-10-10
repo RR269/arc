@@ -557,11 +557,6 @@ input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-hig
 .depot-note.on{opacity:1;visibility:visible;pointer-events:auto}
 .depot-note button{background:none;border:none;color:var(--t1);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer;min-height:32px;padding:0 4px}
 .depot-note.err{color:var(--red)}
-.depot-entry{display:flex;align-items:center;gap:10px;width:100%;max-width:420px;min-height:52px;margin:14px 0 4px;padding:10px 16px;border-radius:16px;border:1px solid var(--b2);background:var(--bg2);color:var(--t1);font-family:-apple-system,system-ui,sans-serif;cursor:pointer;text-align:left}
-.depot-entry:hover{border-color:var(--b3)}
-.depot-entry-t{font-size:16px;font-weight:600}
-.depot-entry-n{flex:1;font-size:15px;color:var(--t2)}
-.depot-entry-go{font-size:22px;color:var(--t2)}
 #depot-screen{position:fixed;inset:0;z-index:25;background:var(--bg);overflow-y:auto;display:none;-webkit-overflow-scrolling:touch}
 #depot-screen.open{display:block}
 .depot-wrap{max-width:720px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 20px calc(var(--depot-space,0px) + 24px);font-family:-apple-system,system-ui,sans-serif}
@@ -807,17 +802,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .depot-cancelled{margin-top:20px}
 .depot-cancelled summary{min-height:44px;display:flex;align-items:center;font-size:15px;color:var(--t2);cursor:pointer}
 .depot-item.off{opacity:.7}
-.next-wrap{margin:8px 0 26px;font-family:-apple-system,system-ui,sans-serif}
-.next-title{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:12px}
-.next-item{padding:14px 16px;border-radius:16px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:10px}
-.next-step{font-size:17px;font-weight:600;line-height:1.4;color:var(--t1);word-break:break-word}
-.next-when{font-size:14px;color:#ffb340}
-.next-item .rg-acts{margin-top:8px}
-.next-empty{font-size:15px;line-height:1.55;color:var(--t2);padding:14px 16px;border-radius:16px;border:1px dashed var(--b2)}
-.next-empty[hidden]{display:none}
-.next-torange{display:block;min-height:44px;padding:0 4px;margin:2px 0 6px;border:none;background:none;color:var(--t2);font-family:-apple-system,system-ui,sans-serif;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.next-torange[hidden]{display:none}
-.next-torange:hover{color:var(--t1)}
 .matin-torange{display:block;min-height:44px;margin-top:16px;padding:0 4px;border:none;background:none;color:var(--t2);font-family:-apple-system,system-ui,sans-serif;font-size:15px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 /* ═══ POINT DU MATIN ═══ z 28 : au-dessus des écrans et de « Déposé » (25), sous la barre de dépôt (30) */
 #matin-screen{position:fixed;inset:0;z-index:28;background:rgba(0,0,0,.72);display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;font-family:-apple-system,system-ui,sans-serif}
@@ -1507,8 +1491,8 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   -webkit-mask:radial-gradient(circle at var(--hx) calc(108px + var(--hr)),transparent 0,transparent calc(var(--hr) - 84px),rgba(0,0,0,.14) calc(var(--hr) - 2px),#000 calc(var(--hr) - .8px),#000 calc(var(--hr) + .9px),rgba(0,0,0,.6) calc(var(--hr) + 1.9px),rgba(0,0,0,.32) calc(var(--hr) + 10px),rgba(0,0,0,.15) calc(var(--hr) + 34px),rgba(0,0,0,.05) calc(var(--hr) + 74px),transparent calc(var(--hr) + 108px));
   mask:radial-gradient(circle at var(--hx) calc(108px + var(--hr)),transparent 0,transparent calc(var(--hr) - 84px),rgba(0,0,0,.14) calc(var(--hr) - 2px),#000 calc(var(--hr) - .8px),#000 calc(var(--hr) + .9px),rgba(0,0,0,.6) calc(var(--hr) + 1.9px),rgba(0,0,0,.32) calc(var(--hr) + 10px),rgba(0,0,0,.15) calc(var(--hr) + 34px),rgba(0,0,0,.05) calc(var(--hr) + 74px),transparent calc(var(--hr) + 108px))}
 /* Ce qui se touche répond : léger enfoncement, pas de voile */
-#S1 :is(.depot-entry,.h-search-btn,.h-menu-btn,#sync-pill,.pj,.vie):active{transform:scale(.985)}
-#S1 :is(.depot-entry,.h-search-btn,.h-menu-btn,.h-menu-item):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+#S1 :is(.h-search-btn,.h-menu-btn,#sync-pill,.pj,.vie):active{transform:scale(.985)}
+#S1 :is(.h-inst,.h-echo,.h-ranger,.h-search-btn,.h-menu-btn,.h-menu-item):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 /* L'horizon s'allume à l'arrivée sur l'accueil */
 @keyframes hHorizon{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:no-preference){:is(#S1:not(.off) .h-horizon,.scr:not(.off) .x-horizon)::before{animation:hHorizon 1.1s cubic-bezier(.2,.7,.2,1) .15s both}}
@@ -1525,14 +1509,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   :is(#S2,#S3,#S4) .x-horizon{--hr:4400px;--hx:42%}
   #S1 .h-horizon{--hr:4400px;--hx:42%;--hc:linear-gradient(90deg,transparent 0,#FFB340 9%,#FF9500 24%,#FF4D6D 56%,#C77DF0 90%,transparent 100%)}
 }
-@media(prefers-reduced-motion:reduce){#S1 :is(.depot-entry,.h-search-btn,.h-menu-btn,#sync-pill,.pj,.vie):active{transform:none}}
+@media(prefers-reduced-motion:reduce){#S1 :is(.h-search-btn,.h-menu-btn,#sync-pill,.pj,.vie):active{transform:none}}
 /* ═══ ACCUEIL : un seul but, puis l'essentiel, sans rien de trop (même branche, 8 octobre 6 h puis 7 h) ═══
    Rayan, 5 h 50 : « revoir ce qu'on propose, en respectant la vision ». L'accueil a UN but : la prochaine étape.
    Rayan, 6 h 41 : « la typographie doit être reprise », « certaines cases sont assez grosses pour ce qu'elles
    sont », « certaines choses doivent être supprimées » : un espace « épuré et agréable ».
    Dans l'ordre : une ligne (le moment, la date, la ville si elle est affichée), le titre sur une ligne, l'horizon,
-   la prochaine étape (une carte, « C'est fait »), la suite, ce qui attend d'être rangé, Déposé et Point du jour
-   (deux tuiles), les projets en cours (une ligne chacun), les endormis (repliés), Ma vie (deux tuiles).
+   le poste (Déposé, Point du jour, la dernière pensée, ce qui attend d'être rangé ; voir « LE POSTE » plus bas :
+   depuis le 10 octobre, plus de liste d'étapes ici), les projets en cours (une ligne chacun), les endormis
+   (repliés), Ma vie (deux tuiles).
    L'écriture : celle du système partout (San Francisco sur iPhone et Mac) ; Plus Jakarta Sans pour le titre
    seulement ; plus de petites capitales à chasse fixe (comme dans la carte de l'écran d'entrée).
    Sortis de l'accueil : les quatre compteurs, la progression globale et sa phrase tirée au sort, « N bloquants.
@@ -1551,46 +1536,38 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S1 .h-h1-light{font-weight:600}
 #S1 .h-horizon{margin-top:14px;margin-bottom:0}
 /* Titres de section : l'écriture du système, comme les mots de la frise de l'entrée */
-#S1 .next-lbl,#S1 .h-section-lbl{margin:0;font-family:var(--fa);font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.35px;text-transform:none;color:#F5F5F7}
-#S1 .next-title{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+#S1 .h-section-lbl{margin:0;font-family:var(--fa);font-size:17px;line-height:22px;font-weight:600;letter-spacing:-.35px;text-transform:none;color:#F5F5F7}
 #S1 .h-section{margin:0 0 24px}
 #S1 .h-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 2px 10px}
 #S1 .h-section-sub{font-family:var(--fa);font-size:14px;letter-spacing:-.1px;color:var(--t2);opacity:1}
-/* La prochaine étape : la carte que porte l'horizon (un verre sombre, la lumière de son espace, une touche blanche) */
-#S1 .next-wrap{margin:0 0 8px;padding-top:2px;font-family:var(--fa)}
-#S1 .next-lbl{margin:0 2px 10px}
-#S1 .next-item + .next-lbl{margin-top:20px}
-#S1 .next-item.is-now,#S1 .next-empty{position:relative;isolation:isolate;overflow:hidden;margin:0;padding:16px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(10,10,13,.7);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 30px 60px -34px #000}
-#S1 .next-item.is-now::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(95% 80% at 10% 0%,color-mix(in srgb,var(--rg-c,#fff) 20%,transparent),transparent 70%)}
-#S1 .next-item.is-now::after{content:"";position:absolute;left:24px;right:24px;top:0;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--rg-c,#fff),transparent);opacity:.9}
-#S1 .is-now .rg-row{margin:0 0 8px;gap:8px}
-#S1 .rg-lbl{font-size:13px;font-weight:500;color:var(--t2)}
-#S1 .next-when{font-size:14px;font-weight:500;color:#FFC46B}
-#S1 .is-now .next-step{font-size:20px;line-height:1.25;font-weight:600;letter-spacing:-.4px;color:#fff}
-#S1 .is-now .rg-acts{margin-top:14px;gap:8px}
-#S1 .is-now .rg-btn{min-height:48px;padding:0 18px;border-radius:14px;font-size:16px;font-weight:500;letter-spacing:-.2px;color:#F5F5F7;background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16);transition:transform .2s cubic-bezier(.2,.8,.2,1)}
-#S1 .is-now .rg-btn.main{flex:1 1 auto;font-size:17px;font-weight:600;color:#0B0B0F;border:none;background:linear-gradient(180deg,#fff,#ECECF1);box-shadow:inset 0 1px 0 #fff,inset 0 -1px 0 rgba(0,0,0,.1),-50px 14px 28px -24px color-mix(in srgb,var(--rg-c,#fff) 60%,transparent),50px 14px 28px -24px color-mix(in srgb,var(--rg-c,#fff) 60%,transparent)}
-#S1 .is-now .rg-btn:active{transform:scale(.975)}
-#S1 .next-empty{margin-top:6px;font-size:16px;line-height:1.45;letter-spacing:-.2px;color:#E8E8EC}
-/* Ensuite : une ligne par étape, toute la ligne se touche */
-#S1 .next-item.next-row{position:relative;display:block;min-height:56px;margin:0 0 6px;padding:9px 40px 10px 14px;border-radius:16px;border:1px solid var(--b1);background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),#0E0E11;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);cursor:pointer;transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .2s}
-#S1 .next-row .rg-row{margin:0 0 3px;gap:8px}
-#S1 .next-row .next-step{font-size:16px;line-height:1.3;font-weight:500;letter-spacing:-.2px;color:#F5F5F7}
-#S1 .next-row::after{content:"";position:absolute;right:17px;top:50%;width:7px;height:7px;margin-top:-4px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
-#S1 .next-row:hover{border-color:var(--b3)}
-#S1 .next-row:active{transform:scale(.99)}
-/* Ce qui attend d'être rangé : une ligne fine, un point ambre (un fait, pas une alarme) */
-#S1 .next-torange{display:flex;align-items:center;gap:10px;width:100%;min-height:44px;margin:6px 0 0;padding:0 14px;border:1px solid var(--b1);border-radius:14px;background:rgba(255,255,255,.03);font-family:var(--fa);font-size:15px;letter-spacing:-.15px;color:#E8E8EC;text-decoration:none;text-align:left;cursor:pointer}
-#S1 .next-torange[hidden]{display:none}
-#S1 .next-torange::before{content:"";flex-shrink:0;width:7px;height:7px;border-radius:50%;background:#FFB340}
-#S1 .next-torange::after{content:"";flex-shrink:0;margin:0 3px 0 auto;width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
-/* Déposé, Point du jour : deux tuiles côte à côte, à leur juste taille */
-#S1 .h-entries{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:0 0 26px}
-#S1 .depot-entry{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:8px;row-gap:1px;width:auto;max-width:none;min-height:58px;margin:0;padding:9px 14px;border-radius:16px;border:1px solid var(--b1);background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),#0E0E11;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);font-family:var(--fa);text-align:left;color:var(--t1)}
-#S1 .depot-entry:hover{border-color:var(--b3)}
-#S1 .depot-entry-t{grid-area:1/1;font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.25px;color:#F5F5F7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S1 .depot-entry-n{grid-area:2/1/3/3;min-width:0;font-size:13px;line-height:18px;letter-spacing:-.05px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S1 .depot-entry-go{grid-area:1/2;font-size:0;width:7px;height:7px;margin-right:3px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+/* LE POSTE (branche accueil-sans-agenda, 10 octobre). Rayan : « en entrant ici, on dirait un agenda ; ce que je veux,
+   c'est pas un agenda ». Plus de « Prochaine étape » ni d'« Ensuite » sur l'accueil : les étapes vivent dans le Point du
+   jour et dans « Déposé ». À la place, une console de verre que porte l'horizon : deux instruments (Déposé, Point du
+   jour), chacun un chiffre vrai en grand ; dessous, la dernière pensée déposée (un écho, pas une liste) et, seulement
+   s'il y en a, « N pensées à ranger ». Le filet du haut porte les couleurs d'ARC : la console est à ARC, pas à un espace. */
+#S1 .h-poste{position:relative;isolation:isolate;overflow:hidden;margin:2px 0 26px;border-radius:24px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(10,10,13,.7);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 30px 60px -34px #000;font-family:var(--fa)}
+#S1 .h-poste::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(90% 70% at 0% 0%,color-mix(in srgb,var(--ciel,#C77DF0) 16%,transparent),transparent 70%)}
+#S1 .h-poste::after{content:"";position:absolute;left:22px;right:22px;top:0;height:2px;pointer-events:none;background:linear-gradient(90deg,transparent,#FFA51F 22%,#FF6B81 50%,#D596F7 78%,transparent);opacity:.9}
+#S1 .h-poste-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#S1 .h-inst{position:relative;display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:44px;margin:0;padding:16px 34px 14px 16px;border:0;background:none;font-family:var(--fa);text-align:left;color:var(--t1);cursor:pointer;transition:background .2s}
+#S1 .h-inst + .h-inst{border-left:1px solid rgba(255,255,255,.08)}
+#S1 .h-inst:hover{background:rgba(255,255,255,.03)}
+#S1 .h-inst::after{content:"";position:absolute;right:17px;top:22px;width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+#S1 .h-inst-l{max-width:100%;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.25px;color:#F5F5F7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .h-inst-v{max-width:100%;margin-top:6px;font-size:36px;line-height:40px;font-weight:600;letter-spacing:-1.4px;font-variant-numeric:tabular-nums;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .h-inst-s{max-width:100%;margin-top:2px;font-size:13px;line-height:18px;letter-spacing:-.05px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* L'écho : la dernière pensée déposée, ses mots à elle, et depuis quand ; ouvre « Déposé » sur elle */
+#S1 .h-echo{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:56px;margin:0;padding:9px 16px 10px;border:0;border-top:1px solid rgba(255,255,255,.08);background:none;font-family:var(--fa);text-align:left;color:var(--t1);cursor:pointer;transition:background .2s}
+#S1 .h-echo:hover,#S1 .h-ranger:hover{background:rgba(255,255,255,.03)}
+#S1 .h-echo[hidden],#S1 .h-ranger[hidden]{display:none}
+#S1 .h-echo-l{grid-area:1/1;min-width:0;font-size:13px;line-height:18px;letter-spacing:-.05px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .h-echo-t{grid-area:2/1;min-width:0;font-size:15px;line-height:20px;letter-spacing:-.15px;color:#EBEBF0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 :is(.h-echo,.h-ranger) .h-chev{grid-area:1/2/3/3;width:7px;height:7px;margin:0 1px 0 0;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+/* Ce qui attend un choix : une ligne, un point ambre (un fait, pas une alarme) ; absente quand il n'y a rien */
+#S1 .h-ranger{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;margin:0;padding:0 16px;border:0;border-top:1px solid rgba(255,255,255,.08);background:none;font-family:var(--fa);font-size:15px;letter-spacing:-.15px;color:#E8E8EC;text-align:left;cursor:pointer;transition:background .2s}
+#S1 .h-ranger::before{content:"";flex-shrink:0;width:7px;height:7px;border-radius:50%;background:#FFB340;box-shadow:0 0 8px rgba(255,179,64,.6)}
+#S1 .h-ranger .h-ranger-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .h-ranger .h-chev{flex-shrink:0}
 /* Projets en cours : une ligne chacun. Le pictogramme et le nom portent sa couleur ; le trait du bas dit où il en est */
 #S1 .pj-grid{display:grid;gap:8px}
 #S1 .pj{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:40px minmax(0,1fr) auto;column-gap:12px;align-items:center;min-height:66px;padding:11px 14px 13px 12px;border-radius:18px;border:1px solid var(--b1);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.018)),#0D0D10;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);cursor:pointer;transition:transform .2s cubic-bezier(.2,.8,.2,1),border-color .2s}
@@ -1623,7 +1600,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S1 .vie:hover{border-color:color-mix(in srgb,var(--pc,#fff) 36%,var(--b2))}
 #S1 .vie-n{display:block;font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.2px;color:color-mix(in srgb,var(--pc,#fff) 80%,#fff);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 .vie-s{display:block;font-size:13px;line-height:18px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S1 :is(.next-row,.next-torange,.pj,.vie,.h-dort-tog,.h-dort-btn):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+#S1 :is(.pj,.vie,.h-dort-tog,.h-dort-btn):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 @media(min-width:700px){
   #S1 .h-hero{padding-top:30px}
   #S1 .h-quand{font-size:16px;margin-bottom:8px}
@@ -1631,17 +1608,16 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #S1 .h-horizon{margin-top:18px}
   #S1 :is(.pj-grid,.vie-grid){grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
 }
-/* Grand écran : la prochaine étape sur toute la largeur, sa touche à droite */
+/* Grand écran : la console garde ses deux instruments côte à côte, les chiffres plus grands */
 @media(min-width:861px){
-  #S1 .next-wrap{padding-top:8px}
-  #S1 .next-item.is-now{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:32px;align-items:center;padding:20px 22px}
-  #S1 .is-now .rg-row,#S1 .is-now .next-step{grid-column:1}
-  #S1 .is-now .next-step{font-size:24px;letter-spacing:-.55px}
-  #S1 .is-now .rg-acts{grid-column:2;grid-row:1 / span 2;margin:0;flex-direction:column;align-items:stretch;min-width:220px}
-  #S1 .is-now .rg-acts .rg-btn{flex:0 0 auto}
-  #S1 .next-empty{padding:22px}
+  #S1 .h-poste{margin-top:8px}
+  #S1 .h-inst{padding:20px 40px 18px 22px}
+  #S1 .h-inst-v{font-size:44px;line-height:48px;letter-spacing:-1.8px}
+  #S1 .h-inst-s,#S1 .h-echo-l{font-size:14px;line-height:19px}
+  #S1 .h-echo-t,#S1 .h-ranger{font-size:16px}
+  #S1 .h-echo,#S1 .h-ranger{padding-left:22px;padding-right:22px}
 }
-@media(prefers-reduced-motion:reduce){#S1 :is(.next-row,.h-dort-btn,.is-now .rg-btn,.pj,.vie):active{transform:none}#S1 .h-dort-tog i{transition:none}}
+@media(prefers-reduced-motion:reduce){#S1 :is(.h-dort-btn,.pj,.vie):active{transform:none}#S1 .h-dort-tog i{transition:none}}
 /* Le monde vu de l'intérieur : l'endormir ou le réveiller */
 #S2 .w-sommeil{margin:8px 0 0;padding:18px 20px;border-radius:20px;border:1px solid var(--b1);background:rgba(255,255,255,.025)}
 #S2 .w-sommeil-t{font-size:15px;line-height:1.5;color:#C9C9CF;margin-bottom:14px;max-width:38em}
@@ -2101,9 +2077,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* ═══ ACCUEIL : LE SOL ET LE CIEL (branche centre-controle, 10 octobre) ═══
    Rayan : « un centre de contrôle de notre vie, hyper connecté, comme dans un film de science-fiction, en supprimant
    ce fond noir fade seul ». Étude : docs/ETUDE-ACCUEIL.md. Trois couches sous le contenu, aucun mode de fusion :
-   le ciel (une lueur basse à la couleur de l'espace de la prochaine étape, --ciel, posée par rangeHomeRender : un
-   fait, pas un décor), le grain (celui de l'écran d'entrée, noir), le sol (un second arc presque éteint, derrière
-   tout ce qui suit la prochaine étape : ce qui est dessous se lit « sous l'horizon »). Une seule source de lumière. */
+   le ciel (une lueur basse à la couleur de l'espace où la dernière pensée a été rangée, --ciel, posée par
+   rangeHomeRender : un fait, pas un décor), le grain (celui de l'écran d'entrée, noir), le sol (un second arc presque
+   éteint, derrière tout ce qui suit la console : ce qui est dessous se lit « sous l'horizon »). Une seule source de lumière. */
 #S1{--ciel:#C77DF0;--sol-y:520px}
 #S1 .hw{isolation:isolate}
 #S1 .h-ciel{position:absolute;left:calc(var(--bord) * -1 - 20px);right:calc(var(--bord) * -1 - 20px);top:0;bottom:0;z-index:-1;pointer-events:none;overflow:hidden}
@@ -2113,15 +2089,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   background:linear-gradient(90deg,transparent 0,color-mix(in srgb,var(--ciel) 60%,#fff) 28%,color-mix(in srgb,var(--ciel) 75%,#fff) 62%,transparent 100%);opacity:.5;
   -webkit-mask:radial-gradient(circle at 50% calc(var(--sr) + 40px),transparent 0,transparent calc(var(--sr) - 60px),rgba(0,0,0,.12) calc(var(--sr) - 2px),#000 calc(var(--sr) - .6px),#000 calc(var(--sr) + .8px),rgba(0,0,0,.45) calc(var(--sr) + 2px),rgba(0,0,0,.2) calc(var(--sr) + 14px),rgba(0,0,0,.08) calc(var(--sr) + 50px),rgba(0,0,0,.025) calc(var(--sr) + 120px),transparent calc(var(--sr) + 220px));
   mask:radial-gradient(circle at 50% calc(var(--sr) + 40px),transparent 0,transparent calc(var(--sr) - 60px),rgba(0,0,0,.12) calc(var(--sr) - 2px),#000 calc(var(--sr) - .6px),#000 calc(var(--sr) + .8px),rgba(0,0,0,.45) calc(var(--sr) + 2px),rgba(0,0,0,.2) calc(var(--sr) + 14px),rgba(0,0,0,.08) calc(var(--sr) + 50px),rgba(0,0,0,.025) calc(var(--sr) + 120px),transparent calc(var(--sr) + 220px))}
-/* La hiérarchie : une seule carte posée sur l'horizon (le but) ; tout ce qui suit est sous le sol, plus sombre */
-#S1 .next-item.is-now{border-color:color-mix(in srgb,var(--rg-c,#fff) 45%,rgba(255,255,255,.14))}
-#S1 .next-item.next-row,#S1 .pj,#S1 .vie,#S1 .h-dort,#S1 .h-tile{border-color:rgba(255,255,255,.06)}
-#S1 .next-item.next-row{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#0B0B0E}
+/* La hiérarchie : une seule carte posée sur l'horizon (la console) ; tout ce qui suit est sous le sol, plus sombre */
+#S1 .h-poste{border-color:color-mix(in srgb,var(--ciel,#C77DF0) 40%,rgba(255,255,255,.14))}
+#S1 .pj,#S1 .vie,#S1 .h-dort{border-color:rgba(255,255,255,.06)}
 @media(prefers-reduced-motion:reduce){#S1 .h-ciel::before{transition:none}}
 /* ═══ SIGNAUX VRAIS (branche signaux-vrais, 10 octobre) ═══ Chaque lumière dit un fait ; le vivant devant, le dormant derrière. */
 #S1 .h-faits{margin:8px 0 0;font-size:15px;line-height:20px;letter-spacing:-.15px;color:#D6D6DC}
 #S1 .h-faits[hidden]{display:none}
-#S1 .next-sans{margin:6px 0 0;font-size:14px;line-height:18px;color:var(--t2)}
 #S1 .pj-act{color:#B4B4BA}
 #S1 .pj.calme{min-height:58px;padding-top:8px;padding-bottom:10px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008)),#09090C;box-shadow:none}
 #S1 .pj.calme .pj-n{font-size:16px;color:color-mix(in srgb,var(--pc,#fff) 70%,#E8E8EC)}
@@ -2171,17 +2145,16 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="h-faits" id="h-faits" hidden></div>
   </div>
   <div class="h-horizon" aria-hidden="true"><i class="h-comete"></i></div>
-  <!-- LA PROCHAINE ÉTAPE, puis la suite : tirées des pensées rangées. C'est le but de l'écran. -->
-  <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
-    <h2 class="next-title" id="next-title">Prochaines étapes</h2>
-    <div id="next-list"></div>
-    <div class="next-empty" id="next-empty">Rien en cours. Dépose une pensée en bas de l'écran : ARC en tirera la prochaine étape.</div>
-    <button class="next-torange" id="next-torange" type="button" hidden></button>
+  <!-- LE POSTE : ce qu'ARC tient pour la personne, en chiffres vrais. Pas un agenda (Rayan, 10 octobre) : les étapes
+       vivent dans le Point du jour et dans « Déposé ». Deux instruments, l'écho de la dernière pensée, ce qui attend un choix. -->
+  <section class="h-poste" id="h-poste" aria-label="Poste de commande">
+    <div class="h-poste-grid">
+      <button class="h-inst" id="depot-open" type="button"><span class="h-inst-l">Déposé</span><span class="h-inst-v" id="depot-n">0</span><span class="h-inst-s" id="depot-count">Aucune pensée</span></button>
+      <button class="h-inst" id="matin-open" type="button"><span class="h-inst-l">Point du jour</span><span class="h-inst-v" id="matin-entry-v">&#8212;</span><span class="h-inst-s" id="matin-entry-n"></span></button>
+    </div>
+    <button class="h-echo" id="h-echo" type="button" hidden><span class="h-echo-l" id="h-echo-l">Dernière pensée</span><span class="h-echo-t" id="h-echo-t"></span><i class="h-chev" aria-hidden="true"></i></button>
+    <button class="h-ranger" id="h-ranger" type="button" hidden><span class="h-ranger-t" id="h-ranger-t"></span><i class="h-chev" aria-hidden="true"></i></button>
   </section>
-  <div class="h-entries">
-    <button class="depot-entry" id="depot-open" type="button"><span class="depot-entry-t">Déposé</span><span class="depot-entry-n" id="depot-count">Aucune pensée</span><span class="depot-entry-go" aria-hidden="true">›</span></button>
-    <button class="depot-entry" id="matin-open" type="button"><span class="depot-entry-t">Point du jour</span><span class="depot-entry-n" id="matin-entry-n"></span><span class="depot-entry-go" aria-hidden="true">›</span></button>
-  </div>
   <!-- PROJETS : ceux qui avancent en cartes, ceux qui dorment en lignes éteintes -->
   <section class="h-section" aria-labelledby="h-projets-lbl">
     <div class="h-section-head">
@@ -4109,7 +4082,7 @@ setInterval(tickClock,1000); tickClock();
 /* ═══ SIGNAUX VRAIS (branche signaux-vrais, 10 octobre) ═══ Chaque chiffre vient de l'état ; zéro = absent.
    Piège prouvé : S.taskDates est posé par défaut à Date.now() au chargement (normalizeS) : il ne dit rien de vrai.
    Les faits du jour et l'activité d'un projet lisent S.taskDone, écrit seulement par un vrai « C'est fait ». */
-function tacheFaite(wid, tid) { if(!S.taskDone) S.taskDone = {}; if(!S.taskDone[wid]) S.taskDone[wid] = {}; S.taskDone[wid][tid] = Date.now(); }
+function tacheFaite(wid, tid) { if(!S.taskDone) S.taskDone = {}; if(!S.taskDone[wid]) S.taskDone[wid] = {}; S.taskDone[wid][tid] = Date.now(); var w = monde(wid); horizonRepond('comete', w && w.color); }
 function memeJour(a, b) { a = new Date(a); b = b ? new Date(b) : new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
 // Étapes faites aujourd'hui : rangements passés « done » aujourd'hui + tâches de projet cochées aujourd'hui
 function faitsDuJour() {
@@ -4158,9 +4131,15 @@ function renderFaits() {
    « C'est fait » : la comète file une fois le long de l'arc. Une pensée déposée : une étincelle monte de la barre vers
    l'horizon. Un rangement reçu : le ciel s'éclaire une seconde à la couleur de l'espace. Rien si l'appareil demande
    moins de mouvement (la classe est posée mais la feuille ne l'anime pas). */
+var _cometeEnAttente = null;
 function horizonRepond(quoi, couleur) {
   var s1 = document.getElementById('S1'); if(!s1 || s1.classList.contains('off')) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // « C'est fait » se fait dans « Déposé » ou dans le Point du jour, qui couvrent l'accueil : la comète part quand ils se ferment
+  if(quoi === 'comete') {
+    var couvert = ['depot-screen', 'matin-screen'].some(function(id) { var e = document.getElementById(id); return e && e.classList.contains('open'); });
+    if(couvert) { _cometeEnAttente = couleur || _cometeEnAttente || '#FF9500'; return; }
+  }
   if(couleur) s1.style.setProperty('--eclat', couleur);
   var cible = quoi === 'comete' ? s1.querySelector('.h-comete') : quoi === 'etincelle' ? s1.querySelector('.h-etincelle') : s1.querySelector('.h-ciel');
   if(!cible) return;
@@ -6106,11 +6085,13 @@ function depotRender(force) {
   var all = everything.filter(function(t) { return cancelled.indexOf(t) === -1; });
   var waiting = all.filter(function(t) { return t.status !== 'sent' && t.status !== 'rejected'; }).length;
   var signed = !!getUID();
-  var cnt = document.getElementById('depot-count');
+  var cnt = document.getElementById('depot-count'), val = document.getElementById('depot-n');
   if(cnt) {
-    var txt = all.length === 0 ? 'Aucune pensée' : all.length + ' pensée' + (all.length > 1 ? 's' : '');
+    // Le poste : le nombre en grand, puis le mot ; « en attente » ou « sur cet appareil » seulement s'il y a lieu
+    var txt = all.length === 0 ? 'Aucune pensée' : 'pensée' + (all.length > 1 ? 's' : '');
     if(waiting) txt += ' · ' + waiting + (signed ? ' en attente' : ' sur cet appareil');
     cnt.textContent = txt;
+    if(val) val.textContent = String(all.length);
   }
   if(_range) rangeHomeRender();
   var list = document.getElementById('depot-list'); if(!list) return;
@@ -6177,6 +6158,13 @@ function depotOpen() {
 function depotClose() {
   var s = document.getElementById('depot-screen'); s.classList.remove('open'); s.setAttribute('aria-hidden', 'true');
   depotLayout();
+  cometeAttendue();
+}
+// Une étape faite pendant qu'un écran couvrait l'accueil : la comète part maintenant qu'on le voit
+function cometeAttendue() {
+  if(!_cometeEnAttente || typeof horizonRepond !== 'function') return;
+  var c = _cometeEnAttente; _cometeEnAttente = null;
+  setTimeout(function() { horizonRepond('comete', c); }, 120);
 }
 
 /* Barre : hauteur du champ, place réservée, panneau Claude à droite, clavier de l'iPhone */
@@ -6360,6 +6348,7 @@ function rangeAdd(tid, changes, origin, model, atBefore) {
     model: model || null, created_at: now, sync: 'pending' });
   _range.filings[row.id] = row;
   rangeSave();
+  if(origin === 'user' && changes.status === 'done' && typeof horizonRepond === 'function') horizonRepond('comete', rangeSpaceInfo(row.space).color);
   depotRender();
   setTimeout(rangeRun, 0);
   return row;
@@ -6840,22 +6829,6 @@ function projetCreer() {
 })();
 
 /* Accueil : prochaines étapes (non faites, non annulées), celles qui ont un moment d'abord */
-function rangeNextSteps() {
-  var idx = rangeIndex(), rows = [];
-  depotList().forEach(function(t) {
-    var f = idx.latest[t.id];
-    // Une action réelle : une étape, un espace connu, ni hésitation, ni faite, ni annulée
-    if(f && f.step && f.status !== 'done' && f.status !== 'cancelled' && f.status !== 'unsure' && f.space && f.space !== 'inconnu') rows.push({ t: t, f: f });
-  });
-  var rank = function(m) { return !m || m.type === 'none' ? 2 : m.type === 'datetime' ? 0 : 1; };
-  rows.sort(function(a, b) {
-    var ra = rank(a.f.moment), rb = rank(b.f.moment);
-    if(ra !== rb) return ra - rb;
-    if(ra === 0) return a.f.moment.at < b.f.moment.at ? -1 : 1;
-    return a.t.created_at < b.t.created_at ? 1 : -1;
-  });
-  return rows.slice(0, 5);
-}
 // Pensées qui attendent un choix de Rayan : pas encore rangées, ARC hésite, ou espace inconnu (hors notes, faites,
 // annulées, refusées)
 function rangeToSortCount() {
@@ -6870,99 +6843,52 @@ function rangeToSortCount() {
 }
 function rangeHomeRender() {
   if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
-  var list = document.getElementById('next-list'); if(!list) return;
-  var n = rangeToSortCount(), tr = document.getElementById('next-torange');
+  var poste = document.getElementById('h-poste'); if(!poste) return;
+  // Plus de liste d'étapes sur l'accueil (Rayan, 10 octobre : « c'est pas un agenda ») : les étapes vivent dans le Point
+  // du jour et dans « Déposé ». Ici : ce qui attend un choix, l'écho de la dernière pensée, la couleur du ciel.
+  var n = rangeToSortCount(), tr = document.getElementById('h-ranger');
   tr.hidden = n === 0;
-  tr.textContent = n + (n > 1 ? ' pensées à ranger' : ' pensée à ranger');
-  var rows = rangeNextSteps();
-  // Le ciel prend la couleur de l'espace de la prochaine étape (posé après le rendu, voir plus bas)
-  // Projets nés d'une pensée : leur prochaine étape (une par projet éveillé) suit celles des pensées. Les cinq projets
-  // d'origine n'y entrent pas : leurs tâches datent d'avril, l'accueil ne montre que des actions réelles.
-  WORLDS.forEach(function(w) {
-    if(!w.cree || mondeDort(w.id)) return;
-    var tache = w.tasks_todo.concat(S.custom[w.id] || []).filter(function(x) { return !(S.tasks[w.id] && S.tasks[w.id][x.id]); })[0];
-    if(tache) rows.push({ projet: w, tache: tache });
-  });
-  document.getElementById('next-empty').hidden = rows.length > 0;
-  list.textContent = '';
-  // La première est LA prochaine étape : une carte, « C'est fait » en bouton principal. Les suivantes sont des
-  // lignes : toute la ligne ouvre la pensée dans « Déposé », où tout se corrige (espace, étape, moment, fait).
-  var ouvrir = function(tid, kind) {
-    _rangeEdit = kind ? { tid: tid, kind: kind } : null; depotOpen();
-    var target = document.querySelector('#depot-list [data-id="' + tid + '"]'); if(target) target.scrollIntoView({ block: 'center' });
-  };
-  rows.forEach(function(r, i) {
-    if(i < 2) list.appendChild(rgEl('div', 'next-lbl', i === 0 ? 'Prochaine étape' : 'Ensuite'));
-    if(r.projet) { list.appendChild(rangeHomeProjet(r, i === 0)); return; }
-    var it = rgEl('div', 'next-item ' + (i === 0 ? 'is-now' : 'next-row')); it.setAttribute('data-id', r.t.id);
-    it.style.setProperty('--rg-c', rangeSpaceInfo(r.f.space).color);
-    var top = rgEl('div', 'rg-row');
-    top.appendChild(rgEl('span', 'rg-lbl', rangeOriginLabel(r.f)));
-    top.appendChild(rangePill(r.f.space));
-    var mt = rangeMomentText(r.f.moment);
-    if(mt) top.appendChild(rgEl('span', 'next-when', mt));
-    it.appendChild(top);
-    it.appendChild(rgEl('div', 'next-step', r.f.step));
-    if(i === 0 && !mt) it.appendChild(rgEl('div', 'next-sans', 'Sans moment'));
-    if(i === 0) {
-      var acts = rgEl('div', 'rg-acts');
-      acts.appendChild(rangeBtn('C\'est fait', function() { horizonRepond('comete', rangeSpaceInfo(r.f.space).color); rangeAdd(r.t.id, { status: 'done' }, 'user'); }, 'main'));
-      if(!mt) acts.appendChild(rangeBtn('Fixer un moment', function() { ouvrir(r.t.id, 'moment'); }));
-      it.appendChild(acts);
-    } else {
-      it.setAttribute('role', 'button'); it.setAttribute('tabindex', '0');
-      it.addEventListener('click', function() { ouvrir(r.t.id); });
-      it.addEventListener('keydown', function(ev) { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ouvrir(r.t.id); } });
-    }
-    list.appendChild(it);
-  });
-  homeCiel(rows[0]);
+  document.getElementById('h-ranger-t').textContent = n + (n > 1 ? ' pensées à ranger' : ' pensée à ranger');
+  homeEcho();
+  homeCiel();
   // Les rangements arrivent après le rendu de l'accueil : les faits du jour et l'activité des projets les suivent
   if(typeof renderFaits === 'function') renderFaits();
   if(typeof renderCards === 'function' && !_renderCardsEnCours) { _renderCardsEnCours = true; try { renderCards(); } finally { _renderCardsEnCours = false; } }
 }
 var _renderCardsEnCours = false;
-// Le sol et le ciel : la couleur de la prochaine étape teinte le haut ; le sol passe juste sous sa carte
-var _cielRow = null;
-function homeCiel(r, resize) {
-  var s1 = document.getElementById('S1'); if(!s1) return;
-  if(!resize) _cielRow = r; else r = _cielRow;
-  var c = r ? (r.projet ? r.projet.color : rangeSpaceInfo(r.f.space).color) : '#C77DF0';
-  s1.style.setProperty('--ciel', c);
-  // Le sol passe sous la carte du but : mesuré une fois la page posée (la carte est dessinée juste avant)
-  var hw = s1.querySelector('.hw'), now = s1.querySelector('.next-item.is-now') || s1.querySelector('.next-empty');
-  if(!hw || !now) return;
-  var top = now.getBoundingClientRect().bottom - hw.getBoundingClientRect().top;
-  if(top > 0) s1.style.setProperty('--sol-y', Math.round(top - 40) + 'px');
+// L'écho : la dernière pensée déposée (ni annulée ni refusée), ses mots, et depuis quand
+var _echoTid = null;
+function homeEcho() {
+  var el = document.getElementById('h-echo'); if(!el) return;
+  var idx = rangeIndex(), t = depotList().filter(function(x) { var f = idx.latest[x.id]; return x.status !== 'rejected' && !(f && f.status === 'cancelled'); })[0];
+  el.hidden = !t; _echoTid = t ? t.id : null;
+  if(!t) return;
+  document.getElementById('h-echo-l').textContent = 'Dernière pensée · ' + ilYA(new Date(t.created_at).getTime());
+  document.getElementById('h-echo-t').textContent = '« ' + t.body.replace(/\s+/g, ' ').trim() + ' »';
 }
-
-// Une étape d'un projet né d'une pensée, sur l'accueil : même carte ; « C'est fait » coche la tâche du projet
-function rangeHomeProjet(r, premiere) {
-  var w = r.projet, t = r.tache;
-  var it = rgEl('div', 'next-item ' + (premiere ? 'is-now' : 'next-row')); it.setAttribute('data-projet', String(w.id));
-  it.style.setProperty('--rg-c', w.color);
-  var top = rgEl('div', 'rg-row');
-  top.appendChild(rgEl('span', 'rg-lbl', 'Projet'));
-  top.appendChild(rangePill(w.key));
-  it.appendChild(top);
-  it.appendChild(rgEl('div', 'next-step', t.t));
-  var ouvrir = function() { enterWorld(w.id); };
-  if(premiere) {
-    var acts = rgEl('div', 'rg-acts');
-    acts.appendChild(rangeBtn('C\'est fait', function() {
-      if(!S.tasks[w.id]) S.tasks[w.id] = {};
-      if(!S.taskDates[w.id]) S.taskDates[w.id] = {};
-      horizonRepond('comete', w.color);
-      S.tasks[w.id][t.id] = true; S.taskDates[w.id][t.id] = Date.now(); tacheFaite(w.id, t.id); saveS(); renderHome(); toast('C\u2019est fait');
-    }, 'main'));
-    acts.appendChild(rangeBtn('Ouvrir le projet', ouvrir));
-    it.appendChild(acts);
-  } else {
-    it.setAttribute('role', 'button'); it.setAttribute('tabindex', '0');
-    it.addEventListener('click', ouvrir);
-    it.addEventListener('keydown', function(ev) { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ouvrir(); } });
-  }
-  return it;
+function ilYA(ts) {
+  var m = Math.floor((Date.now() - ts) / 60000);
+  if(m < 1) return 'à l’instant';
+  if(m < 60) return 'il y a ' + m + ' min';
+  if(memeJour(ts)) return 'il y a ' + Math.floor(m / 60) + ' h';
+  return depuisQuand(ts);
+}
+// Le sol et le ciel : le ciel prend la couleur de l'espace où la dernière pensée a été rangée (un fait) ; sans
+// rangement, le violet d'ARC. Le sol passe juste sous la console.
+function homeCielCouleur() {
+  if(typeof _range === 'undefined' || !_range) return null;
+  var idx = rangeIndex(), best = null;
+  depotList().forEach(function(t) { var f = idx.latest[t.id]; if(f && f.status !== 'cancelled' && f.space && f.space !== 'inconnu' && (!best || f.created_at > best.created_at)) best = f; });
+  return best ? rangeSpaceInfo(best.space).color : null;
+}
+function homeCiel() {
+  var s1 = document.getElementById('S1'); if(!s1) return;
+  s1.style.setProperty('--ciel', homeCielCouleur() || '#C77DF0');
+  // Le sol passe sous la console : mesuré une fois la page posée
+  var hw = s1.querySelector('.hw'), poste = s1.querySelector('.h-poste');
+  if(!hw || !poste) return;
+  var top = poste.getBoundingClientRect().bottom - hw.getBoundingClientRect().top;
+  if(top > 0) s1.style.setProperty('--sol-y', Math.round(top - 40) + 'px');
 }
 
 /* ═══ POINT DU MATIN ═══
@@ -7139,6 +7065,7 @@ function matinShow(how) {
 function matinClose() {
   var sc = document.getElementById('matin-screen'); sc.classList.remove('open'); sc.setAttribute('aria-hidden', 'true');
   _matinOpen = false;
+  if(typeof cometeAttendue === 'function') cometeAttendue();
 }
 // À l'ouverture d'ARC (lancement ou retour au premier plan) : une fois par jour, après l'heure choisie
 function matinCheck() {
@@ -7152,15 +7079,20 @@ function matinLabels() {
   var st = _matin.settings;
   var lbl = document.getElementById('btn-matin-lbl');
   if(lbl) lbl.textContent = 'Point du matin · ' + (st.enabled ? st.hour.replace(':', '\u00A0h\u00A0') : 'désactivé');
-  var n = document.getElementById('matin-entry-n');
+  var n = document.getElementById('matin-entry-n'), v = document.getElementById('matin-entry-v');
   if(n) {
-    if(!st.enabled) n.textContent = 'Désactivé';
-    else if(new Date() < matinHourToday()) n.textContent = 'Prêt à ' + st.hour.replace(':', '\u00A0h\u00A0');
+    // Le poste : un chiffre vrai en grand (heure du point, ou nombre d'étapes du jour), le mot dessous ; « — » quand il n'y a rien
+    var val = '\u2014', sub = '';
+    if(!st.enabled) sub = 'Désactivé';
+    else if(new Date() < matinHourToday()) { val = st.hour; sub = 'à venir'; }
     else {
-      var day = _matin.days[matinDayKey(new Date())];
-      if(day && day.shownAt) n.textContent = 'Vu à ' + new Date(day.shownAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-      else { var d = matinData(); var k = d.today.length + d.replace.length; n.textContent = k ? k + ' étape' + (k > 1 ? 's' : '') + ' aujourd\'hui' : 'Prêt'; }
+      var day = _matin.days[matinDayKey(new Date())], d = matinData(), k = d.today.length + d.replace.length;
+      var etapes = k ? k + ' étape' + (k > 1 ? 's' : '') : '';
+      if(day && day.shownAt) { val = new Date(day.shownAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); sub = 'vu' + (etapes ? ' · ' + etapes : ''); }
+      else if(k) { val = String(k); sub = 'étape' + (k > 1 ? 's' : '') + ' aujourd\u2019hui'; }
+      else sub = 'Rien n\u2019attend';
     }
+    n.textContent = sub; if(v) v.textContent = val;
   }
 }
 function matinSettingsOpen() {
@@ -7327,10 +7259,15 @@ function depotInit() {
     }
   });
   document.getElementById('depot-open').addEventListener('click', depotOpen);
-  document.getElementById('next-torange').addEventListener('click', depotOpen);
+  document.getElementById('h-ranger').addEventListener('click', depotOpen);
+  // L'écho ouvre « Déposé » sur la dernière pensée
+  document.getElementById('h-echo').addEventListener('click', function() {
+    depotOpen();
+    var target = _echoTid && document.querySelector('#depot-list [data-id="' + _echoTid + '"]'); if(target) target.scrollIntoView({ block: 'center' });
+  });
   document.getElementById('depot-back').addEventListener('click', depotClose);
   window.addEventListener('resize', depotLayout);
-  window.addEventListener('resize', function() { if(typeof homeCiel === 'function') homeCiel(null, true); });
+  window.addEventListener('resize', function() { if(typeof homeCiel === 'function') homeCiel(); });
   if(window.visualViewport) { visualViewport.addEventListener('resize', depotLayout); visualViewport.addEventListener('scroll', depotLayout); }
   // Changement d'écran (accueil, monde, pôle) : recalcul de la place du panneau Claude
   var mo = new MutationObserver(function() { depotLayout(); });

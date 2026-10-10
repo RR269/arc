@@ -303,7 +303,21 @@ l'accueil). « Tu as une idée. Elle devient réelle. » n'est plus sur l'écran
 - Carte du but : « Sans moment » quand aucun moment n'est fixé.
 - Lignes de projet : « aujourd'hui », « hier », « il y a 3 j », « il y a 2 mois » (la dernière activité).
 - Synchronisation : « À jour 06:24 », « Envoi… », « Hors ligne ». Retirés : « ✓ Sync », « Sync… », et « ARC » comme état.
-- Point du jour : « Vu à 08:12 » une fois vu ; « Prêt à 08 h 00 » avant l'heure.
+- Point du jour : « Vu à 08:12 » une fois vu ; « Prêt à 08 h 00 » avant l'heure (remplacés le 10 octobre, voir ci-dessous).
+
+### Les mots du poste (10 octobre, accueil sans agenda)
+
+Rayan, 10 octobre, 7 h 19 : « en entrant ici, on dirait que c'est un agenda. Et moi, ce que je veux, c'est pas un
+agenda ». « Prochaine étape », « Ensuite » et « Rien en cours. Dépose une pensée… » quittent l'accueil (les étapes
+restent dans le Point du jour et dans « Déposé »). À la place, le poste : des chiffres vrais en grand, un mot dessous.
+- Déposé : le nombre en grand, puis « pensées » (« pensée » au singulier, « Aucune pensée » à zéro), « · 2 en attente »
+  ou « · 2 sur cet appareil » seulement s'il y a lieu.
+- Point du jour : « 08:00 » en grand et « à venir » avant l'heure ; une fois vu, l'heure à laquelle il l'a été
+  (« 07:51 ») et « vu · 1 étape » ; pas encore vu après l'heure : « 3 » et « étapes aujourd'hui » ; rien à cette heure :
+  « — » et « Rien n'attend » ; « — » et « Désactivé ». Jamais « Prêt ».
+- L'écho : « Dernière pensée · à l'instant » (« il y a 12 min », « il y a 3 h », « hier », « il y a 4 j »), puis les mots
+  de la pensée entre guillemets, sur une ligne.
+- « 2 pensées à ranger » (« 1 pensée à ranger »), absent à zéro.
 
 ## 5. Ce que ces mots engagent
 
