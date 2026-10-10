@@ -2045,6 +2045,47 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 @media(hover:hover) and (pointer:fine){#search-footer{display:block}}
 #search-modal :is(#search-close,.sr-item):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 @media(max-width:560px){#search-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}#search-box{max-height:calc(100dvh - 24px - env(safe-area-inset-top))}}
+/* ═══ EN FAIRE UN PROJET (branche developper, 10 octobre) ═══
+   « Développer · Fais-en un projet, étape par étape. » Depuis une pensée de « Déposé » : ARC propose un nom, une
+   mission et trois premières étapes ; Rayan corrige ; « Créer le projet » l'ajoute à Projets. Même écriture que la
+   recherche : verre sombre, police du système, libellés au-dessus des champs, une seule touche blanche. */
+#projet-modal{--t2:#C4C4CC;--t3:#A6A6AE;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.16);position:fixed;inset:0;z-index:210;display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 40px) 16px 16px;background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-family:var(--fa);letter-spacing:-.1px;overflow-y:auto;overscroll-behavior:contain}
+#projet-modal.open{display:flex;animation:searchIn .22s cubic-bezier(.16,1,.3,1)}
+#projet-box{position:relative;width:min(560px,100%);margin-bottom:24px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(14,14,17,.94);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -20px #000;overflow:hidden}
+#projet-box::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--pjc,#64d2ff),transparent);opacity:.9}
+.npj-head{display:flex;align-items:center;gap:12px;padding:14px 10px 6px 20px}
+#pj-titre{flex:1;font-family:var(--ft);font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.5px;color:#F5F5F7}
+#pj-fermer{flex-shrink:0;min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
+.npj-body{padding:4px 20px 20px}
+.npj-source{margin:0 0 14px;font-size:15px;line-height:1.45;color:var(--t2);overflow-wrap:anywhere}
+.npj-source b{font-weight:500;color:#F5F5F7}
+#pj-etat{display:flex;align-items:center;gap:10px;min-height:22px;margin:0 0 12px;font-size:15px;line-height:1.4;color:var(--t2)}
+#pj-etat[hidden]{display:none}
+#pj-etat .npj-pulse{flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--pjc,#64d2ff);box-shadow:0 0 10px var(--pjc,#64d2ff);animation:pjPulse 1.2s ease-in-out infinite}
+#pj-etat.err .npj-pulse{display:none}
+@keyframes pjPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+#pj-form{display:flex;flex-direction:column;gap:14px}
+.npj-champ{display:flex;flex-direction:column;gap:6px}
+.npj-lbl{font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
+.npj-aide{font-size:13px;line-height:18px;color:var(--t2)}
+#pj-form :is(input,textarea){width:100%;min-height:48px;padding:11px 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.04);font-family:var(--fa);font-size:17px;line-height:1.35;letter-spacing:-.25px;color:#F5F5F7;-webkit-appearance:none;appearance:none;resize:none}
+#pj-form textarea{min-height:72px}
+#pj-form .npj-etapes textarea{min-height:48px;overflow:hidden}
+#pj-form :is(input,textarea)::placeholder{color:var(--t3)}
+#pj-form :is(input,textarea):focus{outline:none;border-color:var(--pjc,#64d2ff);box-shadow:0 0 0 3px color-mix(in srgb,var(--pjc,#64d2ff) 22%,transparent)}
+#pj-form :is(input,textarea):disabled{opacity:.6}
+.npj-etapes{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none;counter-reset:pje}
+.npj-etapes li{display:flex;align-items:center;gap:10px;counter-increment:pje}
+.npj-etapes li::before{content:counter(pje);flex-shrink:0;display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--b2);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:#E8E8EC}
+#pj-err{min-height:0;font-size:15px;line-height:1.4;color:#FF9F9F}
+#pj-err:empty{display:none}
+.npj-acts{display:flex;align-items:center;gap:10px;margin-top:4px}
+#pj-creer{flex:1;min-height:50px;border-radius:16px;border:0;background:#F5F5F7;color:#0B0B0F;font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
+#pj-creer:disabled{opacity:.55;cursor:default}
+#pj-annuler{min-height:50px;padding:0 16px;border-radius:16px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:var(--t2);cursor:pointer}
+#projet-modal :is(#pj-fermer,#pj-creer,#pj-annuler):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+@media(max-width:560px){#projet-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}}
+@media(prefers-reduced-motion:reduce){#projet-modal.open{animation:none}#pj-etat .npj-pulse{animation:none}}
 </style>
 </head>
 <body>
@@ -2193,7 +2234,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
 
       <!-- ACTION PRIORITAIRE -->
-      <div class="wsec">
+      <div class="wsec" id="wsec-prio">
         <div class="wsec-head"><span class="wsec-lbl">Action prioritaire</span><div class="wsec-line"></div></div>
         <div class="waction">
           <div class="waction-bar" id="waction-bar"></div>
@@ -2235,7 +2276,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
 
       <!-- PROCHAINES ACTIONS -->
-      <div class="wsec">
+      <div class="wsec" id="wsec-na">
         <div class="wsec-head"><span class="wsec-lbl">Prochaines actions</span><div class="wsec-line"></div></div>
         <div class="wna-list" id="na-list"></div>
       </div>
@@ -2685,6 +2726,31 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div id="search-inp-wrap"><span class="sr-loupe" aria-hidden="true"></span><input id="search-inp" type="search" enterkeyhint="search" placeholder="Rechercher dans ARC" aria-label="Rechercher dans ARC" autocomplete="off" spellcheck="false"><button id="search-close" type="button">Fermer</button></div>
     <div id="search-results"><div class="sr-empty">Tes pensées, tes tâches et leurs notes, tes projets, leur journal et ton dossier juridique.</div></div>
     <div id="search-footer">Flèches pour choisir · Entrée pour ouvrir · Échap pour fermer</div>
+  </div>
+</div>
+<!-- EN FAIRE UN PROJET : depuis une pensée de « Déposé » -->
+<div id="projet-modal" role="dialog" aria-modal="true" aria-labelledby="pj-titre">
+  <div id="projet-box">
+    <div class="npj-head"><div id="pj-titre">Nouveau projet</div><button id="pj-fermer" type="button">Fermer</button></div>
+    <div class="npj-body">
+      <p class="npj-source">Né de ta pensée : <b id="pj-pensee"></b></p>
+      <div id="pj-etat" role="status" aria-live="polite" hidden><span class="npj-pulse" aria-hidden="true"></span><span id="pj-etat-t"></span></div>
+      <form id="pj-form" novalidate>
+        <label class="npj-champ"><span class="npj-lbl">Nom du projet</span>
+          <input id="pj-nom" type="text" maxlength="24" autocomplete="off" enterkeyhint="next" placeholder="Un nom court"></label>
+        <label class="npj-champ"><span class="npj-lbl">Mission</span>
+          <textarea id="pj-mission" maxlength="200" rows="2" placeholder="Ce que ce projet doit atteindre, en une phrase"></textarea></label>
+        <div class="npj-champ"><span class="npj-lbl" id="npj-etapes-lbl">Premières étapes</span>
+          <span class="npj-aide">Une action par ligne. Tu pourras en ajouter dans le projet.</span>
+          <ol class="npj-etapes" aria-labelledby="npj-etapes-lbl">
+            <li><textarea id="pj-e1" rows="1" maxlength="120" enterkeyhint="next" aria-label="Étape 1"></textarea></li>
+            <li><textarea id="pj-e2" rows="1" maxlength="120" enterkeyhint="next" aria-label="Étape 2"></textarea></li>
+            <li><textarea id="pj-e3" rows="1" maxlength="120" enterkeyhint="next" aria-label="Étape 3"></textarea></li>
+          </ol></div>
+        <div id="pj-err" role="alert"></div>
+        <div class="npj-acts"><button id="pj-annuler" type="button">Annuler</button><button id="pj-creer" type="submit">Créer le projet</button></div>
+      </form>
+    </div>
   </div>
 </div>
 <!-- DÉPÔT : liste des pensées déposées (sous la barre, au-dessus des écrans) -->
@@ -3181,7 +3247,7 @@ async function authMakeReference() {
     return;
   }
   authDone();
-  toast('☁ Cet appareil est la référence de ton compte');
+  toast('Cet appareil est la référence de ton compte');
 }
 
 function setSyncUI(state, label) {
@@ -3362,7 +3428,7 @@ async function pushToCloud() {
     var r, recu = false, tours = 0;
     do { _syncAgain = false; r = await syncEchange(); recu = recu || (r && r.recu); tours++; }
     while((_syncAgain || (r && r.encore)) && tours < 5);
-    if(recu) { renderHome(); toast('☁ Sync · ' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})); }
+    if(recu) renderHome();      // la pastille du haut dit déjà « Sync » : pas de bulle par-dessus la note du dépôt
     setSyncUI('ok', '✓ Sync');
     setTimeout(function() { if(!_pushing) setSyncUI('ok', 'ARC'); }, 2000);
   } catch(e) {
@@ -3414,7 +3480,7 @@ async function pullFromCloud() {
       localStorage.setItem('arc_cloud_ts', String(new Date(res.data.updated_at).getTime()));
       renderHome();
       setSyncUI('ok', 'ARC');
-      toast('☁ Données de ton compte récupérées · ancien état local gardé');
+      toast('Données de ton compte récupérées · ancien état local gardé');
       return;
     }
     // Appareil relié : plus de « le plus récent remplace tout ». Un échange lit, fusionne et n'écrit que si besoin.
@@ -3822,7 +3888,7 @@ function migrateWorlds(){
     if(S.mt5){ arch.mt5=S.mt5; delete S.mt5; had=true; }
     if(had){ if(!S.archive) S.archive={}; S.archive.trading=arch; }
     // ARYAN : ce qui était « à faire » en avril et qui est fait depuis
-    if(S.tasks&&S.tasks[0]){ WORLDS[0].tasks_done.forEach(function(t){ S.tasks[0][t.id]=true; }); }
+    if(S.tasks&&S.tasks[0]){ monde(0).tasks_done.forEach(function(t){ S.tasks[0][t.id]=true; }); }
   }
   // v3 (8 octobre 2026) : décision de Rayan du 5 octobre, FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
   // Posé une seule fois : ensuite c'est Rayan qui réveille ou endort un projet (S.sleep, par identifiant de monde).
@@ -3836,10 +3902,10 @@ function mondeSommeil(wid,dort){
   if(!S.sleep) S.sleep={};
   S.sleep[wid]=!!dort; saveS();
   renderHome(); renderSommeil();
-  toast(WORLDS[wid].name+(dort?" est endormi":" est réveillé"));
+  toast(monde(wid).name+(dort?" est endormi":" est réveillé"));
 }
 function renderSommeil(){
-  var t=document.getElementById("w-sommeil-t"), b=document.getElementById("w-sommeil-btn"); if(!t||!b||CUR.wid<0||!WORLDS[CUR.wid]) return;
+  var t=document.getElementById("w-sommeil-t"), b=document.getElementById("w-sommeil-btn"); if(!t||!b||CUR.wid<0||!monde(CUR.wid)) return;
   var d=mondeDort(CUR.wid);
   t.textContent=d?"Ce projet est endormi : il ne fait plus partie des projets en cours de l\u2019accueil. Rien n\u2019est effacé."
                  :"Tu n\u2019avances plus sur ce projet ? Endors-le : il quitte les projets en cours de l\u2019accueil, rien n\u2019est effacé.";
@@ -3854,8 +3920,43 @@ function loadS(){
   normalizeS();
 }
 
+/* ═══ PROJETS NÉS D'UNE PENSÉE (10 octobre) ═══
+   Les cinq projets d'origine restent écrits dans WORLDS (leur id est leur place : 0 à 4). Un projet créé depuis ARC vit
+   dans les données (S.mondes, une entrée par projet, clé = son id) et WORLDS le reçoit à la suite à chaque
+   normalisation (chargement, synchronisation). Son id est l'heure de sa création en millisecondes : deux appareils ne
+   peuvent pas en créer deux avec le même. Toutes les données par projet (S.tasks, S.journal, S.notes…) restent
+   rangées par id, comme pour les cinq d'origine ; monde(id) remplace WORLDS[id]. */
+var WORLDS_BASE = WORLDS.length;
+var MONDE_COULEURS = ['#64d2ff', '#ffd60a', '#ff6482', '#bf5af2', '#66d4cf', '#ff9f0a', '#7d7aff'];
+function monde(id) {
+  if(id === null || id === undefined || id === '') return undefined;
+  var n = Number(id);
+  if(n >= 0 && n < WORLDS_BASE && WORLDS[n] && WORLDS[n].id === n) return WORLDS[n];
+  for(var i = WORLDS_BASE; i < WORLDS.length; i++) if(WORLDS[i].id === n) return WORLDS[i];
+  return undefined;
+}
+function mondeCle(nom) {       // clé d'espace pour le rangement : minuscules, sans accents ni signes
+  return String(nom || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
+}
+function mondesConstruire() {
+  WORLDS.length = WORLDS_BASE;
+  var m = S.mondes || {};
+  Object.keys(m).map(function(k) { return m[k]; })
+    .filter(function(x) { return x && typeof x.id === 'number' && x.id >= WORLDS_BASE && typeof x.name === 'string' && x.name; })
+    .sort(function(a, b) { return a.id - b.id; })
+    .forEach(function(x) {
+      WORLDS.push({ id: x.id, icon: '', name: x.name, color: x.color || MONDE_COULEURS[0], wbg: '#000',
+        cat: 'Projet · né le ' + new Date(x.id).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }),
+        tags: [], desc: x.desc || '', mission: x.mission || '', priority: null, tasks_done: [],
+        tasks_todo: (x.etapes || []).filter(function(e) { return e && e.id && e.t; }).map(function(e) { return { id: e.id, t: e.t }; }),
+        blockers: [], nextActions: [], suggestions: [], context: 'Projet de Rayan : ' + x.name + '. ' + (x.mission || ''), key: x.key || mondeCle(x.name), cree: true, from: x.from || null });
+    });
+}
+
 /* Valeurs par défaut et migrations : appelé au chargement local et après une récupération cloud */
 function normalizeS(){
+  if(!S.mondes) S.mondes={};
+  mondesConstruire();
   if(!S.focus) S.focus={};
   migrateWorlds();
   if(!S.sleep) S.sleep={};
@@ -3947,6 +4048,8 @@ setInterval(tickClock,1000); tickClock();
 
 /* ===== RENDER HOME ===== */
 function renderHome(){
+  // Prochaine étape : elle peut venir d'une tâche de projet (projet né d'une pensée), donc elle suit aussi l'état S
+  if(typeof _range!=="undefined"&&_range&&typeof rangeHomeRender==="function") rangeHomeRender();
   // Le titre compte les espaces : plus de « Sept » écrit en dur
   var n=WORLDS.length+POLES.length, mots=["Aucun","Un","Deux","Trois","Quatre","Cinq","Six","Sept","Huit","Neuf","Dix","Onze","Douze"];
   var esp=document.getElementById("h-espaces"); if(esp) esp.textContent=(mots[n]||String(n))+" espace"+(n>1?"s":"")+".";
@@ -4028,7 +4131,7 @@ function renderCards(){
 var wTimer={s:0,running:false,iv:null};
 function enterWorld(wid){
   CUR.wid=wid;
-  var w=WORLDS[wid];
+  var w=monde(wid);
   document.documentElement.style.setProperty("--wc",w.color);
   document.getElementById("S2").setAttribute("data-wid",wid);
   document.getElementById("w-icon").textContent=w.icon;
@@ -4067,7 +4170,7 @@ function enterWorld(wid){
 
 function autoWorldBriefing(wid){
   var brief=document.getElementById("cp-brief"); if(brief) brief.style.display="flex";
-  var w=WORLDS[wid];
+  var w=monde(wid);
   var allT=w.tasks_done.concat(w.tasks_todo);
   var done=allT.filter(function(t){ return S.tasks[wid][t.id]; });
   var todo=allT.filter(function(t){ return !S.tasks[wid][t.id]; });
@@ -4078,7 +4181,7 @@ function autoWorldBriefing(wid){
 
 /* ===== RENDER WORLD ===== */
 function renderWorld(){
-  var wid=CUR.wid; var w=WORLDS[wid];
+  var wid=CUR.wid; var w=monde(wid);
   // Band
   document.getElementById("wband-cat").textContent=w.cat;
   document.getElementById("wband-name").textContent=w.name;
@@ -4104,7 +4207,9 @@ function renderWorld(){
   // Mission
   document.getElementById("miss-txt").textContent=w.mission;
   var dot=document.getElementById("miss-dot"); if(dot) dot.style.background=w.color;
-  // Priority action
+  // Action prioritaire : écrite dans les cinq projets d'origine ; un projet né d'une pensée n'en a pas (ses étapes suffisent)
+  var prioSec=document.getElementById("wsec-prio"); if(prioSec) prioSec.hidden=!w.priority;
+  if(w.priority){
   document.getElementById("waction-title").textContent=w.priority.title;
   document.getElementById("waction-detail").textContent=w.priority.detail;
   document.getElementById("waction-num").textContent=w.priority.num;
@@ -4112,6 +4217,7 @@ function renderWorld(){
   document.getElementById("waction-badge").textContent=w.priority.badge;
   document.getElementById("waction-badge").style.background="color-mix(in srgb,"+w.color+" 15%,transparent)";
   document.getElementById("waction-badge").style.color=w.color;
+  }
   // Focus banner
   var fb=document.getElementById("w-focus-banner");
   var ft=document.getElementById("w-focus-txt");
@@ -4141,7 +4247,7 @@ function descRepli(ouvert){
 }
 
 function renderTasks(){
-  var wid=CUR.wid; var w=WORLDS[wid];
+  var wid=CUR.wid; var w=monde(wid);
   var container=document.getElementById("tasks-container"); if(!container) return;
   var allT=w.tasks_done.concat(w.tasks_todo);
   var custom=S.custom[wid]||[];
@@ -4177,7 +4283,7 @@ function renderTasks(){
 }
 
 function renderTaskRow(t,wid,done,focusId){
-  var w=WORLDS[wid];
+  var w=monde(wid);
   var isBlk=w.blockers.includes(t.t)||(S.blkCustom[wid]||[]).includes(t.t);
   var isFocus=t.id===focusId;
   var deadline=S.deadlines[wid+":"+t.id]||null;
@@ -4200,7 +4306,7 @@ function renderTaskRow(t,wid,done,focusId){
 }
 
 function renderBlockers(){
-  var wid=CUR.wid; var w=WORLDS[wid];
+  var wid=CUR.wid; var w=monde(wid);
   var list=document.getElementById("blk-list"); if(!list) return;
   var blk=[].concat(w.blockers,S.blkCustom[wid]||[]);
   if(blk.length===0){ list.innerHTML='<div class="wjou-empty">Aucun bloquant.</div>'; return; }
@@ -4214,10 +4320,11 @@ function renderBlockers(){
 }
 
 function renderNA(){
-  var wid=CUR.wid; var w=WORLDS[wid];
+  var wid=CUR.wid; var w=monde(wid);
   var list=document.getElementById("na-list"); if(!list) return;
   var html="";
-  w.nextActions.forEach(function(a,i){
+  var naSec=document.getElementById("wsec-na"); if(naSec) naSec.hidden=!(w.nextActions||[]).length;   // section vide : cachée
+  (w.nextActions||[]).forEach(function(a,i){
     html+='<div class="wna-item"><span class="wna-num">'+(i+1)+'.</span><span class="wna-text">'+esc(a)+'</span></div>';
   });
   list.innerHTML=html;
@@ -4240,7 +4347,7 @@ function renderTools(wid){
   var tools=S.tools[wid]||[];
   var html="";
   tools.forEach(function(tool){
-    html+='<a class="wtool-card" href="'+esc(tool.url||"#")+'" target="_blank" rel="noopener" style="--wc:'+WORLDS[wid].color+'"><span class="wtool-icon">'+esc(tool.icon||"🔗")+'</span><span class="wtool-name">'+esc(tool.name)+'</span><button class="wtool-del" data-action="del-tool" data-wid="'+wid+'" data-tid="'+tool.id+'" onclick="event.preventDefault();event.stopPropagation()">✕</button></a>';
+    html+='<a class="wtool-card" href="'+esc(tool.url||"#")+'" target="_blank" rel="noopener" style="--wc:'+monde(wid).color+'"><span class="wtool-icon">'+esc(tool.icon||"🔗")+'</span><span class="wtool-name">'+esc(tool.name)+'</span><button class="wtool-del" data-action="del-tool" data-wid="'+wid+'" data-tid="'+tool.id+'" onclick="event.preventDefault();event.stopPropagation()">✕</button></a>';
   });
   html+='<button class="wtool-add" data-action="add-tool" data-wid="'+wid+'">+<br><span>Ajouter</span></button>';
   grid.innerHTML=html;
@@ -4955,7 +5062,7 @@ document.addEventListener("click",function(ev){
   }
   // Cockpit CCB send
   // Cockpit : une question à Claude, la réponse arrive dans le cockpit (le choix « Chat » répondait derrière lui)
-  if(t.closest("#ccb-send")){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt||!cockpitState.task) return; inp.value=""; ccbTaille(); var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.hidden=true; var cw=WORLDS[cockpitState.wid]||{}; var prompt="Projet : "+(cw.name||"")+"\nMission du projet : "+(cw.mission||"")+"\nTâche : "+cockpitState.task.t+"\n\nDemande : "+txt+"\n\nRéponds en français, directement, avec du contenu utilisable — pas d'introduction."; cockpitState.lastQ=txt; claudeCall(prompt,cockpitState.wid,"cockpit"); return; }
+  if(t.closest("#ccb-send")){ var inp=document.getElementById("ccb-inp"); var txt=inp.value.trim(); if(!txt||!cockpitState.task) return; inp.value=""; ccbTaille(); var pb2=document.getElementById("ccb-prompt-badge"); if(pb2) pb2.hidden=true; var cw=monde(cockpitState.wid)||{}; var prompt="Projet : "+(cw.name||"")+"\nMission du projet : "+(cw.mission||"")+"\nTâche : "+cockpitState.task.t+"\n\nDemande : "+txt+"\n\nRéponds en français, directement, avec du contenu utilisable — pas d'introduction."; cockpitState.lastQ=txt; claudeCall(prompt,cockpitState.wid,"cockpit"); return; }
   // CCB mode
   if(t.closest("[data-mode]")){ var mode=t.closest("[data-mode]").getAttribute("data-mode"); cockpitState.mode=mode; document.querySelectorAll(".ccb-mode").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mode")===mode); }); return; }
   // QA project select
@@ -4999,8 +5106,8 @@ document.addEventListener("click",function(ev){
   var sugEl = t.closest('[data-sug-wid]');
   if(sugEl){ var swid=parseInt(sugEl.getAttribute('data-sug-wid')); var stxt=sugEl.getAttribute('data-sug-txt'); cpSend(swid, stxt); return; }
   // Lovable
-  if(t.id==="btn-lov"){ var w=WORLDS[CUR.wid]; if(w.lovable) window.open(w.lovable,"_blank"); return; }
-  if(t.id==="btn-code"){ var w=WORLDS[CUR.wid]; window.open("https://github.com","_blank"); return; }
+  if(t.id==="btn-lov"){ var w=monde(CUR.wid); if(w.lovable) window.open(w.lovable,"_blank"); return; }
+  if(t.id==="btn-code"){ var w=monde(CUR.wid); window.open("https://github.com","_blank"); return; }
   // Focus banner
   if(t.closest("[data-open-focus='1']")){ var wid=CUR.wid; var focId=S.focus[wid]; if(focId) openCockpit(wid,focId); return; }
   // Blk add
@@ -5172,7 +5279,7 @@ var cockpitState={wid:-1,tid:null,task:null,mode:"inject",pomoActive:false,pomoS
 
 
 function openCockpit(wid, tid){
-  var w = WORLDS[wid]; if(!w) return;
+  var w = monde(wid); if(!w) return;
   var allT = w.tasks_done.concat(w.tasks_todo).concat((S.custom[wid]||[]).map(function(t){ return {id:t.id,t:t.t}; }));
   var task = tid ? allT.find(function(t){ return t.id===tid; }) : allT.find(function(t){ return !S.tasks[wid][t.id]; });
   if(!task) return;
@@ -5340,7 +5447,7 @@ function searchQuery(q) {
   groupes.push(['Pensées', gp]);
   // Tâches : le titre, ou les notes du cockpit
   var gt = [];
-  WORLDS.forEach(function(w, wid) {
+  WORLDS.forEach(function(w) { var wid = w.id;
     var all = w.tasks_todo.concat(w.tasks_done).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
     all.forEach(function(t) {
       var note = (S.taskNotes[wid] || {})[t.id] || '', fait = !!(S.tasks[wid] && S.tasks[wid][t.id]);
@@ -5353,14 +5460,14 @@ function searchQuery(q) {
   groupes.push(['Tâches', gt]);
   // Projets
   var gw = [];
-  WORLDS.forEach(function(w, wid) {
+  WORLDS.forEach(function(w) { var wid = w.id;
     if(!srMatch([w.name, w.cat, w.mission, w.desc].join(' '), mots)) return;
     gw.push({ texte: w.name, meta: [w.cat, mondeDort(wid) ? 'Endormi' : ''].filter(Boolean).join(' · '), ouvrir: function() { closeSearch(); enterWorld(wid); } });
   });
   groupes.push(['Projets', gw]);
   // Journal des projets
   var gj = [];
-  WORLDS.forEach(function(w, wid) {
+  WORLDS.forEach(function(w) { var wid = w.id;
     (S.journal[wid] || []).slice().reverse().forEach(function(j) {
       if(!srMatch(j.t, mots)) return;
       gj.push({ texte: srExtrait(j.t, mots), meta: w.name + ' · ' + srDate(j.ts), ouvrir: function() { closeSearch(); enterWorld(wid); allerA('journal'); } });
@@ -5512,7 +5619,7 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
     }
     if(type==="sante"||type==="juridique"){
       if(msgsEl&&typing){
-        var w=WORLDS[0]; var color=type==="sante"?"#30d158":"#0a84ff";
+        var w=monde(0); var color=type==="sante"?"#30d158":"#0a84ff";
         var aMsg=createMsgEl("assistant",txt,color);
         msgsEl.insertBefore(aMsg,typing);
         msgsEl.scrollTop=msgsEl.scrollHeight;
@@ -5521,7 +5628,7 @@ async function claudeCall(prompt,ctxId,type,sysprompt){
     }
     // chat or briefing — add to main panel
     if(msgsEl&&typing){
-      var w=WORLDS[ctxId]; var color=w?w.color:"#fff";
+      var w=monde(ctxId); var color=w?w.color:"#fff";
       var aMsg2=createMsgEl("assistant",txt,color);
       if(type==="briefing") aMsg2.classList.add("briefing");
       var typing2=document.getElementById("cp-typing");
@@ -5570,7 +5677,7 @@ async function cpSend(widOverride, textOverride){
   if(ta && !textOverride) ta.value = '';
   var welcome = document.getElementById('cp-welcome'); if(welcome) welcome.style.display='none';
   var msgs = document.getElementById('cp-msgs'); if(!msgs) return;
-  var w = wid >= 0 ? WORLDS[wid] : null;
+  var w = wid >= 0 ? monde(wid) : null;
   var color = w ? w.color : '#fff';
   var typing = document.getElementById('cp-typing');
   var umsg = createMsgEl('user', txt, color);
@@ -5599,7 +5706,7 @@ function renderChatHistory(wid){
   existingMsgs.forEach(function(m){ m.remove(); });
   var typing=document.getElementById("cp-typing");
   history.slice(-30).forEach(function(m){
-    var w=WORLDS[CUR.wid]; var color=w?w.color:"#fff";
+    var w=monde(CUR.wid); var color=w?w.color:"#fff";
     var el=createMsgEl(m.r,m.t,color);
     msgs.insertBefore(el,typing);
   });
@@ -6044,7 +6151,7 @@ function rangeStats(filings) {
 /* Espaces envoyés au proxy : les cinq mondes et les deux pôles, avec une clé stable */
 function rangeSpaces() {
   var list = WORLDS.map(function(w) {
-    var key = String(w.name).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
+    var key = w.key || String(w.name).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
     var note = (mondeDort(w.id) ? 'Endormi. ' : '') + String(w.cat || '') + '. ' + String(w.mission || '');
     return { key: key, name: w.name, kind: 'project', note: note.slice(0, 200), color: w.color };
   });
@@ -6052,6 +6159,10 @@ function rangeSpaces() {
     note: 'Santé de Rayan : rendez-vous, notes, documents, questions pour le médecin. Organisation seulement.' });
   list.push({ key: 'juridique', name: 'Juridique', kind: 'life', color: '#0a84ff',
     note: 'Démarches administratives et juridiques, contrats, échéances. Organisation seulement.' });
+  // Le proxy accepte 12 espaces au plus : au-delà, les projets endormis ne sont plus proposés, puis les plus récents.
+  // Santé et Juridique restent toujours (ce sont les deux derniers de la liste).
+  for(var i = list.length - 3; list.length > 12 && i >= 0; i--) if(/^Endormi\./.test(list[i].note)) list.splice(i, 1);
+  while(list.length > 12) list.splice(list.length - 3, 1);
   return list;
 }
 function rangeSpaceInfo(key) {
@@ -6302,6 +6413,9 @@ function rangeBlock(t) {
       var st = _rangeInFlight[t.id] ? 'ARC range…' : _rangeFailed[t.id] ? 'À ranger plus tard' : 'À ranger';
       box.appendChild(rgEl('div', 'rg-wait' + (_rangeInFlight[t.id] ? ' busy' : ''), st));
     }
+    var pjx = projetDe(t.id);
+    if(pjx) acts0.appendChild(rangeBtn('Ouvrir le projet ' + pjx.name, function() { depotClose(); enterWorld(pjx.id); }));
+    else acts0.appendChild(rangeBtn('En faire un projet', function() { projetOuvrir(t.id); }));
     acts0.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
     box.appendChild(acts0);
     return box;
@@ -6378,11 +6492,166 @@ function rangeBlock(t) {
     acts.appendChild(rangeBtn(mt ? 'Changer le moment' : 'Fixer un moment', function() { rangeEditOpen(t.id, 'moment'); }));
     acts.appendChild(rangeBtn(f.step ? 'Modifier l\'étape' : 'Ajouter une étape', function() { rangeEditOpen(t.id, 'step'); }));
     if(!unsure) acts.appendChild(rangeBtn('Changer d\'espace', function() { rangeEditOpen(t.id, 'space'); }));
+    var pjx = projetDe(t.id);
+    if(pjx) acts.appendChild(rangeBtn('Ouvrir le projet ' + pjx.name, function() { depotClose(); enterWorld(pjx.id); }));
+    else acts.appendChild(rangeBtn('En faire un projet', function() { projetOuvrir(t.id); }));
     acts.appendChild(rangeBtn('Annuler le dépôt', function() { rangeAdd(t.id, { status: 'cancelled' }, 'user'); }, 'quiet'));
     box.appendChild(acts);
   }
   return box;
 }
+
+/* ═══ EN FAIRE UN PROJET ═══ « Développer · Fais-en un projet, étape par étape. »
+   Depuis une pensée : Claude propose un nom, une mission et trois premières étapes (par le proxy, comme une discussion,
+   sans rien enregistrer côté serveur) ; Rayan corrige ; « Créer le projet » l'ajoute à S.mondes, range la pensée dans
+   ce projet et l'ouvre. Sans réponse valable de Claude, les champs restent à remplir à la main : rien n'est bloqué. */
+var _pj = { tid: null, demande: 0, touche: {} };
+var PJ_SYSTEM = 'Tu aides Rayan à transformer une pensée en projet. Réponds UNIQUEMENT par un objet JSON, sans texte autour, ' +
+  'de la forme {"nom": "...", "mission": "...", "etapes": ["...", "...", "..."]}.\n' +
+  'Règles :\n' +
+  '- nom : 2 à 24 caractères, court et parlant ; reprends un mot de la pensée quand c\'est possible ; jamais un nom déjà pris.\n' +
+  '- mission : une phrase de 160 caractères au plus, ce que le projet doit atteindre ; aucune promesse ni aucun chiffre que la pensée ne donne pas.\n' +
+  '- etapes : exactement 3 actions concrètes, dans l\'ordre ; chacune commence par un verbe à l\'infinitif et fait 80 caractères au plus ; la première se fait en moins d\'une heure.\n' +
+  '- N\'invente aucun fait : ni date, ni chiffre, ni nom de personne ou d\'entreprise absent de la pensée. Garde les mots de Rayan.\n' +
+  '- Français, sans emoji, sans guillemets décoratifs.';
+
+function projetDe(tid) {               // le projet né de cette pensée, s'il existe
+  for(var i = WORLDS_BASE; i < WORLDS.length; i++) if(WORLDS[i].from === tid) return WORLDS[i];
+  return null;
+}
+function projetNomsPris() {
+  return WORLDS.map(function(w) { return w.name; }).concat(['Santé', 'Juridique']);
+}
+// Erreur de nom : vide, trop court, ou déjà pris (même clé de rangement, donc même espace)
+function projetNomErreur(nom) {
+  if(!nom) return 'Donne un nom au projet.';
+  if(nom.length < 2) return 'Deux caractères au moins.';
+  var cle = mondeCle(nom);
+  if(!cle) return 'Le nom doit contenir au moins une lettre ou un chiffre.';
+  if(cle === 'inconnu' || cle === 'sante' || cle === 'juridique' || rangeSpaces().some(function(s) { return s.key === cle; }) ||
+     WORLDS.some(function(w) { return (w.key || mondeCle(w.name)) === cle; }))
+    return 'Ce nom est déjà pris par un autre espace.';
+  return '';
+}
+function projetCouleur() {
+  var prises = WORLDS.map(function(w) { return String(w.color).toLowerCase(); });
+  for(var i = 0; i < MONDE_COULEURS.length; i++) if(prises.indexOf(MONDE_COULEURS[i]) === -1) return MONDE_COULEURS[i];
+  return MONDE_COULEURS[(WORLDS.length - WORLDS_BASE) % MONDE_COULEURS.length];
+}
+function projetEtat(txt, err) {
+  var e = document.getElementById('pj-etat');
+  e.hidden = !txt; e.classList.toggle('err', !!err);
+  document.getElementById('pj-etat-t').textContent = txt || '';
+}
+function projetTaille() {          // les étapes grandissent avec leur texte : rien n'est coupé
+  ['pj-e1', 'pj-e2', 'pj-e3'].forEach(function(id) { var el = document.getElementById(id); el.style.height = 'auto'; el.style.height = el.scrollHeight + 2 + 'px'; });
+}
+function projetChamps() { return ['pj-nom', 'pj-mission', 'pj-e1', 'pj-e2', 'pj-e3'].map(function(id) { return document.getElementById(id); }); }
+// Pose une proposition dans les champs que Rayan n'a pas encore touchés
+function projetRemplir(p) {
+  var v = { 'pj-nom': p.nom, 'pj-mission': p.mission, 'pj-e1': p.etapes[0], 'pj-e2': p.etapes[1], 'pj-e3': p.etapes[2] };
+  projetChamps().forEach(function(el) { if(!_pj.touche[el.id] && v[el.id]) el.value = v[el.id]; });
+  projetTaille();
+}
+// Lit et vérifie la réponse de Claude ; null si elle ne convient pas
+function projetLire(txt) {
+  var a = String(txt || '').indexOf('{'), b = String(txt || '').lastIndexOf('}');
+  if(a < 0 || b <= a) return null;
+  var o; try { o = JSON.parse(txt.slice(a, b + 1)); } catch(e) { return null; }
+  var propre = function(x, max) { return typeof x === 'string' ? x.replace(/\s+/g, ' ').trim().slice(0, max) : ''; };
+  var nom = propre(o && o.nom, 24), mission = propre(o && o.mission, 200);
+  var etapes = Array.isArray(o && o.etapes) ? o.etapes.map(function(e) { return propre(e, 120); }).filter(Boolean).slice(0, 3) : [];
+  if(!nom || !etapes.length) return null;
+  if(projetNomErreur(nom)) nom = '';          // nom déjà pris : Rayan choisit
+  while(etapes.length < 3) etapes.push('');
+  return { nom: nom, mission: mission, etapes: etapes };
+}
+async function projetDemander(pensee) {
+  var token = null;
+  if(_sb && getUID()) { var sess = await _sb.auth.getSession(); token = sess.data && sess.data.session && sess.data.session.access_token; }
+  if(!token) throw new Error('sans session');
+  var body = { model: CLAUDE_MODEL, max_tokens: 500, system: PJ_SYSTEM,
+    messages: [{ role: 'user', content: 'Noms déjà pris : ' + projetNomsPris().join(', ') + '.\n\nPensée de Rayan : « ' + pensee + ' »' }] };
+  var resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', { method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) });
+  if(!resp.ok) throw new Error('statut ' + resp.status);
+  var data = await resp.json();
+  return (data.content || []).filter(function(c) { return c && c.type === 'text'; }).map(function(c) { return c.text; }).join('');
+}
+
+async function projetOuvrir(tid) {
+  var t = _depot.thoughts[tid]; if(!t) return;
+  _pj = { tid: tid, demande: _pj.demande + 1, touche: {} };
+  var n = _pj.demande;
+  var m = document.getElementById('projet-modal');
+  m.style.setProperty('--pjc', projetCouleur());
+  document.getElementById('pj-pensee').textContent = '« ' + t.body + ' »';
+  projetChamps().forEach(function(el) { el.value = ''; el.disabled = false; }); projetTaille();
+  document.getElementById('pj-err').textContent = '';
+  document.getElementById('pj-creer').disabled = false;
+  m.classList.add('open'); m.scrollTop = 0; projetTaille();
+  var ok = !!(_sb && getUID()) && navigator.onLine !== false;
+  if(!ok) { projetEtat('Hors connexion : écris ton projet toi-même.', true); document.getElementById('pj-nom').focus(); return; }
+  projetEtat('ARC prépare ton projet…');
+  try {
+    var p = projetLire(await projetDemander(t.body));
+    if(n !== _pj.demande || !m.classList.contains('open')) return;     // fermé ou rouvert entre-temps
+    if(!p) throw new Error('réponse illisible');
+    projetRemplir(p);
+    projetEtat('ARC propose. Corrige ce que tu veux, puis crée le projet.');
+  } catch(e) {
+    if(n !== _pj.demande) return;
+    console.warn('Projet : proposition impossible :', e.message);
+    if(!_pj.touche['pj-e1'] && !document.getElementById('pj-e1').value) { document.getElementById('pj-e1').value = t.body.slice(0, 120); projetTaille(); }
+    projetEtat('ARC n’a pas pu préparer le projet. Écris-le toi-même : ta pensée est en première étape.', true);
+  }
+}
+function projetFermer() {
+  _pj.demande++; _pj.tid = null;
+  document.getElementById('projet-modal').classList.remove('open');
+}
+function projetCreer() {
+  var t = _depot.thoughts[_pj.tid]; if(!t) return;
+  var nom = document.getElementById('pj-nom').value.replace(/\s+/g, ' ').trim();
+  var mission = document.getElementById('pj-mission').value.replace(/\s+/g, ' ').trim();
+  var err = projetNomErreur(nom);
+  if(err) { document.getElementById('pj-err').textContent = err; document.getElementById('pj-nom').focus(); return; }
+  var id = Date.now();
+  while(monde(id) || (S.mondes && S.mondes[String(id)])) id++;
+  var etapes = ['pj-e1', 'pj-e2', 'pj-e3'].map(function(k) { return document.getElementById(k).value.replace(/\s+/g, ' ').trim(); })
+    .filter(Boolean).map(function(x, i) { return { id: 'e' + id.toString(36) + i, t: x.slice(0, 120) }; });
+  var cle = mondeCle(nom);
+  S.mondes[String(id)] = { id: id, name: nom, key: cle, color: projetCouleur(), mission: mission,
+    desc: 'Né de ta pensée : « ' + t.body.slice(0, 280) + ' »', etapes: etapes, from: t.id };
+  normalizeS();
+  saveS();
+  // La pensée est rangée dans son projet (son étape, si elle en avait une, reste la sienne)
+  rangeAdd(t.id, { space: cle, status: 'filed' }, 'user');
+  projetFermer();
+  depotClose();
+  renderHome();
+  enterWorld(id);
+  toast('Projet créé · il est dans Projets');
+}
+(function() {
+  var f = document.getElementById('pj-form'); if(!f) return;
+  f.addEventListener('submit', function(ev) { ev.preventDefault(); projetCreer(); });
+  f.addEventListener('input', function(ev) {
+    if(ev.target && ev.target.id) _pj.touche[ev.target.id] = true;
+    if(ev.target && ev.target.id === 'pj-nom') document.getElementById('pj-err').textContent = '';
+    if(ev.target && /^pj-e/.test(ev.target.id)) projetTaille();
+  });
+  f.addEventListener('keydown', function(ev) {
+    if(ev.key !== 'Enter' || ev.shiftKey || !ev.target || !/^pj-e/.test(ev.target.id)) return;
+    ev.preventDefault();
+    var suiv = { 'pj-e1': 'pj-e2', 'pj-e2': 'pj-e3' }[ev.target.id];
+    if(suiv) document.getElementById(suiv).focus(); else document.getElementById('pj-creer').focus();
+  });
+  document.getElementById('pj-fermer').addEventListener('click', projetFermer);
+  document.getElementById('pj-annuler').addEventListener('click', projetFermer);
+  document.getElementById('projet-modal').addEventListener('click', function(ev) { if(ev.target.id === 'projet-modal') projetFermer(); });
+  document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && document.getElementById('projet-modal').classList.contains('open')) projetFermer(); });
+})();
 
 /* Accueil : prochaines étapes (non faites, non annulées), celles qui ont un moment d'abord */
 function rangeNextSteps() {
@@ -6420,6 +6689,13 @@ function rangeHomeRender() {
   tr.hidden = n === 0;
   tr.textContent = n + (n > 1 ? ' pensées à ranger' : ' pensée à ranger');
   var rows = rangeNextSteps();
+  // Projets nés d'une pensée : leur prochaine étape (une par projet éveillé) suit celles des pensées. Les cinq projets
+  // d'origine n'y entrent pas : leurs tâches datent d'avril, l'accueil ne montre que des actions réelles.
+  WORLDS.forEach(function(w) {
+    if(!w.cree || mondeDort(w.id)) return;
+    var tache = w.tasks_todo.concat(S.custom[w.id] || []).filter(function(x) { return !(S.tasks[w.id] && S.tasks[w.id][x.id]); })[0];
+    if(tache) rows.push({ projet: w, tache: tache });
+  });
   document.getElementById('next-empty').hidden = rows.length > 0;
   list.textContent = '';
   // La première est LA prochaine étape : une carte, « C'est fait » en bouton principal. Les suivantes sont des
@@ -6430,6 +6706,7 @@ function rangeHomeRender() {
   };
   rows.forEach(function(r, i) {
     if(i < 2) list.appendChild(rgEl('div', 'next-lbl', i === 0 ? 'Prochaine étape' : 'Ensuite'));
+    if(r.projet) { list.appendChild(rangeHomeProjet(r, i === 0)); return; }
     var it = rgEl('div', 'next-item ' + (i === 0 ? 'is-now' : 'next-row')); it.setAttribute('data-id', r.t.id);
     it.style.setProperty('--rg-c', rangeSpaceInfo(r.f.space).color);
     var top = rgEl('div', 'rg-row');
@@ -6451,6 +6728,34 @@ function rangeHomeRender() {
     }
     list.appendChild(it);
   });
+}
+
+// Une étape d'un projet né d'une pensée, sur l'accueil : même carte ; « C'est fait » coche la tâche du projet
+function rangeHomeProjet(r, premiere) {
+  var w = r.projet, t = r.tache;
+  var it = rgEl('div', 'next-item ' + (premiere ? 'is-now' : 'next-row')); it.setAttribute('data-projet', String(w.id));
+  it.style.setProperty('--rg-c', w.color);
+  var top = rgEl('div', 'rg-row');
+  top.appendChild(rgEl('span', 'rg-lbl', 'Projet'));
+  top.appendChild(rangePill(w.key));
+  it.appendChild(top);
+  it.appendChild(rgEl('div', 'next-step', t.t));
+  var ouvrir = function() { enterWorld(w.id); };
+  if(premiere) {
+    var acts = rgEl('div', 'rg-acts');
+    acts.appendChild(rangeBtn('C\'est fait', function() {
+      if(!S.tasks[w.id]) S.tasks[w.id] = {};
+      if(!S.taskDates[w.id]) S.taskDates[w.id] = {};
+      S.tasks[w.id][t.id] = true; S.taskDates[w.id][t.id] = Date.now(); saveS(); renderHome(); toast('C\u2019est fait');
+    }, 'main'));
+    acts.appendChild(rangeBtn('Ouvrir le projet', ouvrir));
+    it.appendChild(acts);
+  } else {
+    it.setAttribute('role', 'button'); it.setAttribute('tabindex', '0');
+    it.addEventListener('click', ouvrir);
+    it.addEventListener('keydown', function(ev) { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); ouvrir(); } });
+  }
+  return it;
 }
 
 /* ═══ POINT DU MATIN ═══

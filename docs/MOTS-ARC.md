@@ -283,8 +283,21 @@ l'accueil). « Tu as une idée. Elle devient réelle. » n'est plus sur l'écran
   « Juridique » ; « Dans tes notes de « … » » ; « Rien pour « … ». » ; « Et N de plus : précise ta recherche. »
 - Retirés : « War Room », « Injecter » / « Chat », « Claude actif — contexte complet chargé », « Contexte » (Mac).
 
+### Les mots de « En faire un projet » (10 octobre)
+
+- Sous une pensée dans « Déposé » : « En faire un projet » ; une fois créé : « Ouvrir le projet … ».
+- La feuille : « Nouveau projet », « Né de ta pensée : « … » », « ARC prépare ton projet… », « ARC propose. Corrige ce
+  que tu veux, puis crée le projet. », « Nom du projet », « Mission », « Premières étapes », « Une action par ligne. Tu
+  pourras en ajouter dans le projet. », « Créer le projet », « Annuler », « Fermer ».
+- Erreurs : « Donne un nom au projet. », « Deux caractères au moins. », « Ce nom est déjà pris par un autre espace. »,
+  « ARC n'a pas pu préparer le projet. Écris-le toi-même : ta pensée est en première étape. », « Hors connexion :
+  écris ton projet toi-même. »
+- Dans le projet : « Projet · né le 10 octobre », « Né de ta pensée : « … » ». Sur l'accueil : « Projet » au-dessus de
+  l'étape, « Ouvrir le projet ». Bulle : « Projet créé · il est dans Projets ».
+- Retirés : le nuage « ☁ » des bulles de synchronisation (emoji), et la bulle « Sync · 03:37 » elle-même (la pastille du
+  haut le dit déjà, la bulle passait sur la note du dépôt).
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par
-pensée (aujourd'hui : rangement dans un espace existant ; la création d'un monde depuis une pensée est à construire),
-la prochaine étape chaque matin (fait, point du matin). Le deuxième point est le chantier qui vient.
+pensée (fait le 10 octobre : « En faire un projet »), la prochaine étape chaque matin (fait, point du matin).
