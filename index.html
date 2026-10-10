@@ -3191,22 +3191,180 @@ function setSyncUI(state, label) {
   if(lbl) lbl.textContent = label;
 }
 
+/* ═══ SYNCHRONISATION : FUSION, JAMAIS D'ÉCRASEMENT (10 octobre) ═══
+   Avant : chaque appareil envoyait tout son état et la lecture remplaçait tout l'état local ; une entrée écrite sur
+   l'iPhone disparaissait dès que le Mac envoyait le sien (prouvé : tests/synchro.mjs, premier contrôle).
+   Maintenant, chaque échange fait une fusion à trois : la « base » (dernier état commun à cet appareil et au serveur,
+   gardée sur l'appareil), l'état de l'appareil et l'état en ligne. Ce qu'un seul côté a changé est gardé ; un ajout
+   de chaque côté donne les deux ; une suppression d'un côté est appliquée. Si les deux côtés ont changé la même
+   valeur, la plus récente l'emporte et l'autre est gardée sur l'appareil (arc_sync_pertes_v1).
+   L'écriture ne réussit que si la ligne n'a pas changé depuis sa lecture (updated_at) ; sinon on relit et on refusionne. */
+var SYNC_BASE_KEY = 'arc_sync_base_v1';
+var SYNC_PERTES_KEY = 'arc_sync_pertes_v1';
+var SYNC_META_MAX = { _lastAction: 1, _savedAt: 1, _worldsV: 1 };      // nombres qui ne font que monter : le plus grand
+var SYNC_ENTIER = { lastActive: 1, taskOrder: 1 };                    // listes dont l'ordre est la donnée : un bloc
+var _syncAgain = false;
+
+function syncClone(o) { return o === undefined ? undefined : JSON.parse(JSON.stringify(o)); }
+function syncEq(a, b) {
+  if(a === b) return true;
+  if(a === null || b === null || typeof a !== 'object' || typeof b !== 'object') return false;
+  if(Array.isArray(a) !== Array.isArray(b)) return false;
+  if(Array.isArray(a)) { if(a.length !== b.length) return false; for(var i = 0; i < a.length; i++) if(!syncEq(a[i], b[i])) return false; return true; }
+  var ka = Object.keys(a).filter(function(k) { return a[k] !== undefined; });
+  var kb = Object.keys(b).filter(function(k) { return b[k] !== undefined; });
+  if(ka.length !== kb.length) return false;
+  for(var j = 0; j < ka.length; j++) if(!syncEq(a[ka[j]], b[ka[j]])) return false;
+  return true;
+}
+// Identité d'un élément de liste, indépendante de l'ordre des clés
+function syncCle(x) {
+  if(x === null || typeof x !== 'object') return JSON.stringify(x);
+  if(Array.isArray(x)) return '[' + x.map(syncCle).join(',') + ']';
+  return '{' + Object.keys(x).filter(function(k) { return x[k] !== undefined; }).sort()
+    .map(function(k) { return JSON.stringify(k) + ':' + syncCle(x[k]); }).join(',') + '}';
+}
+function syncIsObj(x) { return x !== null && typeof x === 'object' && !Array.isArray(x); }
+// Liste : chaque élément compte une fois par exemplaire (base + ajouts d'un côté + ajouts de l'autre − suppressions)
+function syncListe(b, l, r) {
+  b = Array.isArray(b) ? b : [];
+  var compte = function(arr) { var m = {}; arr.forEach(function(x) { var k = syncCle(x); m[k] = (m[k] || 0) + 1; }); return m; };
+  var cb = compte(b), cl = compte(l), cr = compte(r), voulu = {};
+  Object.keys(cb).concat(Object.keys(cl), Object.keys(cr)).forEach(function(k) {
+    voulu[k] = Math.max(0, (cl[k] || 0) + (cr[k] || 0) - (cb[k] || 0));
+  });
+  var out = [], pris = {};
+  r.concat(l).forEach(function(x) {        // ordre : celui du serveur, puis les ajouts de l'appareil
+    var k = syncCle(x); if((pris[k] || 0) < voulu[k]) { out.push(x); pris[k] = (pris[k] || 0) + 1; }
+  });
+  // Éléments datés (journal, messages, check-in) : remis dans l'ordre du temps
+  var date = function(x) { return syncIsObj(x) ? (typeof x.ts === 'number' ? x.ts : (typeof x.date === 'string' ? Date.parse(x.date) : NaN)) : NaN; };
+  if(out.length && out.every(function(x) { return !isNaN(date(x)); })) out.sort(function(a, c) { return date(a) - date(c); });
+  return syncClone(out);
+}
+// Fusion à trois. pertes reçoit les valeurs écartées quand les deux côtés ont changé la même chose.
+function syncFusion(b, l, r, localPlusRecent, pertes, chemin) {
+  if(syncEq(l, r)) return syncClone(l);
+  if(syncEq(l, b)) return syncClone(r);
+  if(syncEq(r, b)) return syncClone(l);
+  var nom = chemin[chemin.length - 1];
+  if(chemin.length === 1 && SYNC_META_MAX[nom] && typeof l === 'number' && typeof r === 'number') return Math.max(l, r);
+  if(syncIsObj(l) && syncIsObj(r) && !SYNC_ENTIER[chemin[0]]) {
+    var bo = syncIsObj(b) ? b : {}, out = {}, cles = {};
+    Object.keys(l).concat(Object.keys(r), Object.keys(bo)).forEach(function(k) { cles[k] = 1; });
+    Object.keys(cles).forEach(function(k) {
+      var v = syncFusion(bo[k], l[k], r[k], localPlusRecent, pertes, chemin.concat(k));
+      if(v !== undefined) out[k] = v;
+    });
+    return out;
+  }
+  if(Array.isArray(l) && Array.isArray(r) && !SYNC_ENTIER[chemin[0]]) return syncListe(b, l, r);
+  // Les deux côtés ont changé la même valeur : la plus récente l'emporte ; si c'est un texte, l'autre est gardé sur l'appareil
+  var garde = localPlusRecent ? l : r, ecarte = localPlusRecent ? r : l;
+  if(typeof ecarte === 'string' && ecarte !== '') pertes.push({ chemin: chemin.join('.'), valeur: syncClone(ecarte), gardee: garde === undefined ? null : syncClone(garde) });
+  return syncClone(garde);
+}
+// Santé : un seul check-in par jour (le plus récent), même s'il a été fait sur deux appareils
+function syncApres(etat) {
+  var s = etat && etat.poles && etat.poles.sante;
+  if(Array.isArray(s)) {
+    var parJour = {};
+    s.forEach(function(c) { if(!c || !c.date) return; var j = new Date(c.date).toDateString(); if(!parJour[j] || c.date > parJour[j].date) parJour[j] = c; });
+    etat.poles.sante = s.filter(function(c) { return !c || !c.date || parJour[new Date(c.date).toDateString()] === c; });
+  }
+  return etat;
+}
+function syncFusionner(base, local, distant, pertes) {
+  var plusRecent = (local._lastAction || 0) >= (distant._lastAction || 0);
+  return syncApres(syncFusion(base || {}, local, distant, plusRecent, pertes, []));
+}
+function syncBaseLire() {
+  try { var b = JSON.parse(localStorage.getItem(SYNC_BASE_KEY) || 'null'); return b && b.uid === getUID() ? b.state : null; }
+  catch(e) { return null; }
+}
+function syncBaseEcrire(state) {
+  try { localStorage.setItem(SYNC_BASE_KEY, JSON.stringify({ uid: getUID(), state: state })); }
+  catch(e) { console.warn('Base de synchronisation non gardée :', e.message); }
+}
+function syncGarderPertes(pertes) {
+  if(!pertes.length) return;
+  try {
+    var l = JSON.parse(localStorage.getItem(SYNC_PERTES_KEY) || '[]');
+    pertes.forEach(function(p) { p.at = new Date().toISOString(); l.push(p); });
+    localStorage.setItem(SYNC_PERTES_KEY, JSON.stringify(l.slice(-50)));
+  } catch(e) {}
+}
+// Pose dans S l'état fusionné, sans perdre ce qui a été saisi pendant l'échange (instantane = S au départ)
+function syncAppliquer(instantane, fusion) {
+  var pertes = [], actuel = syncClone(S);
+  var final = syncEq(actuel, instantane) ? fusion : syncFusionner(instantane, actuel, fusion, pertes);
+  syncGarderPertes(pertes);
+  var change = !syncEq(final, actuel);
+  if(change) {
+    Object.keys(S).forEach(function(k) { delete S[k]; });
+    Object.assign(S, { tasks:{}, notes:{}, journal:{}, custom:{}, blkCustom:{} }, syncClone(final));
+    normalizeS();
+    try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+  }
+  return { change: change, encore: !syncEq(syncClone(S), fusion) };
+}
+
+// Un échange complet : lire, fusionner, écrire si besoin, et seulement si personne n'a écrit entre-temps
+async function syncEchange() {
+  var uid = getUID();
+  for(var essai = 0; essai < 4; essai++) {
+    var instantane = syncClone(S);
+    var res = await _sb.from('arc_data').select('state,updated_at').eq('user_id', uid).maybeSingle();
+    if(res.error) throw res.error;
+    var now = new Date().toISOString();
+    if(!res.data) {
+      // Appareil relié mais aucune ligne (il vient de devenir la référence) : on la crée avec son état
+      var ins = await _sb.from('arc_data').upsert({ user_id: uid, state: instantane, updated_at: now }, { onConflict: 'user_id' });
+      if(ins.error) throw ins.error;
+      localStorage.setItem('arc_cloud_ts', String(Date.now()));
+      syncBaseEcrire(instantane);
+      return { recu: false, encore: !syncEq(syncClone(S), instantane) };
+    }
+    var distant = res.data.state || {};
+    if(!distant._worldsV) distant._worldsV = 0;     // état venu d'un appareil pas encore migré
+    var pertes = [];
+    var fusion = syncFusionner(syncBaseLire(), instantane, distant, pertes);
+    if(!syncEq(fusion, distant)) {
+      var up = await _sb.from('arc_data').update({ state: fusion, updated_at: now })
+        .eq('user_id', uid).eq('updated_at', res.data.updated_at).select('updated_at');
+      if(up.error) throw up.error;
+      if(!up.data || !up.data.length) {
+        // Quelqu'un a écrit entre la lecture et l'écriture : on relit et on refusionne. Au dernier essai, si la ligne
+        // n'a pas bougé du tout (le filtre sur la date n'a rien trouvé), on écrit quand même l'état fusionné.
+        if(essai < 3) continue;
+        var re = await _sb.from('arc_data').select('updated_at').eq('user_id', uid).maybeSingle();
+        if(re.error || !re.data || re.data.updated_at !== res.data.updated_at) throw new Error('ligne modifiée pendant la synchronisation');
+        var force = await _sb.from('arc_data').upsert({ user_id: uid, state: fusion, updated_at: now }, { onConflict: 'user_id' });
+        if(force.error) throw force.error;
+      }
+      localStorage.setItem('arc_cloud_ts', String(Date.now()));
+    }
+    syncGarderPertes(pertes);
+    syncBaseEcrire(fusion);
+    var app = syncAppliquer(instantane, fusion);
+    return { recu: app.change, encore: app.encore };
+  }
+}
+
 async function pushToCloud() {
   // Jamais d'envoi sans compte, ni depuis un appareil pas encore relié : il écraserait la référence
-  if(!_sb || _pushing || !getUID() || !isLinked() || _syncPaused) return;
+  if(!_sb || !getUID() || !isLinked() || _syncPaused) return;
+  if(_pushing) { _syncAgain = true; return; }       // un échange est en cours : on en refait un juste après
+  if(navigator.onLine === false) { setSyncUI('err', 'Hors ligne'); return; }   // l'événement « online » relancera
   _pushing = true;
   setSyncUI('busy', 'Sync…');
   try {
-    var cleanS = JSON.parse(JSON.stringify(S));
-    var err = (await _sb.from('arc_data').upsert(
-      { user_id: getUID(), state: cleanS, updated_at: new Date().toISOString() },
-      { onConflict: 'user_id' }
-    )).error;
-    if(err) throw err;
-    var nowTs = Date.now();
-    localStorage.setItem('arc_cloud_ts', String(nowTs));
-    setSyncUI('ok', '\u2713 Sync');
-    setTimeout(function() { setSyncUI('ok', 'ARC'); }, 2000);
+    var r, recu = false, tours = 0;
+    do { _syncAgain = false; r = await syncEchange(); recu = recu || (r && r.recu); tours++; }
+    while((_syncAgain || (r && r.encore)) && tours < 5);
+    if(recu) { renderHome(); toast('☁ Sync · ' + new Date().toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})); }
+    setSyncUI('ok', '✓ Sync');
+    setTimeout(function() { if(!_pushing) setSyncUI('ok', 'ARC'); }, 2000);
   } catch(e) {
     setSyncUI('err', 'Hors ligne');
     console.warn('Push failed:', e.message);
@@ -3249,6 +3407,7 @@ async function pullFromCloud() {
       Object.keys(S).forEach(function(k) { delete S[k]; });
       Object.assign(S, { tasks:{}, notes:{}, journal:{}, custom:{}, blkCustom:{} }, res.data.state);
       if(!res.data.state._worldsV) S._worldsV = 0;
+      syncBaseEcrire(syncClone(res.data.state));   // point de départ commun avec le serveur
       normalizeS();
       linkDevice();
       localStorage.setItem(SK, JSON.stringify(S));
@@ -3258,22 +3417,9 @@ async function pullFromCloud() {
       toast('☁ Données de ton compte récupérées · ancien état local gardé');
       return;
     }
-    var cloudTs = new Date(res.data.updated_at).getTime();
-    var cloudAction = (res.data.state && res.data.state._lastAction) || 0;
-    var localAction = S._lastAction || 0;
-    // Comparaison sur _lastAction (vraie action user) pas _savedAt (auto-save)
-    if(cloudAction > localAction + 1000) {
-      if(!res.data.state._worldsV) S._worldsV=0; // état venu d'un appareil pas encore migré
-      Object.assign(S, res.data.state);
-      normalizeS();
-      localStorage.setItem(SK, JSON.stringify(S));
-      localStorage.setItem('arc_cloud_ts', String(cloudTs));
-      renderHome();
-      toast('\u2601 Sync · ' + new Date(cloudTs).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}));
-    } else if(localAction > cloudAction + 1000) {
-      await pushToCloud();
-    }
+    // Appareil relié : plus de « le plus récent remplace tout ». Un échange lit, fusionne et n'écrit que si besoin.
     setSyncUI('ok', 'ARC');
+    await pushToCloud();
   } catch(e) {
     setSyncUI('err', 'Hors ligne');
     console.warn('Pull failed:', e.message);

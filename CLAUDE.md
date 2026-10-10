@@ -20,6 +20,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
   `cockpit.mjs` (cockpit d'une tâche : mêmes mesures, réponse de Claude visible sur iPhone, notes, journal, « C'est fait », minuteur, Échap),
   `recherche.mjs` (recherche : pensées, tâches et notes, projets, journal, Juridique ; ouverture au bon endroit ; clavier ; charte),
+  `synchro.mjs` (deux appareils sur le même compte : fusion, hors réseau, suppression, conflit, écriture conditionnelle),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
@@ -39,6 +40,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - État dans l'objet `S`, enregistré dans `localStorage` sous la clé `arc_v2` (`loadS`, `saveS`).
 - Connexion : adresse + mot de passe (`authGo`), ou code à 6 chiffres / lien par e-mail (`authSendCode`, `authVerifyCode`) ; `showAuthScreen` ; `getUID` = identifiant du compte.
 - Synchronisation Supabase : table `arc_data`, une ligne par compte (`pushToCloud`, `pullFromCloud`). Sans session, rien n'est lu ni écrit.
+  Depuis le 10 octobre, chaque échange fusionne (`syncEchange`, `syncFusionner`) au lieu de remplacer : voir « Synchronisation » plus bas.
 - Dépôt de pensées : barre fixe en bas de l'écran, liste « Déposé » ; pensées dans `localStorage` sous
   `arc_thoughts_v1` (jamais dans `S`), envoyées dans la table `thoughts` (`depotFlush`, `depotPull`), mesures
   `open` et `deposit` dans `arc_events`.
@@ -56,7 +58,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/synchro.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -797,6 +799,45 @@ Tiroirs, War Room, recherche (branche `interieur-tiroirs`, 8 octobre 10 h, parti
   l'environnement de travail l'a refusée, rien n'a été lu ni écrit. Source non trouvée (le code d'ARC n'ouvre aucune
   connexion « temps réel ») : à chercher avant de faire tourner les tests sur une machine qui a accès au réseau.
 
+En ligne (9 octobre) : PR #16, #17 et #18 fusionnées par Rayan le 8 octobre à 18 h 19 (`main` à `d5620f4`).
+
+**Rangement constaté en réel sur l'iPhone (9 octobre, 23 h 26)** : Rayan a redéployé le proxy de `main` (455 lignes,
+`claude-sonnet-5-5`, `tool_choice` « auto »). « Appeler le comptable » : étape gardée telle quelle, aucun moment inventé,
+espace Juridique (validé par Rayan en touchant « Rétablir » ; il avait d'abord annulé le dépôt, sans doute pour cet
+espace). Le geste central (déposer, ranger, voir l'étape) marche de bout en bout. Le point du matin s'est ouvert à
+23 h 14 (première ouverture du jour, voulu).
+
+Synchronisation, fusion au lieu d'écrasement (branche `synchro`, 10 octobre 1 h, partie de `main` à `d5620f4`) :
+- Accord de Rayan (9 octobre, 23 h 37 et 10 octobre, 1 h 03) : « OUI », « GO ATTAQUONS ARC ».
+- **Défaut prouvé** (avant toute correction, faux Supabase, deux navigateurs) : l'iPhone ajoute une entrée au journal,
+  l'envoie ; le Mac, resté ouvert, ajoute une note de tâche et envoie tout son état ; l'entrée de l'iPhone disparaît
+  en ligne, puis de l'iPhone à son retour au premier plan. Cause : `pushToCloud` envoyait tout `S` sans relire
+  (`upsert`), `pullFromCloud` remplaçait tout (`Object.assign`) quand l'autre côté était plus récent. Sur la version en
+  ligne, `tests/synchro.mjs` échoue 6 fois sur 11.
+- **Correction** : un échange (`syncEchange`) lit la ligne, fait une fusion à trois (`syncFusionner`) entre la base
+  (dernier état commun, `arc_sync_base_v1` sur l'appareil), l'état de l'appareil et l'état en ligne, puis n'écrit que
+  si quelque chose change, et seulement si la ligne n'a pas bougé depuis la lecture (`update … eq('updated_at', …)` ;
+  sinon relire et refusionner, trois fois ; au quatrième, si la ligne n'a vraiment pas bougé, écriture simple).
+  Règles : ce qu'un seul côté change est gardé ; dans une liste, chaque ajout est gardé et chaque suppression appliquée
+  (éléments datés remis dans l'ordre du temps) ; `lastActive` et `taskOrder` vont d'un bloc ; `_lastAction`,
+  `_savedAt`, `_worldsV` : le plus grand ; même valeur changée des deux côtés : la plus récente (`_lastAction`)
+  l'emporte et, si c'est un texte, l'autre est gardé sur l'appareil (`arc_sync_pertes_v1`, 50 au plus, aucun écran ne
+  le montre encore) ; un seul check-in Santé par jour. Ce qui est saisi pendant un échange est refusionné
+  (`syncAppliquer`). Un envoi demandé pendant un échange est refait juste après (`_syncAgain`, avant : perdu jusqu'à
+  l'action suivante). Appareil qui se sait hors réseau : rien n'est tenté, « Hors ligne » tout de suite.
+- **Premier échange de chaque appareil après la mise en ligne** : pas encore de base, donc union des deux états ; rien
+  ne se perd, mais un élément supprimé sur un seul appareil avant la mise en ligne peut revenir une fois.
+- Inchangé : la première connexion d'un appareil (la version en ligne l'emporte, état local gardé sous
+  `arc_v2_avant_connexion`, et elle devient la base) ; la création de la ligne par l'appareil de référence ; aucune
+  table ni règle Supabase touchée, aucune lecture de la vraie base. Les pensées et rangements n'étaient pas concernés.
+- Hors réseau, supabase-js réessaie une lecture environ 8 s avant d'échouer (mesuré) : « Hors ligne » peut mettre ce
+  temps à s'afficher quand le navigateur se croit en ligne.
+- `tests/outils.mjs` : le faux Supabase garde une vraie ligne `arc_data` (lecture, création, écriture conditionnelle,
+  date rendue comme Postgres) ; `fk.arc = null` = compte sans ligne.
+- Tests : synchro 11/11 (nouveau), proxy 41/41, connexion 27/27, dépôt 19/19, rangement 25/25, matin 27/27, accueil
+  17/17, mondes 7/7, pôles 9/9, cockpit 17/17, recherche 8/8, entrée-fond 41/41 ; 427 `<div` / 427 `</div>`.
+  Vérifié dans Chromium seulement, contre un faux Supabase : **le vrai passage Mac ↔ iPhone reste à constater par Rayan.**
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
@@ -843,10 +884,10 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 
 ### Ouvert
 
-1. **Le geste central est construit, en essai** : dépôt en ligne ; rangement et point du matin sur la branche
-   `rangement` ; proxy `a1ca2ca` déployé et essayé sur le Mac, version suivante à redéployer ; iPhone pas essayé.
-2. **La synchronisation remplace tout l'état d'un coup** (dernière action gagne, `pullFromCloud`) : à remplacer
-   par des pensées en ajout seul avant d'ouvrir le dépôt sur deux appareils.
+1. **Le geste central marche en réel** (9 octobre, iPhone, proxy de `main` redéployé par Rayan) : les trente jours
+   d'usage mesurés peuvent commencer.
+2. **La synchronisation fusionne** (branche `synchro`, 10 octobre) au lieu de remplacer tout l'état ; l'état reste une
+   seule ligne par compte : le modèle par élément (version 3) reste à faire avant d'ouvrir ARC à d'autres personnes.
 3. **Santé reste un suivi à curseurs** (check-in, score, série) : les consignes envoyées à Claude ne jouent plus
    le « conseiller » (branche `rangement`), mais l'écran reste à ramener à la mémoire, aux échéances et aux documents.
 4. **Un seul fichier** de plus de 5 000 lignes, `supabase-js@2` non figé, insertions
