@@ -2088,6 +2088,16 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #projet-modal :is(#pj-fermer,#pj-creer,#pj-annuler,#pj-reessayer):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 @media(max-width:560px){#projet-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}}
 @media(prefers-reduced-motion:reduce){#projet-modal.open{animation:none}#pj-etat .npj-pulse{animation:none}}
+/* ═══ SECTIONS VIDES REPLIÉES (branche projet-sections, 10 octobre) ═══
+   Un projet neuf montrait quatre sections vides (Bloquants, Notes, Journal, Outils) sur un écran et demi. Vide, une
+   section n'est plus qu'une ligne : son titre, et une touche « Ajouter » ou « Écrire » qui ouvre le champ. */
+#S2 .wsec-ouvrir{display:none;margin-left:auto;min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.2px;color:#E8E8EC;cursor:pointer}
+#S2 .wsec.vide{margin-bottom:6px}
+#S2 .wsec.vide>.wsec-head{align-items:center;margin-bottom:0}
+#S2 .wsec.vide>.wsec-head .wsec-ouvrir{display:inline-flex;align-items:center}
+#S2 .wsec.vide>.wsec-head .wsec-info{display:none}
+#S2 .wsec.vide>:not(.wsec-head){display:none}
+#S2 .wsec-ouvrir:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -2269,7 +2279,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 
       <!-- BLOQUANTS -->
       <div class="wsec" id="wsec-bloquants">
-        <div class="wsec-head"><span class="wsec-lbl">Bloquants</span><div class="wsec-line"></div></div>
+        <div class="wsec-head"><span class="wsec-lbl">Bloquants</span><div class="wsec-line"></div><button class="wsec-ouvrir" type="button" data-ouvrir="bloquants" aria-label="Ajouter un bloquant">Ajouter</button></div>
         <div class="wblk-list" id="blk-list"></div>
         <div class="wblk-add">
           <input class="wblk-inp" id="blk-inp" placeholder="Ajouter un bloquant...">
@@ -2284,15 +2294,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
 
       <!-- NOTES -->
-      <div class="wsec">
-        <div class="wsec-head"><span class="wsec-lbl">Notes</span><div class="wsec-line"></div><span class="wsec-info" id="notes-chars">0 mots</span></div>
+      <div class="wsec" id="wsec-notes">
+        <div class="wsec-head"><span class="wsec-lbl">Notes</span><div class="wsec-line"></div><span class="wsec-info" id="notes-chars">0 mots</span><button class="wsec-ouvrir" type="button" data-ouvrir="notes" aria-label="Écrire une note">Écrire</button></div>
         <textarea class="wnotes-ta" id="notes-ta" placeholder="Tes notes, id&#233;es, r&#233;flexions..."></textarea>
         <div class="wnotes-hint">Sauvegarde automatique</div>
       </div>
 
       <!-- JOURNAL -->
       <div class="wsec" id="wsec-journal">
-        <div class="wsec-head"><span class="wsec-lbl">Journal</span><div class="wsec-line"></div></div>
+        <div class="wsec-head"><span class="wsec-lbl">Journal</span><div class="wsec-line"></div><button class="wsec-ouvrir" type="button" data-ouvrir="journal" aria-label="Ajouter une entrée au journal">Ajouter</button></div>
         <div class="wjou-add-row">
           <input class="wjou-inp" id="jou-inp" placeholder="Entr&#233;e du jour..." autocomplete="off">
           <button class="wjou-btn" id="jou-add-btn">+ Ajouter</button>
@@ -2301,8 +2311,8 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
 
       <!-- OUTILS -->
-      <div class="wsec">
-        <div class="wsec-head"><span class="wsec-lbl">Outils</span><div class="wsec-line"></div></div>
+      <div class="wsec" id="wsec-outils">
+        <div class="wsec-head"><span class="wsec-lbl">Outils</span><div class="wsec-line"></div><button class="wsec-ouvrir" type="button" data-ouvrir="outils" aria-label="Ajouter un outil">Ajouter</button></div>
         <div class="wtools-grid" id="tools-grid"></div>
       </div>
       <!-- Endormir ou réveiller ce projet (S.sleep) : il quitte ou rejoint les projets en cours de l'accueil -->
@@ -4133,7 +4143,7 @@ function renderCards(){
 /* ===== ENTER WORLD ===== */
 var wTimer={s:0,running:false,iv:null};
 function enterWorld(wid){
-  CUR.wid=wid;
+  CUR.wid=wid; _secOuvertes={};
   var w=monde(wid);
   document.documentElement.style.setProperty("--wc",w.color);
   document.getElementById("S2").setAttribute("data-wid",wid);
@@ -4237,6 +4247,28 @@ function renderWorld(){
   renderJournal();
   // Notes
   var na=document.getElementById("notes-ta"); if(na){ na.value=S.notes[wid]||""; updateNotesChars(); }
+  sectionsVides();
+}
+
+// Sections vides repliées : une ligne et une touche, tant que rien n'y est écrit (sauf si on vient de l'ouvrir)
+var _secOuvertes={};
+function sectionsVides(){
+  var wid=CUR.wid, w=monde(wid); if(!w) return;
+  var vide={
+    bloquants: !(w.blockers||[]).length && !(S.blkCustom[wid]||[]).length,
+    notes: !String(S.notes[wid]||"").trim(),
+    journal: !(S.journal[wid]||[]).length,
+    outils: !(S.tools[wid]||[]).length
+  };
+  Object.keys(vide).forEach(function(k){
+    var sec=document.getElementById("wsec-"+k); if(sec) sec.classList.toggle("vide", vide[k] && !_secOuvertes[k]);
+  });
+}
+function sectionOuvrir(k){
+  if(k==="outils"){ addTool(CUR.wid); sectionsVides(); return; }
+  _secOuvertes[k]=true; sectionsVides();
+  var champ=document.getElementById({bloquants:"blk-inp",notes:"notes-ta",journal:"jou-inp"}[k]);
+  if(champ){ champ.focus(); champ.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}); }
 }
 
 // Description du monde : trois lignes au plus (charte : pas de pavé) ; « Lire la suite » ne se montre que si le
@@ -4337,7 +4369,7 @@ function renderJournal(){
   var wid=CUR.wid;
   var list=document.getElementById("jou-list"); if(!list) return;
   var jou=(S.journal[wid]||[]).slice().reverse();
-  if(jou.length===0){ list.innerHTML='<div class="wjou-empty">Pas encore d\'entrée. Journalise maintenant.</div>'; return; }
+  if(jou.length===0){ list.innerHTML='<div class="wjou-empty">Pas encore d\'entrée.</div>'; return; }
   var html="";
   jou.slice(0,20).forEach(function(j){
     html+='<div class="wjou-entry"><span class="wjou-ts">'+fmtTs(j.ts)+'</span><span class="wjou-text">'+esc(j.t)+'</span><button class="wjou-del" data-action="del-jou" data-ts="'+j.ts+'">&#10005;</button></div>';
@@ -5070,6 +5102,7 @@ document.addEventListener("click",function(ev){
   if(t.closest("[data-mode]")){ var mode=t.closest("[data-mode]").getAttribute("data-mode"); cockpitState.mode=mode; document.querySelectorAll(".ccb-mode").forEach(function(b){ b.classList.toggle("active",b.getAttribute("data-mode")===mode); }); return; }
   // QA project select
   // Add tool
+  var ouvSec=t.closest("[data-ouvrir]"); if(ouvSec){ sectionOuvrir(ouvSec.getAttribute("data-ouvrir")); return; }
   var addToolEl=t.closest("[data-action='add-tool']");
   if(addToolEl){ var wid=addToolEl.getAttribute("data-wid"); addTool(wid); return; }
   // Del tool
