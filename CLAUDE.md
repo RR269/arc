@@ -1000,6 +1000,31 @@ fusionnée) :
   moment pour y figurer), projet 31/31 (le projet né d'une pensée est une ligne sous « Projets », le ciel prend sa
   couleur), et les dix autres suites passent ; contraste le plus faible sur l'accueil 6,29 : 1 ; 437 `<div` /
   437 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
+- **PR #26 fusionnée par Rayan le 10 octobre (`main` à `57d2a4a`) ; vu sur son iPhone à 17 h 48** (ses captures) : tout
+  le poste tient dans le premier écran (Déposé « 6 pensées », Point du jour « 08:02 vu », la dernière pensée, « 2 pensées
+  à ranger »), titre « Un cerveau. Huit espaces. », pastille « À jour 17:48 ».
+
+Le poste vu sur l'iPhone : deux défauts (branche `poste-iphone`, 10 octobre 18 h, partie de `main` à `57d2a4a`) :
+- **Écran d'entrée, champ adresse en jaune pâle, texte illisible** (capture de Rayan, 17 h 48, champ sélectionné).
+  Cause prouvée : `index.html`, `.auth-field .auth-input:focus{box-shadow:none}` (cadran du 7 octobre) a le même poids
+  que `.auth-input:-webkit-autofill:focus` (ombre sombre qui couvre le jaune du trousseau) et vient plus bas : il
+  l'emporte et retire l'ombre dès que le champ est sélectionné. Au repos le champ restait sombre, d'où le « tout est
+  ok » du 7 octobre. Reproduit dans Chromium en rejouant la cascade (sélecteurs « autofill » remplacés par une classe,
+  jaune posé comme le fait Safari, transition de retard coupée) : même image que sa capture. Correction : deux règles
+  plus lourdes, `.auth-field .auth-input:-webkit-autofill:focus` et `:autofill:focus`, gardent l'ombre sombre et le
+  texte clair. Outil de simulation hors dépôt ; le contrôle est dans `tests/connexion.mjs`.
+- **« N pensées déposées » comptait les dépôts annulés** (`faitsDuJour`), alors que « Déposé », sur le même écran, les
+  retire (`depotRender`). Prouvé sur `main` : trois pensées, une annulée → « Déposé 2 », « 3 pensées déposées ». Les
+  deux suivent maintenant la même règle. Sur l'iPhone de Rayan (6 et 6), l'écart n'est pas démontré : sans lecture de
+  ses données, impossible de savoir s'il a annulé une pensée aujourd'hui.
+- **Test intermittent réparé, cause prouvée** : `tests/recherche.mjs`, cible de 42 px sur Mac, une fois de temps en
+  temps. La recherche s'ouvre en 220 ms avec un zoom de 0,96 (`searchIn`) et le test mesurait à 150 ms
+  (44 × 0,96 = 42). Le test attend la fin de l'animation. ARC n'est pas en cause.
+- **Outillage de cette session** : cdnjs, jsdelivr et Google Fonts injoignables ; bibliothèques installées par npm et
+  servies localement (`/tmp/arc-outils`, hors dépôt) ; Playwright 1.56.1, accordé au Chromium installé (1194).
+- Tests : connexion 28/28 (un contrôle ajouté, échoue sur `main`), accueil 25/25 (un contrôle ajouté, échoue sur
+  `main`), recherche 8/8, et les dix autres suites passent. Vérifié dans Chromium seulement : **le champ du trousseau
+  reste à voir par Rayan sur son iPhone.**
 
 ### Décisions de Rayan (5 octobre)
 

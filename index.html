@@ -971,6 +971,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .auth-field:first-child .auth-input{border-top-left-radius:15px;border-top-right-radius:15px}
 .auth-field:last-child .auth-input{border-bottom-left-radius:15px;border-bottom-right-radius:15px}
 .auth-field .auth-input:focus{box-shadow:none;outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
+/* Champ rempli par le trousseau ET sélectionné : la règle ci-dessus retirait l'ombre sombre qui couvre le jaune de Safari
+   (même poids que la règle « autofill:focus », écrite plus bas). Celle-ci pèse plus : le champ reste sombre. */
+.auth-field .auth-input:-webkit-autofill:focus{-webkit-text-fill-color:#F5F5F7;-webkit-box-shadow:0 0 0 1000px #0B0B0F inset;box-shadow:0 0 0 1000px #0B0B0F inset}
+.auth-field .auth-input:autofill:focus{-webkit-text-fill-color:#F5F5F7;box-shadow:0 0 0 1000px #0B0B0F inset}
 .auth-field.auth-passrow{margin-bottom:0}
 .auth-field.auth-passrow .auth-input{padding-right:58px}
 .auth-field .auth-lbl{position:absolute;left:16px;top:19px;margin:0;font-family:inherit;font-size:17px;font-weight:400;line-height:20px;letter-spacing:-.2px;text-transform:none;color:#A6A6AE;pointer-events:none;transform-origin:0 0;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
@@ -4095,7 +4099,9 @@ function faitsDuJour() {
     var td = (S.taskDone || {})[w.id] || {};
     Object.keys(td).forEach(function(tid) { if(S.tasks[w.id] && S.tasks[w.id][tid] && memeJour(td[tid])) etapes++; });
   });
-  if(typeof _depot !== 'undefined' && _depot) Object.keys(_depot.thoughts).forEach(function(id) { if(memeJour(_depot.thoughts[id].created_at)) pensees++; });
+  // Une pensée dont le dépôt a été annulé n'est plus « déposée » : même règle que le chiffre « Déposé » du poste (depotRender)
+  var dernier = (typeof _range !== 'undefined' && _range) ? rangeIndex().latest : {};
+  if(typeof _depot !== 'undefined' && _depot) Object.keys(_depot.thoughts).forEach(function(id) { var f = dernier[id]; if(f && f.status === 'cancelled') return; if(memeJour(_depot.thoughts[id].created_at)) pensees++; });
   return { etapes: etapes, pensees: pensees };
 }
 // Dernière activité d'un projet : journal, tâche cochée, pensée rangée dedans, ou sa naissance
