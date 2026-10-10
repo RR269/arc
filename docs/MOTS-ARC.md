@@ -327,6 +327,12 @@ restent dans le Point du jour et dans « Déposé »). À la place, le poste : d
 - Inchangés : « Projets », « 3 en cours · 3 endormis », « Endormis », « Réveiller », « Ma vie », « Check-in fait »,
   « 3 éléments ».
 
+### Les mots des pensées d'un projet (10 octobre)
+
+- Section « Pensées » dans un projet, à droite « 2 à faire » (« Toutes faites », « Faite »).
+- Sous chaque pensée : « Demain · 09:00 · déposée il y a 2 h », « Faite · déposée hier », « déposée à l'instant ».
+- Au-delà de six : « Et 3 de plus, dans Déposé ».
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par

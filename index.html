@@ -2089,6 +2089,24 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 .wsec.vide>.wsec-head .wsec-ouvrir{display:inline-flex;align-items:center}
 #S2 .wsec.vide>.wsec-head .wsec-info{display:none}
 #S2 .wsec.vide>:not(.wsec-head){display:none}
+/* Les pensées d'un projet (branche projet-pensees, 10 octobre) : le panneau de l'accueil, une ligne par pensée ; le point
+   à la couleur du projet pour ce qui reste à faire, un anneau éteint pour ce qui est fait (avec le mot « Faite »). */
+#S2 #wsec-pensees[hidden]{display:none}
+#S2 .wpen{overflow:hidden;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+#S2 .wpen-row{display:grid;grid-template-columns:10px minmax(0,1fr) 10px;column-gap:14px;align-items:center;width:100%;min-height:60px;margin:0;padding:11px 16px 12px;border:0;background:none;font-family:var(--fa);text-align:left;color:inherit;cursor:pointer;transition:background-color .2s}
+#S2 .wpen-row + .wpen-row,#S2 .wpen-plus{border-top:1px solid rgba(255,255,255,.06)}
+#S2 .wpen-row:hover{background:rgba(255,255,255,.03)}
+#S2 .wpen-row:active{background:rgba(255,255,255,.06)}
+#S2 .wpen-pt{width:8px;height:8px;border-radius:50%;background:var(--wc,#fff);box-shadow:0 0 8px color-mix(in srgb,var(--wc,#fff) 60%,transparent)}
+#S2 .wpen-row.fait .wpen-pt{background:none;box-shadow:inset 0 0 0 1.6px #6E6E76}
+#S2 .wpen-txt{display:block;min-width:0}
+#S2 .wpen-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:16px;line-height:21px;font-weight:500;letter-spacing:-.2px;color:#F5F5F7}
+#S2 .wpen-row.fait .wpen-t{font-weight:400;color:#C4C4CC}
+#S2 .wpen-m{display:block;margin-top:2px;font-size:13px;line-height:18px;letter-spacing:-.05px;color:#B4B4BA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S2 .wpen-chev{width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+#S2 .wpen-plus{display:block;width:100%;min-height:48px;margin:0;padding:0 16px;border-left:0;border-right:0;border-bottom:0;background:none;font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.15px;text-align:left;color:#E8E8EC;cursor:pointer}
+#S2 :is(.wpen-row,.wpen-plus):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
+@media(prefers-reduced-motion:reduce){#S2 .wpen-row{transition:none}}
 #S2 .wsec-ouvrir:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 /* ═══ ACCUEIL : LE SOL ET LE CIEL (branche centre-controle, 10 octobre) ═══
    Rayan : « un centre de contrôle de notre vie, hyper connecté, comme dans un film de science-fiction, en supprimant
@@ -2304,6 +2322,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <button class="wtask-add-btn" id="task-add-btn">+ Ajouter</button>
         </div>
         <div id="tasks-container"></div>
+      </div>
+
+      <!-- PENSÉES : celles que tu as déposées et qui sont rangées dans ce projet (absente s'il n'y en a aucune) -->
+      <div class="wsec" id="wsec-pensees" hidden>
+        <div class="wsec-head"><span class="wsec-lbl">Pensées</span><div class="wsec-line"></div><span class="wsec-info" id="wpen-n"></span></div>
+        <div class="wpen" id="wpen-list"></div>
       </div>
 
       <!-- BLOQUANTS -->
@@ -4360,6 +4384,7 @@ function renderWorld(){
   // Notes
   var na=document.getElementById("notes-ta"); if(na){ na.value=S.notes[wid]||""; updateNotesChars(); }
   sectionsVides();
+  renderPenseesProjet();
 }
 
 // Sections vides repliées : une ligne et une touche, tant que rien n'y est écrit (sauf si on vient de l'ouvrir)
@@ -6309,7 +6334,7 @@ function rangeStats(filings) {
 /* Espaces envoyés au proxy : les cinq mondes et les deux pôles, avec une clé stable */
 function rangeSpaces() {
   var list = WORLDS.map(function(w) {
-    var key = w.key || String(w.name).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
+    var key = espaceCle(w);
     var note = (mondeDort(w.id) ? 'Endormi. ' : '') + String(w.cat || '') + '. ' + String(w.mission || '');
     return { key: key, name: w.name, kind: 'project', note: note.slice(0, 200), color: w.color };
   });
@@ -6322,6 +6347,59 @@ function rangeSpaces() {
   for(var i = list.length - 3; list.length > 12 && i >= 0; i--) if(/^Endormi\./.test(list[i].note)) list.splice(i, 1);
   while(list.length > 12) list.splice(list.length - 3, 1);
   return list;
+}
+// La clé d'espace d'un projet, telle que le rangement la connaît (la même pour le proxy, la page et ses écrans)
+function espaceCle(w) { return w.key || String(w.name).toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40); }
+/* LES PENSÉES D'UN PROJET (branche projet-pensees, 10 octobre). Vision : « l'IA la range, la relie au bon projet ».
+   Une pensée appartient au projet où son rangement le plus récent la place (ni annulée, ni « ARC hésite », ni refusée
+   par le serveur). À faire d'abord, de la plus récente à la plus ancienne ; les faites ensuite. Toucher une pensée
+   l'ouvre dans « Déposé », là où elle se modifie. Les textes sont posés par textContent. */
+var WPEN_MAX = 6;
+function penseesDuProjet(w) {
+  if(typeof _depot === 'undefined' || !_depot || typeof _range === 'undefined' || !_range || !w) return [];
+  var key = espaceCle(w), idx = rangeIndex();
+  return depotList().map(function(t) { return { t: t, f: idx.latest[t.id] }; })
+    .filter(function(x) { return x.t.status !== 'rejected' && x.f && x.f.space === key && (x.f.status === 'filed' || x.f.status === 'done'); })
+    .sort(function(a, b) {
+      var fa = a.f.status === 'done', fb = b.f.status === 'done';
+      if(fa !== fb) return fa ? 1 : -1;
+      return new Date(b.t.created_at) - new Date(a.t.created_at);
+    });
+}
+function renderPenseesProjet() {
+  var sec = document.getElementById('wsec-pensees'), list = document.getElementById('wpen-list'); if(!sec || !list) return;
+  var w = (typeof CUR !== 'undefined' && CUR.wid >= 0) ? monde(CUR.wid) : null;
+  var tout = penseesDuProjet(w);
+  sec.hidden = !tout.length;
+  list.innerHTML = '';
+  if(!tout.length) return;
+  var afaire = tout.filter(function(x) { return x.f.status !== 'done'; }).length;
+  document.getElementById('wpen-n').textContent = afaire ? (afaire + ' à faire') : (tout.length > 1 ? 'Toutes faites' : 'Faite');
+  tout.slice(0, WPEN_MAX).forEach(function(x) {
+    var fait = x.f.status === 'done', row = document.createElement('button');
+    row.type = 'button'; row.className = 'wpen-row' + (fait ? ' fait' : ''); row.setAttribute('data-tid', x.t.id);
+    var pt = document.createElement('span'); pt.className = 'wpen-pt'; pt.setAttribute('aria-hidden', 'true');
+    var tx = document.createElement('span'); tx.className = 'wpen-txt';
+    var b = document.createElement('span'); b.className = 'wpen-t'; b.textContent = x.t.body.replace(/\s+/g, ' ').trim();
+    var meta = [fait ? 'Faite' : rangeMomentText(x.f.moment), 'déposée ' + ilYA(new Date(x.t.created_at).getTime())].filter(Boolean).join(' · ');
+    var mm = document.createElement('span'); mm.className = 'wpen-m'; mm.textContent = meta;
+    tx.appendChild(b); tx.appendChild(mm);
+    var ch = document.createElement('i'); ch.className = 'wpen-chev'; ch.setAttribute('aria-hidden', 'true');
+    row.appendChild(pt); row.appendChild(tx); row.appendChild(ch);
+    row.addEventListener('click', function() { penseeOuvrir(x.t.id); });
+    list.appendChild(row);
+  });
+  if(tout.length > WPEN_MAX) {
+    var plus = document.createElement('button'); plus.type = 'button'; plus.className = 'wpen-plus';
+    plus.textContent = 'Et ' + (tout.length - WPEN_MAX) + ' de plus, dans Déposé';
+    plus.addEventListener('click', function() { penseeOuvrir(tout[WPEN_MAX].t.id); });
+    list.appendChild(plus);
+  }
+}
+function penseeOuvrir(tid) {
+  _rangeEdit = null; depotOpen();
+  var el = document.querySelector('#depot-list [data-id="' + tid + '"]');
+  if(el) el.scrollIntoView({ block: 'center' });
 }
 function rangeSpaceInfo(key) {
   var s = rangeSpaces().filter(function(x) { return x.key === key; })[0];
@@ -6865,6 +6943,8 @@ function rangeToSortCount() {
   return n;
 }
 function rangeHomeRender() {
+  // L'écran d'un projet ouvert suit aussi les rangements qui arrivent (ses pensées)
+  var s2 = document.getElementById('S2'); if(s2 && !s2.classList.contains('off')) renderPenseesProjet();
   if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
   var poste = document.getElementById('h-poste'); if(!poste) return;
   // Plus de liste d'étapes sur l'accueil (Rayan, 10 octobre : « c'est pas un agenda ») : les étapes vivent dans le Point
