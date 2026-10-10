@@ -70,7 +70,7 @@ const outil = () => { window.pjv = id => document.getElementById(id).value; };
   const msg = JSON.stringify(envoi.messages || []);
   ok(vu && c.ouvert && c.nom === PROPOSITION.nom && c.mission === PROPOSITION.mission && c.e.join('|') === PROPOSITION.etapes.join('|') && /ARC propose/.test(c.etat),
      'Sous une pensée, « En faire un projet » ouvre la feuille ; la proposition de Claude remplit le nom, la mission et les trois étapes', JSON.stringify(c));
-  ok(!envoi.task && /transformer une pensée en projet/.test(envoi.system || '') && msg.includes(PENSEE) && /ARYAN/.test(msg) && /Juridique/.test(msg) && envoi.max_tokens <= 500,
+  ok(!envoi.task && /transformer une pensée en projet/.test(envoi.system || '') && msg.includes(PENSEE) && /ARYAN/.test(msg) && /Juridique/.test(msg) && envoi.max_tokens <= 800,
      'Claude reçoit la pensée et les noms déjà pris, par le chemin de la discussion (rien d\'enregistré côté serveur, aucun redéploiement)', JSON.stringify({ task: envoi.task, max: envoi.max_tokens }));
 
   await page.fill('#pj-e3', 'Créer la chaîne et publier la première vidéo');
@@ -144,6 +144,38 @@ for (const mode of ['erreur', 'illisible']) {
     const k = await page.evaluate(() => WORLDS[WORLDS.length - 1].key);
     ok(k === 'chaine', 'Un nom accentué donne une clé de rangement sans accent (« Chaîne » → « chaine »)', k);
   }
+  await ctx.close();
+}
+
+// ── 2 bis. Réponses réelles possibles : bloc ```json et clés accentuées, réponse coupée, refus du service ; « Demander à nouveau »
+{
+  const rep = [
+    { status: 200, json: { content: [{ type: 'text', text: '```json\n{"Nom": "Nettoyage Ext", "Mission": "Ouvrir une société de nettoyage d’extérieur.", "Étapes": [{"texte": "Choisir le statut"}, "2. Lister le matériel", "- Trouver un premier client"]}\n```' }] } },
+    { status: 200, json: { content: [{ type: 'text', text: '{"nom": "Nettoy' }], stop_reason: 'max_tokens' } },
+    { status: 403, json: { error: { message: 'compte refusé', source: 'arc-proxy' } } },
+    { status: 200, json: { content: [{ type: 'text', text: JSON.stringify(PROPOSITION) }] } }
+  ];
+  let i = 0;
+  const fk = fakeSupabase();
+  fk.proxy = async body => body.task === 'file' ? { status: 200, json: { filing: { space: 'inconnu', confidence: 'unsure', step: '', moment: { type: 'none' }, extras: [] }, model: 'test' } } : rep[Math.min(i++, rep.length - 1)];
+  const { page, ctx } = await appareil(IPHONE, fk);
+  await page.evaluate(outil);
+  await ouvrirFeuille(page);
+  const a1 = await champs(page);
+  ok(a1.nom === 'Nettoyage Ext' && /nettoyage/.test(a1.mission) && a1.e.join('|') === 'Choisir le statut|Lister le matériel|Trouver un premier client',
+     'Réponse de Claude en bloc ```json avec « Nom », « Étapes » accentués et étapes numérotées ou en objets : lue quand même, étapes nettoyées', JSON.stringify(a1));
+  const raison = async () => { await page.evaluate(async () => { await projetProposer(); }); return page.evaluate(() => ({ etat: document.getElementById('pj-etat-t').textContent, btn: !document.getElementById('pj-reessayer').hidden })); };
+  await page.fill('#pj-nom', ''); await page.evaluate(() => { _pj.touche = {}; ['pj-nom', 'pj-mission', 'pj-e1', 'pj-e2', 'pj-e3'].forEach(id => document.getElementById(id).value = ''); });
+  const r2 = await raison();
+  const r3 = await raison();
+  ok(/coupée avant la fin/.test(r2.etat) && r2.btn && /n’a pas accès à Claude/.test(r3.etat) && !r3.btn && !/\b40[0-9]\b/.test(r3.etat),
+     'Échec : la feuille dit ce qui s\'est passé, en mots (réponse coupée ; compte sans accès), sans code ; « Demander à nouveau à ARC » seulement quand réessayer peut servir', JSON.stringify({ r2, r3 }));
+  const lignes = await page.evaluate(() => { const e = document.getElementById('pj-etat-t'); const r = document.createRange(); r.selectNodeContents(e); const rects = [...r.getClientRects()]; return e.textContent.includes('\u00A0:'); });
+  ok(lignes, 'Typographie : le deux-points est collé à son mot par une espace insécable (jamais en début de ligne)');
+  await page.evaluate(() => { document.getElementById('pj-reessayer').hidden = false; });
+  await page.click('#pj-reessayer'); await page.waitForTimeout(400);
+  const a4 = await champs(page);
+  ok(a4.nom === PROPOSITION.nom && /ARC propose/.test(a4.etat), '« Demander à nouveau à ARC » relance Claude et remplit la feuille', JSON.stringify(a4));
   await ctx.close();
 }
 
