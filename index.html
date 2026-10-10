@@ -2077,13 +2077,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .npj-etapes{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none;counter-reset:pje}
 .npj-etapes li{display:flex;align-items:center;gap:10px;counter-increment:pje}
 .npj-etapes li::before{content:counter(pje);flex-shrink:0;display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--b2);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:#E8E8EC}
+#pj-reessayer{min-height:44px;margin:-4px 0 14px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
+#pj-reessayer[hidden]{display:none}
 #pj-err{min-height:0;font-size:15px;line-height:1.4;color:#FF9F9F}
 #pj-err:empty{display:none}
 .npj-acts{display:flex;align-items:center;gap:10px;margin-top:4px}
 #pj-creer{flex:1;min-height:50px;border-radius:16px;border:0;background:#F5F5F7;color:#0B0B0F;font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
 #pj-creer:disabled{opacity:.55;cursor:default}
 #pj-annuler{min-height:50px;padding:0 16px;border-radius:16px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:var(--t2);cursor:pointer}
-#projet-modal :is(#pj-fermer,#pj-creer,#pj-annuler):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+#projet-modal :is(#pj-fermer,#pj-creer,#pj-annuler,#pj-reessayer):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 @media(max-width:560px){#projet-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}}
 @media(prefers-reduced-motion:reduce){#projet-modal.open{animation:none}#pj-etat .npj-pulse{animation:none}}
 </style>
@@ -2733,8 +2735,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   <div id="projet-box">
     <div class="npj-head"><div id="pj-titre">Nouveau projet</div><button id="pj-fermer" type="button">Fermer</button></div>
     <div class="npj-body">
-      <p class="npj-source">Né de ta pensée : <b id="pj-pensee"></b></p>
+      <p class="npj-source">Né de ta pensée&nbsp;: <b id="pj-pensee"></b></p>
       <div id="pj-etat" role="status" aria-live="polite" hidden><span class="npj-pulse" aria-hidden="true"></span><span id="pj-etat-t"></span></div>
+      <button id="pj-reessayer" type="button" hidden>Demander à nouveau à ARC</button>
       <form id="pj-form" novalidate>
         <label class="npj-champ"><span class="npj-lbl">Nom du projet</span>
           <input id="pj-nom" type="text" maxlength="24" autocomplete="off" enterkeyhint="next" placeholder="Un nom court"></label>
@@ -6554,57 +6557,94 @@ function projetRemplir(p) {
   projetTaille();
 }
 // Lit et vérifie la réponse de Claude ; null si elle ne convient pas
+// Lit la réponse de Claude ; renvoie { p } ou { raison } (forme inattendue). Tolérant : bloc ```json, clés accentuées
+// ou anglaises (« étapes », « steps », « name »), étapes en liste de textes, d'objets ou en lignes.
 function projetLire(txt) {
-  var a = String(txt || '').indexOf('{'), b = String(txt || '').lastIndexOf('}');
-  if(a < 0 || b <= a) return null;
-  var o; try { o = JSON.parse(txt.slice(a, b + 1)); } catch(e) { return null; }
-  var propre = function(x, max) { return typeof x === 'string' ? x.replace(/\s+/g, ' ').trim().slice(0, max) : ''; };
-  var nom = propre(o && o.nom, 24), mission = propre(o && o.mission, 200);
-  var etapes = Array.isArray(o && o.etapes) ? o.etapes.map(function(e) { return propre(e, 120); }).filter(Boolean).slice(0, 3) : [];
-  if(!nom || !etapes.length) return null;
-  if(projetNomErreur(nom)) nom = '';          // nom déjà pris : Rayan choisit
+  txt = String(txt || '').replace(/```(?:json)?/gi, '');
+  var a = txt.indexOf('{'), b = txt.lastIndexOf('}');
+  if(a < 0 || b <= a) return { raison: 'format' };
+  var o; try { o = JSON.parse(txt.slice(a, b + 1)); } catch(e) { return { raison: 'format' }; }
+  if(o && typeof o === 'object' && !Array.isArray(o) && o.projet && typeof o.projet === 'object') o = o.projet;
+  var cles = {};
+  Object.keys(o || {}).forEach(function(k) { cles[k.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()] = o[k]; });
+  var prendre = function() { for(var i = 0; i < arguments.length; i++) if(cles[arguments[i]] !== undefined) return cles[arguments[i]]; };
+  var propre = function(x, max) { return typeof x === 'string' ? x.replace(/\s+/g, ' ').replace(/^[\s\-–•\d.)]+/, '').trim().slice(0, max) : ''; };
+  var nom = propre(prendre('nom', 'name', 'titre', 'title'), 24), mission = propre(prendre('mission', 'objectif', 'but'), 200);
+  var e = prendre('etapes', 'etape', 'steps', 'actions');
+  if(typeof e === 'string') e = e.split(/\n+/);
+  var etapes = Array.isArray(e) ? e.map(function(x) { return propre(x && typeof x === 'object' ? (x.t || x.texte || x.etape || x.titre || x.action || '') : x, 120); }).filter(Boolean).slice(0, 3) : [];
+  if(!nom && !mission && !etapes.length) return { raison: 'format' };
+  if(nom && projetNomErreur(nom)) nom = '';    // nom déjà pris : Rayan choisit
   while(etapes.length < 3) etapes.push('');
-  return { nom: nom, mission: mission, etapes: etapes };
+  return { p: { nom: nom, mission: mission, etapes: etapes } };
 }
+// Ce qui s'est passé, en mots : la phrase suffit pour retrouver la cause (charte : pas de code à l'écran)
+var PJ_RAISONS = {
+  session: 'tu n\u2019es plus connecté. Reconnecte-toi pour que Claude t\u2019aide.',
+  reseau: 'le réseau n\u2019a pas répondu.',
+  expire: 'ta session a expiré. Reconnecte-toi pour que Claude t\u2019aide.',
+  interdit: 'ce compte n\u2019a pas accès à Claude.',
+  trop: 'trop de demandes d\u2019un coup. Réessaie dans une minute.',
+  panne: 'le service de Claude est en panne pour l\u2019instant.',
+  refus: 'la demande a été refusée par le service de Claude.',
+  coupee: 'la réponse de Claude a été coupée avant la fin.',
+  vide: 'Claude n\u2019a rien répondu.',
+  format: 'la réponse de Claude n\u2019avait pas la forme attendue.'
+};
+function projetErreur(raison) { var e = new Error(raison); e.raison = raison; return e; }
 async function projetDemander(pensee) {
   var token = null;
   if(_sb && getUID()) { var sess = await _sb.auth.getSession(); token = sess.data && sess.data.session && sess.data.session.access_token; }
-  if(!token) throw new Error('sans session');
-  var body = { model: CLAUDE_MODEL, max_tokens: 500, system: PJ_SYSTEM,
+  if(!token) throw projetErreur('session');
+  var body = { model: CLAUDE_MODEL, max_tokens: 800, system: PJ_SYSTEM,
     messages: [{ role: 'user', content: 'Noms déjà pris : ' + projetNomsPris().join(', ') + '.\n\nPensée de Rayan : « ' + pensee + ' »' }] };
-  var resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', { method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) });
-  if(!resp.ok) throw new Error('statut ' + resp.status);
-  var data = await resp.json();
-  return (data.content || []).filter(function(c) { return c && c.type === 'text'; }).map(function(c) { return c.text; }).join('');
+  var resp;
+  try {
+    resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', { method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(body) });
+  } catch(e) { throw projetErreur('reseau'); }
+  if(!resp.ok) throw projetErreur(resp.status === 401 ? 'expire' : resp.status === 403 ? 'interdit' : resp.status === 429 ? 'trop' : resp.status >= 500 ? 'panne' : 'refus');
+  var data = await resp.json().catch(function() { return {}; });
+  var txt = (data.content || []).filter(function(c) { return c && c.type === 'text'; }).map(function(c) { return c.text; }).join('');
+  if(!txt.trim()) throw projetErreur('vide');
+  var lu = projetLire(txt);
+  if(lu.p) return lu.p;
+  throw projetErreur(data.stop_reason === 'max_tokens' ? 'coupee' : lu.raison);
 }
 
-async function projetOuvrir(tid) {
-  var t = _depot.thoughts[tid]; if(!t) return;
-  _pj = { tid: tid, demande: _pj.demande + 1, touche: {} };
-  var n = _pj.demande;
-  var m = document.getElementById('projet-modal');
-  m.style.setProperty('--pjc', projetCouleur());
-  document.getElementById('pj-pensee').textContent = '« ' + t.body + ' »';
-  projetChamps().forEach(function(el) { el.value = ''; el.disabled = false; }); projetTaille();
-  document.getElementById('pj-err').textContent = '';
-  document.getElementById('pj-creer').disabled = false;
-  m.classList.add('open'); m.scrollTop = 0; projetTaille();
-  var ok = !!(_sb && getUID()) && navigator.onLine !== false;
-  if(!ok) { projetEtat('Hors connexion : écris ton projet toi-même.', true); document.getElementById('pj-nom').focus(); return; }
+async function projetProposer() {
+  var t = _depot.thoughts[_pj.tid]; if(!t) return;
+  var n = ++_pj.demande, m = document.getElementById('projet-modal');
+  document.getElementById('pj-reessayer').hidden = true;
+  if(!(_sb && getUID()) || navigator.onLine === false) { projetEtat('Hors connexion\u00A0: écris ton projet toi-même.', true); return; }
   projetEtat('ARC prépare ton projet…');
   try {
-    var p = projetLire(await projetDemander(t.body));
+    var p = await projetDemander(t.body);
     if(n !== _pj.demande || !m.classList.contains('open')) return;     // fermé ou rouvert entre-temps
-    if(!p) throw new Error('réponse illisible');
     projetRemplir(p);
     projetEtat('ARC propose. Corrige ce que tu veux, puis crée le projet.');
   } catch(e) {
     if(n !== _pj.demande) return;
-    console.warn('Projet : proposition impossible :', e.message);
+    var raison = e.raison || 'reseau';
+    console.warn('Projet : proposition impossible :', raison, e.message);
+    try { localStorage.setItem('arc_projet_diag', JSON.stringify({ at: new Date().toISOString(), raison: raison })); } catch(x) {}
     if(!_pj.touche['pj-e1'] && !document.getElementById('pj-e1').value) { document.getElementById('pj-e1').value = t.body.slice(0, 120); projetTaille(); }
-    projetEtat('ARC n’a pas pu préparer le projet. Écris-le toi-même : ta pensée est en première étape.', true);
+    projetEtat('ARC n\u2019a pas pu préparer le projet\u00A0: ' + PJ_RAISONS[raison] + ' Tu peux l\u2019écrire toi-même, ta pensée est en première étape.', true);
+    document.getElementById('pj-reessayer').hidden = raison === 'session' || raison === 'interdit';
   }
+}
+async function projetOuvrir(tid) {
+  var t = _depot.thoughts[tid]; if(!t) return;
+  _pj = { tid: tid, demande: _pj.demande, touche: {} };
+  var m = document.getElementById('projet-modal');
+  m.style.setProperty('--pjc', projetCouleur());
+  document.getElementById('pj-pensee').textContent = '« ' + t.body + ' »';
+  projetChamps().forEach(function(el) { el.value = ''; el.disabled = false; });
+  document.getElementById('pj-err').textContent = '';
+  document.getElementById('pj-creer').disabled = false;
+  m.classList.add('open'); m.scrollTop = 0; projetTaille();
+  if(!(_sb && getUID()) || navigator.onLine === false) document.getElementById('pj-nom').focus();
+  await projetProposer();
 }
 function projetFermer() {
   _pj.demande++; _pj.tid = null;
@@ -6622,7 +6662,7 @@ function projetCreer() {
     .filter(Boolean).map(function(x, i) { return { id: 'e' + id.toString(36) + i, t: x.slice(0, 120) }; });
   var cle = mondeCle(nom);
   S.mondes[String(id)] = { id: id, name: nom, key: cle, color: projetCouleur(), mission: mission,
-    desc: 'Né de ta pensée : « ' + t.body.slice(0, 280) + ' »', etapes: etapes, from: t.id };
+    desc: 'Né de ta pensée\u00A0: « ' + t.body.slice(0, 280) + ' »', etapes: etapes, from: t.id };
   normalizeS();
   saveS();
   // La pensée est rangée dans son projet (son étape, si elle en avait une, reste la sienne)
@@ -6648,6 +6688,7 @@ function projetCreer() {
     if(suiv) document.getElementById(suiv).focus(); else document.getElementById('pj-creer').focus();
   });
   document.getElementById('pj-fermer').addEventListener('click', projetFermer);
+  document.getElementById('pj-reessayer').addEventListener('click', function() { projetProposer(); });
   document.getElementById('pj-annuler').addEventListener('click', projetFermer);
   document.getElementById('projet-modal').addEventListener('click', function(ev) { if(ev.target.id === 'projet-modal') projetFermer(); });
   document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && document.getElementById('projet-modal').classList.contains('open')) projetFermer(); });

@@ -879,6 +879,20 @@ En faire un projet (branche `developper`, 10 octobre 3 h 30, partie de `main` à
   rangement 25/25, matin 27/27, mondes 7/7, pôles 9/9, cockpit 17/17, recherche 8/8, entrée-fond 41/41 ;
   436 `<div` / 436 `</div>`. Vérifié dans Chromium seulement : **le vrai Claude et l'iPhone restent à voir par Rayan.**
 
+- **PR #20 fusionnée par Rayan le 10 octobre à 4 h 08.** Premier essai réel (4 h 13, iPhone, pensée « OUVRIR SOCIÉTÉ
+  DE NETTOYAGE D'EXTÉRIEUR ») : « ARC n'a pas pu préparer le projet ». **Cause non prouvée** : le proxy transmet bien
+  `system` et `max_tokens` (`supabase/functions/ARC-CLAUDE-PROXY/index.ts`, fonction `chat`) ; la page ne gardait pas
+  la raison. Hypothèses : réponse de Claude dans une forme que `projetLire` refusait (clés accentuées comme « étapes »,
+  objets au lieu de textes), réponse coupée à 500 jetons, refus du service, réseau.
+- **Correctif (branche `projet-proposition`, partie de `main` à la fusion de la PR #20)** : lecture tolérante (bloc
+  ```json, clés accentuées ou anglaises, étapes en textes, objets ou lignes, numéros retirés, objet `projet`
+  englobant) ; 800 jetons ; la feuille dit la raison en mots (`PJ_RAISONS` : session, réseau, session expirée, compte
+  sans accès, trop de demandes, panne, refus, réponse coupée, réponse vide, forme inattendue), sans code ; la raison
+  est aussi gardée sur l'appareil (`arc_projet_diag`) ; « Demander à nouveau à ARC » (`projetProposer`) quand
+  réessayer peut servir. Espaces insécables devant les deux-points (« pensée : » ne commence plus une ligne).
+  **Au prochain essai, la phrase de la feuille dira la cause.**
+- Tests : projet 30/30 (quatre contrôles ajoutés), les douze autres suites passent ; 436 `<div` / 436 `</div>`.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
