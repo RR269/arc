@@ -911,6 +911,36 @@ Sections vides repliées (branche `projet-sections`, 10 octobre 5 h, partie de `
   différait d'un pixel d'arrondi une fois la page plus courte).
 - Tests : projet 31/31 (un contrôle ajouté), mondes 7/7, et les onze autres suites passent ; 436 `<div` / 436 `</div>`.
 
+Accueil, centre de contrôle : étude puis le sol et le ciel (branches `etude-accueil` et `centre-controle`, 10 octobre
+5 h 30 et 6 h, parties de `main` après la PR #23) :
+- Rayan (5 h 26, dicté) : « transformer cet espace en un centre de contrôle de notre vie, hyper connecté, comme dans un
+  film de science-fiction, en supprimant ce fond noir fade seul ; là je vois une page chargée de fonctions, l'une
+  après l'autre » ; il demande une étude ou un audit ; d'autres visions viendront, il en parlera plus tard.
+  Puis (5 h 52) : « choisis le meilleur pour ARC, si tu as totalement compris ma vision ».
+- **Étude** : `docs/ETUDE-ACCUEIL.md`, par un agent qui n'avait pas construit l'écran. Diagnostic : une colonne de
+  cartes grises de même poids sur un noir uni, un horizon qui ne bouge jamais, aucun signal vivant. Trois principes :
+  un horizon, un sol ; chaque lumière dit un fait ; le vivant devant, le dormant derrière. Direction unique « le sol
+  et le ciel », quatre étapes testables (fond, hiérarchie, signaux vrais, horizon qui répond), validation iPhone
+  après la deuxième. Cinq questions posées à Rayan avec réponses supposées (toutes « oui ») : il a délégué le choix.
+- **Étape 1, le fond** (`#S1 .h-ciel`, `#S1 .h-sol`, dans `.hw` pour défiler avec le contenu, `z-index` −1 sous un
+  `.hw` isolé ; aucun mode de fusion) : le ciel, une lueur basse en haut à la couleur de l'espace de la prochaine
+  étape (`--ciel`, posé par `homeCiel` depuis `rangeHomeRender` : orange pour ARYAN, bleu pour un projet né d'une
+  pensée, violet d'ARC si rien n'attend) ; le grain de l'écran d'entrée, noir, à 22 % ; le sol, un second arc
+  presque éteint (opacité 0,5 sur un dégradé déjà pâle), dont le bord passe 40 px sous la carte du but (`--sol-y`,
+  recalculé au rendu et au redimensionnement). **Piège vu** : `#S1` est `position:fixed` et défile ; les couches
+  doivent vivre dans `.hw`, et le sol se mesure par rapport à `.hw`, pas à `#S1`.
+- **Étape 2, la hiérarchie** : la carte du but porte un filet à sa couleur (45 %) ; tout ce qui suit (Ensuite,
+  Projets, Ma vie, tuiles, Endormis) passe sous le sol avec un filet plus discret (6 %) et un fond plus sombre.
+  Une seule touche blanche, inchangée. La page ne s'allonge pas (1 168 px remplie sur iPhone 390).
+- **Pas encore fait, étapes 3 et 4** (après validation sur iPhone) : les signaux vrais (moment de l'étape, « N étapes
+  faites aujourd'hui », dernière activité par projet et retrait après 7 jours, synchronisation en mot, Point du jour
+  vu) ; l'horizon qui répond (comète sur « C'est fait », point de lumière au dépôt, éclair au rangement, trait de
+  synchronisation), jamais en boucle.
+- Tests : accueil 19/19 (deux contrôles ajoutés, iPhone et Mac : couches sous le contenu, grain, ciel à la couleur
+  de la prochaine étape, sol sous sa carte, ≥ 8 % de noir franc), les douze autres suites passent ; contraste
+  ≥ 4,5 : 1 mesuré partout ; 438 `<div` / 438 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son
+  iPhone** (le rendu des lueurs et du grain sur l'écran OLED).
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

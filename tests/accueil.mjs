@@ -15,7 +15,7 @@
 // La ville : la position vient d'un faux appareil et son nom d'un faux service (aucune requête ne part vers le vrai).
 
 import { chromium, startServer, fakeSupabase, openPage, sessionScript, deposit } from './outils.mjs';
-import { mesurer } from './mesure.mjs';
+import { mesurer, png } from './mesure.mjs';
 
 const { server, url } = await startServer();
 const browser = await chromium.launch();
@@ -110,6 +110,24 @@ for (const vp of ECRANS) {
   ok(!defauts.length, `${vp.n} : l'accueil respecte la charte, vide et rempli (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion ni débordement, police du système, horizon d'ARC, date écrite une fois)`,
      defauts.slice(0, 4).join(' ; ') || `polices : ${dernier.polices.join(', ')} ; ${dernier.etapes} étapes, ${dernier.mondes} projets en cours, ${dernier.dort} endormis, ${dernier.poles} pôles`);
   ok(n > 300 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout sur l'accueil, vide et rempli, menu compris`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
+  // Le sol et le ciel (10 octobre) : le ciel prend la couleur de l'espace de la prochaine étape (un fait), le sol passe
+  // sous la carte du but ; le noir reste noir (pas de voile) ; aucune fusion ; le vivant devant : une seule touche blanche.
+  const sc = await page.evaluate(() => {
+    const s1 = document.getElementById('S1'), now = s1.querySelector('.next-item.is-now');
+    const ciel = s1.style.getPropertyValue('--ciel').trim(), solY = parseFloat(s1.style.getPropertyValue('--sol-y'));
+    const hwTop = s1.querySelector('.hw').getBoundingClientRect().top;
+    const attendu = now ? getComputedStyle(now).getPropertyValue('--rg-c').trim() : null;
+    const bas = now ? now.getBoundingClientRect().bottom - hwTop : null;
+    const sol = s1.querySelector('.h-sol'), cl = s1.querySelector('.h-ciel');
+    return { ciel, attendu, solY, bas, couches: !!(sol && cl), grain: /svg/.test(getComputedStyle(cl, '::after').backgroundImage), sousContenu: parseInt(getComputedStyle(sol).zIndex) < 0 && parseInt(getComputedStyle(cl).zIndex) < 0 };
+  });
+  const noir = await page.evaluate(() => { const b = document.body.getBoundingClientRect(); return { w: Math.round(b.width), h: innerHeight }; });
+  const shot = png(await page.screenshot());
+  let noirs = 0, total = 0; for (let y = 0; y < shot.h; y += 3) for (let x = 0; x < shot.w; x += 3) { const i = (y * shot.w + x) * shot.bpp; total++; if (shot.px[i] <= 2 && shot.px[i + 1] <= 2 && shot.px[i + 2] <= 2) noirs++; }
+  const partNoir = Math.round(100 * noirs / total);
+  ok(sc.couches && sc.sousContenu && sc.grain && sc.ciel.toLowerCase() === (sc.attendu || '').toLowerCase() && Math.abs(sc.solY - (sc.bas - 40)) <= 2 && partNoir >= 8,
+     `${vp.n} : le sol et le ciel : couches sous le contenu, grain, ciel à la couleur de la prochaine étape, sol sous sa carte, au moins 8 % de noir franc`,
+     JSON.stringify({ ciel: sc.ciel, attendu: sc.attendu, solY: sc.solY, bas: sc.bas, partNoir }));
   // les cinq mondes et les deux pôles s'ouvrent depuis l'accueil, et on en revient
   const ouverts = [];
   for (let w = 0; w < 5; w++) { await page.evaluate(i => document.querySelector(`#S1 :is(.pj, .h-dort-row)[data-wid="${i}"]`).click(), w); await page.waitForTimeout(650);
