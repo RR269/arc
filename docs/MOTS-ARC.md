@@ -297,6 +297,14 @@ l'accueil). « Tu as une idée. Elle devient réelle. » n'est plus sur l'écran
 - Retirés : le nuage « ☁ » des bulles de synchronisation (emoji), et la bulle « Sync · 03:37 » elle-même (la pastille du
   haut le dit déjà, la bulle passait sur la note du dépôt).
 
+### Les mots du centre de contrôle (10 octobre, accueil)
+
+- Sous le titre : « 2 étapes faites aujourd'hui · 1 pensée déposée » (absent les jours à zéro, jamais « 0 »).
+- Carte du but : « Sans moment » quand aucun moment n'est fixé.
+- Lignes de projet : « aujourd'hui », « hier », « il y a 3 j », « il y a 2 mois » (la dernière activité).
+- Synchronisation : « À jour 06:24 », « Envoi… », « Hors ligne ». Retirés : « ✓ Sync », « Sync… », et « ARC » comme état.
+- Point du jour : « Vu à 08:12 » une fois vu ; « Prêt à 08 h 00 » avant l'heure.
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par

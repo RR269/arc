@@ -128,6 +128,34 @@ for (const vp of ECRANS) {
   ok(sc.couches && sc.sousContenu && sc.grain && sc.ciel.toLowerCase() === (sc.attendu || '').toLowerCase() && Math.abs(sc.solY - (sc.bas - 40)) <= 2 && partNoir >= 8,
      `${vp.n} : le sol et le ciel : couches sous le contenu, grain, ciel à la couleur de la prochaine étape, sol sous sa carte, au moins 8 % de noir franc`,
      JSON.stringify({ ciel: sc.ciel, attendu: sc.attendu, solY: sc.solY, bas: sc.bas, partNoir }));
+  // Signaux vrais (10 octobre) : chaque chiffre vient de l'état, zéro = absent ; l'activité d'un projet ne vient que
+  // d'un vrai geste (S.taskDone), jamais de la date posée par défaut au chargement (S.taskDates).
+  const sv = await page.evaluate(() => {
+    const faits = document.getElementById('h-faits');
+    const lignes = [...document.querySelectorAll('#S1 .pj')].map(e => ({ n: e.querySelector('.pj-n').textContent, act: (e.querySelector('.pj-act') || {}).textContent || '', calme: e.classList.contains('calme') }));
+    const sans = !!document.querySelector('#S1 .next-item.is-now .next-sans');
+    const defaut = Object.values(S.taskDates).some(w => Object.keys(w).length) && !Object.values(S.taskDone || {}).some(w => Object.keys(w).length);
+    return { faits: faits.hidden ? null : faits.textContent, lignes, sans, defaut, sync: document.getElementById('sync-lbl').textContent };
+  });
+  // trois pensées déposées à l'instant, rangées dans ARYAN et ATLAS (et une hésitation) : voilà les seuls faits
+  const faitsOk = /3 pensées déposées/.test(sv.faits || '') && !/étape/.test(sv.faits || '');
+  const actOk = sv.lignes.every(l => (l.n === 'ARYAN' || l.n === 'ATLAS') ? /aujourd/.test(l.act) : l.act === '');
+  ok(faitsOk && actOk && sv.defaut && !/Sync|ARC/.test(sv.sync),
+     `${vp.n} : signaux vrais : les faits du jour disent ce qui s'est passé (absents sinon), un projet ne montre une activité qu'après un vrai geste (les dates par défaut ne comptent pas), la synchronisation est un mot`,
+     JSON.stringify(sv));
+  {
+    // « C'est fait » sur une tâche de projet : un vrai geste, compté dans les faits du jour, et la comète part une fois
+    await page.evaluate(() => { S.mondes['1760000000000'] = { id: 1760000000000, name: 'Essai', key: 'essai', color: '#64d2ff', mission: '', desc: '', etapes: [{ id: 'e1', t: 'Première étape' }], from: null }; normalizeS(); saveS(); renderHome(); });
+    await page.evaluate(() => { const b = [...document.querySelectorAll('#S1 .next-item.is-now .rg-btn')].find(x => x.textContent === "C'est fait"); if (b) b.click(); });
+    await page.waitForTimeout(60);
+    const ap = await page.evaluate(() => ({ faits: document.getElementById('h-faits').textContent, comete: document.querySelector('#S1 .h-comete').classList.contains('va-comete'), reduit: matchMedia('(prefers-reduced-motion: reduce)').matches, fait: Object.values(S.taskDone || {}).some(w => Object.keys(w).length) }));
+    await page.waitForTimeout(1400);
+    const fin = await page.evaluate(() => document.querySelector('#S1 .h-comete').classList.contains('va-comete'));
+    // le premier « C'est fait » ferme l'étape de la pensée du jour (ARYAN) : un vrai geste, compté
+    ok(/étape faite aujourd/.test(ap.faits) && (ap.reduit ? !ap.comete : ap.comete) && !fin,
+       `${vp.n} : « C'est fait » compte dans les faits du jour ; la comète part une fois (jamais quand l'appareil demande moins de mouvement) puis s'éteint`, JSON.stringify({ ap, fin }));
+    await page.evaluate(() => { delete S.mondes['1760000000000']; delete S.tasks[1760000000000]; delete S.taskDone[1760000000000]; normalizeS(); saveS(); renderHome(); });
+  }
   // les cinq mondes et les deux pôles s'ouvrent depuis l'accueil, et on en revient
   const ouverts = [];
   for (let w = 0; w < 5; w++) { await page.evaluate(i => document.querySelector(`#S1 :is(.pj, .h-dort-row)[data-wid="${i}"]`).click(), w); await page.waitForTimeout(650);
@@ -330,6 +358,29 @@ for (const vp of ECRANS) {
   // l'heure est posée, pas avancée : avancer l'horloge de plusieurs heures d'un coup échouait parfois sous charge
   for (const h of ['09', '16', '23']) { await page.clock.setFixedTime(new Date(`2026-10-08T${h}:00:00+02:00`)); vus.push(await lire()); }
   ok(vus.join(' | ') === 'nuit:Jeudi 8 octobre:picto | matin:Jeudi 8 octobre:picto | aprem:Jeudi 8 octobre:picto | soir:Jeudi 8 octobre:picto', 'Au-dessus du titre : le moment de la journée (un pictogramme au trait, quatre moments) et la date, écrite une fois', vus.join(' | '));
+  await ctx.close();
+}
+
+/* L'horizon répond, avec le mouvement permis : la comète file une fois sur « C'est fait », l'étincelle monte au
+   dépôt, rien ne tourne en boucle, et chaque réponse s'éteint seule. */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'no-preference' });
+  await ctx.addInitScript(sessionScript());
+  const fk = fakeSupabase(); fk.proxy = reponses();
+  const { page, errors } = await openPage(browser, url, { ctx, fk });
+  const lu = () => page.evaluate(() => ({ et: document.querySelector('#S1 .h-etincelle').classList.contains('va-etincelle'), co: document.querySelector('#S1 .h-comete').classList.contains('va-comete'),
+    anims: document.getAnimations().map(a => a.animationName || '').filter(n => /hComete|hEtincelle|hEclair/.test(n)) }));
+  const repos = await lu();
+  await deposit(page, 'Appeler la comptable pour la TVA');
+  await page.waitForTimeout(80); const t1 = await lu();
+  await page.waitForTimeout(3200); const t2 = await lu();
+  await page.evaluate(() => { depotClose(); goHome(); renderHome(); });
+  await page.evaluate(() => { const b = [...document.querySelectorAll('#S1 .next-item.is-now .rg-btn')].find(x => x.textContent === "C'est fait"); if (b) b.click(); });
+  await page.waitForTimeout(200); const t3 = await lu();
+  await page.waitForTimeout(1700); const t4 = await lu();
+  ok(!repos.anims.length && t1.et && t1.anims.includes('hEtincelle') && !t2.et && !t2.anims.length && t3.co && t3.anims.includes('hComete') && !t4.co && !t4.anims.length && !errors.length,
+     'L\'horizon répond : rien au repos ; l\'étincelle monte au dépôt puis s\'éteint ; la comète file sur « C\'est fait » puis s\'éteint ; aucune boucle',
+     JSON.stringify({ repos, t1, t2, t3, t4, erreurs: errors }));
   await ctx.close();
 }
 
