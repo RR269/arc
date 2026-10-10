@@ -941,6 +941,32 @@ Accueil, centre de contrôle : étude puis le sol et le ciel (branches `etude-ac
   ≥ 4,5 : 1 mesuré partout ; 438 `<div` / 438 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son
   iPhone** (le rendu des lueurs et du grain sur l'écran OLED).
 
+Centre de contrôle, étapes 3 et 4 : les signaux vrais, l'horizon qui répond (branche `signaux-vrais`, 10 octobre
+6 h 25, partie de `main` à `505071d`, PR #24 fusionnée à 6 h 21) :
+- Rayan (6 h 22) : « go ».
+- **Signaux vrais** (chaque chiffre vient de l'état ; zéro = absent) : sous le titre, `#h-faits` : « N étapes faites
+  aujourd'hui · N pensées déposées » (`faitsDuJour`, `renderFaits`), absent s'il n'y a rien ; sur la carte du but,
+  « Sans moment » si aucun moment n'est fixé (`.next-sans`) ; sur chaque ligne de projet, la dernière activité
+  (`projetActivite`, `depuisQuand` : « aujourd'hui », « hier », « il y a N j », « il y a N mois »), en tête de la
+  seconde ligne pour ne jamais être coupée ; sans mouvement depuis 7 jours, la ligne recule (`.pj.calme` : plus
+  basse, sans relief, nom à 16 px, contraste gardé) ; la pastille de synchronisation dit « À jour 06:24 » (heure du
+  dernier échange, `_syncAt`), « Envoi… » pendant, « Hors ligne » sinon, plus de point vert muet ni de « ✓ Sync » /
+  « ARC » ; « Point du jour » dit « Vu à 08:12 » une fois vu.
+- **Faux signal prouvé et écarté** : `S.taskDates` est posé à `Date.now()` par défaut au chargement (`normalizeS`,
+  « 34 étapes faites aujourd'hui » sur un appareil neuf). Un vrai « C'est fait » écrit `S.taskDone[wid][tid]`
+  (`tacheFaite`, depuis la case d'un monde, le cockpit et l'accueil) ; seuls ces horodatages comptent.
+- **L'horizon répond** (`horizonRepond`, une fois, jamais en boucle, rien si l'appareil demande moins de
+  mouvement) : « C'est fait » lance la comète le long de l'arc (`.h-comete`, `hComete`, 1,1 s, tête blanche et
+  traîne à la couleur de l'espace) ; une pensée déposée fait monter une étincelle de la barre du bas vers l'horizon
+  (`.h-etincelle`, `hEtincelle`, 0,9 s) ; un rangement reçu de l'IA éclaire le ciel une seconde à la couleur de
+  l'espace (`.h-ciel.va-eclair`, `hEclair`). Toujours `transform`, `opacity`, fond ; aucun mode de fusion.
+- **Piège vu** : les rangements arrivent après `renderHome` (par `depotRender → rangeHomeRender`) ; les faits et
+  les lignes de projet se redessinent donc aussi depuis `rangeHomeRender` (garde `_renderCardsEnCours`).
+- Tests : accueil 24/24 (trois contrôles ajoutés : signaux vrais iPhone et Mac, « C'est fait » compté et comète
+  absente sous mouvement réduit, et, avec le mouvement permis, étincelle et comète une fois puis éteintes, aucune
+  boucle), les douze autres suites passent ; 439 `<div` / 439 `</div>`. Vérifié dans Chromium seulement : **la
+  fluidité de la comète et de l'étincelle reste à voir par Rayan sur son iPhone.**
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

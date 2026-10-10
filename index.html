@@ -2118,11 +2118,33 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S1 .next-item.next-row,#S1 .pj,#S1 .vie,#S1 .h-dort,#S1 .h-tile{border-color:rgba(255,255,255,.06)}
 #S1 .next-item.next-row{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01)),#0B0B0E}
 @media(prefers-reduced-motion:reduce){#S1 .h-ciel::before{transition:none}}
+/* ═══ SIGNAUX VRAIS (branche signaux-vrais, 10 octobre) ═══ Chaque lumière dit un fait ; le vivant devant, le dormant derrière. */
+#S1 .h-faits{margin:8px 0 0;font-size:15px;line-height:20px;letter-spacing:-.15px;color:#D6D6DC}
+#S1 .h-faits[hidden]{display:none}
+#S1 .next-sans{margin:6px 0 0;font-size:14px;line-height:18px;color:var(--t2)}
+#S1 .pj-act{color:#B4B4BA}
+#S1 .pj.calme{min-height:58px;padding-top:8px;padding-bottom:10px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.008)),#09090C;box-shadow:none}
+#S1 .pj.calme .pj-n{font-size:16px;color:color-mix(in srgb,var(--pc,#fff) 70%,#E8E8EC)}
+#S1 .pj.calme .pj-ico{opacity:.75}
+#S1 .pj.calme::before{display:none}
+#S1 #sync-lbl{font-variant-numeric:tabular-nums;white-space:nowrap}
+/* ═══ L'HORIZON RÉPOND ═══ transform, opacity, position d'un fond ; aucun mode de fusion ; rien sans événement */
+#S1 .h-horizon{overflow:visible}
+#S1 .h-comete{position:absolute;left:0;top:0;width:92px;height:40px;margin:-20px 0 0 -72px;pointer-events:none;opacity:0;transform-origin:72px 20px;--ec:var(--eclat,#FF9500);
+  background:radial-gradient(circle at 72px 20px,#fff 0,#fff 1.6px,color-mix(in srgb,var(--ec) 45%,#fff) 3.2px,color-mix(in srgb,var(--ec) 62%,transparent) 7px,color-mix(in srgb,var(--ec) 22%,transparent) 13px,transparent 20px),linear-gradient(90deg,transparent,rgba(255,255,255,.5) 60%,#fff) 0 18.5px/72px 3px no-repeat}
+@keyframes hComete{0%{opacity:0;transform:translate(0,22px) rotate(-7deg)}8%{opacity:1}100%{opacity:0;transform:translate(100vw,-10px) rotate(-7deg)}}
+#S1 .h-comete.va-comete{animation:hComete 1.1s cubic-bezier(.3,.6,.4,1) both}
+#S1 .h-etincelle{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 70px);width:10px;height:10px;margin-left:-5px;border-radius:50%;pointer-events:none;opacity:0;z-index:31;background:#fff;box-shadow:0 0 12px 3px rgba(255,255,255,.7),0 0 28px 8px color-mix(in srgb,var(--ciel,#C77DF0) 60%,transparent)}
+@keyframes hEtincelle{0%{opacity:0;transform:translateY(0) scale(.6)}10%{opacity:1;transform:translateY(-10px) scale(1)}100%{opacity:0;transform:translateY(calc(-100vh + 220px)) scale(.3)}}
+#S1 .h-etincelle.va-etincelle{animation:hEtincelle .9s cubic-bezier(.2,.7,.2,1) both}
+@keyframes hEclair{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+#S1 .h-ciel.va-eclair::before{animation:hEclair 1.1s ease-out both;background:radial-gradient(75% 62% at 50% 0%,color-mix(in srgb,var(--eclat,#fff) 70%,transparent),color-mix(in srgb,var(--eclat,#fff) 20%,transparent) 44%,transparent 72%)}
+@media(prefers-reduced-motion:reduce){#S1 .h-comete,#S1 .h-etincelle{display:none}#S1 .h-ciel.va-eclair::before{animation:none}}
 </style>
 </head>
 <body>
 <!-- S1 HOME -->
-<div class="scr" id="S1"><div class="hw"><div class="h-ciel" aria-hidden="true"></div><div class="h-sol" aria-hidden="true"></div>
+<div class="scr" id="S1"><div class="hw"><div class="h-ciel" aria-hidden="true"></div><i class="h-etincelle" aria-hidden="true"></i><div class="h-sol" aria-hidden="true"></div>
   <nav class="hn"><div class="hn-left">
     <div class="h-logo-mark"><svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" overflow="visible"><path class="arc-leg-l" d="M18 5 L4 30"/><path class="arc-leg-r" d="M18 5 L32 30"/><path class="arc-cross" d="M9 20 Q18 13 27 20"/><path class="arc-shimmer" d="M9 20 Q18 13 27 20"/><circle class="arc-apex" cx="18" cy="5" r="2"/></svg></div>
     <div class="h-logo-name">ARC</div>
@@ -2145,8 +2167,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <!-- le moment (pictogramme), la date, puis la ville et le pays si la personne a choisi de les afficher -->
     <div class="h-quand" id="h-quand"><i class="h-quand-ico" aria-hidden="true"></i><span id="h-date"></span><span class="h-lieu" id="h-lieu" hidden></span></div>
     <h1 class="h-h1"><span class="h-h1-gradient">Un cerveau.</span> <span class="h-h1-light" id="h-espaces">Sept espaces.</span></h1>
+    <!-- des faits vrais du jour ; absente quand il n'y a rien à dire (jamais « 0 ») -->
+    <div class="h-faits" id="h-faits" hidden></div>
   </div>
-  <div class="h-horizon" aria-hidden="true"></div>
+  <div class="h-horizon" aria-hidden="true"><i class="h-comete"></i></div>
   <!-- LA PROCHAINE ÉTAPE, puis la suite : tirées des pensées rangées. C'est le but de l'écran. -->
   <section class="next-wrap" id="next-steps" aria-labelledby="next-title">
     <h2 class="next-title" id="next-title">Prochaines étapes</h2>
@@ -3303,6 +3327,7 @@ var SYNC_PERTES_KEY = 'arc_sync_pertes_v1';
 var SYNC_META_MAX = { _lastAction: 1, _savedAt: 1, _worldsV: 1 };      // nombres qui ne font que monter : le plus grand
 var SYNC_ENTIER = { lastActive: 1, taskOrder: 1 };                    // listes dont l'ordre est la donnée : un bloc
 var _syncAgain = false;
+var _syncAt = 0;        // heure du dernier échange réussi : la pastille le dit en mot, pas en point vert
 
 function syncClone(o) { return o === undefined ? undefined : JSON.parse(JSON.stringify(o)); }
 function syncEq(a, b) {
@@ -3456,14 +3481,14 @@ async function pushToCloud() {
   if(_pushing) { _syncAgain = true; return; }       // un échange est en cours : on en refait un juste après
   if(navigator.onLine === false) { setSyncUI('err', 'Hors ligne'); return; }   // l'événement « online » relancera
   _pushing = true;
-  setSyncUI('busy', 'Sync…');
+  setSyncUI('busy', 'Envoi…');
   try {
     var r, recu = false, tours = 0;
     do { _syncAgain = false; r = await syncEchange(); recu = recu || (r && r.recu); tours++; }
     while((_syncAgain || (r && r.encore)) && tours < 5);
-    if(recu) renderHome();      // la pastille du haut dit déjà « Sync » : pas de bulle par-dessus la note du dépôt
-    setSyncUI('ok', '✓ Sync');
-    setTimeout(function() { if(!_pushing) setSyncUI('ok', 'ARC'); }, 2000);
+    if(recu) renderHome();      // la pastille du haut dit déjà l'état : pas de bulle par-dessus la note du dépôt
+    _syncAt = Date.now();
+    setSyncUI('ok', 'À jour\u00A0' + new Date(_syncAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
   } catch(e) {
     setSyncUI('err', 'Hors ligne');
     console.warn('Push failed:', e.message);
@@ -4012,6 +4037,7 @@ function normalizeS(){
     }
   }
   if(!S.taskDates) S.taskDates={};
+  if(!S.taskDone) S.taskDone={};     // heure réelle de chaque « C'est fait » (jamais posée par défaut : un signal vrai)
   if(!S.sessions) S.sessions=[];
   if(!S.jurNotes) S.jurNotes="";
   WORLDS.forEach(function(w){
@@ -4080,7 +4106,70 @@ setInterval(tickClock,1000); tickClock();
 
 
 /* ===== RENDER HOME ===== */
+/* ═══ SIGNAUX VRAIS (branche signaux-vrais, 10 octobre) ═══ Chaque chiffre vient de l'état ; zéro = absent.
+   Piège prouvé : S.taskDates est posé par défaut à Date.now() au chargement (normalizeS) : il ne dit rien de vrai.
+   Les faits du jour et l'activité d'un projet lisent S.taskDone, écrit seulement par un vrai « C'est fait ». */
+function tacheFaite(wid, tid) { if(!S.taskDone) S.taskDone = {}; if(!S.taskDone[wid]) S.taskDone[wid] = {}; S.taskDone[wid][tid] = Date.now(); }
+function memeJour(a, b) { a = new Date(a); b = b ? new Date(b) : new Date(); return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+// Étapes faites aujourd'hui : rangements passés « done » aujourd'hui + tâches de projet cochées aujourd'hui
+function faitsDuJour() {
+  var etapes = 0, pensees = 0;
+  if(typeof _range !== 'undefined' && _range) {
+    var idx = rangeIndex();
+    Object.keys(idx.latest).forEach(function(tid) { var f = idx.latest[tid]; if(f.status === 'done' && memeJour(f.created_at)) etapes++; });
+  }
+  WORLDS.forEach(function(w) {
+    var td = (S.taskDone || {})[w.id] || {};
+    Object.keys(td).forEach(function(tid) { if(S.tasks[w.id] && S.tasks[w.id][tid] && memeJour(td[tid])) etapes++; });
+  });
+  if(typeof _depot !== 'undefined' && _depot) Object.keys(_depot.thoughts).forEach(function(id) { if(memeJour(_depot.thoughts[id].created_at)) pensees++; });
+  return { etapes: etapes, pensees: pensees };
+}
+// Dernière activité d'un projet : journal, tâche cochée, pensée rangée dedans, ou sa naissance
+function projetActivite(w) {
+  var t = 0;
+  (S.journal[w.id] || []).forEach(function(j) { if(j.ts > t) t = j.ts; });
+  var td = (S.taskDone || {})[w.id] || {};
+  Object.keys(td).forEach(function(tid) { if(S.tasks[w.id] && S.tasks[w.id][tid] && td[tid] > t) t = td[tid]; });
+  if(typeof _range !== 'undefined' && _range) {
+    var key = w.key || mondeCle(w.name), idx = rangeIndex();
+    Object.keys(idx.latest).forEach(function(tid) { var f = idx.latest[tid]; if(f.space === key) { var at = new Date(f.created_at).getTime(); if(at > t) t = at; } });
+  }
+  if(w.cree && w.id > t) t = w.id;
+  return t;
+}
+function depuisQuand(ts) {
+  if(!ts) return '';
+  var j = Math.floor((Date.now() - ts) / 86400000);
+  if(memeJour(ts)) return 'aujourd\u2019hui';
+  if(j <= 1) return 'hier';
+  if(j < 30) return 'il y a ' + j + '\u00A0j';
+  var m = Math.floor(j / 30); return 'il y a ' + m + '\u00A0mois';
+}
+function renderFaits() {
+  var el = document.getElementById('h-faits'); if(!el) return;
+  var f = faitsDuJour(), parts = [];
+  if(f.etapes) parts.push(f.etapes + (f.etapes > 1 ? ' étapes faites' : ' étape faite') + ' aujourd\u2019hui');
+  if(f.pensees) parts.push(f.pensees + (f.pensees > 1 ? ' pensées déposées' : ' pensée déposée'));
+  el.hidden = !parts.length;
+  el.textContent = parts.join(' · ');
+}
+/* ═══ L'HORIZON RÉPOND (branche signaux-vrais, 10 octobre) ═══ Jamais en boucle : chaque lumière a une cause.
+   « C'est fait » : la comète file une fois le long de l'arc. Une pensée déposée : une étincelle monte de la barre vers
+   l'horizon. Un rangement reçu : le ciel s'éclaire une seconde à la couleur de l'espace. Rien si l'appareil demande
+   moins de mouvement (la classe est posée mais la feuille ne l'anime pas). */
+function horizonRepond(quoi, couleur) {
+  var s1 = document.getElementById('S1'); if(!s1 || s1.classList.contains('off')) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(couleur) s1.style.setProperty('--eclat', couleur);
+  var cible = quoi === 'comete' ? s1.querySelector('.h-comete') : quoi === 'etincelle' ? s1.querySelector('.h-etincelle') : s1.querySelector('.h-ciel');
+  if(!cible) return;
+  var cls = 'va-' + quoi;
+  cible.classList.remove(cls); void cible.offsetWidth; cible.classList.add(cls);
+  cible.addEventListener('animationend', function fin() { cible.classList.remove(cls); cible.removeEventListener('animationend', fin); });
+}
 function renderHome(){
+  renderFaits();
   // Prochaine étape : elle peut venir d'une tâche de projet (projet né d'une pensée), donc elle suit aussi l'état S
   if(typeof _range!=="undefined"&&_range&&typeof rangeHomeRender==="function") rangeHomeRender();
   // Le titre compte les espaces : plus de « Sept » écrit en dur
@@ -4135,9 +4224,10 @@ function renderCards(){
       if(nt) focusTxt=nt.t;
     }
     // Une ligne par projet : son pictogramme, son nom, sa prochaine tâche, où il en est. Le reste est dans le projet.
-    html+='<div class="pj" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'" role="button" tabindex="0">';
+    var act=projetActivite(wd), depuis=depuisQuand(act), calme=act&&(Date.now()-act)>7*86400000;
+    html+='<div class="pj'+(calme?' calme':'')+'" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'" role="button" tabindex="0">';
     html+='<span class="pj-ico" aria-hidden="true"></span>';
-    html+='<span class="pj-txt"><span class="pj-n">'+esc(wd.name)+'</span>'+(focusTxt?'<span class="pj-f">'+esc(focusTxt)+'</span>':'')+'</span>';
+    html+='<span class="pj-txt"><span class="pj-n">'+esc(wd.name)+'</span>'+(calme?(depuis?'<span class="pj-f pj-act">'+esc(depuis)+'</span>':''):(focusTxt?'<span class="pj-f">'+(depuis?'<span class="pj-act">'+esc(depuis)+' · </span>':'')+esc(focusTxt)+'</span>':(depuis?'<span class="pj-f pj-act">'+esc(depuis)+'</span>':'')))+'</span>';
     html+='<span class="pj-pct">'+pct+'\u00A0%</span>';
     html+='<span class="pj-bar" aria-hidden="true"><span style="width:'+pct+'%"></span></span>';
     html+='</div>';
@@ -5066,7 +5156,7 @@ document.addEventListener("click",function(ev){
   if(t.getAttribute&&t.getAttribute("data-action")==="notif"){ toast("Notifications bientôt disponibles"); document.getElementById("h-menu-dd").classList.remove("open"); return; }
   // Toggle task
   var toggleEl=t.closest("[data-action='toggle-task']");
-  if(toggleEl){ var wid=parseInt(toggleEl.getAttribute("data-wid")); var tid=toggleEl.getAttribute("data-tid"); S.tasks[wid][tid]=!S.tasks[wid][tid]; if(S.tasks[wid][tid]) S.taskDates[wid][tid]=Date.now(); saveS(); renderTasks(); renderWorld(); renderHome(); return; }
+  if(toggleEl){ var wid=parseInt(toggleEl.getAttribute("data-wid")); var tid=toggleEl.getAttribute("data-tid"); S.tasks[wid][tid]=!S.tasks[wid][tid]; if(S.tasks[wid][tid]){ S.taskDates[wid][tid]=Date.now(); tacheFaite(wid,tid); } saveS(); renderTasks(); renderWorld(); renderHome(); return; }
   // Open cockpit from task click
   var cockpitEl=t.closest("[data-action='open-cockpit']");
   if(cockpitEl){ var wid=parseInt(cockpitEl.getAttribute("data-wid")); var tid=cockpitEl.getAttribute("data-tid"); openCockpit(wid,tid); return; }
@@ -5088,7 +5178,7 @@ document.addEventListener("click",function(ev){
   // Cockpit back
   if(t.id==="cockpit-back"||t.closest("#cockpit-back")){ closeCockpit(); return; }
   // Cockpit done
-  if(t.closest("#cockpit-done-btn")){ var wid=cockpitState.wid; var tid=cockpitState.tid; if(wid>=0&&tid){ if(!S.tasks[wid]) S.tasks[wid]={}; S.tasks[wid][tid]=!S.tasks[wid][tid]; saveS(); closeCockpit(); if(CUR.wid===wid) renderWorld(); else renderTasks(); toast(S.tasks[wid][tid]?"C\u2019est fait":"Tâche rouverte"); } return; }
+  if(t.closest("#cockpit-done-btn")){ var wid=cockpitState.wid; var tid=cockpitState.tid; if(wid>=0&&tid){ if(!S.tasks[wid]) S.tasks[wid]={}; S.tasks[wid][tid]=!S.tasks[wid][tid]; if(S.tasks[wid][tid]) tacheFaite(wid,tid); saveS(); closeCockpit(); if(CUR.wid===wid) renderWorld(); else renderTasks(); toast(S.tasks[wid][tid]?"C\u2019est fait":"Tâche rouverte"); } return; }
   // Pomodoro toggle
   if(t.closest("#cockpit-pomo-btn")){ var pw=document.getElementById("pomo-widget"); var ouvre=!pw.classList.contains("open"); pw.classList.toggle("open",ouvre); t.closest("#cockpit-pomo-btn").setAttribute("aria-expanded",ouvre?"true":"false"); return; }
   if(t.getAttribute&&t.getAttribute("data-action")==="pomo-toggle"&&t.id==="cockpit-pomo-btn"){ var pw=document.getElementById("pomo-widget"); pw.classList.toggle("open"); return; }
@@ -5902,6 +5992,7 @@ function depotSubmit() {
   ta.value = ''; depotAutoGrow(); depotSendState();
   depotRender();
   _rangeLastDeposit = { id: id, at: Date.now() };
+  horizonRepond('etincelle');
   depotNote(getUID() ? 'Déposé · à ranger' : 'Déposé sur cet appareil seulement.', false, true);
   setTimeout(depotFlush, 0);
 }
@@ -6371,6 +6462,7 @@ async function rangeRequestAll() {
         .sort(function(a, b) { return a.created_at < b.created_at ? -1 : 1; })[0];
       var before = mine ? new Date(new Date(mine.created_at).getTime() - 1).toISOString() : null;
       rangeAdd(t.id, { status: unsure ? 'unsure' : 'filed', space: f.space, step: f.step, moment: f.moment, extras: f.extras || [] }, 'ai', data.model, before);
+      if(!unsure) horizonRepond('eclair', rangeSpaceInfo(f.space).color);
       if(_rangeLastDeposit && _rangeLastDeposit.id === t.id && Date.now() - _rangeLastDeposit.at < 60000) {
         depotNote(unsure ? 'Déposé · ARC hésite' : 'Rangé dans ' + rangeSpaceInfo(f.space).name, false, true);
       }
@@ -6811,9 +6903,10 @@ function rangeHomeRender() {
     if(mt) top.appendChild(rgEl('span', 'next-when', mt));
     it.appendChild(top);
     it.appendChild(rgEl('div', 'next-step', r.f.step));
+    if(i === 0 && !mt) it.appendChild(rgEl('div', 'next-sans', 'Sans moment'));
     if(i === 0) {
       var acts = rgEl('div', 'rg-acts');
-      acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(r.t.id, { status: 'done' }, 'user'); }, 'main'));
+      acts.appendChild(rangeBtn('C\'est fait', function() { horizonRepond('comete', rangeSpaceInfo(r.f.space).color); rangeAdd(r.t.id, { status: 'done' }, 'user'); }, 'main'));
       if(!mt) acts.appendChild(rangeBtn('Fixer un moment', function() { ouvrir(r.t.id, 'moment'); }));
       it.appendChild(acts);
     } else {
@@ -6824,7 +6917,11 @@ function rangeHomeRender() {
     list.appendChild(it);
   });
   homeCiel(rows[0]);
+  // Les rangements arrivent après le rendu de l'accueil : les faits du jour et l'activité des projets les suivent
+  if(typeof renderFaits === 'function') renderFaits();
+  if(typeof renderCards === 'function' && !_renderCardsEnCours) { _renderCardsEnCours = true; try { renderCards(); } finally { _renderCardsEnCours = false; } }
 }
+var _renderCardsEnCours = false;
 // Le sol et le ciel : la couleur de la prochaine étape teinte le haut ; le sol passe juste sous sa carte
 var _cielRow = null;
 function homeCiel(r, resize) {
@@ -6855,7 +6952,8 @@ function rangeHomeProjet(r, premiere) {
     acts.appendChild(rangeBtn('C\'est fait', function() {
       if(!S.tasks[w.id]) S.tasks[w.id] = {};
       if(!S.taskDates[w.id]) S.taskDates[w.id] = {};
-      S.tasks[w.id][t.id] = true; S.taskDates[w.id][t.id] = Date.now(); saveS(); renderHome(); toast('C\u2019est fait');
+      horizonRepond('comete', w.color);
+      S.tasks[w.id][t.id] = true; S.taskDates[w.id][t.id] = Date.now(); tacheFaite(w.id, t.id); saveS(); renderHome(); toast('C\u2019est fait');
     }, 'main'));
     acts.appendChild(rangeBtn('Ouvrir le projet', ouvrir));
     it.appendChild(acts);
@@ -7058,7 +7156,11 @@ function matinLabels() {
   if(n) {
     if(!st.enabled) n.textContent = 'Désactivé';
     else if(new Date() < matinHourToday()) n.textContent = 'Prêt à ' + st.hour.replace(':', '\u00A0h\u00A0');
-    else { var d = matinData(); var k = d.today.length + d.replace.length; n.textContent = k ? k + ' étape' + (k > 1 ? 's' : '') + ' aujourd\'hui' : 'Prêt'; }
+    else {
+      var day = _matin.days[matinDayKey(new Date())];
+      if(day && day.shownAt) n.textContent = 'Vu à ' + new Date(day.shownAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      else { var d = matinData(); var k = d.today.length + d.replace.length; n.textContent = k ? k + ' étape' + (k > 1 ? 's' : '') + ' aujourd\'hui' : 'Prêt'; }
+    }
   }
 }
 function matinSettingsOpen() {
