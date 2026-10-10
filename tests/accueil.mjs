@@ -433,6 +433,52 @@ for (const vp of ECRANS) {
   await ctx.close();
 }
 
+/* Les pensées d'un projet (10 octobre) : une pensée rangée dans ARYAN se retrouve dans ARYAN, et nulle part ailleurs ;
+   à faire d'abord, faites ensuite ; annulée ou rangée ailleurs : absente ; toucher la ligne ouvre « Déposé » sur elle ;
+   un projet sans pensée n'a pas la section. Contraste mesuré dans l'image, cibles ≥ 44 px. */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  await ctx.addInitScript(sessionScript());
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.waitForTimeout(500);
+  const T = ['Appeler le fournisseur des sacs', 'Refaire la page produit', 'Vérifier le paiement test', 'Idée annulée', 'Relire les statuts'];
+  for (const t of T) { await deposit(page, t); await page.waitForTimeout(200); }
+  await page.evaluate(T => {
+    const id = t => Object.values(_depot.thoughts).find(x => x.body === t).id;
+    const d = new Date(); d.setDate(d.getDate() + 1); d.setHours(9, 0, 0, 0);
+    rangeAdd(id(T[0]), { space: 'aryan', status: 'filed', step: T[0], moment: { type: 'datetime', at: d.toISOString() } }, 'user');
+    rangeAdd(id(T[1]), { space: 'aryan', status: 'filed', step: T[1] }, 'user');
+    rangeAdd(id(T[2]), { space: 'aryan', status: 'done', step: T[2] }, 'user');
+    rangeAdd(id(T[3]), { space: 'aryan', status: 'cancelled' }, 'user');
+    rangeAdd(id(T[4]), { space: 'atlas', status: 'filed', step: T[4] }, 'user');
+    if (typeof matinClose === 'function') matinClose();
+    document.activeElement && document.activeElement.blur(); enterWorld(0);
+  }, T);
+  await page.waitForTimeout(500);
+  const lire = () => page.evaluate(() => { const s = document.getElementById('wsec-pensees');
+    return { vu: !s.hidden && s.offsetParent !== null, n: document.getElementById('wpen-n').textContent,
+             lignes: [...document.querySelectorAll('#wpen-list .wpen-row')].map(e => ({ t: e.querySelector('.wpen-t').textContent, m: e.querySelector('.wpen-m').textContent, fait: e.classList.contains('fait'), h: Math.round(e.getBoundingClientRect().height) })) }; });
+  const a = await lire();
+  await page.evaluate(() => document.getElementById('wsec-pensees').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const m = await mesurer(page, { racine: '#wsec-pensees' });
+  await page.evaluate(() => document.querySelectorAll('#wpen-list .wpen-row')[0].click()); await page.waitForTimeout(400);
+  const ouvert = await page.evaluate(() => { const it = document.querySelector('#depot-list [data-id="' + document.querySelectorAll('#wpen-list .wpen-row')[0].dataset.tid + '"]'); const r = it && it.getBoundingClientRect();
+    return document.getElementById('depot-screen').classList.contains('open') && !!r && r.top >= 0 && r.bottom <= innerHeight; });
+  await page.evaluate(() => { depotClose(); enterWorld(1); }); await page.waitForTimeout(300);
+  const fba = await lire();
+  await page.evaluate(() => enterWorld(4)); await page.waitForTimeout(300);
+  const atlas = await lire();
+  const t = a.lignes.map(l => l.t).join(' | ');
+  // sans faux proxy, le faux Supabase répond 500 au rangement (tests/outils.mjs, « pas de faux proxy ») : rangé ici à la main
+  const vraies = errors.filter(e => !/status of 500/.test(e));
+  ok(a.vu && a.n === '2 à faire' && t === 'Refaire la page produit | Appeler le fournisseur des sacs | Vérifier le paiement test'
+     && /^Demain · 09:00 · déposée/.test(a.lignes[1].m) && a.lignes[2].fait && /^Faite · déposée/.test(a.lignes[2].m) && a.lignes.every(l => l.h >= 44)
+     && ouvert && !fba.vu && atlas.vu && atlas.lignes.length === 1 && atlas.lignes[0].t === 'Relire les statuts' && !m.sous.length && m.n >= 6 && !vraies.length,
+     'Projet : ses pensées rangées s\'y retrouvent (à faire puis faites, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section ; contraste ≥ 4,5 : 1',
+     `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.vu ? 'section visible' : 'sans section'} ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
+  await ctx.close();
+}
+
 await browser.close(); server.close();
 if (process.env.DETAIL) for (const [k, v] of Object.entries(detail)) console.log(k + '\n  ' + v.sort().join('\n  '));
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);

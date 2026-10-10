@@ -1054,6 +1054,29 @@ Accueil, seconde partie : Projets et Ma vie (branche `accueil-projets`, 10 octob
   et les onze autres suites passent ; 438 `<div` / 438 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan
   sur son iPhone.**
 
+- **PR #28 fusionnée par Rayan le 10 octobre à 19 h 59** (`main` à `e90e28a`).
+
+Les pensées d'un projet (branche `projet-pensees`, 10 octobre 20 h, partie de `main` à `e90e28a`) :
+- Rayan (19 h 59) : « on continue », lu comme l'accord pour le chantier proposé à la PR #28 (vision : « l'IA la range,
+  la relie au bon projet »).
+- **Constat** : une pensée rangée dans ARYAN ne se voyait nulle part dans ARYAN (aucune section ne lisait les
+  rangements ; seule la liste « Déposé » les montrait).
+- **Section « Pensées »** (`#wsec-pensees`, sous les tâches) : les pensées dont le rangement le plus récent place dans
+  ce projet (`penseesDuProjet` ; statut `filed` ou `done` ; ni annulées, ni « ARC hésite », ni refusées par le serveur).
+  À faire d'abord, de la plus récente à la plus ancienne, puis les faites. Une ligne par pensée (`renderPenseesProjet`) :
+  point à la couleur du projet (anneau éteint si faite), les mots de la pensée sur deux lignes au plus, dessous le
+  moment ou « Faite » et « déposée il y a… » ; à droite « 2 à faire » (ou « Toutes faites »). Six lignes au plus, puis
+  « Et N de plus, dans Déposé ». Toucher une ligne ouvre « Déposé » sur la pensée (`penseeOuvrir`), là où elle se
+  modifie. Sans pensée, la section n'existe pas. Le même panneau sombre que l'accueil. Textes posés par `textContent`.
+- La clé d'espace d'un projet est maintenant une seule fonction (`espaceCle`), utilisée par `rangeSpaces` et la section.
+- L'écran d'un projet ouvert se redessine quand un rangement arrive (`rangeHomeRender` appelle `renderPenseesProjet`).
+- Aucune donnée touchée, aucune table, rien de nouveau envoyé.
+- Tests : accueil 27/27 (un contrôle ajouté : bon projet, ordre, moment, « Faite », annulée et autre projet exclus,
+  ouverture dans « Déposé », projet sans pensée sans section, cibles ≥ 44 px, contraste le plus faible 8,91 : 1 ; les
+  deux « 500 » de console de ce contrôle viennent du faux Supabase sans faux proxy, `tests/outils.mjs`, et sont
+  écartés nommément), et les douze autres suites passent ; 442 `<div` / 442 `</div>`. Vérifié dans Chromium seulement :
+  **à voir par Rayan sur son iPhone.**
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
