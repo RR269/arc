@@ -102,13 +102,14 @@ const outil = () => { window.pjv = id => document.getElementById(id).value; };
   ok(r.rangee === 'recettesyoutube' && r.origine === 'user' && r.titre !== avant.titre && /Huit espaces/.test(r.titre),
      'La pensée est rangée dans son projet, et le titre de l\'accueil compte un espace de plus', `${avant.titre} → ${r.titre}, rangée « ${r.rangee} »`);
 
-  // L'accueil : la première étape du nouveau projet devient « Prochaine étape » ; « C'est fait » coche la tâche du projet
+  // L'accueil (plus de liste d'étapes depuis le 10 octobre) : le projet est une ligne sous « Projets », avec sa première
+  // étape et son activité du jour ; le poste garde ses chiffres ; le ciel prend la couleur du projet (la pensée y est rangée)
   await page.evaluate(() => goHome()); await page.waitForTimeout(300);
-  const h1 = await page.evaluate(() => { const c = document.querySelector('#next-list .next-item.is-now'); return { txt: c ? c.textContent : '', vide: !document.getElementById('next-empty').hidden }; });
-  await page.locator('#next-list .next-item.is-now').getByRole('button', { name: 'C\'est fait' }).click(); await page.waitForTimeout(300);
-  const h2 = await page.evaluate(id => ({ txt: (document.querySelector('#next-list .next-item.is-now') || {}).textContent || '', coche: Object.values(S.tasks[id] || {}).filter(Boolean).length }), r.id);
-  ok(!h1.vide && /Projet/.test(h1.txt) && /Recettes YouTube/.test(h1.txt) && /Noter cinq idées/.test(h1.txt) && h2.coche === 1 && /Filmer une recette test/.test(h2.txt),
-     'Accueil : la première étape du projet devient « Prochaine étape » (plus de « Rien en cours ») ; « C\'est fait » la coche dans le projet et passe à la suivante', JSON.stringify({ h1, h2 }));
+  const h1 = await page.evaluate(id => { const l = document.querySelector(`#S1 .pj[data-wid="${id}"]`), s1 = document.getElementById('S1');
+    return { la: !!l, nom: l ? l.querySelector('.pj-n').textContent : '', suite: l ? l.querySelector('.pj-f').textContent : '', agenda: !!document.querySelector('#S1 #next-list, #S1 .next-item'),
+             ciel: s1.style.getPropertyValue('--ciel').trim().toLowerCase(), couleur: String(monde(id).color).toLowerCase(), n: document.getElementById('depot-n').textContent }; }, r.id);
+  ok(h1.la && h1.nom === 'Recettes YouTube' && /Noter cinq idées/.test(h1.suite) && /aujourd/.test(h1.suite) && !h1.agenda && h1.ciel === h1.couleur && h1.n === '1',
+     'Accueil : le projet né de la pensée est une ligne sous « Projets » (nom, première étape, activité du jour) ; aucune liste d\'étapes ; le ciel prend sa couleur', JSON.stringify(h1));
   await page.evaluate(id => { S.tasks[id] = {}; saveS(); enterWorld(id); }, r.id); await page.waitForTimeout(200);
   // Cocher une étape dans le projet fait avancer l'anneau ; l'accueil montre le projet
   await page.locator('#tasks-container .wtask-cb').first().click(); await page.waitForTimeout(200);

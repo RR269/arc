@@ -951,7 +951,8 @@ Centre de contrôle, étapes 3 et 4 : les signaux vrais, l'horizon qui répond (
   seconde ligne pour ne jamais être coupée ; sans mouvement depuis 7 jours, la ligne recule (`.pj.calme` : plus
   basse, sans relief, nom à 16 px, contraste gardé) ; la pastille de synchronisation dit « À jour 06:24 » (heure du
   dernier échange, `_syncAt`), « Envoi… » pendant, « Hors ligne » sinon, plus de point vert muet ni de « ✓ Sync » /
-  « ARC » ; « Point du jour » dit « Vu à 08:12 » une fois vu.
+  « ARC » ; « Point du jour » dit « Vu à 08:12 » une fois vu (depuis le 10 octobre 7 h 30 : « 08:12 » en grand et
+  « vu », dans le poste).
 - **Faux signal prouvé et écarté** : `S.taskDates` est posé à `Date.now()` par défaut au chargement (`normalizeS`,
   « 34 étapes faites aujourd'hui » sur un appareil neuf). Un vrai « C'est fait » écrit `S.taskDone[wid][tid]`
   (`tacheFaite`, depuis la case d'un monde, le cockpit et l'accueil) ; seuls ces horodatages comptent.
@@ -966,6 +967,39 @@ Centre de contrôle, étapes 3 et 4 : les signaux vrais, l'horizon qui répond (
   absente sous mouvement réduit, et, avec le mouvement permis, étincelle et comète une fois puis éteintes, aucune
   boucle), les douze autres suites passent ; 439 `<div` / 439 `</div>`. Vérifié dans Chromium seulement : **la
   fluidité de la comète et de l'étincelle reste à voir par Rayan sur son iPhone.**
+
+Accueil sans agenda, le poste (branche `accueil-sans-agenda`, 10 octobre 7 h 30, partie de `main` à `b1ae24c`, PR #25
+fusionnée) :
+- Rayan (7 h 19, dicté) : l'étincelle marche sur son iPhone ; « en entrant ici, on dirait que c'est un agenda. Et moi,
+  ce que je veux, c'est pas un agenda […] la prochaine étape, elle y soit pas. Qu'on supprime ça. Le ensuite, on
+  supprime. On laisse déposer, le point du jour, [les pensées] à ranger. On dispose d'une autre manière avec un design
+  différent. Et ensuite, on verra pour la suite. On va diviser ça en deux parties. » **Règle à garder : la première
+  page n'est pas un agenda ; aucune liste d'étapes sur l'accueil** (elles vivent dans le Point du jour et dans « Déposé »).
+  Ceci est la première partie (le haut de l'accueil) ; la seconde (Projets, Ma vie) attend sa décision.
+- **Retirés de l'accueil** : « Prochaine étape » (la carte, son « C'est fait », « Fixer un moment »), « Ensuite », « Rien
+  en cours. Dépose une pensée… », `rangeNextSteps`, `rangeHomeProjet`, les styles `.next-*`, les deux tuiles
+  `.depot-entry`. Aucune donnée touchée : les mêmes étapes s'affichent dans le Point du jour et dans « Déposé ».
+- **Le poste** (`#h-poste`, bloc de style « LE POSTE ») : une console de verre que porte l'horizon, filet du haut aux
+  couleurs d'ARC (la console est à ARC, pas à un espace), lueur et bord à la couleur du ciel. Deux instruments
+  (`.h-inst`, chiffre en grand `.h-inst-v` 36 px, 44 sur Mac, chasse fixe, mot dessous `.h-inst-s`) : **Déposé**
+  (`#depot-n` = nombre de pensées ni annulées ni refusées, `#depot-count` = « pensées · 2 en attente ») et **Point du
+  jour** (`#matin-entry-v`, `#matin-entry-n`, posés par `matinLabels` : heure du point une fois vu, nombre d'étapes du
+  jour, « 08:00 / à venir », « — / Rien n'attend », « — / Désactivé »). Dessous, **l'écho** (`#h-echo`, `homeEcho`,
+  `ilYA`) : la dernière pensée déposée, ses mots sur une ligne, depuis quand ; ouvre « Déposé » sur elle. Puis
+  **« N pensées à ranger »** (`#h-ranger`, point ambre), absent à zéro ; ouvre « Déposé ». `#next-torange` n'existe plus.
+- **Le ciel** (`homeCiel`, `homeCielCouleur`) prend la couleur de l'espace où la dernière pensée a été rangée (un fait ;
+  faites comprises, annulées et hésitations exclues) ; violet d'ARC sans rangement. Le sol passe 40 px sous le poste.
+- **La comète** n'a plus de « C'est fait » sur l'accueil : elle part sur tout « C'est fait » (`rangeAdd` avec `status`
+  done et `origin` user ; `tacheFaite`) et, si « Déposé » ou le Point du jour couvre l'accueil, attend leur fermeture
+  (`_cometeEnAttente`, `cometeAttendue`, appelée par `depotClose` et `matinClose`). Toujours une fois, jamais en boucle.
+- Plus aucune touche blanche sur l'accueil : la seule est « Déposer », dans la barre. iPhone 390 × 844 : l'accueil
+  rempli fait 979 px (1 168 avant), tout le poste dans le premier écran.
+- Tests : accueil 24/24 (contrôles réécrits : ordre avec le poste, aucune liste d'étapes ni « Prochaine étape » ni
+  « Ensuite », chiffres vrais, écho, « à ranger », « C'est fait » depuis « Déposé » compté et comète à la fermeture),
+  rangement 25/25 (les contrôles 6, 7, 9, 18, 19 et 20 lisent le Point du jour au lieu de l'accueil ; fixtures sans
+  moment pour y figurer), projet 31/31 (le projet né d'une pensée est une ligne sous « Projets », le ciel prend sa
+  couleur), et les dix autres suites passent ; contraste le plus faible sur l'accueil 6,29 : 1 ; 437 `<div` /
+  437 `</div>`. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
 
 ### Décisions de Rayan (5 octobre)
 

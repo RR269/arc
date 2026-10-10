@@ -146,18 +146,21 @@ const waitFiled = (page, id) => page.waitForFunction(i => !!rangeIndex().ai[i], 
   await ctx.close();
 }
 
-/* 6. « C'est fait » retire l'étape de l'accueil */
+/* 6. « C'est fait » (depuis « Déposé » : l'accueil n'a plus de liste d'étapes depuis le 10 octobre) retire l'étape du
+      point du jour et se lit sur l'accueil */
 {
-  const fk = fakeSupabase(); fk.proxy = filingReply(ATLAS);
+  const fk = fakeSupabase(); fk.proxy = filingReply({ ...ATLAS, moment: { type: 'none' } });   // sans moment : dans le point du jour dès aujourd'hui
   const { ctx, page } = await open({ fk });
-  const T = 'Pensée faite depuis l\'accueil';
+  const T = 'Pensée faite depuis Déposé';
   await deposit(page, T); const id = await idOf(page, T); await waitFiled(page, id);
-  const before = await page.locator(`#next-list [data-id="${id}"]`).count();
-  await page.locator(`#next-list [data-id="${id}"] button`, { hasText: 'C\'est fait' }).click();
-  const after = await page.locator(`#next-list [data-id="${id}"]`).count();
-  const empty = await page.isVisible('#next-empty');
-  ok(before === 1 && after === 0 && empty && (await latestOf(page, id)).status === 'done',
-     '« C\'est fait » retire l\'étape de l\'accueil', `avant : ${before}, après : ${after}, état vide affiché : ${empty}`);
+  const dansMatin = () => page.evaluate(i => { matinShow('manual'); const n = document.querySelectorAll(`#matin-body .matin-row[data-id="${i}"]`).length; matinClose(); return n; }, id);
+  const before = await dansMatin();
+  await page.click('#depot-open'); await btn(page, id, 'C\'est fait').click(); await page.click('#depot-back');
+  const after = await dansMatin();
+  const home = await page.evaluate(() => ({ agenda: !!document.querySelector('#S1 #next-list, #S1 .next-item'), faits: document.getElementById('h-faits').textContent, n: document.getElementById('depot-n').textContent }));
+  ok(before === 1 && after === 0 && !home.agenda && /1 étape faite aujourd/.test(home.faits) && home.n === '1' && (await latestOf(page, id)).status === 'done',
+     '« C\'est fait » depuis « Déposé » retire l\'étape du point du jour ; l\'accueil le compte dans ses faits du jour, sans liste d\'étapes',
+     `point du jour avant : ${before}, après : ${after} ; accueil : « ${home.faits} », ${home.n} pensée`);
   await ctx.close();
 }
 
@@ -170,12 +173,12 @@ const waitFiled = (page, id) => page.waitForFunction(i => !!rangeIndex().ai[i], 
   fk.proxy = filingReply(ATLAS);
   const { ctx, page } = await open({ fk });
   await page.waitForTimeout(800);
-  const home = await page.locator(`#next-list [data-id="${tid}"] .next-step`).textContent().catch(() => null);
+  const home = await page.evaluate(i => { matinShow('manual'); const e = document.querySelector(`#matin-body .matin-row[data-id="${i}"] .matin-step`); matinClose(); return e ? e.textContent : null; }, tid);
   await page.click('#depot-open');
   const pill = await item(page, tid).locator('.rg-pill').first().textContent();
   const asked = fk.log.proxyCalls.filter(b => b.task === 'file' && b.thought.id === tid).length;
   ok(home === 'Écrire aux deux boutiques pilotes' && pill === 'ARYAN' && asked === 0,
-     'Un rangement fait sur un appareil apparaît sur l\'autre', `accueil : « ${home} », espace : ${pill}, redemandé au proxy : ${asked}`);
+     'Un rangement fait sur un appareil apparaît sur l\'autre', `point du jour : « ${home} », espace : ${pill}, redemandé au proxy : ${asked}`);
   await ctx.close();
 }
 
@@ -210,8 +213,8 @@ const waitFiled = (page, id) => page.waitForFunction(i => !!rangeIndex().ai[i], 
   let dialog = false; page.on('dialog', d => { dialog = true; d.dismiss(); });
   await deposit(page, 'Pensée piégée'); const id = await idOf(page, 'Pensée piégée'); await waitFiled(page, id);
   await page.click('#depot-open'); await page.waitForTimeout(300);
-  const r = await page.evaluate(() => ({ tags: document.querySelectorAll('#depot-list img, #depot-list b, #depot-list script, #next-list img, #next-list b').length,
-    step: document.querySelector('#depot-list .rg-step').textContent, home: document.querySelector('#next-list .next-step').textContent }));
+  const r = await page.evaluate(() => { matinShow('manual'); const r = { tags: document.querySelectorAll('#depot-list img, #depot-list b, #depot-list script, #matin-body img, #matin-body b, #h-echo img, #h-echo b').length,
+    step: document.querySelector('#depot-list .rg-step').textContent, home: document.querySelector('#matin-body .matin-step').textContent }; matinClose(); return r; });
   ok(r.tags === 0 && r.step === '<img src=x onerror=alert(1)>' && r.home === r.step && !dialog,
      'Un texte d\'IA contenant du HTML s\'affiche comme du texte', `balises créées : ${r.tags}, alerte : ${dialog}`);
   await ctx.close();
@@ -236,20 +239,20 @@ const waitFiled = (page, id) => page.waitForFunction(i => !!rangeIndex().ai[i], 
   await ctx.close();
 }
 
-/* 11. iPhone et Mac : bloc « Prochaines étapes » lisible, aucune erreur, cinq mondes et deux pôles */
+/* 11. iPhone et Mac : le poste de l'accueil lisible, aucune erreur, cinq mondes et deux pôles */
 for (const vp of [{ n: 'iPhone 390×844', width: 390, height: 844 }, { n: 'Mac 1440×900', width: 1440, height: 900 }]) {
   const fk = fakeSupabase(); fk.proxy = filingReply(ATLAS);
   const { ctx, page, errors } = await open({ fk, viewport: { width: vp.width, height: vp.height } });
   await deposit(page, 'Pensée pour l\'accueil'); const id = await idOf(page, 'Pensée pour l\'accueil'); await waitFiled(page, id);
   const home = await page.evaluate(() => {
-    const box = document.getElementById('next-steps'); const r = box.getBoundingClientRect();
+    const box = document.getElementById('h-poste'); const r = box.getBoundingClientRect();
     const texts = [...box.querySelectorAll('*')].filter(e => e.childNodes.length && [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()));
     const minFont = Math.min(...texts.map(e => parseFloat(getComputedStyle(e).fontSize)));
     const minBtn = Math.min(...[...box.querySelectorAll('button')].filter(b => b.offsetParent).map(b => Math.min(b.getBoundingClientRect().height, b.getBoundingClientRect().width)));
     const mondes = document.getElementById('hgrid').getBoundingClientRect().top;
     return { shown: r.height > 0 && r.width > 0 && r.right <= innerWidth + 1, minFont, minBtn, above: r.bottom <= mondes };
   });
-  ok(home.shown && home.minFont >= 12 && home.minBtn >= 44 && home.above, `${vp.n} : « Prochaines étapes » visible, au-dessus des mondes, texte ≥ 12 px, cibles ≥ 44 px`,
+  ok(home.shown && home.minFont >= 12 && home.minBtn >= 44 && home.above, `${vp.n} : le poste visible, au-dessus des mondes, texte ≥ 12 px, cibles ≥ 44 px`,
      `police min ${home.minFont} px, cible min ${Math.round(home.minBtn)} px`);
   await page.click('#depot-open');
   const listMinBtn = await page.evaluate(() => Math.min(...[...document.querySelectorAll('#depot-list button')].map(b => b.getBoundingClientRect().height)));
@@ -397,45 +400,45 @@ const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('onlin
   await ctx.close();
 }
 
-/* 18. Rangée sans étape : une note dans son espace, avec « Ajouter une étape » ; rien dans « Prochaines étapes » */
+/* 18. Rangée sans étape : une note dans son espace, avec « Ajouter une étape » ; rien dans le point du jour */
 {
   const fk = fakeSupabase();
   fk.proxy = filingReply({ space: 'aryan', confidence: 'sure', step: '', moment: { type: 'none' }, extras: [] });
   const { ctx, page } = await open({ fk });
   await deposit(page, 'dg'); const id = await idOf(page, 'dg'); await waitFiled(page, id);
-  const inNext = await page.locator(`#next-list [data-id="${id}"]`).count();
+  const inNext = await page.evaluate(i => { matinShow('manual'); const n = document.querySelectorAll(`#matin-body .matin-row[data-id="${i}"]`).length; matinClose(); return n; }, id);
   await page.click('#depot-open');
   const box = await item(page, id).locator('.rg-box').textContent();
   const add = await btn(page, id, 'Ajouter une étape').count();
   const pill = await item(page, id).locator('.rg-pill').first().textContent().catch(() => null);
   ok(inNext === 0 && /Note/.test(box) && add === 1 && pill === 'ARYAN' && !/Pas encore d'étape|À ranger/.test(box),
-     'Rangée sans étape : une note dans son espace, « Ajouter une étape », absente des prochaines étapes',
-     `dans « Prochaines étapes » : ${inNext}, espace : ${pill}, bloc : « ${box.replace(/\s+/g, ' ').slice(0, 80)} »`);
+     'Rangée sans étape : une note dans son espace, « Ajouter une étape », absente du point du jour',
+     `dans le point du jour : ${inNext}, espace : ${pill}, bloc : « ${box.replace(/\s+/g, ' ').slice(0, 80)} »`);
   await ctx.close();
 }
 
-/* 19. « Prochaines étapes » : seulement des actions réelles ; une ligne discrète « N pensées à ranger » ouvre « Déposé » */
+/* 19. Le point du jour : seulement des actions réelles ; sur l'accueil, une ligne « N pensées à ranger » ouvre « Déposé » */
 {
   const fk = fakeSupabase();
   let k = 0;
-  const answers = [ATLAS, { space: 'inconnu', confidence: 'unsure', step: 'Noter l\'idée', moment: { type: 'none' }, extras: [] },
+  const answers = [{ ...ATLAS, moment: { type: 'none' } }, { space: 'inconnu', confidence: 'unsure', step: 'Noter l\'idée', moment: { type: 'none' }, extras: [] },
                    { space: 'aryan', confidence: 'unsure', step: 'Voir avec la boulangerie', moment: { type: 'none' }, extras: [] }];
   fk.proxy = async () => ({ status: 200, json: { filing: answers[k++], model: 'm' } });
   const { ctx, page } = await open({ fk });
   for (const T of ['Action claire', 'Idée floue', 'Hésitation']) { await deposit(page, T); await waitFiled(page, await idOf(page, T)); }
-  const steps = await page.locator('#next-list .next-step').allTextContents();
-  const line = await page.textContent('#next-torange').catch(() => null);
-  const visible = await page.isVisible('#next-torange');
-  await page.click('#next-torange', { timeout: 3000 }).catch(() => {});
+  const steps = await page.evaluate(() => { matinShow('manual'); const t = [...document.querySelectorAll('#matin-body .matin-step')].map(e => e.textContent); matinClose(); return t; });
+  const line = await page.textContent('#h-ranger').catch(() => null);
+  const visible = await page.isVisible('#h-ranger');
+  await page.click('#h-ranger', { timeout: 3000 }).catch(() => {});
   const opened = await page.evaluate(() => document.getElementById('depot-screen').classList.contains('open'));
   ok(steps.length === 1 && steps[0] === ATLAS.step && visible && /^2 pensées à ranger$/.test((line || '').trim()) && opened,
-     '« Prochaines étapes » : actions réelles seulement, une ligne « N pensées à ranger » qui ouvre « Déposé »',
+     'Point du jour : actions réelles seulement ; accueil : une ligne « N pensées à ranger » qui ouvre « Déposé »',
      `étapes : ${steps.join(' | ')} ; ligne : « ${line && line.trim()} » ; ouvre « Déposé » : ${opened}`);
   await ctx.close();
 }
 
 /* 20. Origine visible : « ARC propose » tant que la ligne la plus récente vient de l'IA, « Rangé » dès que Rayan a
-       modifié quelque chose — dans « Déposé », « Prochaines étapes » et le point du matin */
+       modifié quelque chose — dans « Déposé » et le point du matin (l'accueil n'a plus de liste d'étapes) */
 {
   const fk = fakeSupabase(); fk.proxy = filingReply({ ...ATLAS, moment: { type: 'none' } });
   const { ctx, page } = await open({ fk });
@@ -444,8 +447,7 @@ const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('onlin
   const labels = () => page.evaluate(i => {
     const lbl = sel => { const e = document.querySelector(sel); return e ? e.textContent : null; };
     if (typeof matinShow === 'function') matinShow('manual');
-    const r = { depose: lbl(`#depot-list [data-id="${i}"] .rg-box .rg-lbl`), accueil: lbl(`#next-list [data-id="${i}"] .rg-lbl`),
-                matin: lbl(`#matin-body .matin-row[data-id="${i}"] .rg-lbl`) };
+    const r = { depose: lbl(`#depot-list [data-id="${i}"] .rg-box .rg-lbl`), matin: lbl(`#matin-body .matin-row[data-id="${i}"] .rg-lbl`) };
     if (typeof matinClose === 'function') matinClose();
     return r;
   }, id);
@@ -456,7 +458,7 @@ const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('onlin
   const after = await labels();
   const ok1 = Object.values(before).every(v => v === 'ARC propose');
   const ok2 = Object.values(after).every(v => v === 'Rangé');
-  ok(ok1 && ok2, 'Origine visible : « ARC propose » pour l\'IA, « Rangé » dès que Rayan modifie (Déposé, accueil, point du matin)',
+  ok(ok1 && ok2, 'Origine visible : « ARC propose » pour l\'IA, « Rangé » dès que Rayan modifie (Déposé, point du matin)',
      `avant : ${JSON.stringify(before)} ; après : ${JSON.stringify(after)}`);
   await ctx.close();
 }
