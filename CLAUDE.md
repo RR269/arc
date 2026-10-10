@@ -837,6 +837,8 @@ Synchronisation, fusion au lieu d'écrasement (branche `synchro`, 10 octobre 1 h
 - Tests : synchro 11/11 (nouveau), proxy 41/41, connexion 27/27, dépôt 19/19, rangement 25/25, matin 27/27, accueil
   17/17, mondes 7/7, pôles 9/9, cockpit 17/17, recherche 8/8, entrée-fond 41/41 ; 427 `<div` / 427 `</div>`.
   Vérifié dans Chromium seulement, contre un faux Supabase : **le vrai passage Mac ↔ iPhone reste à constater par Rayan.**
+- **PR #19 fusionnée par Rayan le 10 octobre à 2 h 17 ; constaté en réel à 3 h 25** : une entrée au journal d'ARYAN
+  écrite sur l'iPhone, une autre sur le Mac resté ouvert, les deux restent (« les deux test ok »).
 
 ### Décisions de Rayan (5 octobre)
 
