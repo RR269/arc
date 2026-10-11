@@ -136,6 +136,36 @@ const liens = page => page.evaluate(() => ({
   await ctx.close();
 }
 
+// ── 4. La planète de l'accueil ne dessine que ce qui existe ──
+{
+  const fk = fakeSupabase();
+  fk.proxy = async body => body.task === 'file'
+    ? { status: 200, json: { filing: /comptable/i.test(body.thought.body) ? { space: 'juridique', confidence: 'sure', step: 'Appeler', moment: { type: 'none' }, extras: [] } : /module/i.test(body.thought.body) ? { space: 'atlas', confidence: 'sure', step: 'Écrire', moment: { type: 'none' }, extras: [] } : { space: 'inconnu', confidence: 'unsure', step: '', moment: { type: 'none' }, extras: [] }, model: 'test' } }
+    : { status: 200, json: { content: [{ type: 'text', text: 'ok' }] } };
+  const { page, errors, ctx } = await appareil(fk);
+  let sc = await page.evaluate(() => ({ lum: _pl.scene.esp.reduce((n, e) => n + e.lum.length, 0), ponts: _pl.scene.ponts.length, syn: _pl.scene.synapses.length, orb: _pl.scene.orbite.length, esp: _pl.scene.esp.length, attendu: WORLDS.length + POLES.length }));
+  ok(sc.lum === 0 && sc.ponts === 0 && sc.syn === 0 && sc.orb === 0 && sc.esp === sc.attendu, 'Planète, compte neuf : une région par espace, aucune lumière ni aucun fil', JSON.stringify(sc));
+  for (const t of ['Appeler le comptable pour la TVA', 'Demander au comptable le régime de TVA', 'Écrire le module 4', 'Une idée en vrac']) { await deposit(page, t); await page.waitForTimeout(500); }
+  await page.waitForTimeout(1200);
+  await page.evaluate(() => { rlPoser('projet', 4, 1, 'oui', ['FBA']); const ts = Object.values(_depot.thoughts); rlPoser('pensee', ts.find(x => /Appeler/.test(x.body)).id, ts.find(x => /Demander/.test(x.body)).id, 'oui', ['comptable']); goHome(); renderHome(); });
+  await page.waitForTimeout(300);
+  sc = await page.evaluate(() => ({ jur: _pl.scene.esp.find(e => e.k === 'juridique').lum.length, atlas: _pl.scene.esp.find(e => e.k === 'atlas').lum.length,
+    lum: _pl.scene.esp.reduce((n, e) => n + e.lum.length, 0), ponts: _pl.scene.ponts.map(p => p.a.n + '-' + p.b.n).join(), syn: _pl.scene.synapses.length, orb: _pl.scene.orbite.length, aRanger: rangeToSortCount(),
+    fba: _pl.scene.esp.find(e => e.n === 'FBA').dort, fusion: getComputedStyle(document.getElementById('h-planete')).mixBlendMode, vu: _pl.vu }));
+  ok(sc.jur === 2 && sc.atlas === 1 && sc.lum === 3 && /ATLAS/.test(sc.ponts) && /FBA/.test(sc.ponts) && sc.syn === 1 && sc.orb === sc.aRanger && sc.orb === 1 && sc.fba && sc.fusion === 'normal' && sc.vu,
+    'Planète : une lumière par pensée rangée, un pont par projets reliés, un fil par pensées reliées, l\'orbite = pensées à ranger', JSON.stringify(sc));
+  // Mouvement réduit : une image, pas d'animation qui tourne
+  const raf = await page.evaluate(() => _pl.raf);
+  ok(!raf, 'Mouvement réduit : la planète est une image fixe', String(raf));
+  // Toucher la région d'ATLAS ouvre ATLAS
+  const pt = await page.evaluate(() => { const e = _pl.scene.esp.find(x => x.k === 'atlas'), r = document.getElementById('h-planete').getBoundingClientRect(); return { x: r.left + e.cap[0], y: r.top + e.cap[1] }; });
+  await page.mouse.click(pt.x, pt.y); await page.waitForTimeout(300);
+  const ouvert = await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && CUR.wid === 4);
+  ok(ouvert, 'Toucher la région d\'ATLAS ouvre ATLAS', JSON.stringify(pt));
+  ok(!errors.length, 'Aucune erreur de console (planète)', errors.join(' | '));
+  await ctx.close();
+}
+
 await browser.close(); server.close();
 let fails = 0;
 for (const r of results) { if (!r.ok) fails++; console.log((r.ok ? 'OK   ' : 'ÉCHEC') + ' ' + r.name + (r.detail ? ' — ' + r.detail : '')); }

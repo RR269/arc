@@ -1174,6 +1174,22 @@ ARC en orbite, et Relier (11 octobre) :
   - **Pas encore** : liens vers Santé et Juridique ; pensées d'un projet lié affichées dans l'autre ; la planète ;
     Claude qui lit les liens (attend la réponse sur les données).
   - Tests : relier 18/18 (nouveau). Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
+- **PR #33 fusionnée par Rayan le 11 octobre à 11 h 26.**
+- **La planète (branche `planete`, partie de `main` à `b3f3c90`)** : sous l'horizon de l'accueil, la face de nuit d'une
+  planète dessinée dans un canevas (`#h-planete`, sous le contenu ; la bande `#h-orbite`, 176 px sur iPhone et 240 px
+  sur Mac, lui laisse la place et porte le geste). **Son bord est l'horizon d'ARC** : même cercle, lu dans `--hr` et
+  `--hx` de `.h-horizon` (`plGeometrie`). Tout vient d'ARC (`plDonnees`, `plScene`) :
+  une région par espace (projets, Santé, Juridique ; douze au plus, les plus vivants devant, les endormis au bord et
+  gris), dont le nombre de points suit ses pensées ; une lumière par pensée rangée (récente forte, ancienne faible, faite
+  = petit anneau) ; un fil de chaque pensée vers son espace ; un pont par projets reliés (`S.liens`), dont l'influx part
+  de l'éveillé vers l'endormi ; un fil par pensées reliées ; l'orbite ambre au-dessus du bord = `rangeToSortCount`.
+  Les influx ne courent que sur ces fils et jamais vers une pensée faite ; l'espace qui reçoit s'allume. Toucher une
+  région ouvre l'espace. Mouvement réduit : une image fixe ; l'animation s'arrête quand l'accueil est caché ou
+  l'onglet en arrière-plan (`plVisible`, `plDemarrer`). Sur Mac, les bords du canevas se fondent (masque CSS, pas de
+  mode de fusion). Aucune bibliothèque. Compte neuf : les régions sans lumière (« elle s'allume à mesure »).
+  Tests : relier 23/23 (cinq contrôles ajoutés : compte neuf, une lumière par pensée rangée, ponts, fils, orbite,
+  image fixe sous mouvement réduit, toucher une région), les 13 autres suites passent ; 484 `<div` / 484 `</div>`.
+  Vérifié dans Chromium seulement : **la fluidité sur l'iPhone et l'écran OLED restent à voir par Rayan.**
 
 ### Décisions de Rayan (5 octobre)
 
