@@ -150,10 +150,10 @@ const liens = page => page.evaluate(() => ({
       const taches = (w.tasks_done || []).concat(w.tasks_todo || [], S.custom[w.id] || []).filter(t => fait[t.id]).length;
       const attendu = penseesDe(espaceCle(w)).length + taches + (S.journal[w.id] || []).filter(j => j && (j.t || j.txt)).length;
       if (e.items.length !== attendu) ecarts.push(e.n + ' ' + e.items.length + '≠' + attendu); });
-    return { ecarts, poles: sc.poles.map(e => e.n).join(), surPlanete: sc.tous.filter(e => e.pole).length, zone: Math.min(...sc.poles.map(e => e.cap[1])) > Math.max(...sc.esp.filter(e => !e.dort).map(e => e.cap[1])), pts: sc.esp.some(e => e.pts) };
+    return { ecarts, poles: sc.poles.map(e => e.n).join(), surPlanete: sc.tous.filter(e => e.pole).length, zone: (() => { const vie = sc.sections.find(x => x.cle === 'vie'), sa = sc.poles.find(e => e.id === 'sante'), ju = sc.poles.find(e => e.id === 'juridique'); return !!vie && sc.poles.every(e => e.cap[0] > vie.x0) && sc.esp.every(e => e.cap[0] < vie.x0) && sa.cap[1] < ju.cap[1]; })(), pts: sc.esp.some(e => e.pts) };
   });
   let r = await reel();
-  ok(!r.ecarts.length && r.surPlanete === 2 && r.zone && !r.pts, 'Planète : autour de chaque projet, un point par chose réelle (aucun point de décor) ; Santé et Juridique sur la planète, dans leur rangée « Ma vie », sous les projets', JSON.stringify(r));
+  ok(!r.ecarts.length && r.surPlanete === 2 && r.zone && !r.pts, 'Planète : autour de chaque projet, un point par chose réelle (aucun point de décor) ; Santé et Juridique sur la planète, dans leur colonne « Ma vie » sur le bord droit, hors du champ des projets, Santé au-dessus de Juridique', JSON.stringify(r));
   for (const t of ['Appeler le comptable pour la TVA', 'Demander au comptable le régime de TVA', 'Écrire le module 4', 'Une idée en vrac']) { await deposit(page, t); await page.waitForTimeout(500); }
   await page.waitForTimeout(1200);
   await page.evaluate(() => { rlPoser('projet', 4, 1, 'oui', ['FBA']); const ts = Object.values(_depot.thoughts); rlPoser('pensee', ts.find(x => /Appeler/.test(x.body)).id, ts.find(x => /Demander/.test(x.body)).id, 'oui', ['comptable']); S.journal[4].push({ ts: Date.now(), t: 'Module 3 relu' }); saveS(true); goHome(); renderHome(); });
@@ -174,10 +174,10 @@ const liens = page => page.evaluate(() => ({
     const y = f => sc.tous.filter(f).map(e => e.cap[1]);
     const bande = _pl.band.etiquettes || [], croiseB = [];
     for (let i = 0; i < bande.length; i++) for (let j = i + 1; j < bande.length; j++) { const a = bande[i], b = bande[j]; if (a[0] < b[0] + b[2] && a[0] + a[2] > b[0] && a[1] < b[1] + b[3] && a[1] + a[3] > b[1]) croiseB.push(i + '×' + j); }
-    return { noms: et.length, croise, croiseB, rangs: sc.sections.map(s => s.titre).join(','), dortHaut: Math.max(...y(e => e.dort)) < Math.min(...y(e => !e.dort && !e.pole)), vieBas: Math.min(...y(e => e.pole)) > Math.max(...y(e => !e.pole)), legende: !!document.getElementById('carte-legende') && getComputedStyle(document.getElementById('carte-legende')).display !== 'none' };
+    return { noms: et.length, croise, croiseB, rangs: sc.sections.map(s => s.titre).join(','), dortHaut: Math.max(...y(e => e.dort)) < Math.min(...y(e => !e.dort && !e.pole)), vieBas: (() => { const vie = sc.sections.find(x => x.cle === 'vie'), sa = sc.poles.find(e => e.id === 'sante'), ju = sc.poles.find(e => e.id === 'juridique'); return !!vie && sc.poles.every(e => e.cap[0] > vie.x0) && sc.esp.every(e => e.cap[0] + e.cellW / 2 <= vie.x0 + 1) && sa.cap[1] < ju.cap[1]; })(), legende: !!document.getElementById('carte-legende') && getComputedStyle(document.getElementById('carte-legende')).display !== 'none' };
   });
   ok(ordre.noms >= 6 && !ordre.croise.length && !ordre.croiseB.length && ordre.rangs === 'Endormis,En cours,Ma vie' && ordre.dortHaut && ordre.vieBas && ordre.legende,
-    'Carte réglée : trois rangées nommées (Endormis, En cours, Ma vie), aucun nom sur un autre (carte et accueil), une légende des points', JSON.stringify(ordre));
+    'Carte réglée : Endormis et En cours dans le champ, Ma vie en colonne à droite (Santé puis Juridique), aucun nom sur un autre (carte et accueil), une légende des points', JSON.stringify(ordre));
   ok(c.ouvert && c.boutons === 0 && /1 pensée en orbite, à ranger/.test(c.faits) && /FBA dort, lié à ATLAS/.test(c.faits), 'Carte : ouverte depuis la bande, sans touches + ni −, une ligne de faits vrais', JSON.stringify(c));
   // Glisser : la carte bouge (et un glissé n'ouvre rien)
   const v0 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty }));

@@ -1280,6 +1280,21 @@ ARC en orbite, et Relier (11 octobre) :
     cours, Ma vie dessous, aucun nom qui en croise un autre sur la carte ni sur l'accueil, légende visible), et les
     13 autres suites passent. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
 
+- **PR #37 fusionnée le 11 octobre à 20 h 56.** Les captures de Rayan de 21 h 06 montraient encore la version #36 :
+  GitHub Pages sert la page avec un cache de 10 minutes, et le service worker (« réseau d'abord ») passe par ce cache.
+- **Étude de la carte (branche `etude-carte`, PR #38, 21 h 20)** : `docs/ETUDE-CARTE.md`, écrite par un agent qui n'a
+  pas construit l'écran. Verdict : retirer la bande de l'accueil, régler la carte, « la carte situe, le panneau dit ».
+  **En attente de Rayan.**
+- **Ma vie sur le côté (branche `ma-vie-cote`, 21 h 35)**. Rayan (21 h 31) : Santé et Juridique « ne doivent pas être au
+  milieu », « visibles mais pas dans le champ ; le champ est fait pour être productif » ; « les deux à droite, l'un sur
+  l'autre, Juridique en bas et Santé en haut, un peu décalés, avec leur effet ». **Règle à garder : le champ (gauche et
+  centre) est aux projets ; Ma vie est une colonne sur le bord droit.** `plDisposer` : colonne `colW` (30 % de la largeur
+  sur la carte, 26 % sur la bande), les rangées Endormis et En cours se centrent dans le reste ; Santé en haut,
+  Juridique dessous, décalé vers le champ ; la zone teintée de Ma vie suit (filet pointillé vertical, lueur vers le
+  bord). Un nom trop long réduit sa taille jusqu'à 11 px avant d'être coupé (« TELENEUF » à 375 px).
+  Tests : relier 29/29 (les deux contrôles de Ma vie vérifient la colonne : à droite de tous les projets, aucun projet
+  dedans, Santé au-dessus de Juridique). Vérifié dans Chromium seulement.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
