@@ -136,33 +136,57 @@ const liens = page => page.evaluate(() => ({
   await ctx.close();
 }
 
-// ── 4. La planète de l'accueil ne dessine que ce qui existe ──
+// ── 4. La planète de l'accueil et la carte ne dessinent que ce qui existe ──
 {
   const fk = fakeSupabase();
   fk.proxy = async body => body.task === 'file'
     ? { status: 200, json: { filing: /comptable/i.test(body.thought.body) ? { space: 'juridique', confidence: 'sure', step: 'Appeler', moment: { type: 'none' }, extras: [] } : /module/i.test(body.thought.body) ? { space: 'atlas', confidence: 'sure', step: 'Écrire', moment: { type: 'none' }, extras: [] } : { space: 'inconnu', confidence: 'unsure', step: '', moment: { type: 'none' }, extras: [] }, model: 'test' } }
     : { status: 200, json: { content: [{ type: 'text', text: 'ok' }] } };
   const { page, errors, ctx } = await appareil(fk);
-  let sc = await page.evaluate(() => ({ lum: _pl.scene.esp.reduce((n, e) => n + e.lum.length, 0), ponts: _pl.scene.ponts.length, syn: _pl.scene.synapses.length, orb: _pl.scene.orbite.length, esp: _pl.scene.esp.length, attendu: WORLDS.length + POLES.length }));
-  ok(sc.lum === 0 && sc.ponts === 0 && sc.syn === 0 && sc.orb === 0 && sc.esp === sc.attendu, 'Planète, compte neuf : une région par espace, aucune lumière ni aucun fil', JSON.stringify(sc));
+  const bande = () => page.evaluate(() => { const sc = _pl.band.sc; return { lum: sc.esp.reduce((n, e) => n + e.lum.length, 0), ponts: sc.ponts.map(p => p.a.n + '-' + p.b.n).join(), syn: sc.synapses.length, orb: sc.orbite.length, esp: sc.esp.length, poles: sc.esp.filter(e => e.pole).length, attendu: WORLDS.length }; });
+  let sc = await bande();
+  ok(sc.lum === 0 && !sc.ponts && sc.syn === 0 && sc.orb === 0 && sc.esp === sc.attendu && sc.poles === 0, 'Planète, compte neuf : une région par projet (ni Santé ni Juridique), aucune lumière ni aucun fil', JSON.stringify(sc));
   for (const t of ['Appeler le comptable pour la TVA', 'Demander au comptable le régime de TVA', 'Écrire le module 4', 'Une idée en vrac']) { await deposit(page, t); await page.waitForTimeout(500); }
   await page.waitForTimeout(1200);
   await page.evaluate(() => { rlPoser('projet', 4, 1, 'oui', ['FBA']); const ts = Object.values(_depot.thoughts); rlPoser('pensee', ts.find(x => /Appeler/.test(x.body)).id, ts.find(x => /Demander/.test(x.body)).id, 'oui', ['comptable']); goHome(); renderHome(); });
   await page.waitForTimeout(300);
-  sc = await page.evaluate(() => ({ jur: _pl.scene.esp.find(e => e.k === 'juridique').lum.length, atlas: _pl.scene.esp.find(e => e.k === 'atlas').lum.length,
-    lum: _pl.scene.esp.reduce((n, e) => n + e.lum.length, 0), ponts: _pl.scene.ponts.map(p => p.a.n + '-' + p.b.n).join(), syn: _pl.scene.synapses.length, orb: _pl.scene.orbite.length, aRanger: rangeToSortCount(),
-    fba: _pl.scene.esp.find(e => e.n === 'FBA').dort, fusion: getComputedStyle(document.getElementById('h-planete')).mixBlendMode, vu: _pl.vu }));
-  ok(sc.jur === 2 && sc.atlas === 1 && sc.lum === 3 && /ATLAS/.test(sc.ponts) && /FBA/.test(sc.ponts) && sc.syn === 1 && sc.orb === sc.aRanger && sc.orb === 1 && sc.fba && sc.fusion === 'normal' && sc.vu,
-    'Planète : une lumière par pensée rangée, un pont par projets reliés, un fil par pensées reliées, l\'orbite = pensées à ranger', JSON.stringify(sc));
-  // Mouvement réduit : une image, pas d'animation qui tourne
+  sc = await page.evaluate(() => { const sc = _pl.band.sc; return { atlas: sc.esp.find(e => e.k === 'atlas').lum.length, lum: sc.esp.reduce((n, e) => n + e.lum.length, 0), ponts: sc.ponts.map(p => p.a.n + '-' + p.b.n).join(), orb: sc.orbite.length, aRanger: rangeToSortCount(), fba: sc.esp.find(e => e.n === 'FBA').dort, fbaDevant: sc.esp.find(e => e.n === 'FBA').v > sc.esp.find(e => e.k === 'atlas').v, fusion: getComputedStyle(document.getElementById('h-planete')).mixBlendMode, vu: _pl.vu }; });
+  ok(sc.atlas === 1 && sc.lum === 1 && /ATLAS/.test(sc.ponts) && /FBA/.test(sc.ponts) && sc.orb === sc.aRanger && sc.orb === 1 && sc.fba && !sc.fbaDevant && sc.fusion === 'normal' && sc.vu,
+    'Planète : une lumière par pensée rangée dans un projet, un pont par projets reliés, l\'orbite = pensées à ranger, l\'endormi derrière', JSON.stringify(sc));
   const raf = await page.evaluate(() => _pl.raf);
   ok(!raf, 'Mouvement réduit : la planète est une image fixe', String(raf));
-  // Toucher la région d'ATLAS ouvre ATLAS
-  const pt = await page.evaluate(() => { const e = _pl.scene.esp.find(x => x.k === 'atlas'), r = document.getElementById('h-planete').getBoundingClientRect(); return { x: r.left + e.cap[0], y: r.top + e.cap[1] }; });
-  await page.mouse.click(pt.x, pt.y); await page.waitForTimeout(300);
-  const ouvert = await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && CUR.wid === 4);
-  ok(ouvert, 'Toucher la région d\'ATLAS ouvre ATLAS', JSON.stringify(pt));
-  ok(!errors.length, 'Aucune erreur de console (planète)', errors.join(' | '));
+  // Toucher la bande hors d'une région ouvre la carte ; Santé et Juridique y sont sur leur lune
+  const coin = await page.evaluate(() => { const r = document.getElementById('h-orbite').getBoundingClientRect(); return { x: r.left + 20, y: r.top + 20 }; });
+  await page.mouse.click(coin.x, coin.y); await page.waitForTimeout(300);
+  let c = await page.evaluate(() => { const V = _pl.carte, sc = V && V.sc; return { ouvert: carteOuverte(), poles: sc && sc.poles.map(e => e.n + ':' + e.lum.length).join(), surPlanete: sc && sc.esp.some(e => e.pole), syn: sc && sc.synapses.length, faits: document.getElementById('carte-faits').textContent }; });
+  ok(c.ouvert && c.poles === 'Santé:0,Juridique:2' && !c.surPlanete && c.syn === 1 && /1 pensée à ranger/.test(c.faits) && /FBA dort, lié à ATLAS/.test(c.faits),
+    'Carte : ouverte depuis la bande ; Santé et Juridique sur la lune « Ma vie » ; le fil entre pensées reliées ; une ligne de faits vrais', JSON.stringify(c));
+  // Charte de la carte : touches de 44 px, contraste de la barre du haut
+  const cib = await page.evaluate(() => [...document.querySelectorAll('#carte button')].map(b => Math.round(Math.min(b.getBoundingClientRect().width, b.getBoundingClientRect().height))));
+  const m = await mesurer(page, { racine: '#carte .carte-haut', cadre: '#carte .carte-haut' });
+  ok(cib.every(h => h >= 44) && m.n > 2 && m.pire.ratio >= 4.5, 'Carte : touches de 44 px au moins, contraste de la barre ≥ 4,5 : 1', cib.join(', ') + ' · ' + fmt(m.pire.ratio));
+  // Toucher ATLAS de loin : la carte se rapproche ; de près : ATLAS s'ouvre
+  const cap = () => page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.k === 'atlas'); return { x: e.cap[0] * V.s + V.tx, y: e.cap[1] * V.s + V.ty, s: V.s }; });
+  let p = await cap(); await page.mouse.click(p.x, p.y); await page.waitForTimeout(200);
+  const s1 = (await cap()).s;
+  ok(s1 > 2 && await page.evaluate(() => carteOuverte()), 'Carte : toucher une région de loin la rapproche', 'échelle ' + s1.toFixed(2));
+  // De près, la pensée se lit (dessinée sur le canevas : on vérifie qu'elle est à l'écran) puis ATLAS s'ouvre
+  const lisible = await page.evaluate(() => { const V = _pl.carte, L = V.sc.esp.find(x => x.k === 'atlas').lum[0], q = [L.s[0] * V.s + V.tx, L.s[1] * V.s + V.ty]; return q[0] > 0 && q[0] < innerWidth && q[1] > 0 && q[1] < innerHeight; });
+  p = await cap(); await page.mouse.click(p.x, p.y); await page.waitForTimeout(300);
+  const ouvert = await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && CUR.wid === 4 && !carteOuverte());
+  ok(lisible && ouvert, 'Carte : de près, la pensée est à l\'écran, et toucher ATLAS ouvre ATLAS', JSON.stringify({ lisible, ouvert }));
+  // Rapprocher et éloigner : touches, molette du pavé (pincer), bornes 1 à 5, Échap ferme
+  await page.evaluate(() => { goHome(); carteOuvrir(); }); await page.waitForTimeout(200);
+  await page.click('#carte-plus'); const sp = await page.evaluate(() => _pl.carte.s);
+  await page.mouse.move(195, 500); for (let i = 0; i < 12; i++) await page.mouse.wheel(0, -120).catch(() => {});
+  await page.evaluate(() => { for (let i = 0; i < 20; i++) document.getElementById('carte-cv').dispatchEvent(new WheelEvent('wheel', { deltaY: -60, ctrlKey: true, clientX: 195, clientY: 500, bubbles: true, cancelable: true })); });
+  const smax = await page.evaluate(() => _pl.carte.s);
+  await page.click('#carte-centre'); await page.waitForTimeout(100);
+  const s0 = await page.evaluate(() => _pl.carte.s);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  const ferme = await page.evaluate(() => !carteOuverte());
+  ok(sp > 1.5 && smax === 5 && s0 === 1 && ferme, 'Carte : « + », pincer au pavé jusqu\'à 5 fois, « vue d\'ensemble », Échap ferme', JSON.stringify({ sp, smax, s0, ferme }));
+  ok(!errors.length, 'Aucune erreur de console (planète et carte)', errors.join(' | '));
   await ctx.close();
 }
 
