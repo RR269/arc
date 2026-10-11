@@ -2231,8 +2231,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #carte .carte-ranger[hidden]{display:none}
 #carte .carte-ranger i{width:7px;height:7px;border-radius:50%;background:#FFB340;box-shadow:0 0 8px #FFB340}
 #carte .carte-ranger b{width:7px;height:7px;border-top:1.6px solid #FFD9A0;border-right:1.6px solid #FFD9A0;transform:rotate(45deg);margin-left:2px}
-#carte .carte-fiche{position:absolute;left:16px;right:16px;bottom:calc(var(--depot-space,90px) + 12px);max-width:460px;margin:0 auto;padding:14px 16px 12px;border-radius:20px;border:1px solid color-mix(in srgb,var(--cf,#fff) 45%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--cf,#fff) 12%,transparent),rgba(255,255,255,.02)),rgba(12,12,16,.9);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);font-family:var(--fa);box-shadow:0 20px 50px rgba(0,0,0,.6)}
-#carte .carte-fiche[hidden]{display:none}
 #carte .carte-legende{position:absolute;left:16px;right:16px;bottom:calc(var(--depot-space,90px) + 10px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font:500 13px/18px var(--fa);color:#C7C7CC;pointer-events:none}
 #carte .carte-fiche:not([hidden]) ~ .carte-legende{display:none}
 #carte .carte-legende span{display:inline-flex;align-items:center;gap:6px}
@@ -2240,15 +2238,49 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #carte .lg-afaire{border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.55)}
 #carte .lg-fait{border-radius:50%;background:rgba(199,199,204,.55);width:4px!important;height:4px!important}
 #carte .lg-orbite{border-radius:50%;background:#FFB340;box-shadow:0 0 6px 2px rgba(255,179,64,.5)}
-#carte .cf-k{display:flex;align-items:center;gap:8px;font-size:13px;line-height:18px;color:#D1D1D6}
-#carte .cf-k::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cf,#fff);box-shadow:0 0 8px var(--cf,#fff)}
-#carte .cf-t{margin-top:4px;font-size:17px;line-height:23px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
-#carte .cf-m{margin-top:2px;font-size:13px;line-height:18px;color:#C7C7CC}
-#carte .cf-m:empty{display:none}
-#carte .cf-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
-#carte .cf-b{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);font:500 15px var(--fa);color:#F2F2F7;cursor:pointer}
-#carte .cf-b1{border-color:color-mix(in srgb,var(--cf,#fff) 60%,transparent);background:color-mix(in srgb,var(--cf,#fff) 18%,transparent);color:#fff;font-weight:600}
-#carte .cf-b:focus-visible{outline:2px solid #fff;outline-offset:2px}
+/* La carte dans chaque monde : ouvre la carte centrée sur ce projet, son panneau ouvert */
+#S2 .w-carte{display:inline-flex;align-items:center;gap:9px;min-height:44px;margin-top:12px;padding:0 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--wc,#fff) 38%,transparent);background:color-mix(in srgb,var(--wc,#fff) 8%,rgba(255,255,255,.03));font:500 15px var(--fa);color:#F2F2F7;cursor:pointer}
+#S2 .w-carte i{width:14px;height:14px;border-radius:50%;border:1.6px solid var(--wc,#fff);position:relative;box-sizing:border-box}
+#S2 .w-carte i::after{content:"";position:absolute;left:3px;top:3px;width:5px;height:5px;border-radius:50%;background:var(--wc,#fff);box-shadow:0 0 6px var(--wc,#fff)}
+#S2 .w-carte:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+/* Le panneau d'un espace : la carte situe, le panneau dit (étude de la carte, étape 3) */
+#carte .carte-panneau{position:absolute;left:0;right:0;bottom:0;max-height:min(58vh,calc(100% - 200px));display:flex;flex-direction:column;padding:0 16px calc(var(--depot-space,90px) + 6px);border-radius:24px 24px 0 0;border-top:1px solid color-mix(in srgb,var(--pn,#fff) 42%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--pn,#fff) 10%,transparent),rgba(255,255,255,0) 120px),rgba(10,10,14,.94);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);font-family:var(--fa);box-shadow:0 -18px 50px rgba(0,0,0,.65);transform:translateY(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+#carte .carte-panneau[hidden]{display:none}
+#carte .carte-panneau:not([hidden]) ~ .carte-legende{display:none}
+#carte .pn-tete{display:flex;align-items:flex-start;gap:12px;padding:16px 0 12px}
+#carte .pn-pt{flex:none;width:10px;height:10px;margin-top:9px;border-radius:50%;background:var(--pn,#fff);box-shadow:0 0 10px var(--pn,#fff)}
+#carte .pn-txt{flex:1;min-width:0}
+#carte .pn-k{font-size:13px;line-height:18px;color:#C7C7CC}
+#carte .pn-t{font:600 22px/28px var(--fa);letter-spacing:-.4px;color:#F5F5F7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#carte .pn-m{margin-top:2px;font-size:15px;line-height:20px;color:#D1D1D6}
+#carte .pn-m:empty{display:none}
+#carte .pn-x{flex:none;width:44px;height:44px;margin:-4px -10px 0 0;border:0;background:none;position:relative;cursor:pointer;border-radius:12px}
+#carte .pn-x::before,#carte .pn-x::after{content:"";position:absolute;left:14px;top:21px;width:16px;height:1.8px;border-radius:1px;background:#D1D1D6;transform:rotate(45deg)}
+#carte .pn-x::after{transform:rotate(-45deg)}
+#carte .pn-acts{display:flex;gap:10px;padding-bottom:12px}
+#carte .pn-b{flex:1;min-height:50px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);font:600 16px var(--fa);color:#F2F2F7;cursor:pointer}
+#carte .pn-b1{background:#F5F5F7;border-color:#F5F5F7;color:#0B0B0F}
+#carte .pn-corps{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;margin:0 -16px;padding:0 16px 8px}
+#carte .pn-g{margin-top:10px}
+#carte .pn-gt{display:flex;align-items:center;justify-content:space-between;min-height:36px;font:600 17px var(--fa);letter-spacing:-.2px;color:#F5F5F7}
+#carte .pn-gt small{font:500 13px var(--fa);color:#C7C7CC}
+#carte button.pn-gt{width:100%;min-height:44px;border:0;background:none;padding:0;cursor:pointer;text-align:left}
+#carte button.pn-gt b{display:inline-flex;align-items:center;gap:8px;font:inherit}
+#carte button.pn-gt b::after{content:"";width:7px;height:7px;border-right:1.6px solid #C7C7CC;border-bottom:1.6px solid #C7C7CC;transform:rotate(45deg);margin-top:-4px;transition:transform .2s}
+#carte button.pn-gt[aria-expanded="true"] b::after{transform:rotate(225deg);margin-top:3px}
+#carte .pn-l{display:flex;align-items:flex-start;gap:12px;width:100%;min-height:54px;padding:9px 10px;margin:0 -10px;border:0;border-radius:12px;background:none;text-align:left;cursor:pointer;color:inherit;font:inherit;box-sizing:content-box}
+#carte .pn-l:active{background:rgba(255,255,255,.05)}
+#carte .pn-l.choisie{background:color-mix(in srgb,var(--pn,#fff) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--pn,#fff) 50%,transparent)}
+#carte .pn-s{flex:none;width:8px;height:8px;margin-top:7px;border-radius:50%;background:var(--pn,#fff);box-shadow:0 0 8px var(--pn,#fff)}
+#carte .pn-s.fait{width:5px;height:5px;margin:8px 1.5px 0;background:rgba(199,199,204,.6);box-shadow:none}
+#carte .pn-s.rg{background:#FFB340;box-shadow:0 0 8px #FFB340}
+#carte .pn-lt{flex:1;min-width:0}
+#carte .pn-lm{display:block;font-size:16px;line-height:21px;color:#F2F2F7;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+#carte .pn-ld{display:block;margin-top:2px;font-size:13px;line-height:18px;color:#C7C7CC}
+#carte .pn-vide{padding:6px 0 10px;font-size:15px;line-height:21px;color:#C7C7CC}
+#carte :is(.pn-b,.pn-x,.pn-l,button.pn-gt):focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media(min-width:861px){#carte .carte-panneau{left:auto;right:16px;top:calc(var(--carte-haut,96px) + 8px);bottom:calc(var(--depot-space,90px) + 12px);width:380px;max-height:none;border-radius:22px;border:1px solid color-mix(in srgb,var(--pn,#fff) 36%,transparent);padding-bottom:10px}}
+@media(prefers-reduced-motion:reduce){#carte .carte-panneau{transition:none}#carte button.pn-gt b::after{transition:none}}
 #carte .carte-ret:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 
 @media(prefers-reduced-motion:reduce){#S1 .h-ciel::before{transition:none}}
@@ -2366,6 +2398,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <div class="w-hero-desc" id="wband-desc"></div>
           <button class="w-hero-more" id="wband-more" type="button" aria-expanded="false" hidden>Lire la suite</button>
           <div class="w-hero-tags" id="wband-tags"></div>
+          <button class="w-carte" id="w-carte" type="button"><i aria-hidden="true"></i>Voir sur la carte</button>
           <!-- FOCUS TASK en premier plan -->
           <div class="w-focus-banner" id="w-focus-banner" style="display:none" data-open-focus="1">
             <div class="w-focus-dot"></div>
@@ -3036,12 +3069,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <button class="carte-ret" id="carte-fermer" type="button"><i aria-hidden="true"></i>Accueil</button>
     <div class="carte-txt"><div class="carte-t">Carte</div><button class="carte-ranger" id="carte-ranger" type="button" hidden><i aria-hidden="true"></i><span id="carte-ranger-t"></span><b aria-hidden="true"></b></button></div>
   </div>
-  <!-- La fiche : ce que représente ce qu'on a touché sur la carte -->
-  <div class="carte-fiche" id="carte-fiche" role="status" aria-live="polite" hidden>
-    <div class="cf-k" id="cf-k"></div>
-    <div class="cf-t" id="cf-t"></div>
-    <div class="cf-m" id="cf-m"></div>
-    <div class="cf-acts" id="cf-acts"></div>
+  <div class="carte-panneau" id="carte-panneau" role="region" aria-label="Ce que contient cet espace" hidden>
+    <div class="pn-tete"><i class="pn-pt" aria-hidden="true"></i><div class="pn-txt"><div class="pn-k" id="pn-k"></div><div class="pn-t" id="pn-t"></div><div class="pn-m" id="pn-m"></div></div><button class="pn-x" id="pn-x" type="button" aria-label="Fermer le panneau"></button></div>
+    <div class="pn-acts" id="pn-acts"></div>
+    <div class="pn-corps" id="pn-corps"></div>
   </div>
   <!-- La légende : ce que veut dire chaque point (cachée quand une fiche est ouverte) -->
   <div class="carte-legende" id="carte-legende" aria-hidden="true">
@@ -5377,6 +5408,7 @@ document.addEventListener("click",function(ev){
   // Intel open
   // Back buttons
   if(t.id==="btn-back"||t.closest("#btn-back")){ goHome(); return; }
+  if(t.closest("#w-carte")){ if(CUR && CUR.wid!=null) carteSur(CUR.wid); return; }
   if(t.id==="wband-more"){ descRepli(t.getAttribute("aria-expanded")!=="true"); return; }
   if(t.id==="btn-back-sante"||t.closest("#btn-back-sante")){ goHome(); return; }
   if(t.id==="btn-back-jur"||t.closest("#btn-back-jur")){ goHome(); return; }
@@ -8059,7 +8091,7 @@ function plRendre() {
     var orb = document.getElementById('h-orbite');
     if(orb && !orb._pl) { orb._pl = true; plGestesBande(orb); }
   }
-  if(_pl.carte && carteOuverte()) { var V = _pl.carte, keep = { s: V.s, tx: V.tx, ty: V.ty, choix: V.choix, sMin: V.sMin, sMax: V.sMax }; carteRanger(); _pl.carte = plVue(V.cv, plGeoCarte(), true); Object.assign(_pl.carte, keep); carteFicheRafraichir(); }
+  if(_pl.carte && carteOuverte()) { var V = _pl.carte, keep = { s: V.s, tx: V.tx, ty: V.ty, choix: V.choix, panneau: V.panneau, sMin: V.sMin, sMax: V.sMax }; carteRanger(); _pl.carte = plVue(V.cv, plGeoCarte(), true); Object.assign(_pl.carte, keep); carteFicheRafraichir(); }
   plDemarrer();
 }
 function plBandeVisible() { var s1 = document.getElementById('S1'); return !!_pl.band && s1 && !s1.classList.contains('off') && !carteOuverte(); }
@@ -8120,15 +8152,15 @@ function carteEnsemble(V, sansAnim) {
 function carteBorner(V) {
   var W = V.cv.width / V.dpr, H = V.cv.height / V.dpr, b = V.sc.box;
   V.s = Math.max(V.sMin || .3, Math.min(V.sMax || 6, V.s));
-  var x0 = W * .5 - b.x1 * V.s, x1 = W * .5 - b.x0 * V.s, y0 = H * .55 - b.y1 * V.s, y1 = 104 - b.y0 * V.s;
+  var x0 = W * .5 - b.x1 * V.s, x1 = W * .5 - b.x0 * V.s, y0 = H * (V.panneau ? .14 : .55) - b.y1 * V.s, y1 = (V.haut || 100) + 4 - b.y0 * V.s;
   if(x0 > x1) x0 = x1 = (x0 + x1) / 2; if(y0 > y1) y0 = y1;
   V.tx = Math.min(x1, Math.max(x0, V.tx)); V.ty = Math.min(y1, Math.max(y0, V.ty));
 }
 function carteZoom(V, f, x, y) { var s0 = V.s, s1 = Math.max(V.sMin || .3, Math.min(V.sMax || 6, s0 * f)); V.tx = x - (x - V.tx) * s1 / s0; V.ty = y - (y - V.ty) * s1 / s0; V.s = s1; carteBorner(V); carteRedessin(); }
 function carteRedessin() { if(plCalme() && _pl.carte && carteOuverte()) plDessiner(_pl.carte, performance.now()); }
-function carteGlisser(V, cible) {
-  var tmp = { cv: V.cv, dpr: V.dpr, sc: V.sc, s: cible.s, tx: cible.tx, ty: cible.ty, sMin: V.sMin, sMax: V.sMax }; carteBorner(tmp);
-  if(plCalme()) { V.s = tmp.s; V.tx = tmp.tx; V.ty = tmp.ty; carteRedessin(); return; }
+function carteGlisser(V, cible, sansAnim) {
+  var tmp = { cv: V.cv, dpr: V.dpr, sc: V.sc, s: cible.s, tx: cible.tx, ty: cible.ty, sMin: V.sMin, sMax: V.sMax, panneau: V.panneau, haut: V.haut }; carteBorner(tmp);
+  if(plCalme() || sansAnim) { V.s = tmp.s; V.tx = tmp.tx; V.ty = tmp.ty; carteRedessin(); return; }
   var de = { s: V.s, tx: V.tx, ty: V.ty }, t0 = performance.now(); _pl.elan = null;
   (function pas(now) { var k = Math.min(1, (now - t0) / 420), e = 1 - Math.pow(1 - k, 3); V.s = de.s + (tmp.s - de.s) * e; V.tx = de.tx + (tmp.tx - de.tx) * e; V.ty = de.ty + (tmp.ty - de.ty) * e; if(k < 1) requestAnimationFrame(pas); })(t0);
 }
@@ -8148,50 +8180,128 @@ function carteOuvrir() {
   c.classList.add('open'); c.setAttribute('aria-hidden', 'false');
   carteRanger();
   _pl.carte = plVue(document.getElementById('carte-cv'), plGeoCarte(), true);
+  c.style.setProperty('--carte-haut', _pl.carte.haut + 'px');
   carteFiche(null);
   if(!c._gestes) { c._gestes = true; carteGestes(); }
   if(typeof depotLayout === 'function') depotLayout();
   setTimeout(function() { var b = document.getElementById('carte-fermer'); if(b) b.focus({ preventScroll: true }); }, 0);
   plDemarrer(); if(plCalme()) plDessiner(_pl.carte, performance.now());
 }
+// Ouvrir la carte déjà centrée sur un espace, son panneau ouvert (depuis l'écran d'un projet)
+function carteSur(id) {
+  carteOuvrir();
+  var V = _pl.carte, e = V && V.sc.tous.filter(function(x) { return String(x.id) === String(id); })[0];
+  if(e) carteFiche(e, true);
+}
 function carteFermer(sansRetour) {
   var c = document.getElementById('carte'); if(!c || !c.classList.contains('open')) return;
-  c.classList.remove('open'); c.setAttribute('aria-hidden', 'true'); _pl.elan = null;
+  c.classList.remove('open'); c.setAttribute('aria-hidden', 'true'); _pl.elan = null; carteFiche(null);
   if(typeof depotLayout === 'function') depotLayout();
   plDemarrer(); if(plCalme() && _pl.band && !sansRetour) plDessiner(_pl.band, performance.now());
 }
-/* La fiche : ce que représente ce qu'on a touché, et ce qu'on peut en faire */
-function carteFiche(chose) {
-  var V = _pl.carte, f = document.getElementById('carte-fiche'); if(!f) return;
-  if(V) V.choix = chose || null;
-  f.hidden = !chose; carteRedessin();
-  if(!chose) return;
-  var k = document.getElementById('cf-k'), t = document.getElementById('cf-t'), m = document.getElementById('cf-m'), acts = document.getElementById('cf-acts');
-  acts.textContent = '';
-  var bouton = function(txt, fn, blanc) { var b = document.createElement('button'); b.type = 'button'; b.className = 'cf-b' + (blanc ? ' cf-b1' : ''); b.textContent = txt; b.addEventListener('click', fn); acts.appendChild(b); };
-  if(chose.items) {
-    // Un espace
-    f.style.setProperty('--cf', chose.dort ? '#8E8E93' : chose.c);
-    k.textContent = chose.pole ? 'Ma vie' : (chose.dort ? 'Projet endormi' : 'Projet');
-    t.textContent = chose.n; m.textContent = plEtatCourt(chose);
-    if(chose.dort) bouton('Réveiller', function() { mondeSommeil(chose.id, false); toast(chose.n + ' est réveillé'); plRendre(); var V2 = _pl.carte; var e2 = V2 && V2.sc.tous.filter(function(x) { return x.id === chose.id; })[0]; carteFiche(e2 || null); });
-    bouton('Ouvrir ' + chose.n, function() { plOuvrirEspace(chose); }, true);
+/* Le panneau (étude de la carte, étape 3) : la carte situe, le panneau dit. Toucher un espace le centre au-dessus du
+   panneau, qui range tout ce qu'il contient ; toucher un point ouvre le panneau de son espace, sur sa ligne. Toucher une
+   ligne ouvre la chose là où elle vit. Une seule touche blanche. Textes posés par textContent. */
+var PN_GROUPES = [
+  { k: 'afaire', t: 'À faire', f: function(it) { return plAFaire(it); } },
+  { k: 'pensees', t: 'Pensées faites', f: function(it) { return it.type === 'pensee' && it.faite; } },
+  { k: 'rdv', t: 'Rendez-vous passés', f: function(it) { return it.type === 'rdv' && it.faite; } },
+  { k: 'journal', t: 'Journal', f: function(it) { return it.type === 'journal'; } },
+  { k: 'docs', t: 'Documents', f: function(it) { return it.type === 'doc'; } },
+  { k: 'jur', t: 'Démarches faites', f: function(it) { return it.type === 'jur' && it.faite; } },
+  { k: 'taches', t: 'Tâches faites', f: function(it) { return it.type === 'tache'; }, replie: true }
+];
+var _pnOuverts = {};
+function pnQuand(it) {
+  if(!it.ts) return '';
+  if(it.type === 'rdv' && !it.faite) return 'À venir · ' + (typeof santeJour === 'function' ? santeJour(new Date(it.ts)) : '');
+  return (it.type === 'pensee' || it.type === 'aranger' ? 'Déposée ' : '') + ilYA(it.ts);
+}
+function pnOuvrirChose(it, e) {
+  if(it.type === 'pensee' || it.type === 'aranger') { carteFermer(true); penseeOuvrir(it.id); return; }
+  if(!e) return;
+  plOuvrirEspace(e);
+  if(it.type === 'journal' && typeof allerA === 'function') setTimeout(function() { allerA('journal'); }, 60);
+}
+function pnLigne(it, e, faite) {
+  var b = document.createElement('button'); b.type = 'button'; b.className = 'pn-l'; b.dataset.pn = it.id;
+  var sg = document.createElement('i'); sg.className = 'pn-s' + (it.type === 'aranger' ? ' rg' : faite ? ' fait' : ''); sg.setAttribute('aria-hidden', 'true');
+  var tx = document.createElement('span'); tx.className = 'pn-lt';
+  var m = document.createElement('span'); m.className = 'pn-lm'; m.textContent = it.txt || PL_TYPES[it.type];
+  var d = document.createElement('span'); d.className = 'pn-ld'; d.textContent = [PL_TYPES[it.type], pnQuand(it)].filter(Boolean).join(' · ');
+  tx.appendChild(m); tx.appendChild(d); b.appendChild(sg); b.appendChild(tx);
+  b.addEventListener('click', function() { pnOuvrirChose(it, e); });
+  return b;
+}
+function carteFiche(chose, sansAnim) {
+  var V = _pl.carte, P = document.getElementById('carte-panneau'); if(!P) return;
+  if(!chose) { if(V) { V.choix = null; V.panneau = null; } P.hidden = true; carteRedessin(); return; }
+  var sat = chose.type === 'aranger', e = chose.items ? chose : (sat ? null : chose.e), avant = V && V.panneau;
+  if(V) { V.choix = chose; V.panneau = sat ? { id: 'orbite' } : e; }
+  var k = document.getElementById('pn-k'), t = document.getElementById('pn-t'), m = document.getElementById('pn-m'), acts = document.getElementById('pn-acts'), corps = document.getElementById('pn-corps');
+  acts.textContent = ''; corps.textContent = '';
+  var bouton = function(txt, fn, blanc) { var b = document.createElement('button'); b.type = 'button'; b.className = 'pn-b' + (blanc ? ' pn-b1' : ''); b.textContent = txt; b.addEventListener('click', fn); acts.appendChild(b); };
+  if(sat) {
+    var orb = V ? V.sc.orbite : [];
+    P.style.setProperty('--pn', '#FFB340');
+    k.textContent = 'Orbite'; t.textContent = orb.length + (orb.length > 1 ? ' pensées à ranger' : ' pensée à ranger'); m.textContent = 'Elles attendent un espace.';
+    bouton('Ranger dans Déposé', function() { carteFermer(true); penseeOuvrir(chose.id); }, true);
+    var g0 = document.createElement('div'); g0.className = 'pn-g';
+    orb.forEach(function(o) { g0.appendChild(pnLigne(o, null, false)); });
+    corps.appendChild(g0);
   } else {
-    var e = chose.e, quand = chose.ts ? (chose.type === 'rdv' && !chose.faite ? (typeof santeJour === 'function' ? santeJour(new Date(chose.ts)) : '') : ilYA(chose.ts)) : '';
-    f.style.setProperty('--cf', chose.type === 'aranger' ? '#FFB340' : (e && e.dort ? '#8E8E93' : e ? e.c : '#FFB340'));
-    var kind = PL_TYPES[chose.type] + (chose.type === 'pensee' && chose.faite ? ', faite' : '') + (chose.type === 'jur' ? (chose.faite ? ', faite' : ', à faire') : '');
-    k.textContent = kind + (e ? ' · ' + e.n : '');
-    t.textContent = chose.txt; m.textContent = quand ? (chose.type === 'rdv' && !chose.faite ? 'À venir · ' + quand : (chose.type === 'pensee' || chose.type === 'aranger' ? 'Déposée ' : '') + quand) : '';
-    if(chose.type === 'pensee' || chose.type === 'aranger') bouton(chose.type === 'aranger' ? 'Ranger cette pensée' : 'Ouvrir dans Déposé', function() { carteFermer(true); penseeOuvrir(chose.id); }, true);
-    else bouton('Ouvrir ' + e.n, function() { plOuvrirEspace(e); }, true);
+    P.style.setProperty('--pn', e.dort ? '#AEAEB2' : e.c);
+    k.textContent = e.pole ? 'Ma vie' : (e.dort ? 'Projet endormi' : 'Projet');
+    t.textContent = e.n; m.textContent = plEtatCourt(e);
+    if(e.dort) {
+      bouton('Réveiller', function() { mondeSommeil(e.id, false); toast(e.n + ' est réveillé'); plRendre(); var V2 = _pl.carte, e2 = V2 && V2.sc.tous.filter(function(x) { return x.id === e.id; })[0]; carteFiche(e2 || null, true); }, true);
+      bouton('Ouvrir ' + e.n, function() { plOuvrirEspace(e); });
+    } else bouton('Ouvrir ' + e.n, function() { plOuvrirEspace(e); }, true);
+    var items = e.items.slice().reverse();
+    if(!items.length) { var v = document.createElement('div'); v.className = 'pn-vide'; v.textContent = 'Rien encore. Dépose une pensée : elle s’allumera ici.'; corps.appendChild(v); }
+    PN_GROUPES.forEach(function(G) {
+      var liste = items.filter(G.f); if(!liste.length) return;
+      if(G.k === 'afaire') liste.sort(function(a, b) { return a.type === 'rdv' && b.type === 'rdv' ? a.ts - b.ts : b.ts - a.ts; });
+      var g = document.createElement('div'); g.className = 'pn-g'; g.dataset.g = G.k;
+      var cle = e.id + ':' + G.k, ouvert = !G.replie || _pnOuverts[cle] || (!chose.items && G.f(chose));
+      var titre;
+      if(G.replie) {
+        titre = document.createElement('button'); titre.type = 'button'; titre.className = 'pn-gt'; titre.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+        var tb = document.createElement('b'); tb.textContent = G.t; titre.appendChild(tb);
+      } else { titre = document.createElement('div'); titre.className = 'pn-gt'; titre.textContent = G.t; }
+      var nb = document.createElement('small'); nb.textContent = String(liste.length); titre.appendChild(nb);
+      g.appendChild(titre);
+      var corpsG = document.createElement('div'); corpsG.hidden = !ouvert;
+      liste.forEach(function(it) { corpsG.appendChild(pnLigne(it, e, !plAFaire(it))); });
+      g.appendChild(corpsG);
+      if(G.replie) titre.addEventListener('click', function() { var o = corpsG.hidden; corpsG.hidden = !o; _pnOuverts[cle] = o; titre.setAttribute('aria-expanded', o ? 'true' : 'false'); });
+      corps.appendChild(g);
+    });
   }
+  P.hidden = false;
+  if(V && e && !(avant && avant.id === e.id)) carteCentrer(V, e, sansAnim);
+  carteRedessin();
+  if(!chose.items) {
+    var l = [].filter.call(P.querySelectorAll('.pn-l'), function(x) { return x.dataset.pn === String(chose.id); })[0];
+    if(l) { l.classList.add('choisie'); l.scrollIntoView({ block: 'nearest' }); }
+  } else corps.scrollTop = 0;
+}
+// L'espace se pose au milieu de la place libre au-dessus du panneau (à gauche de lui sur Mac), assez près pour être lu
+function carteCentrer(V, e, sansAnim) {
+  var P = document.getElementById('carte-panneau'), W = V.cv.width / V.dpr, H = V.cv.height / V.dpr, r = P.getBoundingClientRect();
+  var cote = r.left > W / 2, haut = (V.haut || 100) + 8, bas = cote ? H - 120 : r.top - 12, cx = cote ? r.left / 2 : W / 2;
+  var place = Math.max(80, bas - haut), base = (V.sMin || .5) / .85;
+  var s1 = Math.min(V.sMax || 5, Math.max(V.s, base * 1.6), place / ((e.rmax || 16) * 2 + 110));
+  s1 = Math.max(V.sMin || .3, s1);
+  var cible = { s: s1, tx: cx - e.cap[0] * s1, ty: haut + place * .42 - e.cap[1] * s1 };
+  carteGlisser(V, cible, sansAnim);
 }
 function carteFicheRafraichir() {
   var V = _pl.carte; if(!V || !V.choix) return;
   var id = V.choix.items ? null : V.choix.id, eid = V.choix.items ? V.choix.id : null, trouve = null;
   V.sc.tous.forEach(function(e) { if(eid !== null && e.id === eid) trouve = e; e.items.forEach(function(it) { if(id && it.id === id) trouve = it; }); });
   V.sc.orbite.forEach(function(o) { if(id && o.id === id) trouve = o; });
-  carteFiche(trouve);
+  carteFiche(trouve, true);
 }
 function carteToucher(x, y) {
   var V = _pl.carte; if(!V) return;
@@ -8262,6 +8372,7 @@ function carteGestes() {
     else { V.tx -= ev.deltaX; V.ty -= ev.deltaY; carteBorner(V); carteRedessin(); }
   }, { passive: false });
   document.getElementById('carte-fermer').addEventListener('click', function() { carteFermer(); });
+  document.getElementById('pn-x').addEventListener('click', function() { carteFiche(null); });
   document.getElementById('carte-ranger').addEventListener('click', function() { var V = _pl.carte, o = V && V.sc.orbite[0]; carteFermer(true); if(o) penseeOuvrir(o.id); else depotOpen(); });
   document.addEventListener('keydown', function(ev) {
     if(!carteOuverte()) return;

@@ -201,7 +201,7 @@ const liens = page => page.evaluate(() => ({
   // Glisser : la carte bouge (et un glissé n'ouvre rien)
   const v0 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty }));
   await page.mouse.move(200, 500); await page.mouse.down(); await page.mouse.move(150, 430, { steps: 6 }); await page.mouse.up(); await page.waitForTimeout(100);
-  const v1 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty, fiche: !document.getElementById('carte-fiche').hidden }));
+  const v1 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty, fiche: !document.getElementById('carte-panneau').hidden }));
   // Pincer (pavé du Mac) : rapproche puis éloigne, dans les bornes
   await page.evaluate(() => { for (let i = 0; i < 30; i++) document.getElementById('carte-cv').dispatchEvent(new WheelEvent('wheel', { deltaY: -40, ctrlKey: true, clientX: 195, clientY: 500, bubbles: true, cancelable: true })); });
   const sGrand = await page.evaluate(() => _pl.carte.s);
@@ -210,29 +210,46 @@ const liens = page => page.evaluate(() => ({
   ok((v1.tx !== v0.tx || v1.ty !== v0.ty) && !v1.fiche && sGrand > c.s * 2 && Math.abs(sPetit[0] - sPetit[1]) < 1e-6, 'Carte : glisser la déplace sans rien ouvrir ; pincer rapproche et éloigne, jusqu\'aux bornes', JSON.stringify({ v0, v1, s0: c.s, sGrand, sPetit }));
   await page.keyboard.press('0'); await page.waitForTimeout(100);
   // Toucher un point : la fiche dit ce qu'il représente
-  const fiche = async (trouver) => { const p = await page.evaluate(trouver); await page.mouse.click(p.x, p.y); await page.waitForTimeout(150); return page.evaluate(() => ({ vis: !document.getElementById('carte-fiche').hidden, k: document.getElementById('cf-k').textContent, t: document.getElementById('cf-t').textContent, b: [...document.querySelectorAll('#cf-acts button')].map(x => x.textContent), h: [...document.querySelectorAll('#cf-acts button')].map(x => Math.round(x.getBoundingClientRect().height)) })); };
+  const fiche = async (trouver) => { const p = await page.evaluate(trouver); await page.mouse.click(p.x, p.y); await page.waitForTimeout(150); return page.evaluate(() => {
+    const P = document.getElementById('carte-panneau'), V = _pl.carte, e = V.panneau && V.panneau.items ? V.panneau : null, top = P.getBoundingClientRect().top;
+    const blanc = [...P.querySelectorAll('button')].filter(x => { const c = getComputedStyle(x).backgroundColor.match(/\d+/g).map(Number); return c[0] > 230 && c[1] > 230 && c[2] > 230 && (c[3] === undefined || c.length < 4); }).map(x => x.textContent);
+    return { vis: !P.hidden, k: document.getElementById('pn-k').textContent, t: document.getElementById('pn-t').textContent, b: [...document.querySelectorAll('#pn-acts button')].map(x => x.textContent), h: [...P.querySelectorAll('.pn-b, .pn-l:not([hidden]), .pn-x, button.pn-gt')].filter(x => x.offsetParent).map(x => Math.round(x.getBoundingClientRect().height)),
+      choisie: (P.querySelector('.pn-l.choisie .pn-lm') || {}).textContent || '', lignes: P.querySelectorAll('.pn-l').length, items: e ? e.items.length : -1, blanc,
+      dessus: e ? (e.cap[1] * V.s + V.ty) + (e.rmax || 0) * V.s <= top : true };
+  }); };
   await page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.k === 'atlas'); V.s = V.sMax * .5; V.tx = innerWidth / 2 - e.cap[0] * V.s; V.ty = innerHeight * .45 - e.cap[1] * V.s; carteBorner(V); carteRedessin(); });
   let f = await fiche(() => { const V = _pl.carte, it = V.sc.esp.find(x => x.k === 'atlas').items.find(i => i.type === 'journal'); return { x: it.s[0] * V.s + V.tx, y: it.s[1] * V.s + V.ty }; });
-  ok(f.vis && /^Journal · ATLAS/.test(f.k) && f.t === 'Module 3 relu' && f.b.includes('Ouvrir ATLAS') && f.h.every(h => h >= 44), 'Carte : toucher un point ouvre sa fiche (« Journal · ATLAS », ses mots, « Ouvrir ATLAS »)', JSON.stringify(f));
-  const m = await mesurer(page, { racine: '#carte-fiche', cadre: '#carte-fiche' });
-  ok(m.n > 2 && m.pire.ratio >= 4.5, 'Carte : contraste de la fiche ≥ 4,5 : 1', fmt(m.pire.ratio) + ' sur ' + m.n);
+  ok(f.vis && f.k === 'Projet' && f.t === 'ATLAS' && f.choisie === 'Module 3 relu' && f.b.includes('Ouvrir ATLAS') && f.blanc.join() === 'Ouvrir ATLAS' && f.lignes === f.items && f.dessus && f.h.every(h => h >= 44),
+    'Carte, panneau : toucher un point ouvre le panneau de son espace sur sa ligne (« Module 3 relu ») ; une ligne par chose réelle ; l\'espace reste au-dessus du panneau ; une seule touche blanche ; cibles ≥ 44 px', JSON.stringify(f));
+  const m = await mesurer(page, { racine: '#carte-panneau', cadre: '#carte-panneau' });
+  ok(m.n > 4 && m.pire.ratio >= 4.5, 'Carte : contraste du panneau ≥ 4,5 : 1', fmt(m.pire.ratio) + ' sur ' + m.n);
+  // Toucher une ligne de pensée l'ouvre dans « Déposé »
+  const ligne = await page.evaluate(() => { const l = [...document.querySelectorAll('#carte-panneau .pn-l')].find(x => /Écrire le module 4/.test(x.textContent)); l.click(); return { carte: carteOuverte(), depose: document.getElementById('depot-screen').classList.contains('open') || document.getElementById('depot-screen').getAttribute('aria-hidden') === 'false' }; });
+  await page.evaluate(() => { if (typeof depotClose === 'function') depotClose(); carteOuvrir(); });
+  await page.waitForTimeout(150);
+  ok(!ligne.carte && ligne.depose, 'Carte, panneau : toucher une pensée l\'ouvre dans « Déposé »', JSON.stringify(ligne));
   // Un endormi se travaille : sa fiche propose « Réveiller »
   await page.keyboard.press('0'); await page.waitForTimeout(100);
   await page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.n === 'FBA'); V.s = V.sMax * .4; V.tx = innerWidth / 2 - e.cap[0] * V.s; V.ty = innerHeight * .45 - e.cap[1] * V.s; carteBorner(V); carteRedessin(); });
   f = await fiche(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.n === 'FBA'); return { x: e.cap[0] * V.s + V.tx, y: e.cap[1] * V.s + V.ty }; });
-  const okFba = f.vis && f.k === 'Projet endormi' && f.t === 'FBA' && f.b.join() === 'Réveiller,Ouvrir FBA';
-  await page.click('#cf-acts button:first-child'); await page.waitForTimeout(200);
-  const reveil = await page.evaluate(() => ({ dort: mondeDort(1), k: document.getElementById('cf-k').textContent }));
-  ok(okFba && !reveil.dort && reveil.k === 'Projet', 'Carte : la fiche d\'un endormi propose « Réveiller », et le réveil se fait sur place', JSON.stringify({ f, reveil }));
+  const okFba = f.vis && f.k === 'Projet endormi' && f.t === 'FBA' && f.b.join() === 'Réveiller,Ouvrir FBA' && f.blanc.join() === 'Réveiller';
+  await page.click('#pn-acts button:first-child'); await page.waitForTimeout(200);
+  const reveil = await page.evaluate(() => ({ dort: mondeDort(1), k: document.getElementById('pn-k').textContent }));
+  ok(okFba && !reveil.dort && reveil.k === 'Projet', 'Carte, panneau : un endormi propose « Réveiller » (la touche blanche), et le réveil se fait sur place', JSON.stringify({ f, reveil }));
   await page.evaluate(() => mondeSommeil(1, true));
   // Ouvrir un espace depuis sa fiche ; Échap ferme la fiche, puis la carte
-  await page.keyboard.press('Escape'); const sansFiche = await page.evaluate(() => document.getElementById('carte-fiche').hidden && carteOuverte());
+  await page.keyboard.press('Escape'); const sansFiche = await page.evaluate(() => document.getElementById('carte-panneau').hidden && carteOuverte());
   await page.keyboard.press('Escape'); const fermee = await page.evaluate(() => !carteOuverte());
   await page.evaluate(() => carteOuvrir()); await page.waitForTimeout(150);
   await page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.k === 'atlas'); carteFiche(e); });
-  await page.click('#cf-acts .cf-b1'); await page.waitForTimeout(300);
+  await page.click('#pn-acts .pn-b1'); await page.waitForTimeout(300);
   const ouvert = await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && CUR.wid === 4 && !carteOuverte());
-  ok(sansFiche && fermee && ouvert, 'Carte : Échap ferme la fiche puis la carte ; « Ouvrir ATLAS » ouvre ATLAS', JSON.stringify({ sansFiche, fermee, ouvert }));
+  ok(sansFiche && fermee && ouvert, 'Carte : Échap ferme le panneau puis la carte ; « Ouvrir ATLAS » ouvre ATLAS', JSON.stringify({ sansFiche, fermee, ouvert }));
+  // La carte dans chaque monde : depuis ATLAS, la carte s'ouvre centrée sur lui, panneau ouvert
+  await page.click('#w-carte'); await page.waitForTimeout(300);
+  const sur = await page.evaluate(() => { const V = _pl.carte, P = document.getElementById('carte-panneau'), e = V.panneau; return { ouverte: carteOuverte(), t: document.getElementById('pn-t').textContent, vis: !P.hidden, dessus: e && (e.cap[1] * V.s + V.ty) + (e.rmax || 0) * V.s <= P.getBoundingClientRect().top, h: Math.round(document.getElementById('w-carte').getBoundingClientRect().height) }; });
+  ok(sur.ouverte && sur.vis && sur.t === 'ATLAS' && sur.dessus, 'La carte dans chaque monde : « Voir sur la carte » ouvre la carte sur ATLAS, son panneau ouvert, ATLAS au-dessus du panneau', JSON.stringify(sur));
+  await page.evaluate(() => carteFermer());
   ok(!errors.length, 'Aucune erreur de console (planète et carte)', errors.join(' | '));
   await ctx.close();
 }
