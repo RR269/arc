@@ -143,49 +143,67 @@ const liens = page => page.evaluate(() => ({
     ? { status: 200, json: { filing: /comptable/i.test(body.thought.body) ? { space: 'juridique', confidence: 'sure', step: 'Appeler', moment: { type: 'none' }, extras: [] } : /module/i.test(body.thought.body) ? { space: 'atlas', confidence: 'sure', step: 'Écrire', moment: { type: 'none' }, extras: [] } : { space: 'inconnu', confidence: 'unsure', step: '', moment: { type: 'none' }, extras: [] }, model: 'test' } }
     : { status: 200, json: { content: [{ type: 'text', text: 'ok' }] } };
   const { page, errors, ctx } = await appareil(fk);
-  const bande = () => page.evaluate(() => { const sc = _pl.band.sc; return { lum: sc.esp.reduce((n, e) => n + e.lum.length, 0), ponts: sc.ponts.map(p => p.a.n + '-' + p.b.n).join(), syn: sc.synapses.length, orb: sc.orbite.length, esp: sc.esp.length, poles: sc.esp.filter(e => e.pole).length, attendu: WORLDS.length }; });
-  let sc = await bande();
-  ok(sc.lum === 0 && !sc.ponts && sc.syn === 0 && sc.orb === 0 && sc.esp === sc.attendu && sc.poles === 0, 'Planète, compte neuf : une région par projet (ni Santé ni Juridique), aucune lumière ni aucun fil', JSON.stringify(sc));
+  // Chaque point autour d'un espace est une chose réelle : pensées rangées, tâches faites, entrées de journal
+  const reel = () => page.evaluate(() => {
+    const sc = _pl.band.sc, ecarts = [];
+    sc.esp.forEach(e => { const w = monde(e.id), fait = S.tasks[w.id] || {};
+      const taches = (w.tasks_done || []).concat(w.tasks_todo || [], S.custom[w.id] || []).filter(t => fait[t.id]).length;
+      const attendu = penseesDe(espaceCle(w)).length + taches + (S.journal[w.id] || []).filter(j => j && (j.t || j.txt)).length;
+      if (e.items.length !== attendu) ecarts.push(e.n + ' ' + e.items.length + '≠' + attendu); });
+    return { ecarts, poles: sc.poles.map(e => e.n).join(), surPlanete: sc.tous.filter(e => e.pole).length, zone: sc.poles.every(e => e.u > .7) && sc.esp.every(e => e.u < .72), pts: sc.esp.some(e => e.pts) };
+  });
+  let r = await reel();
+  ok(!r.ecarts.length && r.surPlanete === 2 && r.zone && !r.pts, 'Planète : autour de chaque projet, un point par chose réelle (aucun point de décor) ; Santé et Juridique sur la planète, dans leur zone « Ma vie »', JSON.stringify(r));
   for (const t of ['Appeler le comptable pour la TVA', 'Demander au comptable le régime de TVA', 'Écrire le module 4', 'Une idée en vrac']) { await deposit(page, t); await page.waitForTimeout(500); }
   await page.waitForTimeout(1200);
-  await page.evaluate(() => { rlPoser('projet', 4, 1, 'oui', ['FBA']); const ts = Object.values(_depot.thoughts); rlPoser('pensee', ts.find(x => /Appeler/.test(x.body)).id, ts.find(x => /Demander/.test(x.body)).id, 'oui', ['comptable']); goHome(); renderHome(); });
+  await page.evaluate(() => { rlPoser('projet', 4, 1, 'oui', ['FBA']); const ts = Object.values(_depot.thoughts); rlPoser('pensee', ts.find(x => /Appeler/.test(x.body)).id, ts.find(x => /Demander/.test(x.body)).id, 'oui', ['comptable']); S.journal[4].push({ ts: Date.now(), t: 'Module 3 relu' }); saveS(true); goHome(); renderHome(); });
   await page.waitForTimeout(300);
-  sc = await page.evaluate(() => { const sc = _pl.band.sc; return { atlas: sc.esp.find(e => e.k === 'atlas').lum.length, lum: sc.esp.reduce((n, e) => n + e.lum.length, 0), ponts: sc.ponts.map(p => p.a.n + '-' + p.b.n).join(), orb: sc.orbite.length, aRanger: rangeToSortCount(), fba: sc.esp.find(e => e.n === 'FBA').dort, fbaDevant: sc.esp.find(e => e.n === 'FBA').v > sc.esp.find(e => e.k === 'atlas').v, fusion: getComputedStyle(document.getElementById('h-planete')).mixBlendMode, vu: _pl.vu }; });
-  ok(sc.atlas === 1 && sc.lum === 1 && /ATLAS/.test(sc.ponts) && /FBA/.test(sc.ponts) && sc.orb === sc.aRanger && sc.orb === 1 && sc.fba && !sc.fbaDevant && sc.fusion === 'normal' && sc.vu,
-    'Planète : une lumière par pensée rangée dans un projet, un pont par projets reliés, l\'orbite = pensées à ranger, l\'endormi derrière', JSON.stringify(sc));
+  r = await reel();
+  let sc = await page.evaluate(() => { const sc = _pl.band.sc, at = sc.esp.find(e => e.k === 'atlas'); return { atlasPens: at.lum.length, atlasJour: at.items.filter(i => i.type === 'journal').length, jur: sc.poles.find(e => e.id === 'juridique').lum.length, ponts: sc.ponts.map(p => p.a.n + '-' + p.b.n).join(), syn: sc.synapses.length, orb: sc.orbite.length, aRanger: rangeToSortCount(), fbaDerriere: sc.esp.find(e => e.n === 'FBA').v < at.v, fusion: getComputedStyle(document.getElementById('h-planete')).mixBlendMode }; });
+  ok(!r.ecarts.length && sc.atlasPens === 1 && sc.atlasJour >= 1 && sc.jur === 2 && /ATLAS/.test(sc.ponts) && /FBA/.test(sc.ponts) && sc.syn === 1 && sc.orb === sc.aRanger && sc.orb === 1 && sc.fbaDerriere && sc.fusion === 'normal',
+    'Planète : la pensée et l\'entrée de journal s\'ajoutent autour d\'ATLAS, les pensées juridiques dans Ma vie, le pont, le fil, l\'orbite = pensées à ranger, l\'endormi derrière', JSON.stringify({ ...sc, ecarts: r.ecarts }));
   const raf = await page.evaluate(() => _pl.raf);
   ok(!raf, 'Mouvement réduit : la planète est une image fixe', String(raf));
-  // Toucher la bande hors d'une région ouvre la carte ; Santé et Juridique y sont sur leur lune
-  const coin = await page.evaluate(() => { const r = document.getElementById('h-orbite').getBoundingClientRect(); return { x: r.left + 20, y: r.top + 20 }; });
+  // La carte : ouverte depuis la bande ; plus de touches + et − ; on la parcourt
+  const coin = await page.evaluate(() => { const r = document.getElementById('h-orbite').getBoundingClientRect(); return { x: r.left + 12, y: r.bottom - 12 }; });
   await page.mouse.click(coin.x, coin.y); await page.waitForTimeout(300);
-  let c = await page.evaluate(() => { const V = _pl.carte, sc = V && V.sc; return { ouvert: carteOuverte(), poles: sc && sc.poles.map(e => e.n + ':' + e.lum.length).join(), surPlanete: sc && sc.esp.some(e => e.pole), syn: sc && sc.synapses.length, faits: document.getElementById('carte-faits').textContent }; });
-  ok(c.ouvert && c.poles === 'Santé:0,Juridique:2' && !c.surPlanete && c.syn === 1 && /1 pensée à ranger/.test(c.faits) && /FBA dort, lié à ATLAS/.test(c.faits),
-    'Carte : ouverte depuis la bande ; Santé et Juridique sur la lune « Ma vie » ; le fil entre pensées reliées ; une ligne de faits vrais', JSON.stringify(c));
-  // Charte de la carte : touches de 44 px, contraste de la barre du haut
-  const cib = await page.evaluate(() => [...document.querySelectorAll('#carte button')].map(b => Math.round(Math.min(b.getBoundingClientRect().width, b.getBoundingClientRect().height))));
-  const m = await mesurer(page, { racine: '#carte .carte-haut', cadre: '#carte .carte-haut' });
-  ok(cib.every(h => h >= 44) && m.n > 2 && m.pire.ratio >= 4.5, 'Carte : touches de 44 px au moins, contraste de la barre ≥ 4,5 : 1', cib.join(', ') + ' · ' + fmt(m.pire.ratio));
-  // Toucher ATLAS de loin : la carte se rapproche ; de près : ATLAS s'ouvre
-  const cap = () => page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.k === 'atlas'); return { x: e.cap[0] * V.s + V.tx, y: e.cap[1] * V.s + V.ty, s: V.s }; });
-  let p = await cap(); await page.mouse.click(p.x, p.y); await page.waitForTimeout(200);
-  const s1 = (await cap()).s;
-  ok(s1 > 2 && await page.evaluate(() => carteOuverte()), 'Carte : toucher une région de loin la rapproche', 'échelle ' + s1.toFixed(2));
-  // De près, la pensée se lit (dessinée sur le canevas : on vérifie qu'elle est à l'écran) puis ATLAS s'ouvre
-  const lisible = await page.evaluate(() => { const V = _pl.carte, L = V.sc.esp.find(x => x.k === 'atlas').lum[0], q = [L.s[0] * V.s + V.tx, L.s[1] * V.s + V.ty]; return q[0] > 0 && q[0] < innerWidth && q[1] > 0 && q[1] < innerHeight; });
-  p = await cap(); await page.mouse.click(p.x, p.y); await page.waitForTimeout(300);
+  let c = await page.evaluate(() => ({ ouvert: carteOuverte(), boutons: document.querySelectorAll('#carte-plus, #carte-moins, #carte-centre, .carte-zoom').length, faits: document.getElementById('carte-faits').textContent, s: _pl.carte.s }));
+  ok(c.ouvert && c.boutons === 0 && /1 pensée en orbite, à ranger/.test(c.faits) && /FBA dort, lié à ATLAS/.test(c.faits), 'Carte : ouverte depuis la bande, sans touches + ni −, une ligne de faits vrais', JSON.stringify(c));
+  // Glisser : la carte bouge (et un glissé n'ouvre rien)
+  const v0 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty }));
+  await page.mouse.move(200, 500); await page.mouse.down(); await page.mouse.move(150, 430, { steps: 6 }); await page.mouse.up(); await page.waitForTimeout(100);
+  const v1 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty, fiche: !document.getElementById('carte-fiche').hidden }));
+  // Pincer (pavé du Mac) : rapproche puis éloigne, dans les bornes
+  await page.evaluate(() => { for (let i = 0; i < 30; i++) document.getElementById('carte-cv').dispatchEvent(new WheelEvent('wheel', { deltaY: -40, ctrlKey: true, clientX: 195, clientY: 500, bubbles: true, cancelable: true })); });
+  const sGrand = await page.evaluate(() => _pl.carte.s);
+  await page.evaluate(() => { for (let i = 0; i < 60; i++) document.getElementById('carte-cv').dispatchEvent(new WheelEvent('wheel', { deltaY: 40, ctrlKey: true, clientX: 195, clientY: 500, bubbles: true, cancelable: true })); });
+  const sPetit = await page.evaluate(() => [_pl.carte.s, _pl.carte.sMin, _pl.carte.sMax]);
+  ok((v1.tx !== v0.tx || v1.ty !== v0.ty) && !v1.fiche && sGrand > c.s * 2 && Math.abs(sPetit[0] - sPetit[1]) < 1e-6, 'Carte : glisser la déplace sans rien ouvrir ; pincer rapproche et éloigne, jusqu\'aux bornes', JSON.stringify({ v0, v1, s0: c.s, sGrand, sPetit }));
+  await page.keyboard.press('0'); await page.waitForTimeout(100);
+  // Toucher un point : la fiche dit ce qu'il représente
+  const fiche = async (trouver) => { const p = await page.evaluate(trouver); await page.mouse.click(p.x, p.y); await page.waitForTimeout(150); return page.evaluate(() => ({ vis: !document.getElementById('carte-fiche').hidden, k: document.getElementById('cf-k').textContent, t: document.getElementById('cf-t').textContent, b: [...document.querySelectorAll('#cf-acts button')].map(x => x.textContent), h: [...document.querySelectorAll('#cf-acts button')].map(x => Math.round(x.getBoundingClientRect().height)) })); };
+  await page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.k === 'atlas'); V.s = V.sMax * .5; V.tx = innerWidth / 2 - e.cap[0] * V.s; V.ty = innerHeight * .45 - e.cap[1] * V.s; carteBorner(V); carteRedessin(); });
+  let f = await fiche(() => { const V = _pl.carte, it = V.sc.esp.find(x => x.k === 'atlas').items.find(i => i.type === 'journal'); return { x: it.s[0] * V.s + V.tx, y: it.s[1] * V.s + V.ty }; });
+  ok(f.vis && /^Journal · ATLAS/.test(f.k) && f.t === 'Module 3 relu' && f.b.includes('Ouvrir ATLAS') && f.h.every(h => h >= 44), 'Carte : toucher un point ouvre sa fiche (« Journal · ATLAS », ses mots, « Ouvrir ATLAS »)', JSON.stringify(f));
+  const m = await mesurer(page, { racine: '#carte-fiche', cadre: '#carte-fiche' });
+  ok(m.n > 2 && m.pire.ratio >= 4.5, 'Carte : contraste de la fiche ≥ 4,5 : 1', fmt(m.pire.ratio) + ' sur ' + m.n);
+  // Un endormi se travaille : sa fiche propose « Réveiller »
+  await page.keyboard.press('0'); await page.waitForTimeout(100);
+  await page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.n === 'FBA'); V.s = V.sMax * .4; V.tx = innerWidth / 2 - e.cap[0] * V.s; V.ty = innerHeight * .45 - e.cap[1] * V.s; carteBorner(V); carteRedessin(); });
+  f = await fiche(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.n === 'FBA'); return { x: e.cap[0] * V.s + V.tx, y: e.cap[1] * V.s + V.ty }; });
+  const okFba = f.vis && f.k === 'Projet endormi' && f.t === 'FBA' && f.b.join() === 'Réveiller,Ouvrir FBA';
+  await page.click('#cf-acts button:first-child'); await page.waitForTimeout(200);
+  const reveil = await page.evaluate(() => ({ dort: mondeDort(1), k: document.getElementById('cf-k').textContent }));
+  ok(okFba && !reveil.dort && reveil.k === 'Projet', 'Carte : la fiche d\'un endormi propose « Réveiller », et le réveil se fait sur place', JSON.stringify({ f, reveil }));
+  await page.evaluate(() => mondeSommeil(1, true));
+  // Ouvrir un espace depuis sa fiche ; Échap ferme la fiche, puis la carte
+  await page.keyboard.press('Escape'); const sansFiche = await page.evaluate(() => document.getElementById('carte-fiche').hidden && carteOuverte());
+  await page.keyboard.press('Escape'); const fermee = await page.evaluate(() => !carteOuverte());
+  await page.evaluate(() => carteOuvrir()); await page.waitForTimeout(150);
+  await page.evaluate(() => { const V = _pl.carte, e = V.sc.esp.find(x => x.k === 'atlas'); carteFiche(e); });
+  await page.click('#cf-acts .cf-b1'); await page.waitForTimeout(300);
   const ouvert = await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && CUR.wid === 4 && !carteOuverte());
-  ok(lisible && ouvert, 'Carte : de près, la pensée est à l\'écran, et toucher ATLAS ouvre ATLAS', JSON.stringify({ lisible, ouvert }));
-  // Rapprocher et éloigner : touches, molette du pavé (pincer), bornes 1 à 5, Échap ferme
-  await page.evaluate(() => { goHome(); carteOuvrir(); }); await page.waitForTimeout(200);
-  await page.click('#carte-plus'); const sp = await page.evaluate(() => _pl.carte.s);
-  await page.mouse.move(195, 500); for (let i = 0; i < 12; i++) await page.mouse.wheel(0, -120).catch(() => {});
-  await page.evaluate(() => { for (let i = 0; i < 20; i++) document.getElementById('carte-cv').dispatchEvent(new WheelEvent('wheel', { deltaY: -60, ctrlKey: true, clientX: 195, clientY: 500, bubbles: true, cancelable: true })); });
-  const smax = await page.evaluate(() => _pl.carte.s);
-  await page.click('#carte-centre'); await page.waitForTimeout(100);
-  const s0 = await page.evaluate(() => _pl.carte.s);
-  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-  const ferme = await page.evaluate(() => !carteOuverte());
-  ok(sp > 1.5 && smax === 5 && s0 === 1 && ferme, 'Carte : « + », pincer au pavé jusqu\'à 5 fois, « vue d\'ensemble », Échap ferme', JSON.stringify({ sp, smax, s0, ferme }));
+  ok(sansFiche && fermee && ouvert, 'Carte : Échap ferme la fiche puis la carte ; « Ouvrir ATLAS » ouvre ATLAS', JSON.stringify({ sansFiche, fermee, ouvert }));
   ok(!errors.length, 'Aucune erreur de console (planète et carte)', errors.join(' | '));
   await ctx.close();
 }

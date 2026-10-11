@@ -1217,6 +1217,44 @@ ARC en orbite, et Relier (11 octobre) :
     d'ensemble, Échap), accueil 27/27, et les 12 autres suites passent ; 490 `<div` / 490 `</div>`. `tests/connexion.mjs`
     a échoué une fois pendant la série complète (passe seul, 28/28 : intermittent, sans rapport avec la carte).
     Vérifié dans Chromium seulement : **le pincement réel sur l'iPhone reste à essayer par Rayan.**
+- **PR #35 fusionnée par Rayan le 11 octobre à 19 h 06.** Vu sur son iPhone (19 h 10, ses captures) : sur l'accueil,
+  les noms des endormis passaient sur le titre ; sur la carte, « Nettoyage d'extérieur » coupé au bord, Juridique
+  posé sur le bord de la planète.
+- **La carte vivante (branche `carte-vivante`, 11 octobre 19 h 40, partie de `main` après la PR #35)**. Rayan (19 h 32,
+  dicté) : « ma vie, c'est les mondes » : Santé et Juridique ont leur espace à part des projets « mais pas en dehors du
+  monde » ; l'orbite porte les pensées qui doivent rejoindre un monde ; « je dois pouvoir naviguer dessus sans stress,
+  agrandir avec mes doigts, bouger à gauche, à droite, en haut ; il ne doit pas y avoir le plus, le moins et le
+  point » ; la façon de présenter ARYAN, ATLAS, Nettoyage « plus travaillée » ; « au début d'un projet, aucun point
+  autour du point principal ; plus on avance, plus les points s'ajoutent ; chaque point est réel ; quand on clique
+  dessus, il notifie ce qu'il représente » ; une manière de travailler les endormis ; et, ensuite, une carte dans
+  chaque monde. **Règle à garder : autour d'un espace, aucun point de décor ; chaque point est une chose d'ARC.**
+  Fait (le module « LA PLANÈTE ET LA CARTE » est réécrit) :
+  - **Points réels** (`plElements`) : une pensée rangée (lumière ; faite = anneau), une tâche faite (point plein),
+    une entrée de journal (losange), un rendez-vous (anneau, vif s'il est à venir), un document (carré), une démarche
+    juridique (pleine si faite, anneau sinon). Du plus ancien au plus récent, en spirale autour de l'espace : un
+    projet neuf n'a aucun point. Les points de décor des régions et la texture de la planète sont retirés (restent les
+    méridiens, le relief).
+  - **Ma vie sur la planète** : Santé et Juridique dans leur zone, à droite des projets, cernée d'un pointillé et
+    nommée « Ma vie » ; la lune n'existe plus. Les projets occupent la gauche et le centre.
+  - **Les noms** : une pilule de verre (point à la couleur de l'espace, nom ; sur la carte, dessous, l'état vrai :
+    « Actif aujourd'hui · 2 à faire · 21 faits », « Endormi »). Jamais l'une sur l'autre ni sur le titre : si la place
+    manque, le nom seul, sinon rien à cette échelle (on rapproche pour le voir).
+  - **Navigation libre** : la carte est un monde plus grand que l'écran ; vue d'ensemble à l'ouverture
+    (`carteEnsemble`) ; pincer, glisser dans toutes les directions avec un élan qui s'amortit (`carteElan`), toucher
+    deux fois dans le vide pour rapprocher puis revenir à l'ensemble ; Mac : pincer sur le pavé, glisser à deux doigts ;
+    clavier « + », « − », « 0 ». Bornes : le centre de l'écran reste au-dessus de ce qui existe. **Plus de touches
+    + / − / vue d'ensemble.**
+  - **La fiche** (`#carte-fiche`, `carteFiche`, `carteToucher`) : toucher un point dit ce qu'il est (« Journal ·
+    ATLAS », ses mots, depuis quand) et ce qu'on peut en faire (« Ouvrir dans Déposé », « Ouvrir ATLAS », « Ranger
+    cette pensée » pour l'orbite) ; toucher un espace donne son état et « Ouvrir … ». **Un endormi se travaille** :
+    sa fiche propose « Réveiller » (sur place) et « Ouvrir ». Échap ferme la fiche, puis la carte.
+  - Accueil : les noms de la bande ne passent plus au-dessus du bord (fini, le titre recouvert).
+  - **Pas encore : la carte dans chaque monde** (la même carte, centrée sur un projet et tout ce qui le fait). Prochain
+    chantier.
+  - Tests : relier 28/28 (contrôles de la carte réécrits : chaque point = une chose réelle comptée à part, Ma vie sur
+    la planète, aucune touche de zoom, glisser déplace sans rien ouvrir, pincer jusqu'aux bornes, fiche d'une entrée de
+    journal et son contraste, « Réveiller » sur place, Échap, « Ouvrir ATLAS »), et les 13 autres suites passent.
+    Vérifié dans Chromium seulement : **l'élan et le pincement réels restent à essayer par Rayan sur son iPhone.**
 
 ### Décisions de Rayan (5 octobre)
 
