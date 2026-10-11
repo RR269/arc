@@ -414,7 +414,7 @@ for (const vp of ECRANS) {
   await page.waitForTimeout(500);
   const r = await page.evaluate(() => {
     const now = Date.now(), J = 86400000;
-    S.journal[4] = [{ ts: now - 3600e3, txt: 'a' }];          // ATLAS : il y a une heure
+    S.journal[4] = [{ ts: now - 60e3, txt: 'a' }];            // ATLAS : il y a une minute (une heure échouait entre minuit et 1 h)
     S.journal[0] = [{ ts: now - 10 * J, txt: 'b' }];          // ARYAN : dix jours sans mouvement
     S.journal[1] = [{ ts: now - 3 * J - 3600e3, txt: 'c' }];  // FBA, réveillé : il y a trois jours
     S.sleep[1] = false; saveS(); renderHome();
