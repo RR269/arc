@@ -1190,6 +1190,33 @@ ARC en orbite, et Relier (11 octobre) :
   Tests : relier 23/23 (cinq contrôles ajoutés : compte neuf, une lumière par pensée rangée, ponts, fils, orbite,
   image fixe sous mouvement réduit, toucher une région), les 13 autres suites passent ; 484 `<div` / 484 `</div>`.
   Vérifié dans Chromium seulement : **la fluidité sur l'iPhone et l'écran OLED restent à voir par Rayan.**
+- **PR #34 fusionnée par Rayan le 11 octobre à 11 h 47.**
+- **La carte (branche `carte`, 11 octobre 19 h, partie de `main` après la PR #34)**. Rayan (18 h 34) : « les mondes ne
+  sont pas bien disposés », « une carte du monde interactive qui grandit et rétrécit avec les doigts », « Santé et
+  Juridique ne doivent pas être mélangés aux mondes, ils doivent être sur leur espace », « un espace qui guide et
+  dompte tout le reste ». Fait (module « LA PLANÈTE ET LA CARTE », qui remplace celui de la planète) :
+  - **Disposition** (`plPlacer`) : rangées sur le sol, devant 3, au milieu 4, au fond le reste ; le plus vivant au
+    centre ; **un endormi ne passe jamais devant** (il commence au fond).
+  - **Santé et Juridique quittent la planète** : ils vivent sur une lune, « Ma vie », dans le ciel de la carte (leurs
+    pensées, leurs fils, leurs noms posés dehors). La bande de l'accueil ne montre que les projets.
+  - **La carte plein écran** (`#carte`, `carteOuvrir`, `carteFermer`) : on l'ouvre en touchant la bande hors d'une
+    région, par la puce « Carte », ou en posant deux doigts sur la bande. Pincer pour rapprocher ou éloigner (1 à 5
+    fois), glisser pour se déplacer, toucher deux fois pour rapprocher ; sur Mac, pincer sur le pavé (molette avec
+    ctrl), glisser à deux doigts, touches « + » et « − » ; « + », « − » et « vue d'ensemble » en verre, 44 px.
+    Une région touchée de loin se rapproche (`carteAller`) ; de près, elle ouvre l'espace ; de près, chaque lumière
+    dit les mots de sa pensée et s'ouvre dans « Déposé » ; une pensée en orbite ouvre « Déposé ». « ‹ Accueil » et
+    Échap ferment. La barre de dépôt reste au-dessus.
+  - **Ce qui guide** (vrai, rien d'inventé) : en tête de la carte, une ligne de faits (`carteFaits` : « 1 pensée à
+    ranger · 4 espaces ont des pensées à faire · FBA dort, lié à ATLAS ») ; sur la carte, chaque espace dit « N à
+    faire » et un anneau respire autour de lui tant qu'il a des pensées à faire.
+  - Une même scène, deux vues (`plScene(G, avecLune)`, `plDessiner(V, now)`) ; la carte a son propre bord aux couleurs
+    d'ARC. Le corps de la planète est noir franc sous le bord (le contrôle « 8 % de noir franc » de l'accueil
+    tombait à 7 % avec un corps bleu nuit).
+  - Tests : relier 27/27 (contrôles de la planète réécrits, quatre ajoutés : carte ouverte depuis la bande, lune « Ma
+    vie », faits vrais, touches et contraste, région rapprochée puis ouverte, « + », pincer jusqu'à 5, vue
+    d'ensemble, Échap), accueil 27/27, et les 12 autres suites passent ; 490 `<div` / 490 `</div>`. `tests/connexion.mjs`
+    a échoué une fois pendant la série complète (passe seul, 28/28 : intermittent, sans rapport avec la carte).
+    Vérifié dans Chromium seulement : **le pincement réel sur l'iPhone reste à essayer par Rayan.**
 
 ### Décisions de Rayan (5 octobre)
 
