@@ -1091,6 +1091,26 @@ Juridique montre ses pensées (branche `juridique-pensees`, 10 octobre 20 h 40, 
   dans Santé), et les douze autres suites passent ; 446 `<div` / 446 `</div>`. Vérifié dans Chromium seulement :
   **à voir par Rayan sur son iPhone.**
 
+- **PR #30 fusionnée par Rayan le 10 octobre à 20 h 56** (`main` à `104ac39`).
+
+Santé et Juridique : l'étude (branche `etude-poles`, 11 octobre, partie de `main` à `104ac39`) :
+- **Décision de Rayan (10 octobre, 21 h)**, à la question « Santé, je la construis comment ? » : ni curseurs ni simple
+  mémoire : « un pôle santé à la Docteur House science-fiction avec le corps humain en 4D (idée exemple), un espace
+  pour nos rdv médicaux avec des catégories de corps médical ; le reflet du monde de demain ; pareil pour le pôle
+  juridique ; faudrait faire une étude pour voir comment nous pourrions et nous nous devons de construire ces pôles ».
+- **`docs/ETUDE-POLES.md`** : ce qui existe (Santé = curseurs, score, série, conseils ; Juridique = quatre sections,
+  chronologie, « Aides » avec Valence en dur), ce qui est permis (jamais d'avis ; **données de santé d'autres personnes
+  = hébergeur certifié HDS, L. 1111-8, délit sans certificat : Santé se construit pour Rayan seul tant que ce n'est pas
+  réglé** ; Mon espace santé tient déjà le dossier médical, ARC fait la mémoire personnelle et la préparation), le
+  « 4D » lu comme le corps + le temps (corps-hologramme en 2D dessiné dans la page, zones allumées par un fait vrai,
+  ligne du temps dessous ; le vrai 3D n'apporte aucune information et coûte une bibliothèque), Juridique « en orbite »
+  (soi au centre, anneaux 7 / 30 / 90 jours, une échéance par point), les données (`S.sante.rdv`, `soins`, `docs` en
+  référence sans fichier, `S.juridique.echeances`, aucune table), ce que l'IA fait (ranger, proposer un rendez-vous
+  depuis une pensée datée à confirmer, préparer un rendez-vous, rappeler ; jamais conseiller), cinq décisions pour
+  Rayan avec la réponse retenue par défaut, quatre étapes testées. Maquette de direction, hors application :
+  `docs/maquettes/poles-direction.html` (données d'exemple marquées).
+- **Aucune ligne d'`index.html` changée.** Les 13 suites relancées le 11 octobre sur la branche : toutes passent.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
@@ -1134,6 +1154,8 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
 3. `docs/ETUDE-BESOIN.md` : le besoin, sourcé ; la ligne à ne pas franchir en santé et en droit.
 4. `docs/PSYCHOLOGIE-DESIGN.md`, `docs/maquettes/`, `docs/notes/` (détail : schéma, migration, faisabilité,
    revue des maquettes), `docs/AUDIT.md` (audit du code du 4 octobre).
+5. `docs/ETUDE-ACCUEIL.md` (10 octobre, le centre de contrôle) et `docs/ETUDE-POLES.md` (11 octobre, Santé et
+   Juridique : ce qui est permis, le corps en 4D, l'orbite, les étapes, les décisions de Rayan).
 
 ### Ouvert
 

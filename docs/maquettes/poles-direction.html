@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maquette pôles ARC</title>
+<style>
+:root{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;--t1:#F5F5F7;--t2:#B4B4BA;--t3:#8E8E96;--vert:#30d158;--bleu:#0a84ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;font-family:var(--fa);color:var(--t1);-webkit-font-smoothing:antialiased}
+.ecran{position:relative;width:390px;min-height:844px;overflow:hidden;background:#000;padding:0 16px 40px}
+.ciel{position:absolute;inset:0 0 auto 0;height:520px;pointer-events:none;background:radial-gradient(75% 60% at 50% 0%,color-mix(in srgb,var(--c) 34%,transparent),transparent 72%)}
+.bar{position:relative;display:flex;align-items:center;gap:12px;height:64px;border-bottom:1px solid rgba(255,255,255,.06);margin:0 -16px;padding:0 16px}
+.back{display:flex;align-items:center;gap:6px;height:44px;padding:0 14px;border-radius:14px;border:1px solid rgba(255,255,255,.12);font-size:16px}
+.back::before{content:"";width:8px;height:8px;border-left:1.8px solid #fff;border-bottom:1.8px solid #fff;transform:rotate(45deg);margin-left:3px}
+.nom{font-size:20px;font-weight:700;letter-spacing:-.3px;color:var(--c)}
+.etiq{margin-left:auto;font-size:12px;color:var(--t3);border:1px dashed rgba(255,255,255,.18);border-radius:8px;padding:4px 8px}
+h1{position:relative;margin:22px 2px 4px;font-size:28px;line-height:32px;font-weight:700;letter-spacing:-.8px}
+h1 span{color:var(--c)}
+.sous{position:relative;margin:0 2px 14px;font-size:15px;color:var(--t2)}
+.panel{position:relative;border-radius:22px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),#0A0A0D;overflow:hidden}
+.corps{height:420px}
+.corps svg{position:absolute;inset:0;width:100%;height:100%}
+.bascule{position:absolute;top:12px;left:12px;display:flex;border-radius:12px;border:1px solid rgba(255,255,255,.12);overflow:hidden;font-size:13px}
+.bascule b{padding:7px 12px;font-weight:600}.bascule b.on{background:rgba(48,209,88,.16);color:#7EF0A0}
+.temps{position:absolute;left:14px;right:14px;bottom:12px}
+.temps-l{display:flex;justify-content:space-between;font-size:12px;color:var(--t3);font-variant-numeric:tabular-nums}
+.temps-r{position:relative;height:22px}
+.temps-r::before{content:"";position:absolute;left:0;right:0;top:10px;height:2px;border-radius:2px;background:rgba(255,255,255,.12)}
+.temps-r i{position:absolute;top:7px;width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.temps-r em{position:absolute;top:2px;left:72%;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.12)}
+.lbl{position:absolute;font-size:12px;line-height:15px;color:var(--t1);padding:5px 8px;border-radius:9px;background:rgba(10,10,13,.82);border:1px solid color-mix(in srgb,var(--c) 45%,transparent);white-space:nowrap}
+.lbl small{display:block;color:var(--t2);font-size:11px}
+h2{margin:22px 2px 10px;font-size:17px;font-weight:600;letter-spacing:-.35px;display:flex;justify-content:space-between}
+h2 span{font-size:14px;font-weight:400;color:var(--t2)}
+.row{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:center;min-height:60px;padding:10px 16px}
+.row+.row{border-top:1px solid rgba(255,255,255,.06)}
+.pic{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,transparent);border:1px solid color-mix(in srgb,var(--c) 35%,transparent)}
+.pic svg{width:17px;height:17px}
+.rt{font-size:16px;font-weight:500;letter-spacing:-.2px}.rm{font-size:13px;color:var(--t2);margin-top:2px}
+.rd{text-align:right;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}.rd small{display:block;font-size:12px;font-weight:400;color:var(--t2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;align-items:center;gap:7px;min-height:40px;padding:0 13px;border-radius:13px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);font-size:14px}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c)}
+.chip.vide{color:var(--t3)}.chip.vide i{background:none;box-shadow:inset 0 0 0 1.4px #5a5a62}
+.radar{height:400px}
+.radar svg{position:absolute;inset:0;width:100%;height:100%}
+.note{margin:18px 2px 0;font-size:12px;color:var(--t3);text-align:center}
+</style></head><body>
+
+<!-- ═══ SANTÉ ═══ -->
+<div class="ecran" id="sante" style="--c:var(--vert)">
+  <div class="ciel"></div>
+  <div class="bar"><span class="back">Accueil</span><span class="nom">Santé</span><span class="etiq">Maquette · exemple</span></div>
+  <h1>Ton corps,<br><span>ta mémoire.</span></h1>
+  <p class="sous">Rendez-vous, documents, échéances. Jamais d'avis médical.</p>
+  <div class="panel corps">
+    <svg viewBox="0 0 358 420" aria-hidden="true">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#30d158" stop-opacity=".9"/><stop offset="1" stop-color="#30d158" stop-opacity=".25"/></linearGradient>
+        <pattern id="scan" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 5.5H6" stroke="#30d158" stroke-opacity=".22" stroke-width="1"/></pattern>
+        <radialGradient id="pt"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#7EF0A0"/><stop offset="1" stop-color="#30d158" stop-opacity="0"/></radialGradient>
+        <filter id="lueur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="3"/></filter>
+      </defs>
+      <!-- sol -->
+      <ellipse cx="179" cy="356" rx="86" ry="12" fill="none" stroke="#30d158" stroke-opacity=".35"/>
+      <ellipse cx="179" cy="356" rx="120" ry="18" fill="none" stroke="#30d158" stroke-opacity=".15"/>
+      <!-- silhouette : des tubes translucides (le volume) et un trait net (le bord), comme un hologramme -->
+      <g id="corps" stroke-linecap="round" stroke-linejoin="round" fill="none">
+        <g stroke="#30d158" stroke-opacity=".16" stroke-width="18">
+          <path d="M142 104 L124 186 L118 236"/><path d="M216 104 L234 186 L240 236"/>
+          <path d="M162 214 L156 296 L154 366"/><path d="M196 214 L202 296 L204 366"/>
+        </g>
+        <path d="M142 100 Q179 90 216 100 L210 212 Q179 224 148 212 Z" fill="url(#scan)" stroke="none"/>
+        <g stroke="url(#g)" stroke-width="1.6">
+          <circle cx="179" cy="58" r="24"/>
+          <path d="M171 82 L171 92 M187 82 L187 92"/>
+          <path d="M142 100 Q179 90 216 100 L210 212 Q179 224 148 212 Z"/>
+          <path d="M142 104 L124 186 L118 236 M216 104 L234 186 L240 236"/>
+          <path d="M162 214 L156 296 L154 366 M196 214 L202 296 L204 366"/>
+        </g>
+        <g stroke="#30d158" stroke-opacity=".45" stroke-width="3" filter="url(#lueur)">
+          <circle cx="179" cy="58" r="24"/>
+          <path d="M142 100 Q179 90 216 100 L210 212 Q179 224 148 212 Z"/>
+        </g>
+        <!-- ligne de scan -->
+        <rect x="112" y="150" width="134" height="2" fill="#7EF0A0" opacity=".7"/>
+        <rect x="112" y="140" width="134" height="12" fill="#30d158" opacity=".08"/>
+      </g>
+      <!-- zones avec un fait -->
+      <circle cx="170" cy="54" r="9" fill="url(#pt)"/><circle cx="179" cy="70" r="9" fill="url(#pt)"/>
+      <circle cx="188" cy="134" r="10" fill="url(#pt)"/><circle cx="156" cy="296" r="10" fill="url(#pt)"/>
+      <!-- traits vers les étiquettes -->
+      <path d="M170 54H96" stroke="#30d158" stroke-opacity=".5"/><path d="M179 70h88" stroke="#30d158" stroke-opacity=".5"/>
+      <path d="M188 134h80" stroke="#30d158" stroke-opacity=".5"/><path d="M156 296H96" stroke="#30d158" stroke-opacity=".5"/>
+    </svg>
+    <div class="bascule"><b class="on">Face</b><b>Dos</b></div>
+    <div class="lbl" style="left:10px;top:44px">Ophtalmo<small>ordonnance · mars</small></div>
+    <div class="lbl" style="right:10px;top:60px">Dentiste<small>RDV 14 nov.</small></div>
+    <div class="lbl" style="right:10px;top:124px">Cardio<small>bilan · à prévoir</small></div>
+    <div class="lbl" style="left:10px;top:286px">Kiné<small>6 séances sur 10</small></div>
+    <div class="temps"><div class="temps-r"><i style="left:14%"></i><i style="left:38%"></i><i style="left:55%"></i><i style="left:86%"></i><em></em></div>
+      <div class="temps-l"><span>2024</span><span>Aujourd'hui</span><span>2027</span></div></div>
+  </div>
+
+  <h2>Rendez-vous <span>2 à venir</span></h2>
+  <div class="panel">
+    <div class="row"><span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="#7EF0A0" stroke-width="1.7" stroke-linecap="round"><path d="M7 3c-2 0-3 2-3 4 0 4 2 7 3 11 .4 1.6 2 1.6 2.4 0L10 14c.3-1 1-1.5 2-1.5s1.7.5 2 1.5l.6 4c.4 1.6 2 1.6 2.4 0 1-4 3-7 3-11 0-2-1-4-3-4-2 0-3 1-5 1S9 3 7 3z"/></svg></span>
+      <span><div class="rt">Dentiste</div><div class="rm">Contrôle · Dr Martin</div></span><span class="rd">14 nov.<small>09:30</small></span></div>
+    <div class="row"><span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="#7EF0A0" stroke-width="1.7" stroke-linecap="round"><path d="M5 20l3-9 4 3 3-8 4 14"/></svg></span>
+      <span><div class="rt">Kiné</div><div class="rm">Séance 7 sur 10 · genou</div></span><span class="rd">18 nov.<small>18:00</small></span></div>
+  </div>
+
+  <h2>Spécialités <span>4 suivies</span></h2>
+  <div class="chips">
+    <span class="chip"><i></i>Dentiste</span><span class="chip"><i></i>Ophtalmo</span><span class="chip"><i></i>Kiné</span><span class="chip"><i></i>Cardio</span>
+    <span class="chip vide"><i></i>Généraliste</span><span class="chip vide"><i></i>Dermato</span><span class="chip vide"><i></i>ORL</span><span class="chip vide"><i></i>Imagerie</span><span class="chip vide"><i></i>Laboratoire</span><span class="chip vide"><i></i>Psy</span>
+  </div>
+  <p class="note">Maquette de direction, hors de l'application. Données d'exemple.</p>
+</div>
+
+<!-- ═══ JURIDIQUE ═══ -->
+<div class="ecran" id="juridique" style="--c:var(--bleu)">
+  <div class="ciel"></div>
+  <div class="bar"><span class="back">Accueil</span><span class="nom">Juridique</span><span class="etiq">Maquette · exemple</span></div>
+  <h1>Ton dossier,<br><span>en orbite.</span></h1>
+  <p class="sous">Plus c'est proche du centre, plus l'échéance est proche.</p>
+  <div class="panel radar">
+    <svg viewBox="0 0 358 400" aria-hidden="true">
+      <defs>
+        <radialGradient id="balay" cx="0" cy="0" r="1"><stop offset="0" stop-color="#0a84ff" stop-opacity=".5"/><stop offset="1" stop-color="#0a84ff" stop-opacity="0"/></radialGradient>
+        <radialGradient id="ptb"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#64B5FF"/><stop offset="1" stop-color="#0a84ff" stop-opacity="0"/></radialGradient>
+      </defs>
+      <g transform="translate(179 200)" fill="none">
+        <circle r="56" stroke="#0a84ff" stroke-opacity=".55"/><circle r="104" stroke="#0a84ff" stroke-opacity=".32"/><circle r="152" stroke="#0a84ff" stroke-opacity=".18"/>
+        <path d="M-160 0H160M0 -160V160" stroke="#0a84ff" stroke-opacity=".12"/>
+        <circle r="18" fill="#0a84ff" fill-opacity=".15" stroke="#0a84ff"/>
+      </g>
+      <text x="179" y="205" text-anchor="middle" font-size="12" fill="#F5F5F7" font-family="-apple-system,Inter,sans-serif">Toi</text>
+      <g font-family="-apple-system,Inter,sans-serif" font-size="11" fill="#8E8E96"><text x="186" y="141">7 j</text><text x="186" y="93">30 j</text><text x="186" y="45">90 j</text></g>
+      <g stroke="#0a84ff" stroke-opacity=".45"><path d="M214 180L232 176"/><path d="M99 229L96 244"/><path d="M255 290L250 304"/><path d="M61 117L60 104"/></g>
+      <circle cx="214" cy="180" r="11" fill="url(#ptb)"/><circle cx="99" cy="229" r="10" fill="url(#ptb)"/>
+      <circle cx="255" cy="290" r="9" fill="url(#ptb)"/><circle cx="61" cy="117" r="8" fill="url(#ptb)"/>
+    </svg>
+    <div class="lbl" style="left:232px;top:158px">URSSAF<small>déclaration · 5 j</small></div>
+    <div class="lbl" style="left:14px;top:244px">Impôts<small>TVA · 21 j</small></div>
+    <div class="lbl" style="left:196px;top:304px">Assurance<small>échéance · 48 j</small></div>
+    <div class="lbl" style="left:14px;top:66px">Bail<small>révision · 80 j</small></div>
+  </div>
+
+  <h2>Échéances <span>3 ce mois-ci</span></h2>
+  <div class="panel">
+    <div class="row"><span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="#64B5FF" stroke-width="1.7" stroke-linecap="round"><path d="M4 20V9l8-5 8 5v11M8 20v-7h8v7"/></svg></span>
+      <span><div class="rt">URSSAF</div><div class="rm">Déclaration trimestrielle</div></span><span class="rd">15 oct.<small>dans 5 j</small></span></div>
+    <div class="row"><span class="pic"><svg viewBox="0 0 24 24" fill="none" stroke="#64B5FF" stroke-width="1.7" stroke-linecap="round"><path d="M7 3h7l4 4v14H7z M13 3v5h5"/></svg></span>
+      <span><div class="rt">Impôts</div><div class="rm">TVA · relevé à envoyer</div></span><span class="rd">31 oct.<small>dans 21 j</small></span></div>
+  </div>
+  <p class="note">Maquette de direction, hors de l'application. Données d'exemple.</p>
+</div>
+</body></html>
