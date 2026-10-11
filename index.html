@@ -2207,7 +2207,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 /* LA PLANÈTE (11 octobre) : sous l'horizon, la face de nuit ; chaque région est un espace, chaque lumière une pensée,
    chaque fil un lien qui existe dans ARC. Le canevas est sous le contenu ; la bande .h-orbite lui laisse la place. */
 #S1 .h-planete{position:absolute;z-index:-1;pointer-events:none;display:block}
-#S1 .h-orbite{height:176px;margin:-4px calc(var(--bord) * -1) 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#S1 .h-orbite{height:204px;margin:-4px calc(var(--bord) * -1) 0;cursor:pointer;-webkit-tap-highlight-color:transparent}
 @media(min-width:561px){#S1 .h-orbite{height:240px}#S1 .h-planete{-webkit-mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}}
 /* La bande ouvre la carte : une puce « Carte » en verre, en bas à droite de la bande */
 #S1 .h-orbite{position:relative}
@@ -2229,6 +2229,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #carte .carte-f{margin-top:2px;font-size:14px;line-height:19px;color:#D1D1D6}
 #carte .carte-fiche{position:absolute;left:16px;right:16px;bottom:calc(var(--depot-space,90px) + 12px);max-width:460px;margin:0 auto;padding:14px 16px 12px;border-radius:20px;border:1px solid color-mix(in srgb,var(--cf,#fff) 45%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--cf,#fff) 12%,transparent),rgba(255,255,255,.02)),rgba(12,12,16,.9);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);font-family:var(--fa);box-shadow:0 20px 50px rgba(0,0,0,.6)}
 #carte .carte-fiche[hidden]{display:none}
+#carte .carte-legende{position:absolute;left:16px;right:16px;bottom:calc(var(--depot-space,90px) + 10px);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;font:500 12px/16px var(--fa);color:#C7C7CC;pointer-events:none}
+#carte .carte-fiche:not([hidden]) ~ .carte-legende{display:none}
+#carte .carte-legende span{display:inline-flex;align-items:center;gap:6px}
+#carte .carte-legende i{display:inline-block;width:8px;height:8px}
+#carte .lg-pensee{border-radius:50%;background:#fff;box-shadow:0 0 6px 2px rgba(255,255,255,.55)}
+#carte .lg-tache{border-radius:50%;background:#AEAEB2;width:6px!important;height:6px!important}
+#carte .lg-journal{background:#AEAEB2;transform:rotate(45deg);width:6px!important;height:6px!important}
+#carte .lg-rdv{border-radius:50%;border:1.5px solid #AEAEB2;box-sizing:border-box}
+#carte .lg-orbite{border-radius:50%;background:#FFB340;box-shadow:0 0 6px 2px rgba(255,179,64,.5)}
 #carte .cf-k{display:flex;align-items:center;gap:8px;font-size:13px;line-height:18px;color:#D1D1D6}
 #carte .cf-k::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cf,#fff);box-shadow:0 0 8px var(--cf,#fff)}
 #carte .cf-t{margin-top:4px;font-size:17px;line-height:23px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}
@@ -3031,6 +3040,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     <div class="cf-t" id="cf-t"></div>
     <div class="cf-m" id="cf-m"></div>
     <div class="cf-acts" id="cf-acts"></div>
+  </div>
+  <!-- La légende : ce que veut dire chaque point (cachée quand une fiche est ouverte) -->
+  <div class="carte-legende" id="carte-legende" aria-hidden="true">
+    <span><i class="lg-pensee"></i>Pensée</span><span><i class="lg-tache"></i>Tâche faite</span><span><i class="lg-journal"></i>Journal</span><span><i class="lg-rdv"></i>Rendez-vous</span><span><i class="lg-orbite"></i>À ranger</span>
   </div>
 </div>
 <div id="depot-screen" aria-hidden="true">
@@ -7724,23 +7737,6 @@ function plDonnees() {
   var ar = plARanger();
   return { projets: projets, poles: poles, aRanger: ar.length, ranger: ar, liensP: liensP, liensT: liensT };
 }
-// Rangées sur le sol, dans la zone des projets (gauche et centre) ; le plus vivant au centre ; un endormi jamais devant
-function plPlacer(liste, carte) {
-  var u0 = .05, u1 = .68, uc = (u0 + u1) / 2, larg = u1 - u0;
-  var rangs = carte ? [{ v: .72, n: 3 }, { v: .46, n: 3 }, { v: .24, n: 4 }, { v: .08, n: 6 }] : [{ v: .62, n: 3 }, { v: .36, n: 3 }, { v: .16, n: 4 }, { v: .05, n: 6 }];
-  var eveilles = liste.filter(function(e) { return !e.dort; }), dormants = liste.filter(function(e) { return e.dort; });
-  var parRang = rangs.map(function() { return []; }), r0 = 0;
-  eveilles.forEach(function(e) { while(r0 < rangs.length - 1 && parRang[r0].length >= rangs[r0].n) r0++; parRang[r0].push(e); });
-  var r1 = Math.min(rangs.length - 1, Math.max(2, r0 + (parRang[r0].length ? 1 : 0)));
-  dormants.forEach(function(e) { while(r1 < rangs.length - 1 && parRang[r1].length >= rangs[r1].n) r1++; parRang[r1].push(e); });
-  rangs.forEach(function(r, ri) {
-    var pris = parRang[ri], m = pris.length, pas = Math.min(.24, larg / Math.max(1, m));
-    var places = []; for(var j = 0; j < m; j++) places.push(uc + (j - (m - 1) / 2) * pas);
-    places.sort(function(a, b) { return Math.abs(a - uc) - Math.abs(b - uc); });
-    pris.forEach(function(e, j) { e.u = places[j] + (plHash(e.k) - .5) * pas * .2; e.v = r.v + (plHash(e.k + 'v') - .5) * .05; });
-  });
-}
-
 /* Géométries */
 function plGeoBande() {
   var s1 = document.getElementById('S1'), hw = s1 && s1.querySelector('.hw'), hz = s1 && s1.querySelector('.h-horizon'), poste = document.getElementById('h-poste');
@@ -7753,8 +7749,8 @@ function plGeoBande() {
 }
 // La carte : un monde plus grand que l'écran, qu'on parcourt
 function plGeoCarte() {
-  var W = innerWidth, H = innerHeight, w = Math.round(Math.max(W * 1.3, 620)), limbe = 90, bande = Math.round(Math.max(H * 1.05, 720));
-  return { left: 0, top: 0, w: w, h: limbe + bande + 160, cx: w / 2, cy: limbe + w * 1.15, R: w * 1.15, limbe: limbe, bande: bande };
+  var W = innerWidth, H = innerHeight, limbe = 60, R = Math.max(W * 1.6, 900);
+  return { left: 0, top: 0, w: W, h: H * 2, cx: W / 2, cy: limbe + R, R: R, limbe: limbe, bande: Math.max(H, 700) };
 }
 function plSol(G, u, v) {
   var x = G.w * (.5 + (u - .5) * (.62 + .38 * v));
@@ -7762,30 +7758,53 @@ function plSol(G, u, v) {
   return [x, ly + 6 + G.bande * Math.pow(Math.max(0, v), 1.25)];
 }
 
-/* La scène, en coordonnées du monde */
+/* La disposition : des rangées réglées, parallèles à l'horizon, chacune avec son rôle (Rayan, 11 octobre 20 h 14 :
+   « logique et réglé », « pas les unes sur les autres »). Du haut vers le bas : l'orbite (à ranger), les endormis (au
+   loin, près de l'horizon), les projets en cours (devant, en grand), puis Ma vie (Santé, Juridique) dans sa bande.
+   Chaque espace a sa case ; ses points, son nom et son état restent dans sa case : rien ne se chevauche. */
+function plDisposer(G, D, carte) {
+  var W = G.w, marge = carte ? 14 : 8, y = G.limbe + (carte ? 30 : 14), sections = [];
+  var sag = function(x) { var dx = x - G.cx, d0 = G.R * G.R; return (G.cy - Math.sqrt(Math.max(0, d0 - dx * dx))) - (G.cy - G.R); };
+  function rang(liste, cw, ch, titre, cle) {
+    if(!liste.length) return;
+    var sec = { titre: titre, cle: cle, y0: y };
+    if(carte) y += 26;
+    var parRang = Math.max(1, Math.floor((W - 2 * marge) / cw));
+    for(var i = 0; i < liste.length; i += parRang) {
+      var ligne = liste.slice(i, i + parRang), n = ligne.length, pas = Math.min(cw * 1.6, (W - 2 * marge) / n), x0 = W / 2 - pas * (n - 1) / 2;
+      ligne.forEach(function(e, j) {
+        var x = x0 + j * pas;
+        e.cap = [x, y + ch * (carte ? .36 : .42) + sag(x)];
+        e.cellW = pas; e.cellR = Math.min(pas, ch) * (carte ? .3 : .26);
+      });
+      y += ch;
+    }
+    sec.y1 = y; sections.push(sec);
+  }
+  var eveilles = D.projets.filter(function(e) { return !e.dort; }), dormants = D.projets.filter(function(e) { return e.dort; });
+  if(carte) { rang(dormants, 112, 96, 'Endormis', 'dort'); rang(eveilles, 124, 176, 'En cours', 'cours'); rang(D.poles, 150, 176, 'Ma vie', 'vie'); }
+  else { rang(dormants, 64, 30, '', 'dort'); rang(eveilles, 96, 64, '', 'cours'); rang(D.poles, 120, 58, '', 'vie'); }
+  return { sections: sections, bas: y, sag: sag };
+}
 function plScene(G, carte) {
-  var D = plDonnees(), parT = {};
-  plPlacer(D.projets, carte);
-  // Ma vie : sa zone sur la planète, à droite des projets
-  D.poles.forEach(function(e, i) { e.u = i ? .9 : .8; e.v = carte ? (i ? .62 : .36) : (i ? .5 : .24); });
+  var D = plDonnees(), parT = {}, L = plDisposer(G, D, carte);
   var tous = D.projets.concat(D.poles);
   tous.forEach(function(e) {
-    e.cap = plSol(G, e.u, e.v);
     e.items = plElements(e);
-    var r0 = carte ? .014 : .011, rk = carte ? .0095 : .0072, a0 = plHash(e.k) * Math.PI * 2;
+    var r0 = carte ? 9 : 5, rk = carte ? 5.6 : 3, a0 = plHash(e.k) * Math.PI * 2, n = e.items.length;
+    var rmax = n ? r0 + rk * Math.sqrt(n) : 0, f = rmax > e.cellR ? e.cellR / rmax : 1;
+    e.rmax = rmax * f;
     e.items.forEach(function(it, k) {
-      var a = a0 + k * 2.39996, r = r0 + rk * Math.sqrt(k + 1);
-      it.s = plSol(G, e.u + Math.cos(a) * r, e.v + Math.sin(a) * r * 1.5);
+      var a = a0 + k * 2.39996, r = (r0 + rk * Math.sqrt(k + 1)) * f;
+      it.s = [e.cap[0] + Math.cos(a) * r, e.cap[1] + Math.sin(a) * r * .82];
       it.e = e; it.ph = plHash(it.id + 'p'); it.fire = 0;
       it.age = it.ts ? (Date.now() - it.ts) / 864e5 : 999;
       if(it.type === 'pensee') parT[it.id] = it;
     });
     e.lum = e.items.filter(function(it) { return it.type === 'pensee'; });
-    e.afaire = e.lum.filter(function(L) { return !L.faite; }).length + (e.id === 'juridique' ? e.items.filter(function(it) { return it.type === 'jur' && !it.faite; }).length : 0) + (e.id === 'sante' ? e.items.filter(function(it) { return it.type === 'rdv' && !it.faite; }).length : 0);
+    e.afaire = e.lum.filter(function(x) { return !x.faite; }).length + (e.id === 'juridique' ? e.items.filter(function(it) { return it.type === 'jur' && !it.faite; }).length : 0) + (e.id === 'sante' ? e.items.filter(function(it) { return it.type === 'rdv' && !it.faite; }).length : 0);
     e.faits = e.items.filter(function(it) { return it.type === 'tache' || (it.type === 'jur' && it.faite); }).length;
   });
-  // Contour de la zone « Ma vie »
-  var zone = []; for(var q = 0; q <= 48; q++) { var a = q / 48 * Math.PI * 2; zone.push(plSol(G, .85 + Math.cos(a) * .105, (carte ? .49 : .37) + Math.sin(a) * (carte ? .27 : .25))); }
   var grille = [];
   [.08, .2, .36, .56, .8, 1.05].forEach(function(v) { var ln = []; for(var qq = 0; qq <= 48; qq++) ln.push(plSol(G, -.2 + qq / 48 * 1.4, v)); grille.push(ln); });
   for(var j = -5; j <= 5; j++) { var ln2 = []; for(var q2 = 0; q2 <= 18; q2++) ln2.push(plSol(G, .5 + j * .16, q2 / 18 * 1.15)); grille.push(ln2); }
@@ -7795,29 +7814,19 @@ function plScene(G, carte) {
   }).filter(Boolean);
   var synapses = D.liensT.map(function(l) { var a = parT[l.a], b = parT[l.b]; return a && b ? { a: a, b: b, ph: plHash(l.id), last: [0, 0] } : null; }).filter(Boolean);
   var orbite = D.ranger.slice(0, 12).map(function(t, o, arr) { return { a0: o / Math.max(1, arr.length), vit: .006 + .002 * (o % 3), id: t.id, txt: t.body, ts: new Date(t.created_at).getTime(), type: 'aranger' }; });
-  // Le cadre de ce qui existe (pour la vue d'ensemble et les bornes de la carte)
-  var xs = [], ys = [];
-  tous.forEach(function(e) { xs.push(e.cap[0]); ys.push(e.cap[1]); e.items.forEach(function(it) { xs.push(it.s[0]); ys.push(it.s[1]); }); });
-  zone.forEach(function(p) { xs.push(p[0]); ys.push(p[1]); });
-  var box = { x0: Math.min.apply(null, xs) - 70, x1: Math.max.apply(null, xs) + 70, y0: G.limbe - 40, y1: Math.max.apply(null, ys) + 60 };
-  return { G: G, esp: D.projets, poles: D.poles, tous: tous, zone: zone, grille: grille, ponts: ponts, synapses: synapses, orbite: orbite, aRanger: D.aRanger, box: box };
+  var box = { x0: 0, x1: G.w, y0: G.limbe - 44, y1: L.bas + 20 };
+  return { G: G, esp: D.projets, poles: D.poles, tous: tous, sections: L.sections, sag: L.sag, grille: grille, ponts: ponts, synapses: synapses, orbite: orbite, aRanger: D.aRanger, box: box };
 }
 
 /* Le dessin d'une vue : V = { cv, dpr, sc, s, tx, ty, carte, choix } */
-function plPilule(ctx, x, y, e, deux, fam, petit) {
-  // Le nom d'un espace : une pilule de verre, un point à sa couleur, le nom ; dessous (sur la carte), son état vrai
-  var t1 = e.n, t2 = deux || '', h = t2 ? 40 : (petit ? 22 : 26);
-  ctx.font = '600 ' + (petit ? 12 : 13) + 'px ' + fam; var w1 = ctx.measureText(t1).width;
-  ctx.font = '500 12px ' + fam; var w2 = t2 ? ctx.measureText(t2).width : 0;
-  var w = Math.max(w1 + 18, w2) + (petit ? 16 : 20), X = Math.round(x - w / 2), Y = Math.round(y - h / 2), r = Math.min(13, h / 2);
-  ctx.beginPath(); ctx.moveTo(X + r, Y); ctx.arcTo(X + w, Y, X + w, Y + h, r); ctx.arcTo(X + w, Y + h, X, Y + h, r); ctx.arcTo(X, Y + h, X, Y, r); ctx.arcTo(X, Y, X + w, Y, r); ctx.closePath();
-  ctx.fillStyle = 'rgba(12,12,16,.84)'; ctx.fill(); ctx.strokeStyle = plRgba(e.dort ? '#8E8E93' : e.c, e.dort ? .35 : .5); ctx.lineWidth = 1; ctx.stroke();
-  var px = X + (petit ? 10 : 12), py = Y + (t2 ? 13 : h / 2);
-  ctx.beginPath(); ctx.arc(px + 3, py, 3.2, 0, Math.PI * 2); ctx.fillStyle = e.dort ? '#8E8E93' : e.c; ctx.fill();
-  ctx.textBaseline = 'middle';
-  ctx.font = '600 ' + (petit ? 12 : 13) + 'px ' + fam; ctx.fillStyle = e.dort ? '#C7C7CC' : '#F5F5F7'; ctx.fillText(t1, px + 12, py + .5);
-  if(t2) { ctx.font = '500 12px ' + fam; ctx.fillStyle = '#C7C7CC'; ctx.fillText(t2, X + (petit ? 10 : 12), Y + 29); }
-  return [X, Y, w, h];
+function plEtatLignes(e) {
+  if(e.dort) return ['Endormi'];
+  var l1 = '', l2 = [];
+  if(!e.pole && e.act) { var j = Math.floor((Date.now() - e.act) / 864e5); l1 = memeJour(e.act) ? 'Actif aujourd\u2019hui' : j <= 1 ? 'Actif hier' : j < 7 ? 'Actif il y a ' + j + '\u00A0j' : 'Calme depuis ' + j + '\u00A0j'; }
+  if(e.afaire) l2.push(e.afaire + ' à faire');
+  if(e.faits) l2.push(e.faits + (e.faits > 1 ? ' faits' : ' fait'));
+  if(!l2.length && !l1) l2.push(e.items.length ? e.items.length + (e.items.length > 1 ? ' éléments' : ' élément') : 'Rien encore');
+  return [l1, l2.join(' · ')].filter(Boolean);
 }
 function plEtatCourt(e) {
   if(e.dort) return 'Endormi';
@@ -7861,9 +7870,17 @@ function plDessiner(V, now) {
   ctx.save(); ctx.beginPath(); ctx.arc(C[0], C[1], Rr - .5, 0, Math.PI * 2); ctx.clip();
   ctx.lineWidth = .6; ctx.strokeStyle = 'rgba(160,170,220,.08)';
   sc.grille.forEach(function(ln) { ctx.beginPath(); ln.forEach(function(p, i) { var q = P(p); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.stroke(); });
-  // La zone « Ma vie » : un contour pointillé, discret
-  ctx.beginPath(); sc.zone.forEach(function(p, i) { var q = P(p); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.closePath();
-  ctx.fillStyle = 'rgba(120,200,255,.035)'; ctx.fill(); ctx.setLineDash([3, 5]); ctx.strokeStyle = 'rgba(160,220,255,.32)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+  // Ma vie : sa bande sur la planète, entre deux arcs parallèles à l'horizon
+  sc.sections.forEach(function(sec) {
+    if(sec.cle !== 'vie') return;
+    var haut0 = sec.y0 - 6, bas0 = sec.y1 - 8;
+    ctx.beginPath();
+    for(var q = 0; q <= 40; q++) { var x = -40 + q / 40 * (G.w + 80), p = P([x, haut0 + sc.sag(x)]); q ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }
+    for(var q2 = 40; q2 >= 0; q2--) { var x2 = -40 + q2 / 40 * (G.w + 80), p2 = P([x2, bas0 + sc.sag(x2)]); ctx.lineTo(p2[0], p2[1]); }
+    ctx.closePath(); ctx.fillStyle = 'rgba(120,200,255,.045)'; ctx.fill();
+    ctx.beginPath(); for(var q3 = 0; q3 <= 40; q3++) { var x3 = -40 + q3 / 40 * (G.w + 80), p3 = P([x3, haut0 + sc.sag(x3)]); q3 ? ctx.lineTo(p3[0], p3[1]) : ctx.moveTo(p3[0], p3[1]); }
+    ctx.setLineDash([3, 5]); ctx.strokeStyle = 'rgba(160,220,255,.3)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+  });
   // Ponts entre projets reliés : l'influx part de l'éveillé vers l'endormi
   sc.ponts.forEach(function(Pn) {
     var a = P(Pn.a.cap), b = P(Pn.b.cap), c = courbe(a, b, 26 * s + Math.abs(a[0] - b[0]) * .18);
@@ -7925,38 +7942,54 @@ function plDessiner(V, now) {
     if(!Y.a.faite) influx(a, c, b, t1, Y.a.e.c, .9);
     if(!Y.b.faite) influx(b, c, a, t2, Y.b.e.c, .8);
   });
-  // Les espaces : un cœur, un anneau qui respire s'il y a quelque chose à faire, une pilule pour le nom
-  var limbeY = P([G.cx, G.limbe])[1], haut = V.carte ? 100 : 0, poses = [];
-  var libre = function(r) { return r[0] >= 4 && r[0] + r[2] <= W - 4 && r[1] >= Math.max(haut, limbeY + 6) && r[1] + r[3] <= H - 4 && !poses.some(function(o) { return r[0] < o[0] + o[2] + 4 && r[0] + r[2] + 4 > o[0] && r[1] < o[1] + o[3] + 3 && r[1] + r[3] + 3 > o[1]; }); };
-  var ordre = sc.tous.slice().sort(function(a, b) { return (a.dort - b.dort) || (b.items.length - a.items.length); });
-  ordre.forEach(function(e) {
-    var q = P(e.cap); if(!dedans(q, 120)) return;
+  // Les espaces : un cœur, un anneau qui respire s'il y a quelque chose à faire ; dessous, dans sa case, le nom et l'état
+  var haut = V.carte ? 100 : 0, poses = [];
+  var libre = function(r) { return r[0] >= 2 && r[0] + r[2] <= W - 2 && r[1] >= haut && r[1] + r[3] <= H - 2 && !poses.some(function(o) { return r[0] < o[0] + o[2] + 3 && r[0] + r[2] + 3 > o[0] && r[1] < o[1] + o[3] + 2 && r[1] + r[3] + 2 > o[1]; }); };
+  var tronque = function(txt, max) { if(ctx.measureText(txt).width <= max) return txt; while(txt.length > 2 && ctx.measureText(txt + '…').width > max) txt = txt.slice(0, -1); return txt.trim() + '…'; };
+  V.etiquettes = [];
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+  sc.tous.forEach(function(e) {
+    var q = P(e.cap); if(!dedans(q, 140)) return;
     var col = e.dort ? '#8E8E93' : e.c, fe = e.fire ? Math.max(0, 1 - (now - e.fire) / 700) : 0;
     if(fe > 0) { ctx.globalAlpha = fe * .9; ctx.drawImage(plLueur(col), q[0] - 20, q[1] - 20, 40, 40); ctx.globalAlpha = 1; }
-    var rr = 4.5 + Math.min(5, e.items.length * .25) + fe * 4;
+    var rr = (e.dort ? 3.5 : 4.5) + Math.min(4, e.items.length * .2) + fe * 4;
     ctx.beginPath(); ctx.arc(q[0], q[1], rr, 0, Math.PI * 2); ctx.strokeStyle = plRgba(col, e.dort ? .6 : .95); ctx.lineWidth = 1.4; ctx.stroke();
     ctx.beginPath(); ctx.arc(q[0], q[1], 2, 0, Math.PI * 2); ctx.fillStyle = e.dort ? '#AEAEB2' : '#fff'; ctx.fill();
-    if(e.afaire && !e.dort) {
+    if(e.afaire && !e.dort && V.carte) {
       var k = calme ? .5 : (Math.sin(t * 1.6 + plHash(e.k) * 6) + 1) / 2;
       ctx.beginPath(); ctx.arc(q[0], q[1], rr + 6 + 5 * k, 0, Math.PI * 2); ctx.strokeStyle = plRgba(col, .18 + .22 * (1 - k)); ctx.lineWidth = 1; ctx.stroke();
     }
     if(V.choix === e) { ctx.beginPath(); ctx.arc(q[0], q[1], rr + 9, 0, Math.PI * 2); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
-    // La pilule : avec son état si la place le permet, sinon le nom seul ; jamais par-dessus une autre
-    var petit = !V.carte, pos = null, deux = '';
-    [V.carte ? plEtatCourt(e) : '', ''].some(function(dd) {
-      ctx.font = '600 ' + (petit ? 12 : 13) + 'px ' + fam; var w1 = ctx.measureText(e.n).width; ctx.font = '500 12px ' + fam;
-      var w = Math.max(w1 + 18, dd ? ctx.measureText(dd).width : 0) + (petit ? 16 : 20), h = dd ? 40 : (petit ? 22 : 26);
-      var essais = [[q[0] - w / 2, q[1] + rr + 8], [q[0] + rr + 8, q[1] - h / 2], [q[0] - rr - 8 - w, q[1] - h / 2], [q[0] - w / 2, q[1] - rr - 8 - h]];
-      for(var i = 0; i < essais.length; i++) { var r = [essais[i][0], essais[i][1], w, h]; if(libre(r)) { pos = r; deux = dd; return true; } }
-      return false;
-    });
-    if(!pos) return;
-    poses.push(pos);
-    plPilule(ctx, pos[0] + pos[2] / 2, pos[1] + pos[3] / 2, e, deux, fam, petit);
+    // Sur la bande de l'accueil, les endormis restent sans nom (ils sont dans la carte et sous « Endormis »)
+    if(!V.carte && e.dort) return;
+    var large = Math.max(40, e.cellW * s - 10), y1 = q[1] + Math.max(rr + 8, e.rmax * s * .82 + 8) + (V.carte ? 9 : 7);
+    var taille = V.carte ? (e.dort ? 13 : 15) : 12;
+    ctx.font = '600 ' + taille + 'px ' + fam; var nom = tronque(e.n, large), wn = ctx.measureText(nom).width;
+    // L'état, en deux lignes courtes : quand il a bougé, puis ce qui l'attend et ce qui est fait
+    var lignes = V.carte ? plEtatLignes(e) : [], we = 0;
+    ctx.font = '500 12px ' + fam; lignes = lignes.map(function(l) { l = tronque(l, large); we = Math.max(we, ctx.measureText(l).width); return l; });
+    var h = taille + 4 + lignes.length * 16, r = [q[0] - Math.max(wn, we) / 2, y1 - taille / 2 - 2, Math.max(wn, we), h];
+    if(!libre(r)) return;
+    poses.push(r); V.etiquettes.push(r);
+    ctx.shadowColor = 'rgba(0,0,0,.95)'; ctx.shadowBlur = 6;
+    ctx.font = '600 ' + taille + 'px ' + fam; ctx.fillStyle = e.dort ? '#C7C7CC' : col; ctx.fillText(nom, q[0], y1);
+    ctx.font = '500 12px ' + fam; ctx.fillStyle = '#D1D1D6';
+    lignes.forEach(function(l, i) { ctx.fillText(l, q[0], y1 + taille / 2 + 10 + i * 16); });
+    ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
   });
-  // « Ma vie », au-dessus de sa zone
-  var zt = sc.zone.reduce(function(m, p) { return p[1] < m[1] ? p : m; }, sc.zone[0]), zq = P([zt[0], zt[1]]);
-  if(V.carte && dedans(zq, 40)) { ctx.font = '600 13px ' + fam; ctx.textBaseline = 'middle'; var mw = ctx.measureText('Ma vie').width, my = Math.max(zq[1] - 14, limbeY + 14, haut + 8); ctx.shadowColor = 'rgba(0,0,0,.95)'; ctx.shadowBlur = 6; ctx.fillStyle = '#D6EEFF'; ctx.fillText('Ma vie', zq[0] - mw / 2, my); ctx.shadowBlur = 0; ctx.shadowColor = 'transparent'; }
+  ctx.textAlign = 'left';
+  // Le nom de chaque rangée, à gauche : ce que la carte range où
+  if(V.carte) {
+    ctx.font = '600 13px ' + fam; ctx.textBaseline = 'middle';
+    sc.sections.forEach(function(sec) {
+      var x = 16 / s - V.tx / s, p = P([Math.max(6, x), sec.y0 + 11 + sc.sag(Math.max(6, x))]);
+      p[0] = Math.max(16, p[0]);
+      var r = [p[0], p[1] - 9, ctx.measureText(sec.titre).width, 18];
+      if(!dedans(p, 0) || !libre(r)) return;
+      poses.push(r);
+      ctx.fillStyle = sec.cle === 'vie' ? '#CFE9FF' : '#AEAEB2'; ctx.fillText(sec.titre, p[0], p[1]);
+    });
+  }
   // De près, sur la carte : les mots de chaque pensée
   if(V.carte && s >= 1.8) {
     ctx.font = '500 13px ' + fam; ctx.textBaseline = 'middle';
@@ -8051,10 +8084,11 @@ function carteFaits(sc) {
 }
 // La vue d'ensemble : tout ce qui existe tient dans l'écran
 function carteEnsemble(V, sansAnim) {
-  var W = V.cv.width / V.dpr, H = V.cv.height / V.dpr, b = V.sc.box, haut = 110, bas = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--depot-space')) || 90) + 16;
-  var s = Math.min((W - 24) / (b.x1 - b.x0), (H - haut - bas) / (b.y1 - b.y0), 2.2);
-  V.sMin = Math.max(.25, s * .7); V.sMax = Math.max(6, s * 4);
-  var cible = { s: s, tx: W / 2 - (b.x0 + b.x1) / 2 * s, ty: haut + (H - haut - bas) / 2 - (b.y0 + b.y1) / 2 * s };
+  var W = V.cv.width / V.dpr, H = V.cv.height / V.dpr, b = V.sc.box, haut = 104, bas = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--depot-space')) || 90) + 16;
+  // La largeur tient dans l'écran ; si la hauteur dépasse, on descend en glissant
+  var s = Math.min((W - 8) / (b.x1 - b.x0), Math.max(.6, (H - haut - bas) / (b.y1 - b.y0)), 1);
+  V.sMin = s * .85; V.sMax = Math.max(5, s * 5);
+  var cible = { s: s, tx: W / 2 - (b.x0 + b.x1) / 2 * s, ty: haut - b.y0 * s };
   if(sansAnim || plCalme()) { V.s = cible.s; V.tx = cible.tx; V.ty = cible.ty; carteRedessin(); return; }
   carteGlisser(V, cible);
 }
@@ -8062,7 +8096,8 @@ function carteEnsemble(V, sansAnim) {
 function carteBorner(V) {
   var W = V.cv.width / V.dpr, H = V.cv.height / V.dpr, b = V.sc.box;
   V.s = Math.max(V.sMin || .3, Math.min(V.sMax || 6, V.s));
-  var x0 = W * .5 - b.x1 * V.s, x1 = W * .5 - b.x0 * V.s, y0 = H * .5 - b.y1 * V.s, y1 = H * .5 - b.y0 * V.s;
+  var x0 = W * .5 - b.x1 * V.s, x1 = W * .5 - b.x0 * V.s, y0 = H * .55 - b.y1 * V.s, y1 = 104 - b.y0 * V.s;
+  if(x0 > x1) x0 = x1 = (x0 + x1) / 2; if(y0 > y1) y0 = y1;
   V.tx = Math.min(x1, Math.max(x0, V.tx)); V.ty = Math.min(y1, Math.max(y0, V.ty));
 }
 function carteZoom(V, f, x, y) { var s0 = V.s, s1 = Math.max(V.sMin || .3, Math.min(V.sMax || 6, s0 * f)); V.tx = x - (x - V.tx) * s1 / s0; V.ty = y - (y - V.ty) * s1 / s0; V.s = s1; carteBorner(V); carteRedessin(); }

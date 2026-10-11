@@ -150,16 +150,16 @@ const liens = page => page.evaluate(() => ({
       const taches = (w.tasks_done || []).concat(w.tasks_todo || [], S.custom[w.id] || []).filter(t => fait[t.id]).length;
       const attendu = penseesDe(espaceCle(w)).length + taches + (S.journal[w.id] || []).filter(j => j && (j.t || j.txt)).length;
       if (e.items.length !== attendu) ecarts.push(e.n + ' ' + e.items.length + '≠' + attendu); });
-    return { ecarts, poles: sc.poles.map(e => e.n).join(), surPlanete: sc.tous.filter(e => e.pole).length, zone: sc.poles.every(e => e.u > .7) && sc.esp.every(e => e.u < .72), pts: sc.esp.some(e => e.pts) };
+    return { ecarts, poles: sc.poles.map(e => e.n).join(), surPlanete: sc.tous.filter(e => e.pole).length, zone: Math.min(...sc.poles.map(e => e.cap[1])) > Math.max(...sc.esp.filter(e => !e.dort).map(e => e.cap[1])), pts: sc.esp.some(e => e.pts) };
   });
   let r = await reel();
-  ok(!r.ecarts.length && r.surPlanete === 2 && r.zone && !r.pts, 'Planète : autour de chaque projet, un point par chose réelle (aucun point de décor) ; Santé et Juridique sur la planète, dans leur zone « Ma vie »', JSON.stringify(r));
+  ok(!r.ecarts.length && r.surPlanete === 2 && r.zone && !r.pts, 'Planète : autour de chaque projet, un point par chose réelle (aucun point de décor) ; Santé et Juridique sur la planète, dans leur rangée « Ma vie », sous les projets', JSON.stringify(r));
   for (const t of ['Appeler le comptable pour la TVA', 'Demander au comptable le régime de TVA', 'Écrire le module 4', 'Une idée en vrac']) { await deposit(page, t); await page.waitForTimeout(500); }
   await page.waitForTimeout(1200);
   await page.evaluate(() => { rlPoser('projet', 4, 1, 'oui', ['FBA']); const ts = Object.values(_depot.thoughts); rlPoser('pensee', ts.find(x => /Appeler/.test(x.body)).id, ts.find(x => /Demander/.test(x.body)).id, 'oui', ['comptable']); S.journal[4].push({ ts: Date.now(), t: 'Module 3 relu' }); saveS(true); goHome(); renderHome(); });
   await page.waitForTimeout(300);
   r = await reel();
-  let sc = await page.evaluate(() => { const sc = _pl.band.sc, at = sc.esp.find(e => e.k === 'atlas'); return { atlasPens: at.lum.length, atlasJour: at.items.filter(i => i.type === 'journal').length, jur: sc.poles.find(e => e.id === 'juridique').lum.length, ponts: sc.ponts.map(p => p.a.n + '-' + p.b.n).join(), syn: sc.synapses.length, orb: sc.orbite.length, aRanger: rangeToSortCount(), fbaDerriere: sc.esp.find(e => e.n === 'FBA').v < at.v, fusion: getComputedStyle(document.getElementById('h-planete')).mixBlendMode }; });
+  let sc = await page.evaluate(() => { const sc = _pl.band.sc, at = sc.esp.find(e => e.k === 'atlas'); return { atlasPens: at.lum.length, atlasJour: at.items.filter(i => i.type === 'journal').length, jur: sc.poles.find(e => e.id === 'juridique').lum.length, ponts: sc.ponts.map(p => p.a.n + '-' + p.b.n).join(), syn: sc.synapses.length, orb: sc.orbite.length, aRanger: rangeToSortCount(), fbaDerriere: sc.esp.find(e => e.n === 'FBA').cap[1] < at.cap[1], fusion: getComputedStyle(document.getElementById('h-planete')).mixBlendMode }; });
   ok(!r.ecarts.length && sc.atlasPens === 1 && sc.atlasJour >= 1 && sc.jur === 2 && /ATLAS/.test(sc.ponts) && /FBA/.test(sc.ponts) && sc.syn === 1 && sc.orb === sc.aRanger && sc.orb === 1 && sc.fbaDerriere && sc.fusion === 'normal',
     'Planète : la pensée et l\'entrée de journal s\'ajoutent autour d\'ATLAS, les pensées juridiques dans Ma vie, le pont, le fil, l\'orbite = pensées à ranger, l\'endormi derrière', JSON.stringify({ ...sc, ecarts: r.ecarts }));
   const raf = await page.evaluate(() => _pl.raf);
@@ -168,6 +168,16 @@ const liens = page => page.evaluate(() => ({
   const coin = await page.evaluate(() => { const r = document.getElementById('h-orbite').getBoundingClientRect(); return { x: r.left + 12, y: r.bottom - 12 }; });
   await page.mouse.click(coin.x, coin.y); await page.waitForTimeout(300);
   let c = await page.evaluate(() => ({ ouvert: carteOuverte(), boutons: document.querySelectorAll('#carte-plus, #carte-moins, #carte-centre, .carte-zoom').length, faits: document.getElementById('carte-faits').textContent, s: _pl.carte.s }));
+  const ordre = await page.evaluate(() => {
+    const V = _pl.carte, sc = V.sc, et = V.etiquettes || [], croise = [];
+    for (let i = 0; i < et.length; i++) for (let j = i + 1; j < et.length; j++) { const a = et[i], b = et[j]; if (a[0] < b[0] + b[2] && a[0] + a[2] > b[0] && a[1] < b[1] + b[3] && a[1] + a[3] > b[1]) croise.push(i + '×' + j); }
+    const y = f => sc.tous.filter(f).map(e => e.cap[1]);
+    const bande = _pl.band.etiquettes || [], croiseB = [];
+    for (let i = 0; i < bande.length; i++) for (let j = i + 1; j < bande.length; j++) { const a = bande[i], b = bande[j]; if (a[0] < b[0] + b[2] && a[0] + a[2] > b[0] && a[1] < b[1] + b[3] && a[1] + a[3] > b[1]) croiseB.push(i + '×' + j); }
+    return { noms: et.length, croise, croiseB, rangs: sc.sections.map(s => s.titre).join(','), dortHaut: Math.max(...y(e => e.dort)) < Math.min(...y(e => !e.dort && !e.pole)), vieBas: Math.min(...y(e => e.pole)) > Math.max(...y(e => !e.pole)), legende: !!document.getElementById('carte-legende') && getComputedStyle(document.getElementById('carte-legende')).display !== 'none' };
+  });
+  ok(ordre.noms >= 6 && !ordre.croise.length && !ordre.croiseB.length && ordre.rangs === 'Endormis,En cours,Ma vie' && ordre.dortHaut && ordre.vieBas && ordre.legende,
+    'Carte réglée : trois rangées nommées (Endormis, En cours, Ma vie), aucun nom sur un autre (carte et accueil), une légende des points', JSON.stringify(ordre));
   ok(c.ouvert && c.boutons === 0 && /1 pensée en orbite, à ranger/.test(c.faits) && /FBA dort, lié à ATLAS/.test(c.faits), 'Carte : ouverte depuis la bande, sans touches + ni −, une ligne de faits vrais', JSON.stringify(c));
   // Glisser : la carte bouge (et un glissé n'ouvre rien)
   const v0 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty }));
