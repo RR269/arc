@@ -2041,13 +2041,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
    « Développer · Fais-en un projet, étape par étape. » Depuis une pensée de « Déposé » : ARC propose un nom, une
    mission et trois premières étapes ; Rayan corrige ; « Créer le projet » l'ajoute à Projets. Même écriture que la
    recherche : verre sombre, police du système, libellés au-dessus des champs, une seule touche blanche. */
-#projet-modal{--t2:#C4C4CC;--t3:#A6A6AE;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.16);position:fixed;inset:0;z-index:210;display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 40px) 16px 16px;background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-family:var(--fa);letter-spacing:-.1px;overflow-y:auto;overscroll-behavior:contain}
-#projet-modal.open{display:flex;animation:searchIn .22s cubic-bezier(.16,1,.3,1)}
-#projet-box{position:relative;width:min(560px,100%);margin-bottom:24px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(14,14,17,.94);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -20px #000;overflow:hidden}
-#projet-box::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--pjc,#64d2ff),transparent);opacity:.9}
+#projet-modal,#sante-modal{--t2:#C4C4CC;--t3:#A6A6AE;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.16);position:fixed;inset:0;z-index:210;display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 40px) 16px 16px;background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-family:var(--fa);letter-spacing:-.1px;overflow-y:auto;overscroll-behavior:contain}
+#projet-modal.open,#sante-modal.open{display:flex;animation:searchIn .22s cubic-bezier(.16,1,.3,1)}
+#projet-box,#sm-box{position:relative;width:min(560px,100%);margin-bottom:24px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(14,14,17,.94);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -20px #000;overflow:hidden}
+#projet-box::before,#sm-box::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--pjc,#64d2ff),transparent);opacity:.9}
 .npj-head{display:flex;align-items:center;gap:12px;padding:14px 10px 6px 20px}
-#pj-titre{flex:1;font-family:var(--ft);font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.5px;color:#F5F5F7}
-#pj-fermer{flex-shrink:0;min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
+#pj-titre,#sm-titre{flex:1;font-family:var(--ft);font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.5px;color:#F5F5F7}
+#pj-fermer,#sm-fermer{flex-shrink:0;min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
 .npj-body{padding:4px 20px 20px}
 .npj-source{margin:0 0 14px;font-size:15px;line-height:1.45;color:var(--t2);overflow-wrap:anywhere}
 .npj-source b{font-weight:500;color:#F5F5F7}
@@ -2056,7 +2056,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #pj-etat .npj-pulse{flex-shrink:0;width:8px;height:8px;border-radius:50%;background:var(--pjc,#64d2ff);box-shadow:0 0 10px var(--pjc,#64d2ff);animation:pjPulse 1.2s ease-in-out infinite}
 #pj-etat.err .npj-pulse{display:none}
 @keyframes pjPulse{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
-#pj-form{display:flex;flex-direction:column;gap:14px}
+#pj-form,#sm-form{display:flex;flex-direction:column;gap:14px}
 .npj-champ{display:flex;flex-direction:column;gap:6px}
 .npj-lbl{font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
 .npj-aide{font-size:13px;line-height:18px;color:var(--t2)}
@@ -2071,15 +2071,15 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 .npj-etapes li::before{content:counter(pje);flex-shrink:0;display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;border:1px solid var(--b2);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:#E8E8EC}
 #pj-reessayer{min-height:44px;margin:-4px 0 14px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
 #pj-reessayer[hidden]{display:none}
-#pj-err{min-height:0;font-size:15px;line-height:1.4;color:#FF9F9F}
-#pj-err:empty{display:none}
+#pj-err,#sm-err{min-height:0;font-size:15px;line-height:1.4;color:#FF9F9F}
+#pj-err:empty,#sm-err:empty{display:none}
 .npj-acts{display:flex;align-items:center;gap:10px;margin-top:4px}
-#pj-creer{flex:1;min-height:50px;border-radius:16px;border:0;background:#F5F5F7;color:#0B0B0F;font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
+#pj-creer,#sm-ok{flex:1;min-height:50px;border-radius:16px;border:0;background:#F5F5F7;color:#0B0B0F;font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
 #pj-creer:disabled{opacity:.55;cursor:default}
-#pj-annuler{min-height:50px;padding:0 16px;border-radius:16px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:var(--t2);cursor:pointer}
+#pj-annuler,#sm-annuler{min-height:50px;padding:0 16px;border-radius:16px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:var(--t2);cursor:pointer}
 #projet-modal :is(#pj-fermer,#pj-creer,#pj-annuler,#pj-reessayer):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
-@media(max-width:560px){#projet-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}}
-@media(prefers-reduced-motion:reduce){#projet-modal.open{animation:none}#pj-etat .npj-pulse{animation:none}}
+@media(max-width:560px){#projet-modal,#sante-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}}
+@media(prefers-reduced-motion:reduce){#projet-modal.open,#sante-modal.open{animation:none}#pj-etat .npj-pulse{animation:none}}
 /* ═══ SECTIONS VIDES REPLIÉES (branche projet-sections, 10 octobre) ═══
    Un projet neuf montrait quatre sections vides (Bloquants, Notes, Journal, Outils) sur un écran et demi. Vide, une
    section n'est plus qu'une ligne : son titre, et une touche « Ajouter » ou « Écrire » qui ouvre le champ. */
@@ -2091,24 +2091,74 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 .wsec.vide>:not(.wsec-head){display:none}
 /* Les pensées d'un projet (branche projet-pensees, 10 octobre) : le panneau de l'accueil, une ligne par pensée ; le point
    à la couleur du projet pour ce qui reste à faire, un anneau éteint pour ce qui est fait (avec le mot « Faite »). */
-#S2 #wsec-pensees[hidden],#S4 #jsec-pensees[hidden]{display:none}
-:is(#S2,#S4) .wpen{overflow:hidden;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-:is(#S2,#S4) .wpen-row{display:grid;grid-template-columns:10px minmax(0,1fr) 10px;column-gap:14px;align-items:center;width:100%;min-height:60px;margin:0;padding:11px 16px 12px;border:0;background:none;font-family:var(--fa);text-align:left;color:inherit;cursor:pointer;transition:background-color .2s}
-:is(#S2,#S4) .wpen-row + .wpen-row,:is(#S2,#S4) .wpen-plus{border-top:1px solid rgba(255,255,255,.06)}
-:is(#S2,#S4) .wpen-row:hover{background:rgba(255,255,255,.03)}
-:is(#S2,#S4) .wpen-row:active{background:rgba(255,255,255,.06)}
-:is(#S2,#S4) .wpen-pt{width:8px;height:8px;border-radius:50%;background:var(--penc,var(--wc,#fff));box-shadow:0 0 8px color-mix(in srgb,var(--penc,var(--wc,#fff)) 60%,transparent)}
-:is(#S2,#S4) .wpen-row.fait .wpen-pt{background:none;box-shadow:inset 0 0 0 1.6px #6E6E76}
-:is(#S2,#S4) .wpen-txt{display:block;min-width:0}
-:is(#S2,#S4) .wpen-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:16px;line-height:21px;font-weight:500;letter-spacing:-.2px;color:#F5F5F7}
-:is(#S2,#S4) .wpen-row.fait .wpen-t{font-weight:400;color:#C4C4CC}
-:is(#S2,#S4) .wpen-m{display:block;margin-top:2px;font-size:13px;line-height:18px;letter-spacing:-.05px;color:#B4B4BA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-:is(#S2,#S4) .wpen-chev{width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
-:is(#S2,#S4) .wpen-plus{display:block;width:100%;min-height:48px;margin:0;padding:0 16px;border-left:0;border-right:0;border-bottom:0;background:none;font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.15px;text-align:left;color:#E8E8EC;cursor:pointer}
-:is(#S2,#S4) :is(.wpen-row,.wpen-plus):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
+#S2 #wsec-pensees[hidden],#S4 #jsec-pensees[hidden],#S3 #ssec-pensees[hidden]{display:none}
+:is(#S2,#S3,#S4) .wpen{overflow:hidden;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+:is(#S2,#S3,#S4) .wpen-row{display:grid;grid-template-columns:10px minmax(0,1fr) 10px;column-gap:14px;align-items:center;width:100%;min-height:60px;margin:0;padding:11px 16px 12px;border:0;background:none;font-family:var(--fa);text-align:left;color:inherit;cursor:pointer;transition:background-color .2s}
+:is(#S2,#S3,#S4) .wpen-row + .wpen-row,:is(#S2,#S3,#S4) .wpen-plus{border-top:1px solid rgba(255,255,255,.06)}
+:is(#S2,#S3,#S4) .wpen-row:hover{background:rgba(255,255,255,.03)}
+:is(#S2,#S3,#S4) .wpen-row:active{background:rgba(255,255,255,.06)}
+:is(#S2,#S3,#S4) .wpen-pt{width:8px;height:8px;border-radius:50%;background:var(--penc,var(--wc,#fff));box-shadow:0 0 8px color-mix(in srgb,var(--penc,var(--wc,#fff)) 60%,transparent)}
+:is(#S2,#S3,#S4) .wpen-row.fait .wpen-pt{background:none;box-shadow:inset 0 0 0 1.6px #6E6E76}
+:is(#S2,#S3,#S4) .wpen-txt{display:block;min-width:0}
+:is(#S2,#S3,#S4) .wpen-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:16px;line-height:21px;font-weight:500;letter-spacing:-.2px;color:#F5F5F7}
+:is(#S2,#S3,#S4) .wpen-row.fait .wpen-t{font-weight:400;color:#C4C4CC}
+:is(#S2,#S3,#S4) .wpen-m{display:block;margin-top:2px;font-size:13px;line-height:18px;letter-spacing:-.05px;color:#B4B4BA;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#S2,#S3,#S4) .wpen-chev{width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+:is(#S2,#S3,#S4) .wpen-plus{display:block;width:100%;min-height:48px;margin:0;padding:0 16px;border-left:0;border-right:0;border-bottom:0;background:none;font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.15px;text-align:left;color:#E8E8EC;cursor:pointer}
+:is(#S2,#S3,#S4) :is(.wpen-row,.wpen-plus):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
 #S4 .wpen{--penc:#0a84ff}
 #S4 .psec-info{font-size:14px;letter-spacing:-.1px;color:var(--t2)}
-@media(prefers-reduced-motion:reduce){:is(#S2,#S4) .wpen-row{transition:none}}
+/* SANTÉ, LA MÉMOIRE (branche sante-socle, 11 octobre) : le titre et une ligne vraie ; les panneaux des pensées ; une seule
+   touche blanche, « Ajouter un rendez-vous » ; les spécialités en puces, allumées par un fait (point lumineux), éteintes
+   sinon (anneau) : la couleur n'est jamais seule, l'état se lit aussi par la forme. */
+#S3 .wpen{--penc:#30d158}
+#S3 .psec-info{font-size:14px;letter-spacing:-.1px;color:#D6D6DC}
+#S3 #ssec-rdv{margin-top:18px}
+#S3 .sm-hero{padding:22px 2px 4px}
+#S3 .sm-titre{font-family:var(--ft);font-size:clamp(25px,7.3vw,31px);line-height:1.15;font-weight:700;letter-spacing:-.8px;color:#F5F5F7}
+#S3 .sm-sous{margin-top:6px;font-size:15px;line-height:1.4;letter-spacing:-.15px;color:#D6D6DC}
+#S3 .wpen[hidden],#S3 .sm-vide[hidden],#S3 .sm-passes[hidden],#S3 #srdv-passes-list[hidden]{display:none}
+#S3 .sm-vide{padding:14px 16px;border-radius:18px;border:1px dashed rgba(255,255,255,.14);font-size:15px;line-height:1.4;color:#C4C4CC}
+#S3 .sm-ajout{display:block;width:100%;min-height:50px;margin-top:10px;border-radius:16px;border:0;background:#F5F5F7;color:#0B0B0F;font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
+#S3 .sm-ajout:active{transform:scale(.985)}
+#S3 .sm-row{grid-template-columns:10px minmax(0,1fr) auto}
+#S3 .sm-quand{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#S3 .sm-quand b{font-size:15px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
+#S3 .sm-quand small{font-size:13px;color:#B4B4BA}
+#S3 .sm-row.fait .sm-quand b{font-weight:500;color:#C4C4CC}
+#S3 .sm-passes{margin-top:10px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);overflow:hidden}
+#S3 .sm-passes-tog{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 16px;border:0;background:none;font-family:var(--fa);font-size:15px;font-weight:600;letter-spacing:-.2px;color:#D6D6DC;cursor:pointer;text-align:left}
+#S3 .sm-passes-n{flex:1;font-weight:400;color:#B4B4BA}
+#S3 .sm-passes-tog i{width:7px;height:7px;margin:0 4px 3px 0;border-right:1.7px solid var(--t3);border-bottom:1.7px solid var(--t3);transform:rotate(45deg);transition:transform .2s}
+#S3 .sm-passes-tog[aria-expanded="true"] i{transform:rotate(225deg);margin-bottom:-3px}
+#S3 .sm-passes .wpen{border:0;border-top:1px solid rgba(255,255,255,.06);border-radius:0;background:none;box-shadow:none}
+#S3 .sm-chips{display:flex;flex-wrap:wrap;gap:8px}
+#S3 .sm-chip{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:13px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.02);font-size:15px;letter-spacing:-.15px;color:#B4B4BA}
+#S3 .sm-chip i{width:7px;height:7px;border-radius:50%;box-shadow:inset 0 0 0 1.4px #6E6E76}
+#S3 .sm-chip.on{border-color:rgba(48,209,88,.35);background:rgba(48,209,88,.07);color:#F5F5F7}
+#S3 .sm-chip.on i{background:#30d158;box-shadow:0 0 7px #30d158}
+#S3 .sm-sec-btn{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
+#S3 :is(.sm-ajout,.sm-passes-tog,.sm-sec-btn):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+@media(min-width:700px){#S3 .sm-hero{padding-top:30px}#S3 .sm-titre{font-size:40px;letter-spacing:-1.2px}}
+@media(prefers-reduced-motion:reduce){#S3 .sm-ajout:active{transform:none}#S3 .sm-passes-tog i{transition:none}}
+/* La feuille santé : les champs de « Nouveau projet », plus les listes déroulantes */
+#sante-modal{--pjc:#30d158}
+#sm-form .sm-mode{display:flex;flex-direction:column;gap:14px}
+#sm-form .sm-mode[hidden],#sm-form [hidden]{display:none}
+#sm-form :is(input,textarea,select){width:100%;min-height:48px;padding:11px 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.04);font-family:var(--fa);font-size:17px;line-height:1.35;letter-spacing:-.25px;color:#F5F5F7;-webkit-appearance:none;appearance:none;resize:none}
+#sm-form select{background-image:linear-gradient(45deg,transparent 50%,#C4C4CC 50%),linear-gradient(135deg,#C4C4CC 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 15px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+#sm-form select option{background:#141417;color:#F5F5F7}
+#sm-form textarea{min-height:72px}
+#sm-form :is(input,textarea)::placeholder{color:var(--t3)}
+#sm-form input[type=date],#sm-form input[type=time]{color-scheme:dark}
+#sm-form :is(input,textarea,select):focus{outline:none;border-color:#30d158;box-shadow:0 0 0 3px rgba(48,209,88,.22)}
+#sm-form .sm-duo{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:10px}
+#sante-modal .npj-acts{flex-direction:column-reverse;align-items:stretch;gap:6px}
+#sante-modal #sm-annuler{width:100%}
+#sm-suppr{display:block;width:100%;min-height:48px;margin-top:2px;border-radius:14px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:#FF9F9F;cursor:pointer}
+#sm-suppr.arme{border-color:rgba(255,120,120,.45);background:rgba(255,80,80,.08)}
+#sante-modal :is(#sm-fermer,#sm-ok,#sm-annuler,#sm-suppr):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){:is(#S2,#S3,#S4) .wpen-row{transition:none}}
 #S2 .wsec-ouvrir:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 /* ═══ ACCUEIL : LE SOL ET LE CIEL (branche centre-controle, 10 octobre) ═══
    Rayan : « un centre de contrôle de notre vie, hyper connecté, comme dans un film de science-fiction, en supprimant
@@ -2445,6 +2495,49 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   <div class="pbody">
     <div class="pmain" id="pmain-sante">
 
+      <!-- SANTÉ, LA MÉMOIRE (branche sante-socle, 11 octobre ; docs/ETUDE-POLES.md, étape 1). Rendez-vous, spécialités,
+           pensées, documents. Jamais d'avis : ARC note, date, retrouve, prépare. -->
+      <div class="sm-hero">
+        <div class="sm-titre">Ma santé</div>
+        <div class="sm-sous" id="sm-sous"></div>
+      </div>
+
+      <div class="x-horizon" aria-hidden="true"></div>
+
+      <!-- RENDEZ-VOUS -->
+      <div class="psec" id="ssec-rdv">
+        <div class="psec-head"><span class="psec-lbl">Rendez-vous</span><div class="psec-line"></div><span class="psec-info" id="srdv-n"></span></div>
+        <div class="wpen" id="srdv-list"></div>
+        <div class="sm-vide" id="srdv-vide">Aucun rendez-vous à venir.</div>
+        <button class="sm-ajout" id="srdv-ajout" type="button">Ajouter un rendez-vous</button>
+        <div class="sm-passes" id="srdv-passes" hidden>
+          <button class="sm-passes-tog" id="srdv-passes-tog" type="button" aria-expanded="false" aria-controls="srdv-passes-list"><span>Passés</span><span class="sm-passes-n" id="srdv-passes-n"></span><i aria-hidden="true"></i></button>
+          <div class="wpen" id="srdv-passes-list" hidden></div>
+        </div>
+      </div>
+
+      <!-- SPÉCIALITÉS : allumées quand elles ont au moins un rendez-vous ou un document -->
+      <div class="psec" id="ssec-spe">
+        <div class="psec-head"><span class="psec-lbl">Spécialités</span><div class="psec-line"></div><span class="psec-info" id="sspe-n"></span></div>
+        <div class="sm-chips" id="sspe-list"></div>
+      </div>
+
+      <!-- PENSÉES rangées dans Santé (absente s'il n'y en a aucune) -->
+      <div class="psec" id="ssec-pensees" hidden>
+        <div class="psec-head"><span class="psec-lbl">Pensées</span><div class="psec-line"></div><span class="psec-info" id="spen-n"></span></div>
+        <div class="wpen" id="spen-list"></div>
+      </div>
+
+      <!-- DOCUMENTS : une référence (nom, date, où il est), jamais le fichier -->
+      <div class="psec" id="ssec-docs">
+        <div class="psec-head"><span class="psec-lbl">Documents</span><div class="psec-line"></div><button class="sm-sec-btn" id="sdoc-ajout" type="button">Ajouter</button></div>
+        <div class="wpen" id="sdoc-list"></div>
+        <div class="sm-vide" id="sdoc-vide">Note où se trouve une ordonnance, un compte rendu, un résultat : tu le retrouveras ici.</div>
+      </div>
+
+      <!-- L'ANCIEN SUIVI (check-in, score, tendances, habitudes, objectifs) : retiré de l'écran le 11 octobre, données gardées
+           dans l'état et dans l'export CSV ; caché ici pour que son code ne lève aucune erreur -->
+      <div id="sante-suivi" hidden>
       <!-- HERO SCORE -->
       <div class="sante-hero" id="sante-hero">
         <div class="sante-score-ring">
@@ -2465,7 +2558,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         </div>
       </div>
 
-      <div class="x-horizon" aria-hidden="true"></div>
 
       <!-- KPIs 7j -->
       <div class="sante-kpi-grid" id="sante-kpi-grid">
@@ -2581,6 +2673,8 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         </div>
       </div>
 
+      </div>
+
       <!-- JOURNAL -->
       <div class="psec">
         <div class="psec-head"><span class="psec-lbl">Journal sant&#233;</span><div class="psec-line"></div></div>
@@ -2610,19 +2704,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <div style="font-size:32px;margin-bottom:8px">&#129360;</div>
           <div style="font-size:13px;font-weight:800;margin-bottom:6px">Claude Sant&#233;</div>
           <div style="font-size:11px;color:var(--t2);line-height:1.65;margin-bottom:14px">Je note, je retrouve, je pr&#233;pare tes rendez-vous.</div>
-          <div class="cp-sugs">
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Analyse mon check-in')">Analyse check-in</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Optimiser mon sommeil')">Optimiser sommeil</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Programme sport entrepreneur')">Programme sport</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('G&#233;rer le stress')">G&#233;rer le stress</button>
-            <button class="cp-sug" style="--wc:#30d158" onclick="santeCpSend('Routine matin optimale')">Routine matin</button>
-          </div>
         </div>
         <div class="typing" id="cp-typing-sante"><div class="tdots"><span></span><span></span><span></span></div></div>
       </div>
       <div class="cp-inp">
         <div class="cp-inp-row">
-          <textarea class="cp-ta" id="cp-ta-sante" rows="1" placeholder="Question sant&#233;, bien-&#234;tre..."></textarea>
+          <textarea class="cp-ta" id="cp-ta-sante" rows="1" placeholder="Un rendez-vous à préparer, un document à retrouver…"></textarea>
           <button class="cp-send" id="cp-send-sante" style="background:#30d158">
             <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 8l11-5.5-5.5 11-2-5.5-3.5-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
           </button>
@@ -2823,6 +2910,37 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           </ol></div>
         <div id="pj-err" role="alert"></div>
         <div class="npj-acts"><button id="pj-annuler" type="button">Annuler</button><button id="pj-creer" type="submit">Créer le projet</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- SANTÉ : la feuille d'un rendez-vous ou d'un document (même dessin que « Nouveau projet ») -->
+<div id="sante-modal" role="dialog" aria-modal="true" aria-labelledby="sm-titre">
+  <div id="sm-box">
+    <div class="npj-head"><div id="sm-titre">Nouveau rendez-vous</div><button id="sm-fermer" type="button">Fermer</button></div>
+    <div class="npj-body">
+      <form id="sm-form" novalidate>
+        <div class="sm-mode" data-mode="rdv">
+          <label class="npj-champ"><span class="npj-lbl">Spécialité</span><select id="sm-spe"></select></label>
+          <label class="npj-champ"><span class="npj-lbl">Praticien</span><input id="sm-qui" type="text" maxlength="60" autocomplete="off" placeholder="Facultatif"></label>
+          <div class="sm-duo">
+            <label class="npj-champ"><span class="npj-lbl">Date</span><input id="sm-date" type="date"></label>
+            <label class="npj-champ"><span class="npj-lbl">Heure</span><input id="sm-heure" type="time"></label>
+          </div>
+          <label class="npj-champ"><span class="npj-lbl">Lieu</span><input id="sm-lieu" type="text" maxlength="120" autocomplete="off" placeholder="Facultatif"></label>
+          <label class="npj-champ"><span class="npj-lbl">À apporter</span><textarea id="sm-apporter" rows="2" maxlength="300" placeholder="Carte Vitale, ordonnance, radios…"></textarea></label>
+          <label class="npj-champ"><span class="npj-lbl">Mes questions</span><textarea id="sm-questions" rows="2" maxlength="600" placeholder="Ce que tu veux demander"></textarea></label>
+          <label class="npj-champ" id="sm-sortie-champ"><span class="npj-lbl">Ce qui en est sorti</span><textarea id="sm-sortie" rows="2" maxlength="600" placeholder="Ce qu'on t'a dit, la suite prévue"></textarea></label>
+        </div>
+        <div class="sm-mode" data-mode="doc">
+          <label class="npj-champ"><span class="npj-lbl">Document</span><input id="sm-doc-titre" type="text" maxlength="80" autocomplete="off" placeholder="Ordonnance, compte rendu, résultat…"></label>
+          <label class="npj-champ"><span class="npj-lbl">Spécialité</span><select id="sm-doc-spe"></select></label>
+          <label class="npj-champ"><span class="npj-lbl">Date</span><input id="sm-doc-date" type="date"></label>
+          <label class="npj-champ"><span class="npj-lbl">Où il est</span><select id="sm-doc-ou"></select></label>
+        </div>
+        <div id="sm-err" role="alert"></div>
+        <div class="npj-acts"><button id="sm-annuler" type="button">Annuler</button><button id="sm-ok" type="submit">Enregistrer le rendez-vous</button></div>
+        <button id="sm-suppr" type="button" hidden>Supprimer ce rendez-vous</button>
       </form>
     </div>
   </div>
@@ -4042,6 +4160,9 @@ function normalizeS(){
   if(!S.taskOrder) S.taskOrder={};
   if(!S.notifEnabled) S.notifEnabled=false;
   if(!S.tools) S.tools={};
+  if(!S.sante||typeof S.sante!=='object') S.sante={};
+  if(!S.sante.rdv) S.sante.rdv={};
+  if(!S.sante.docs) S.sante.docs={};
   if(!S.poles) S.poles={sante:[],juridique:{statut:[],contrats:[],aides:[],demarches:[]}};
   else{
     if(!S.poles.sante) S.poles.sante=[];
@@ -4222,12 +4343,12 @@ function renderHome(){
 function renderPoles(){
   var grid=document.getElementById("poles-grid"); if(!grid) return;
   var today=new Date().toDateString();
-  var santeCI=S.poles.sante.find(function(ci){ return new Date(ci.date).toDateString()===today; });
   var html="";
   POLES.forEach(function(p){
     // une seconde ligne seulement quand il y a quelque chose à dire : ARC ne reproche rien (vision)
     var sub="";
-    if(p.id==="sante"){ if(santeCI) sub="Check-in fait"; }
+    if(p.id==="sante"){ var pr=santeRdv().filter(santeAVenir).sort(function(a,b){ return santeQuand(a)-santeQuand(b); })[0];
+      if(pr) sub=(santeSpeNom(pr.spe)||"Rendez-vous")+" · "+santeJour(santeQuand(pr)); }
     else if(p.id==="juridique"){
       var jurObj=S.poles.juridique||{}; var total=Object.values(jurObj).reduce(function(a,b){ return a+(Array.isArray(b)?b.length:0); },0);
       if(total>0) sub=total+" élément"+(total>1?"s":"");
@@ -4572,6 +4693,7 @@ function renderSante(){
   renderObjectifs();
   renderSanteJournal();
   renderPoleTools('sante');
+  renderSanteMemoire();
   // Restore today check-in values
   var today = new Date().toDateString();
   var ci = S.poles.sante.find(function(c){ return new Date(c.date).toDateString() === today; });
@@ -6943,6 +7065,189 @@ function projetCreer() {
   document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && document.getElementById('projet-modal').classList.contains('open')) projetFermer(); });
 })();
 
+/* ═══ SANTÉ, LA MÉMOIRE (branche sante-socle, 11 octobre ; docs/ETUDE-POLES.md, étape 1) ═══
+   Rendez-vous, spécialités, documents (une référence : nom, date, où il est ; jamais le fichier), et les pensées rangées
+   en Santé. Données dans S.sante.rdv et S.sante.docs : des objets rangés par id, que la synchronisation fusionne champ
+   par champ (un ajout sur un appareil et une suppression sur l'autre se retrouvent tous les deux). Jamais d'avis
+   médical : ARC note, date, retrouve, prépare. Tous les textes sont posés par textContent. */
+var SANTE_SPECIALITES = [
+  { k: 'generaliste', n: 'Généraliste' }, { k: 'dentiste', n: 'Dentiste' }, { k: 'ophtalmo', n: 'Ophtalmo' },
+  { k: 'dermato', n: 'Dermato' }, { k: 'orl', n: 'ORL' }, { k: 'cardio', n: 'Cardio' }, { k: 'kine', n: 'Kiné' },
+  { k: 'imagerie', n: 'Imagerie' }, { k: 'laboratoire', n: 'Laboratoire' }, { k: 'psy', n: 'Psy' },
+  { k: 'pharmacie', n: 'Pharmacie' }, { k: 'autre', n: 'Autre' }
+];
+var SANTE_OU = [
+  { k: 'mes', n: 'Mon espace santé' }, { k: 'papier', n: 'Papier, chez moi' }, { k: 'photo', n: 'Photo sur mon téléphone' },
+  { k: 'courriel', n: 'Dans mes courriels' }, { k: 'autre', n: 'Ailleurs' }
+];
+function santeSpeNom(k) { var s = SANTE_SPECIALITES.filter(function(x) { return x.k === k; })[0]; return s ? s.n : ''; }
+function santeOuNom(k) { var s = SANTE_OU.filter(function(x) { return x.k === k; })[0]; return s ? s.n : ''; }
+function santeId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+// Le moment d'un rendez-vous : sa date à son heure (9 h si l'heure n'est pas dite, pour le classer dans la journée)
+function santeQuand(r) { var d = new Date(r.date + 'T' + (r.heure || '09:00')); return isNaN(d) ? null : d; }
+function santeAVenir(r) { var d = santeQuand(r); if(!d) return false; var fin = new Date(d); if(!r.heure) fin.setHours(23, 59, 59, 999); return fin >= new Date(); }
+function santeRdv() { return Object.keys((S.sante && S.sante.rdv) || {}).map(function(k) { return S.sante.rdv[k]; }).filter(function(r) { return r && r.id && r.date; }); }
+function santeDocs() { return Object.keys((S.sante && S.sante.docs) || {}).map(function(k) { return S.sante.docs[k]; }).filter(function(d) { return d && d.id && d.titre; }); }
+// « 14 nov. », « Aujourd'hui », « Demain » ; l'heure à part
+function santeJour(d) {
+  var auj = new Date(), dem = new Date(); dem.setDate(auj.getDate() + 1);
+  if(d.toDateString() === auj.toDateString()) return 'Aujourd’hui';
+  if(d.toDateString() === dem.toDateString()) return 'Demain';
+  var opt = { day: 'numeric', month: 'short' }; if(d.getFullYear() !== auj.getFullYear()) opt.year = 'numeric';
+  return d.toLocaleDateString('fr-FR', opt);
+}
+function santeLigne(titre, meta, jour, heure, fait, couleur, ouvrir) {
+  var row = document.createElement('button'); row.type = 'button'; row.className = 'wpen-row sm-row' + (fait ? ' fait' : '');
+  var pt = document.createElement('span'); pt.className = 'wpen-pt'; pt.setAttribute('aria-hidden', 'true'); if(couleur) pt.style.setProperty('--penc', couleur);
+  var tx = document.createElement('span'); tx.className = 'wpen-txt';
+  var t = document.createElement('span'); t.className = 'wpen-t'; t.textContent = titre;
+  tx.appendChild(t);
+  if(meta) { var m = document.createElement('span'); m.className = 'wpen-m'; m.textContent = meta; tx.appendChild(m); }
+  row.appendChild(pt); row.appendChild(tx);
+  if(jour) {
+    var q = document.createElement('span'); q.className = 'sm-quand';
+    var j = document.createElement('b'); j.textContent = jour; q.appendChild(j);
+    if(heure) { var h = document.createElement('small'); h.textContent = heure; q.appendChild(h); }
+    row.appendChild(q);
+  } else { var ch = document.createElement('i'); ch.className = 'wpen-chev'; ch.setAttribute('aria-hidden', 'true'); row.appendChild(ch); }
+  row.addEventListener('click', ouvrir);
+  return row;
+}
+var _smPassesOuverts = false;
+function renderSanteMemoire() {
+  var liste = document.getElementById('srdv-list'); if(!liste) return;
+  var tout = santeRdv(), avenir = tout.filter(santeAVenir), passes = tout.filter(function(r) { return !santeAVenir(r); });
+  avenir.sort(function(a, b) { return santeQuand(a) - santeQuand(b); });
+  passes.sort(function(a, b) { return santeQuand(b) - santeQuand(a); });
+  var rdvLigne = function(r, passe) {
+    var meta = [r.qui, r.lieu].filter(Boolean).join(' · ');
+    if(passe && r.sortie) meta = r.sortie.replace(/\s+/g, ' ').trim();
+    var d = santeQuand(r);
+    return santeLigne(santeSpeNom(r.spe) || 'Rendez-vous', meta, d ? santeJour(d) : '', r.heure ? r.heure.replace(':', ' h ') : '', passe, null, function() { santeOuvrir('rdv', r.id); });
+  };
+  liste.innerHTML = '';
+  avenir.forEach(function(r) { liste.appendChild(rdvLigne(r, false)); });
+  liste.hidden = !avenir.length;
+  document.getElementById('srdv-vide').hidden = !!avenir.length;
+  document.getElementById('srdv-n').textContent = avenir.length ? (avenir.length + ' à venir') : '';
+  var bp = document.getElementById('srdv-passes'), lp = document.getElementById('srdv-passes-list');
+  bp.hidden = !passes.length;
+  if(!passes.length) _smPassesOuverts = false;
+  document.getElementById('srdv-passes-n').textContent = passes.length ? String(passes.length) : '';
+  document.getElementById('srdv-passes-tog').setAttribute('aria-expanded', _smPassesOuverts ? 'true' : 'false');
+  lp.hidden = !_smPassesOuverts; lp.innerHTML = '';
+  passes.forEach(function(r) { lp.appendChild(rdvLigne(r, true)); });
+  // la ligne sous le titre : le prochain rendez-vous, un fait ; rien d'autre
+  var sous = document.getElementById('sm-sous'), p = avenir[0];
+  if(sous) {
+    if(p) { var d = santeQuand(p); sous.textContent = 'Prochain rendez-vous : ' + (santeSpeNom(p.spe) || 'rendez-vous') + ', ' + santeJour(d).toLowerCase().replace('aujourd’hui', 'aujourd’hui') + (p.heure ? ' à ' + p.heure.replace(':', ' h ') : ''); }
+    else sous.textContent = 'Tes rendez-vous, tes documents, ce qu’il faut retenir.';
+  }
+  // spécialités : allumées quand elles ont un fait (un rendez-vous ou un document)
+  var docs = santeDocs(), suivies = {};
+  tout.forEach(function(r) { if(r.spe) suivies[r.spe] = 1; });
+  docs.forEach(function(d) { if(d.spe) suivies[d.spe] = 1; });
+  var chips = document.getElementById('sspe-list'); chips.innerHTML = '';
+  SANTE_SPECIALITES.filter(function(s) { return s.k !== 'autre' || suivies.autre; }).forEach(function(s) {
+    var c = document.createElement('span'); c.className = 'sm-chip' + (suivies[s.k] ? ' on' : '');
+    var i = document.createElement('i'); i.setAttribute('aria-hidden', 'true'); c.appendChild(i);
+    c.appendChild(document.createTextNode(s.n)); chips.appendChild(c);
+  });
+  var nSuiv = Object.keys(suivies).length;
+  document.getElementById('sspe-n').textContent = nSuiv ? (nSuiv + (nSuiv > 1 ? ' suivies' : ' suivie')) : '';
+  // documents : les plus récents d'abord
+  docs.sort(function(a, b) { return String(b.date || b.cree || '').localeCompare(String(a.date || a.cree || '')); });
+  var ld = document.getElementById('sdoc-list'); ld.innerHTML = '';
+  docs.forEach(function(d) {
+    var dd = d.date ? new Date(d.date + 'T12:00') : null;
+    var meta = [santeSpeNom(d.spe), dd && !isNaN(dd) ? dd.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : '', santeOuNom(d.ou)].filter(Boolean).join(' · ');
+    ld.appendChild(santeLigne(d.titre, meta, '', '', false, null, function() { santeOuvrir('doc', d.id); }));
+  });
+  ld.hidden = !docs.length;
+  document.getElementById('sdoc-vide').hidden = !!docs.length;
+  // pensées rangées en Santé (la section des projets et de Juridique)
+  if(typeof renderPensees === 'function') renderPensees('ssec-pensees', 'spen-list', 'spen-n', penseesDe('sante'));
+}
+
+/* La feuille : ajouter ou modifier un rendez-vous, un document. Supprimer demande un second geste (charte, règle 11). */
+var _sm = { mode: 'rdv', id: null, suppr: false };
+function santeOuvrir(mode, id) {
+  _sm = { mode: mode, id: id || null, suppr: false };
+  var m = document.getElementById('sante-modal'), f = document.getElementById('sm-form');
+  f.reset();
+  [].forEach.call(f.querySelectorAll('.sm-mode'), function(z) { z.hidden = z.getAttribute('data-mode') !== mode; });
+  var r = id ? (mode === 'rdv' ? S.sante.rdv[id] : S.sante.docs[id]) : null;
+  if(mode === 'rdv') {
+    document.getElementById('sm-titre').textContent = r ? (santeSpeNom(r.spe) || 'Rendez-vous') : 'Nouveau rendez-vous';
+    document.getElementById('sm-ok').textContent = 'Enregistrer le rendez-vous';
+    document.getElementById('sm-suppr').textContent = 'Supprimer ce rendez-vous';
+    var v = function(i, x) { document.getElementById(i).value = x || ''; };
+    v('sm-spe', r && r.spe); v('sm-qui', r && r.qui); v('sm-date', r && r.date); v('sm-heure', r && r.heure);
+    v('sm-lieu', r && r.lieu); v('sm-apporter', r && r.apporter); v('sm-questions', r && r.questions); v('sm-sortie', r && r.sortie);
+    // « Ce qui en est sorti » ne sert qu'à un rendez-vous déjà enregistré
+    document.getElementById('sm-sortie-champ').hidden = !r;
+  } else {
+    document.getElementById('sm-titre').textContent = r ? r.titre : 'Nouveau document';
+    document.getElementById('sm-ok').textContent = 'Enregistrer le document';
+    document.getElementById('sm-suppr').textContent = 'Supprimer ce document';
+    document.getElementById('sm-doc-titre').value = r ? r.titre : '';
+    document.getElementById('sm-doc-spe').value = r && r.spe || '';
+    document.getElementById('sm-doc-date').value = r && r.date || '';
+    document.getElementById('sm-doc-ou').value = r && r.ou || '';
+  }
+  document.getElementById('sm-suppr').hidden = !r;
+  document.getElementById('sm-suppr').classList.remove('arme');
+  document.getElementById('sm-err').textContent = '';
+  m.classList.add('open'); m.scrollTop = 0;
+  setTimeout(function() { var c = document.getElementById(mode === 'rdv' ? (r ? 'sm-date' : 'sm-spe') : 'sm-doc-titre'); if(c && !r) c.focus(); }, 60);
+}
+function santeFermer() { document.getElementById('sante-modal').classList.remove('open'); }
+function santeEnregistrer() {
+  var err = document.getElementById('sm-err'), now = new Date().toISOString(), g = function(i) { return document.getElementById(i).value.trim(); };
+  if(!S.sante) S.sante = { rdv: {}, docs: {} };
+  if(_sm.mode === 'rdv') {
+    if(!g('sm-spe')) { err.textContent = 'Choisis une spécialité.'; document.getElementById('sm-spe').focus(); return; }
+    if(!g('sm-date')) { err.textContent = 'Indique la date du rendez-vous.'; document.getElementById('sm-date').focus(); return; }
+    var id = _sm.id || santeId(), ancien = S.sante.rdv[id] || {};
+    S.sante.rdv[id] = Object.assign({}, ancien, { id: id, spe: g('sm-spe'), qui: g('sm-qui'), date: g('sm-date'), heure: g('sm-heure'),
+      lieu: g('sm-lieu'), apporter: g('sm-apporter'), questions: g('sm-questions'), sortie: _sm.id ? g('sm-sortie') : (ancien.sortie || ''), cree: ancien.cree || now, maj: now });
+  } else {
+    if(!g('sm-doc-titre')) { err.textContent = 'Donne un nom au document.'; document.getElementById('sm-doc-titre').focus(); return; }
+    var di = _sm.id || santeId(), da = S.sante.docs[di] || {};
+    S.sante.docs[di] = Object.assign({}, da, { id: di, titre: g('sm-doc-titre'), spe: g('sm-doc-spe'), date: g('sm-doc-date'), ou: g('sm-doc-ou'), cree: da.cree || now, maj: now });
+  }
+  var neuf = !_sm.id, mode = _sm.mode;
+  saveS(); santeFermer(); renderSanteMemoire(); if(typeof renderPoles === 'function') renderPoles();
+  toast(mode === 'rdv' ? (neuf ? 'Rendez-vous ajouté' : 'Rendez-vous enregistré') : (neuf ? 'Document ajouté' : 'Document enregistré'));
+}
+function santeSupprimer() {
+  var b = document.getElementById('sm-suppr');
+  if(!b.classList.contains('arme')) { b.classList.add('arme'); b.textContent = 'Toucher encore pour supprimer'; return; }
+  if(_sm.mode === 'rdv') delete S.sante.rdv[_sm.id]; else delete S.sante.docs[_sm.id];
+  var mode = _sm.mode;
+  saveS(); santeFermer(); renderSanteMemoire(); if(typeof renderPoles === 'function') renderPoles();
+  toast(mode === 'rdv' ? 'Rendez-vous supprimé' : 'Document supprimé');
+}
+(function() {
+  var opts = function(sel, liste, vide) {
+    var e = document.getElementById(sel); if(!e) return;
+    e.innerHTML = '';
+    var o0 = document.createElement('option'); o0.value = ''; o0.textContent = vide; e.appendChild(o0);
+    liste.forEach(function(x) { var o = document.createElement('option'); o.value = x.k; o.textContent = x.n; e.appendChild(o); });
+  };
+  opts('sm-spe', SANTE_SPECIALITES, 'Choisir…'); opts('sm-doc-spe', SANTE_SPECIALITES, 'Aucune'); opts('sm-doc-ou', SANTE_OU, 'Je ne sais plus');
+  var on = function(id, ev, fn) { var e = document.getElementById(id); if(e) e.addEventListener(ev, fn); };
+  on('srdv-ajout', 'click', function() { santeOuvrir('rdv'); });
+  on('sdoc-ajout', 'click', function() { santeOuvrir('doc'); });
+  on('srdv-passes-tog', 'click', function() { _smPassesOuverts = !_smPassesOuverts; renderSanteMemoire(); });
+  on('sm-fermer', 'click', santeFermer); on('sm-annuler', 'click', santeFermer);
+  on('sm-suppr', 'click', santeSupprimer);
+  on('sm-form', 'submit', function(ev) { ev.preventDefault(); santeEnregistrer(); });
+  on('sm-form', 'input', function() { document.getElementById('sm-err').textContent = ''; });
+  on('sante-modal', 'click', function(ev) { if(ev.target.id === 'sante-modal') santeFermer(); });
+  document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && document.getElementById('sante-modal').classList.contains('open')) santeFermer(); });
+})();
+
 /* Accueil : prochaines étapes (non faites, non annulées), celles qui ont un moment d'abord */
 // Pensées qui attendent un choix de Rayan : pas encore rangées, ARC hésite, ou espace inconnu (hors notes, faites,
 // annulées, refusées)
@@ -6960,6 +7265,7 @@ function rangeHomeRender() {
   // L'écran d'un projet ouvert suit aussi les rangements qui arrivent (ses pensées)
   var s2 = document.getElementById('S2'); if(s2 && !s2.classList.contains('off')) renderPenseesProjet();
   var s4 = document.getElementById('S4'); if(s4 && !s4.classList.contains('off')) renderPenseesJur();
+  var s3 = document.getElementById('S3'); if(s3 && !s3.classList.contains('off') && typeof renderSanteMemoire === 'function') renderSanteMemoire();
   if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
   var poste = document.getElementById('h-poste'); if(!poste) return;
   // Plus de liste d'étapes sur l'accueil (Rayan, 10 octobre : « c'est pas un agenda ») : les étapes vivent dans le Point

@@ -1111,6 +1111,39 @@ Santé et Juridique : l'étude (branche `etude-poles`, 11 octobre, partie de `ma
   `docs/maquettes/poles-direction.html` (données d'exemple marquées).
 - **Aucune ligne d'`index.html` changée.** Les 13 suites relancées le 11 octobre sur la branche : toutes passent.
 
+- **PR #31 fusionnée par Rayan le 11 octobre à 5 h 25** (`main` à `a2b5bad`).
+
+Santé, étape 1 : la mémoire (branche `sante-socle`, 11 octobre 5 h 30, partie de `main` à `a2b5bad`) :
+- Rayan (5 h 27) : « go on continue », sans préciser : **les réponses par défaut de l'étude sont retenues** (curseurs
+  retirés de l'écran, données gardées ; la liste de spécialités du § 5 ; documents en référence, sans fichier ;
+  « Aides » retiré, pas encore fait, ce sera avec Juridique ; Santé d'abord).
+- **L'écran** (`#S3`) : « Ma santé » et une ligne vraie (`#sm-sous` : « Prochain rendez-vous : Kiné, demain à 18 h 00 »,
+  sinon ce que l'écran garde) ; l'horizon vert ; **Rendez-vous** (à venir par date, heure à droite, « N à venir » ;
+  vide : « Aucun rendez-vous à venir. » ; « Ajouter un rendez-vous », la seule touche blanche ; « Passés » replié, avec
+  « ce qui en est sorti » sous chacun) ; **Spécialités** en puces (point lumineux = au moins un rendez-vous ou un
+  document, anneau sinon ; jamais la couleur seule) ; **Pensées** rangées en Santé (`renderPensees`, déjà écrit) ;
+  **Documents** (nom, spécialité, mois, « où il est ») ; puis le journal santé et les outils, inchangés.
+- **La feuille** (`#sante-modal`, même dessin que « Nouveau projet », styles partagés) : rendez-vous (spécialité,
+  praticien, date, heure, lieu, à apporter, mes questions ; « Ce qui en est sorti » une fois enregistré) ou document
+  (nom, spécialité, date, où il est) ; « Choisis une spécialité. », « Indique la date du rendez-vous. », « Donne un nom
+  au document. » ; supprimer demande un second geste (« Toucher encore pour supprimer », charte règle 11) ; Échap et le
+  fond ferment. Fonctions : `renderSanteMemoire`, `santeOuvrir`, `santeEnregistrer`, `santeSupprimer`, `santeRdv`,
+  `santeAVenir`, `santeJour`.
+- **Données** : `S.sante.rdv` et `S.sante.docs`, des objets rangés par id (la synchronisation les fusionne champ par
+  champ ; une suppression d'un côté et un ajout de l'autre restent tous les deux). Créés par `normalizeS`. Aucune table.
+- **Retirés de l'écran, rien d'effacé** : le score, les quatre moyennes, le check-in, les tendances, les habitudes, les
+  objectifs (dans `#sante-suivi`, caché, pour que leur code ne lève aucune erreur ; `S.poles.sante` intact ; « Export
+  CSV » les exporte toujours) ; les cinq boutons de conseils de Claude Santé (« Optimiser sommeil »…).
+- Accueil, « Ma vie » : Santé dit le prochain rendez-vous (« Kiné · Demain ») au lieu de « Check-in fait ».
+- **Pas encore** (étapes suivantes de l'étude) : le corps et la ligne du temps ; Santé dans la recherche ; le Point du
+  jour qui cite les rendez-vous ; « Préparer ce rendez-vous » avec Claude ; Juridique (orbite, « Aides »).
+- Tests : accueil 27/27 (le contrôle des pensées vérifie que la section de Santé reste cachée sans pensée), pôles 10/10 (le remplissage de Santé passe par la feuille ; un contrôle ajouté : erreurs de la feuille,
+  rendez-vous affiché avec son heure, « 1 à venir », spécialité allumée, ligne du haut, accueil, « Ce qui en est
+  sorti », passage sous « Passés », suppression en deux gestes, ancien suivi caché et données gardées, aucun bouton de
+  conseil ; contraste le plus faible 5,36 : 1, après avoir descendu la section sous la lueur de l'horizon, où « 1 à
+  venir » tombait à 2,86 : 1), et les douze autres suites passent. Vérifié dans Chromium seulement : **à voir par Rayan
+  sur son iPhone** (sélecteurs de date et d'heure de Safari, en français ; le Chromium de test les montre en anglais).
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

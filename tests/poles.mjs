@@ -21,7 +21,7 @@ const fmt = r => r.toFixed(2).replace('.', ',') + ' : 1';
 const dit = m => `${fmt(m.ratio)} sur « ${m.t} » (${m.n}, x ${m.x}, y ${m.y})`;
 const detail = {};
 const ECRANS = [{ n: 'iPhone 390 × 844', width: 390, height: 844, tel: true }, { n: 'Mac 1440 × 900', width: 1440, height: 900, tel: false }];
-const POLES = [{ cle: 'sante', nom: 'Santé', id: 'S3', main: '#pmain-sante', hero: '.sante-hero' }, { cle: 'juridique', nom: 'Juridique', id: 'S4', main: '#pmain-jur', hero: '.jur-hero' }];
+const POLES = [{ cle: 'sante', nom: 'Santé', id: 'S3', main: '#pmain-sante', hero: '.sm-hero' }, { cle: 'juridique', nom: 'Juridique', id: 'S4', main: '#pmain-jur', hero: '.jur-hero' }];
 const contexte = async vp => { const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, deviceScaleFactor: 2, isMobile: vp.tel, hasTouch: vp.tel, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' }); await ctx.addInitScript(sessionScript()); return ctx; };
 
 // Dans la page : ce que la charte mesure sur le pôle ouvert
@@ -48,12 +48,16 @@ const releve = ({ id, main, hero }) => {
 // Remplir le pôle comme Rayan le ferait : les états remplis se mesurent aussi
 const remplir = async (page, cle) => {
   if (cle === 'sante') {
-    await page.click('#checkin-save-btn');
-    await page.fill('#obj-inp', 'Marcher 30 minutes par jour'); await page.click('#obj-add-btn');
-    await page.fill('#obj-inp', 'Prendre rendez-vous chez le dentiste'); await page.click('#obj-add-btn');
-    await page.click('#S3 .obj-check'); await page.click('#S3 .hab-card');
+    // Santé, la mémoire (11 octobre) : un rendez-vous ajouté par la feuille, un document, une note au journal
+    await page.click('#srdv-ajout'); await page.waitForTimeout(250);
+    await page.selectOption('#sm-spe', 'dentiste'); await page.fill('#sm-qui', 'Dr Martin');
+    await page.fill('#sm-date', new Date(Date.now() + 4 * 864e5).toISOString().slice(0, 10)); await page.fill('#sm-heure', '09:30');
+    await page.click('#sm-ok'); await page.waitForTimeout(250);
+    await page.click('#sdoc-ajout'); await page.waitForTimeout(250);
+    await page.fill('#sm-doc-titre', 'Ordonnance lunettes'); await page.selectOption('#sm-doc-spe', 'ophtalmo'); await page.selectOption('#sm-doc-ou', 'mes');
+    await page.click('#sm-ok'); await page.waitForTimeout(250);
     await page.fill('#sante-jou-inp', 'Bilan sanguin fait, résultats attendus lundi.'); await page.click('#sante-jou-btn');
-    return await page.evaluate(() => document.querySelectorAll('#S3 .obj-item').length === 2 && document.querySelectorAll('#S3 .obj-item.done').length === 1 && document.querySelectorAll('#S3 .hab-card.done').length === 1 && document.querySelectorAll('#sante-jou-list .wjou-entry').length === 1);
+    return await page.evaluate(() => document.querySelectorAll('#srdv-list .wpen-row').length === 1 && document.querySelectorAll('#sdoc-list .wpen-row').length === 1 && document.querySelectorAll('#sante-jou-list .wjou-entry').length === 1);
   }
   await page.click('#S4 .jur-sec-head[data-sec="statut"]');
   await page.click('#S4 [data-action="jur-open-form"][data-sec="statut"]');
@@ -107,7 +111,7 @@ for (const vp of ECRANS) {
   if (contrastes.length) { const g = {}; for (const m of contrastes) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0 }; e.nb++; e.min = Math.min(e.min, m.ratio); } detail[vp.n] = Object.entries(g).map(([k, e]) => `${e.min.toFixed(2)}  ${k}  (${e.nb})`); }
   ok(!defauts.length, `${vp.n} : Santé et Juridique respectent la charte, vides et remplis (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon ; écriture de l'accueil : police du système, ni chasse fixe ni capitales, sections à 17 px)`, defauts.slice(0, 4).join(' ; '));
   ok(n > 150 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout, dans les deux pôles`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
-  ok(reste, `${vp.n} : Santé, un objectif se coche, une habitude aussi, une note s'ajoute ; Juridique, la section reste ouverte quand on y ajoute un élément ou qu'on le marque fait`);
+  ok(reste, `${vp.n} : Santé, un rendez-vous et un document s'ajoutent par la feuille, une note au journal ; Juridique, la section reste ouverte quand on y ajoute un élément ou qu'on le marque fait`);
   ok(errors.length === 0, `${vp.n} : aucune erreur de console`, errors.join(' | '));
   await ctx.close();
 }
@@ -123,6 +127,50 @@ for (const vp of ECRANS) {
     await page.evaluate(() => goHome());
   }
   ok(!hors.length, 'Téléphone de 360 px : aucun bouton de la barre du haut ne sort de l\'écran', hors.join(', '));
+  await ctx.close();
+}
+
+/* Santé, la mémoire (11 octobre, docs/ETUDE-POLES.md étape 1) : la feuille refuse sans spécialité ni date et le dit ;
+   le rendez-vous s'affiche, avec « 1 à venir », la spécialité allumée, la ligne du haut et l'accueil (Ma vie) ; modifié,
+   il propose « Ce qui en est sorti » ; supprimé en deux gestes ; passé, il va sous « Passés » ; l'ancien suivi n'est
+   plus à l'écran et ses données restent ; plus aucun bouton de conseil. */
+{
+  const ctx = await contexte({ width: 390, height: 844, tel: true });
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.evaluate(() => { S.poles.sante.push({ date: new Date().toISOString(), sommeil: 7, energie: 6, sport: 0, mental: 7 }); saveS(); if (typeof matinClose === 'function') matinClose(); enterPole('sante'); });
+  await page.waitForTimeout(500);
+  const avant = await page.evaluate(() => ({ suivi: document.getElementById('sante-suivi').offsetParent === null, conseils: document.querySelectorAll('#S3 .cp-sug').length, vide: !document.getElementById('srdv-vide').hidden, blanc: getComputedStyle(document.getElementById('srdv-ajout')).backgroundColor }));
+  await page.click('#srdv-ajout'); await page.waitForTimeout(200);
+  await page.click('#sm-ok'); await page.waitForTimeout(100);
+  const e1 = await page.evaluate(() => document.getElementById('sm-err').textContent);
+  await page.selectOption('#sm-spe', 'kine'); await page.click('#sm-ok'); await page.waitForTimeout(100);
+  const e2 = await page.evaluate(() => [document.getElementById('sm-err').textContent, document.getElementById('sante-modal').classList.contains('open')]);
+  const j = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+  await page.fill('#sm-date', j(3)); await page.fill('#sm-heure', '18:00'); await page.fill('#sm-lieu', 'Cabinet du centre');
+  await page.click('#sm-ok'); await page.waitForTimeout(250);
+  const apres = await page.evaluate(() => ({ lignes: [...document.querySelectorAll('#srdv-list .wpen-row')].map(e => e.textContent), n: document.getElementById('srdv-n').textContent,
+    chip: [...document.querySelectorAll('#sspe-list .sm-chip.on')].map(e => e.textContent), sous: document.getElementById('sm-sous').textContent, ferme: !document.getElementById('sante-modal').classList.contains('open') }));
+  await page.evaluate(() => goHome()); await page.waitForTimeout(250);
+  const vie = await page.evaluate(() => (document.querySelector('#S1 .vie[data-pole="sante"] .vie-s') || {}).textContent || '');
+  await page.evaluate(() => enterPole('sante')); await page.waitForTimeout(300);
+  await page.click('#srdv-list .wpen-row'); await page.waitForTimeout(200);
+  const edit = await page.evaluate(() => ({ sortie: !document.getElementById('sm-sortie-champ').hidden, suppr: !document.getElementById('sm-suppr').hidden, date: document.getElementById('sm-date').value }));
+  await page.fill('#sm-sortie', 'Exercices à faire chaque soir.'); await page.fill('#sm-date', j(-2)); await page.click('#sm-ok'); await page.waitForTimeout(250);
+  const passe = await page.evaluate(() => ({ avenir: document.querySelectorAll('#srdv-list .wpen-row').length, vide: !document.getElementById('srdv-vide').hidden, passes: document.getElementById('srdv-passes-n').textContent }));
+  await page.click('#srdv-passes-tog'); await page.waitForTimeout(150);
+  const pl = await page.evaluate(() => [...document.querySelectorAll('#srdv-passes-list .wpen-row')].map(e => e.textContent).join());
+  await page.click('#srdv-passes-list .wpen-row'); await page.waitForTimeout(200);
+  await page.click('#sm-suppr'); await page.waitForTimeout(100);
+  const unGeste = await page.evaluate(() => Object.keys(S.sante.rdv).length);
+  await page.click('#sm-suppr'); await page.waitForTimeout(250);
+  const fin = await page.evaluate(() => ({ rdv: Object.keys(S.sante.rdv).length, garde: S.poles.sante.length, sauve: !!(JSON.parse(localStorage.getItem('arc_v2')).sante) }));
+  const vraies = errors.filter(e => !/status of 500/.test(e));
+  ok(avant.suivi && avant.conseils === 0 && avant.vide && avant.blanc === 'rgb(245, 245, 247)' && /spécialité/.test(e1) && /date/.test(e2[0]) && e2[1]
+     && apres.lignes.length === 1 && /Kiné/.test(apres.lignes[0]) && /Cabinet du centre/.test(apres.lignes[0]) && /18 h 00/.test(apres.lignes[0]) && apres.n === '1 à venir' && apres.chip.join() === 'Kiné' && /^Prochain rendez-vous : Kiné, /.test(apres.sous) && apres.ferme
+     && /^Kiné · /.test(vie) && edit.sortie && edit.suppr && edit.date === j(3) && passe.avenir === 0 && passe.vide && passe.passes === '1' && /Exercices à faire chaque soir/.test(pl)
+     && unGeste === 1 && fin.rdv === 0 && fin.garde === 1 && fin.sauve && !vraies.length,
+     'Santé, la mémoire : la feuille dit ce qui manque (spécialité, date) ; le rendez-vous s\'affiche avec son heure, « 1 à venir », sa spécialité allumée, la ligne du haut et l\'accueil ; modifié, « Ce qui en est sorti » ; passé, il va sous « Passés » ; supprimé en deux gestes ; l\'ancien suivi n\'est plus à l\'écran, ses données restent ; plus aucun bouton de conseil',
+     JSON.stringify({ avant, e1, e2, apres, vie, edit, passe, pl, unGeste, fin, erreurs: vraies }));
   await ctx.close();
 }
 

@@ -475,15 +475,16 @@ for (const vp of ECRANS) {
   await page.evaluate(() => document.getElementById('jsec-pensees').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
   const mj = await mesurer(page, { racine: '#jsec-pensees' });
   await page.evaluate(() => enterPole('sante')); await page.waitForTimeout(300);
-  const sante = await page.evaluate(() => !!document.querySelector('#S3 .wpen'));
+  // Santé a la section depuis le 11 octobre (étape 1 de l'étude) : aucune pensée n'y est rangée ici, elle reste cachée
+  const sante = await page.evaluate(() => { const e = document.getElementById('ssec-pensees'); return !!e && !e.hidden; });
   const t = a.lignes.map(l => l.t).join(' | ');
   // sans faux proxy, le faux Supabase répond 500 au rangement (tests/outils.mjs, « pas de faux proxy ») : rangé ici à la main
   const vraies = errors.filter(e => !/status of 500/.test(e));
   ok(a.vu && a.n === '2 à faire' && t === 'Refaire la page produit | Appeler le fournisseur des sacs | Vérifier le paiement test'
      && /^Demain · 09:00 · déposée/.test(a.lignes[1].m) && a.lignes[2].fait && /^Faite · déposée/.test(a.lignes[2].m) && a.lignes.every(l => l.h >= 44)
      && ouvert && !fba.vu && atlas.vu && atlas.lignes.length === 1 && atlas.lignes[0].t === 'Relire les statuts' && jur.vu && jur.n === '1 à faire' && jur.lignes.join() === 'Relancer la banque' && !mj.sous.length && !sante && !m.sous.length && m.n >= 6 && !vraies.length,
-     'Projet et Juridique : leurs pensées rangées s\'y retrouvent (à faire puis faites, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section ; Santé n\'en a pas ; contraste ≥ 4,5 : 1',
-     `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.vu ? 'section visible' : 'sans section'} ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; Juridique « ${jur.n} » ${jur.lignes.join(', ')}, le plus faible ${mj.pire ? fmt(mj.pire.ratio) : '?'} ; Santé ${sante ? 'a la section' : 'sans section'} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
+     'Projet et Juridique : leurs pensées rangées s\'y retrouvent (à faire puis faites, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section (Santé comprise) ; contraste ≥ 4,5 : 1',
+     `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.vu ? 'section visible' : 'sans section'} ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; Juridique « ${jur.n} » ${jur.lignes.join(', ')}, le plus faible ${mj.pire ? fmt(mj.pire.ratio) : '?'} ; Santé ${sante ? 'section visible sans pensée' : 'section cachée (aucune pensée)'} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
   await ctx.close();
 }
 
