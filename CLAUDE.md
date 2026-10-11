@@ -1255,6 +1255,30 @@ ARC en orbite, et Relier (11 octobre) :
     la planète, aucune touche de zoom, glisser déplace sans rien ouvrir, pincer jusqu'aux bornes, fiche d'une entrée de
     journal et son contraste, « Réveiller » sur place, Échap, « Ouvrir ATLAS »), et les 13 autres suites passent.
     Vérifié dans Chromium seulement : **l'élan et le pincement réels restent à essayer par Rayan sur son iPhone.**
+- **PR #36 fusionnée par Rayan le 11 octobre à 20 h 03.** Vu sur son iPhone (20 h 05, ses captures) : sur la carte,
+  les pilules couvraient les points et les autres noms (KITCHEN sur son fil, Nettoyage sur ARYAN, la zone Ma vie en
+  travers d'ATLAS), un grand vide en haut et en bas ; sur l'accueil, une bande encombrée de pilules.
+- **La carte réglée (branche `carte-ordre`, 11 octobre 20 h 20, partie de `main` après la PR #36)**. Rayan (20 h 14) :
+  « la disposition : agréable, logique surtout, pas les unes sur les autres, fonction sur fonction ; là c'est un
+  brouhaha » ; « que ça éduque, interactif, intuitif » ; « sinon c'est une deuxième charge qui n'éclaircit rien ».
+  **Règle à garder : la carte est rangée en rangées qui ont chacune un rôle ; chaque espace a sa case, et ses points,
+  son nom et son état restent dans sa case.** Fait (`plDisposer` remplace `plPlacer`) :
+  - Du haut vers le bas : l'orbite (à ranger), **Endormis** (petites cases, près de l'horizon), **En cours** (grandes
+    cases, au centre de l'écran), **Ma vie** (Santé, Juridique, dans une bande teintée entre deux arcs). Les rangées
+    suivent la courbe de l'horizon ; sur la carte, chacune est nommée à gauche (« Endormis », « En cours »,
+    « Ma vie »). Trop d'espaces pour une rangée : elle passe à la ligne.
+  - Les noms ne sont plus des pilules : le nom à la couleur de l'espace, centré sous lui, puis son état en deux lignes
+    courtes (« Actif aujourd'hui », « 2 à faire · 21 faits » ; « Endormi ») ; tronqués à la largeur de leur case ;
+    jamais l'un sur l'autre (contrôlé). Sur l'accueil, les endormis restent sans nom (ils sont dans la carte et sous
+    « Endormis ») ; bande portée à 204 px pour que « Juridique » ne touche plus la puce « Carte ».
+  - Les points d'un espace restent dans son cercle : la spirale se resserre quand il y en a beaucoup.
+  - Vue d'ensemble : la largeur tient dans l'écran, le haut sous l'en-tête ; si c'est plus haut que l'écran, on
+    descend en glissant. La carte n'est plus un monde plus large que l'écran.
+  - **La légende** (`#carte-legende`), au-dessus de la barre de dépôt : Pensée, Tâche faite, Journal, Rendez-vous, À
+    ranger, chacun avec son signe ; cachée quand une fiche est ouverte. La zone ovale pointillée de Ma vie n'existe plus.
+  - Tests : relier 29/29 (un contrôle ajouté : trois rangées nommées dans l'ordre, endormis au-dessus des projets en
+    cours, Ma vie dessous, aucun nom qui en croise un autre sur la carte ni sur l'accueil, légende visible), et les
+    13 autres suites passent. Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
 
 ### Décisions de Rayan (5 octobre)
 
