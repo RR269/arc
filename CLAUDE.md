@@ -1295,6 +1295,30 @@ ARC en orbite, et Relier (11 octobre) :
   Tests : relier 29/29 (les deux contrôles de Ma vie vérifient la colonne : à droite de tous les projets, aucun projet
   dedans, Santé au-dessus de Juridique). Vérifié dans Chromium seulement.
 
+- **PR #38 (étude) et #39 (Ma vie sur le côté) fusionnées le 11 octobre (#39 à 0 h 11 le 12).**
+- **La carte nette (branche `carte-nette`, 12 octobre 0 h 20)**. Rayan (0 h 15) : « on continue, je te veux expert
+  exigeant dans chaque matière ». Étape 2 de `docs/ETUDE-CARTE.md` (la vue d'ensemble), faite avant l'étape 1 :
+  **retirer la bande de l'accueil reste une décision de Rayan** (il venait d'y demander Ma vie à droite). Fait :
+  - **Rien ne passe sur un mot** : `plDessiner` pose d'abord les noms et les titres de rangées (`noms`, `titres`,
+    `V.etiquettes`), puis dessine traits et points sous une découpe qui exclut leurs rectangles (`sansMots`, découpe
+    `evenodd`) ; les fonds (corps de la planète, teinte de Ma vie) restent sous les mots. **Rien sous l'en-tête** de la
+    carte (découpe à `V.haut`, mesuré par `carteHaut`).
+  - **Trois signes** : à faire (pensée, démarche pas faites, rendez-vous à venir : lueur vive, `plAFaire`), fait
+    (poussière de 1,5 px à 35 %), à ranger (ambre, sur l'orbite). Légende de trois entrées. Les tâches d'avril sont de
+    la poussière.
+  - **Aucune phrase sur le canevas** : le bloc des mots de pensée de près est retiré ; la fiche les dit au toucher.
+  - **Noms** : plus de « Endormi » sous les endormis ; en cours 17 px, une seule ligne dessous (« 2 à faire » en blanc,
+    sinon quand il a bougé) ; « 21 faits » sort de la carte (`plLigneCarte` ; `plEtatLignes` retirée).
+  - **En-tête** : « Carte » et une seule action vraie, la puce ambre « 1 pensée à ranger › » (`#carte-ranger`,
+    `carteRanger`), qui ouvre « Déposé » sur elle ; absente à zéro. `carteFaits` et `#carte-faits` n'existent plus.
+  - Vue d'ensemble posée au tiers haut de la place libre (plus de grand vide en bas).
+  - Tests : relier 30/30 (un contrôle ajouté, lu dans les pixels : aucun trait ni point dans le rectangle d'un mot,
+    rien sous l'en-tête, « à faire » plus lumineux que « fait », aucun mot de pensée écrit de près par `fillText`,
+    plus de « Endormi », légende de trois signes). Vérifié dans Chromium seulement.
+  - **Test réparé, cause prouvée** : `tests/accueil.mjs`, « un seul panneau », échouait entre minuit et 1 h (sur `main`
+    aussi) : l'activité d'ATLAS était posée « il y a une heure », donc hier après minuit. Posée il y a une minute.
+    Les 14 suites passent ; 494 `<div` / 494 `</div>`.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

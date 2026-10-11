@@ -167,7 +167,7 @@ const liens = page => page.evaluate(() => ({
   // La carte : ouverte depuis la bande ; plus de touches + et − ; on la parcourt
   const coin = await page.evaluate(() => { const r = document.getElementById('h-orbite').getBoundingClientRect(); return { x: r.left + 12, y: r.bottom - 12 }; });
   await page.mouse.click(coin.x, coin.y); await page.waitForTimeout(300);
-  let c = await page.evaluate(() => ({ ouvert: carteOuverte(), boutons: document.querySelectorAll('#carte-plus, #carte-moins, #carte-centre, .carte-zoom').length, faits: document.getElementById('carte-faits').textContent, s: _pl.carte.s }));
+  let c = await page.evaluate(() => ({ ouvert: carteOuverte(), boutons: document.querySelectorAll('#carte-plus, #carte-moins, #carte-centre, .carte-zoom').length, faits: document.getElementById('carte-ranger').hidden ? '' : document.getElementById('carte-ranger').textContent, titre: document.querySelector('#carte .carte-t').textContent, s: _pl.carte.s }));
   const ordre = await page.evaluate(() => {
     const V = _pl.carte, sc = V.sc, et = V.etiquettes || [], croise = [];
     for (let i = 0; i < et.length; i++) for (let j = i + 1; j < et.length; j++) { const a = et[i], b = et[j]; if (a[0] < b[0] + b[2] && a[0] + a[2] > b[0] && a[1] < b[1] + b[3] && a[1] + a[3] > b[1]) croise.push(i + '×' + j); }
@@ -178,7 +178,26 @@ const liens = page => page.evaluate(() => ({
   });
   ok(ordre.noms >= 6 && !ordre.croise.length && !ordre.croiseB.length && ordre.rangs === 'Endormis,En cours,Ma vie' && ordre.dortHaut && ordre.vieBas && ordre.legende,
     'Carte réglée : Endormis et En cours dans le champ, Ma vie en colonne à droite (Santé puis Juridique), aucun nom sur un autre (carte et accueil), une légende des points', JSON.stringify(ordre));
-  ok(c.ouvert && c.boutons === 0 && /1 pensée en orbite, à ranger/.test(c.faits) && /FBA dort, lié à ATLAS/.test(c.faits), 'Carte : ouverte depuis la bande, sans touches + ni −, une ligne de faits vrais', JSON.stringify(c));
+  ok(c.ouvert && c.boutons === 0 && c.titre === 'Carte' && c.faits === '1 pensée à ranger', 'Carte : ouverte depuis la bande, sans touches + ni −, un en-tête d\'une ligne et une seule action vraie (« 1 pensée à ranger »)', JSON.stringify(c));
+  // Carte nette : rien ne passe sur un mot, rien sous l'en-tête, trois signes, aucune phrase dessinée
+  const nette = await page.evaluate(() => {
+    const V = _pl.carte, cv = V.cv, g = cv.getContext('2d'), d = V.dpr;
+    V.sansTexte = true; plDessiner(V, performance.now());
+    let surMot = 0;
+    (V.etiquettes || []).forEach(r => { const im = g.getImageData(Math.max(0, Math.floor(r[0] * d)), Math.max(0, Math.floor(r[1] * d)), Math.max(1, Math.floor(r[2] * d)), Math.max(1, Math.floor(r[3] * d))).data; for (let i = 0; i < im.length; i += 4) surMot = Math.max(surMot, Math.max(im[i], im[i + 1], im[i + 2]) * im[i + 3] / 255); });
+    const hautIm = g.getImageData(0, 0, cv.width, Math.max(1, Math.floor((V.haut - 1) * d))).data; let sousTete = 0; for (let i = 3; i < hautIm.length; i += 4) sousTete = Math.max(sousTete, hautIm[i]);
+    V.sansTexte = false; plDessiner(V, performance.now());
+    const at = V.sc.esp.find(x => x.k === 'atlas'), px = it => { const q = [it.s[0] * V.s + V.tx, it.s[1] * V.s + V.ty], m = g.getImageData(Math.round(q[0] * d), Math.round(q[1] * d), 1, 1).data; return m[0] + m[1] + m[2]; };
+    const af = at.items.find(i => plAFaire(i)), fa = at.items.find(i => i.type === 'tache');
+    // De près : le canevas n'écrit aucun mot de pensée
+    const ecrits = [], f0 = g.fillText; g.fillText = function(t) { ecrits.push(String(t)); return f0.apply(this, arguments); };
+    const garde = { s: V.s, tx: V.tx, ty: V.ty }; V.s = V.sMax * .6; V.tx = innerWidth / 2 - at.cap[0] * V.s; V.ty = innerHeight * .45 - at.cap[1] * V.s; plDessiner(V, performance.now());
+    g.fillText = f0; Object.assign(V, garde); plDessiner(V, performance.now());
+    const corps = Object.values(_depot.thoughts).map(t => t.body.slice(0, 12));
+    return { surMot: Math.round(surMot), sousTete, eclatAFaire: px(af), eclatFait: px(fa), phrases: ecrits.filter(t => corps.some(b => t.includes(b.slice(0, 8)))), legende: [...document.querySelectorAll('#carte-legende span')].map(x => x.textContent).join(), endormi: ecrits.filter(t => t === 'Endormi').length };
+  });
+  ok(nette.surMot < 48 && nette.sousTete === 0 && nette.eclatAFaire > nette.eclatFait * 2 && !nette.phrases.length && nette.legende === 'À faire,Fait,À ranger' && !nette.endormi,
+    'Carte nette : aucun trait ni point sur un mot, rien sous l\'en-tête, « à faire » brille plus que « fait », aucune phrase sur le canevas, plus de « Endormi », légende de trois signes', JSON.stringify(nette));
   // Glisser : la carte bouge (et un glissé n'ouvre rien)
   const v0 = await page.evaluate(() => ({ tx: _pl.carte.tx, ty: _pl.carte.ty }));
   await page.mouse.move(200, 500); await page.mouse.down(); await page.mouse.move(150, 430, { steps: 6 }); await page.mouse.up(); await page.waitForTimeout(100);
