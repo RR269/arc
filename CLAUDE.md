@@ -1319,6 +1319,30 @@ ARC en orbite, et Relier (11 octobre) :
     aussi) : l'activité d'ATLAS était posée « il y a une heure », donc hier après minuit. Posée il y a une minute.
     Les 14 suites passent ; 494 `<div` / 494 `</div>`.
 
+- **PR #40 fusionnée le 12 octobre à 0 h 55.**
+- **Le panneau d'un espace, et la carte dans chaque monde (branche `carte-panneau`, 12 octobre 1 h 25)**. Rayan
+  (1 h 20) : « go », pour l'étape 3 de `docs/ETUDE-CARTE.md` (plus l'étape 5). Fait :
+  - **La fiche isolée est remplacée par un panneau** (`#carte-panneau`, `carteFiche(chose, sansAnim)` garde son nom) :
+    toucher un espace le centre au milieu de la place libre au-dessus du panneau (`carteCentrer` ; à gauche du panneau
+    sur Mac) ; le panneau monte du bas (58 % de l'écran au plus, défile dedans ; sur Mac, colonne de 380 px à droite) :
+    en tête le point, « Projet », « Projet endormi » ou « Ma vie », le nom (22 px), l'état vrai (`plEtatCourt`), une
+    croix de 44 px ; **une seule touche blanche** : « Ouvrir ARYAN », ou « Réveiller » pour un endormi (« Ouvrir FBA »
+    en verre) ; puis les groupes (`PN_GROUPES`) : À faire, Pensées faites, Rendez-vous passés, Journal, Documents,
+    Démarches faites, Tâches faites (repliée, « 21 »). Une ligne par chose réelle (`pnLigne`, 54 px, mots sur deux lignes,
+    « Pensée · Déposée il y a 3 j »). Espace vide : « Rien encore. Dépose une pensée : elle s'allumera ici. »
+  - **Toucher un point** ouvre le panneau de son espace, sur sa ligne, surlignée (et dépliée si elle est dans un groupe
+    replié). **Toucher une ligne** ouvre la chose là où elle vit (`pnOuvrirChose` : pensée → « Déposé », journal → le
+    projet sur son journal, tâche → le projet, rendez-vous et documents → Santé, démarche → Juridique). Une pensée en
+    orbite ouvre le panneau « Orbite » (« 1 pensée à ranger », touche blanche « Ranger dans Déposé »).
+  - Croix, Échap ou toucher le vide ferment le panneau ; fermer la carte le ferme aussi. Le panneau survit à une
+    reconstruction de la scène (Réveiller) sans recentrer. Quand il est ouvert, la borne du bas laisse remonter un espace
+    du bas de la carte au-dessus de lui (`carteBorner`, `V.panneau`).
+  - **La carte dans chaque monde** : « Voir sur la carte » sous les étiquettes de l'en-tête d'un projet (`#w-carte`,
+    44 px, `carteSur(id)`) ouvre la carte centrée sur ce projet, panneau ouvert. Pas encore dans Santé et Juridique.
+  - Tests : relier 32/32 (contrôles de la fiche réécrits pour le panneau, deux ajoutés : toucher une pensée l'ouvre
+    dans « Déposé » ; « Voir sur la carte » depuis ATLAS) ; les 14 suites passent ; 497 `<div` / 497 `</div>`.
+    Vérifié dans Chromium seulement.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
