@@ -333,6 +333,23 @@ restent dans le Point du jour et dans « Déposé »). À la place, le poste : d
 - Sous chaque pensée : « Demain · 09:00 · déposée il y a 2 h », « Faite · déposée hier », « déposée à l'instant ».
 - Au-delà de six : « Et 3 de plus, dans Déposé ».
 
+### Les mots de Santé, la mémoire (11 octobre)
+
+- Titre « Ma santé » ; dessous « Prochain rendez-vous : Kiné, demain à 18 h 00 », ou « Tes rendez-vous, tes documents, ce
+  qu'il faut retenir. »
+- Sections : « Rendez-vous » (« 2 à venir »), « Passés », « Spécialités » (« 3 suivies »), « Pensées », « Documents ».
+- Vides : « Aucun rendez-vous à venir. » ; « Note où se trouve une ordonnance, un compte rendu, un résultat : tu le
+  retrouveras ici. »
+- Touches : « Ajouter un rendez-vous », « Ajouter » (document), « Enregistrer le rendez-vous », « Enregistrer le
+  document », « Supprimer ce rendez-vous » puis « Toucher encore pour supprimer ».
+- Champs : « Spécialité », « Praticien », « Date », « Heure », « Lieu », « À apporter », « Mes questions », « Ce qui en est
+  sorti », « Document », « Où il est » (« Mon espace santé », « Papier, chez moi », « Photo sur mon téléphone », « Dans mes
+  courriels », « Ailleurs », « Je ne sais plus »).
+- Erreurs : « Choisis une spécialité. », « Indique la date du rendez-vous. », « Donne un nom au document. »
+- Bulles : « Rendez-vous ajouté », « Rendez-vous enregistré », « Rendez-vous supprimé », et de même pour un document.
+- Accueil, Ma vie : « Kiné · Demain ». Retirés : « Check-in fait », « Optimiser sommeil », « Programme sport », « Gérer le
+  stress », « Routine matin », « Analyse check-in ».
+
 ## 5. Ce que ces mots engagent
 
 Ils promettent trois choses, et ARC doit les tenir à l'écran : déposer à l'instant (fait, dépôt), un monde par
