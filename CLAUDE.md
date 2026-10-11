@@ -22,6 +22,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `recherche.mjs` (recherche : pensées, tâches et notes, projets, journal, Juridique ; ouverture au bon endroit ; clavier ; charte),
   `synchro.mjs` (deux appareils sur le même compte : fusion, hors réseau, suppression, conflit, écriture conditionnelle),
   `projet.mjs` (« En faire un projet » : proposition de Claude, création, accueil, rechargement, erreurs, autre appareil, charte),
+  `relier.mjs` (projets liés et mémoire qui revient : proposition avec raison, « Relier », « Pas lié », rechargement, endormi, accueil, synchronisation, charte),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
   `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
@@ -62,7 +63,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/synchro.mjs`, `tests/projet.mjs`, `tests/depot.mjs`, `tests/rangement.mjs` et `tests/matin.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/synchro.mjs`, `tests/projet.mjs`, `tests/depot.mjs`, `tests/rangement.mjs`, `tests/matin.mjs` et `tests/relier.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -1143,6 +1144,36 @@ Santé, étape 1 : la mémoire (branche `sante-socle`, 11 octobre 5 h 30, partie
   conseil ; contraste le plus faible 5,36 : 1, après avoir descendu la section sous la lueur de l'horizon, où « 1 à
   venir » tombait à 2,86 : 1), et les douze autres suites passent. Vérifié dans Chromium seulement : **à voir par Rayan
   sur son iPhone** (sélecteurs de date et d'heure de Safari, en français ; le Chromium de test les montre en anglais).
+
+ARC en orbite, et Relier (11 octobre) :
+- **PR #32 fusionnée par Rayan le 11 octobre à 9 h 17** (Santé, étape 1).
+- **Pensée de Rayan (9 h 31)** : ARC est son deuxième cerveau « à 100 % de ses capacités ». **Règle à garder : ce qui
+  est déposé doit revenir ; ARC ne garde rien qui ne serve.** Question posée, sans réponse : ses projets, son journal
+  et sa santé peuvent-ils partir au proxy pour que Claude connaisse ARC ? (Seules les pensées partent aujourd'hui.)
+- **Maquette « ARC en orbite »** (hors dépôt, carte publiée, données d'exemple) : l'accueil vu d'orbite, une planète
+  dessinée dans la page (aucune bibliothèque, aucun mode de fusion) dont chaque région est un espace et chaque lumière
+  une pensée ; puis, à sa demande (10 h 12, « le cerveau humain et toutes ses neurones qui se branchent »), les
+  pensées en neurones reliés qui se transmettent des influx. Rayan : « les liens doivent être réels et non
+  décoratifs ». **Règle à garder : la planète ne dessinera que des liens qui existent dans ARC.** Pas encore construite.
+- **Relier, étape 1 (branche `relier`, partie de `main` à la fusion de la PR #32)**. Tout sur l'appareil, sans IA,
+  rien de nouveau envoyé ailleurs que dans sa ligne `arc_data`. ARC propose, Rayan confirme.
+  - **Projets liés** (section `#wsec-liens` d'un monde, avant « Pensées ») : deux projets qui partagent des mots rares
+    (nom, catégorie, description, mission, outils, tâches, pensées rangées ; mots vides, verbes et participes écartés)
+    ou dont l'un nomme l'autre (ATLAS dit « Amazon FBA »). Carte « ARC voit un lien avec FBA · En commun : FBA,
+    Amazon, Achat, Marge », touches « Pas lié » et « Relier ». Relié : une ligne (nom, état, nombre de pensées, mots en
+    commun) qui ouvre l'autre projet. Un projet endormi lié à un projet qui bouge le dit (« Ce projet dort. ATLAS, lié,
+    avance : actif aujourd'hui. ») et l'accueil aussi, sous Endormis (« Lié à ATLAS »). Propositions vues sur les
+    données d'avril : ATLAS ↔ FBA, ATLAS ↔ ARYAN (Supabase, Stripe, pages légales), ARYAN ↔ KITCHEN, FBA ↔ TELENEUF.
+  - **La mémoire qui revient** (« Déposé ») : sous une pensée, la pensée plus ancienne la plus proche (deux mots rares en
+    commun, ou un seul d'au moins 5 lettres) : « Ça rejoint une pensée déposée il y a 3 j », la citation (elle mène à
+    la pensée), « En commun : comptable, TVA », « Pas lié » / « Relier ». Reliées, chacune montre l'autre. Au dépôt, le
+    message sous la barre le dit (« Rangé dans ATLAS · ça rejoint une pensée déposée il y a 3 j »).
+  - Données : `S.liens[id]` = { id, type 'projet'|'pensee', a, b, etat 'oui'|'non', mots, at } ; un refus n'est jamais
+    reproposé ; la synchronisation fusionne l'objet comme `S.mondes` (contrôlé). Fonctions : `rlMots`,
+    `rlLiensProjet`, `renderLiensProjet`, `rlLieAEveille`, `rlProche`, `rlBloc`, `rlAuDepot`.
+  - **Pas encore** : liens vers Santé et Juridique ; pensées d'un projet lié affichées dans l'autre ; la planète ;
+    Claude qui lit les liens (attend la réponse sur les données).
+  - Tests : relier 18/18 (nouveau). Vérifié dans Chromium seulement : **à voir par Rayan sur son iPhone.**
 
 ### Décisions de Rayan (5 octobre)
 

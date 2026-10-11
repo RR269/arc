@@ -2106,6 +2106,33 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 :is(#S2,#S3,#S4) .wpen-chev{width:7px;height:7px;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
 :is(#S2,#S3,#S4) .wpen-plus{display:block;width:100%;min-height:48px;margin:0;padding:0 16px;border-left:0;border-right:0;border-bottom:0;background:none;font-family:var(--fa);font-size:15px;font-weight:500;letter-spacing:-.15px;text-align:left;color:#E8E8EC;cursor:pointer}
 :is(#S2,#S3,#S4) :is(.wpen-row,.wpen-plus):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
+/* RELIER : projets liés (monde) et mémoire qui revient (Déposé). Même panneau que « Pensées » ; une proposition d'ARC
+   est une carte de verre à la couleur du projet proposé, avec sa raison ; « Relier » reste en verre (la seule touche
+   blanche de l'écran est « Déposer »). */
+#S2 #wsec-liens[hidden],#S2 .wlien-dort[hidden]{display:none}
+#S2 .wlien-dort{margin:0 0 12px;font-size:15px;line-height:21px;color:#E8E8EC}
+#S2 .wlien-m{white-space:normal}
+#S2 .wlien-prop{margin-top:10px;padding:14px 16px 12px;border-radius:18px;border:1px solid color-mix(in srgb,var(--penc) 38%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--penc) 10%,transparent),rgba(255,255,255,.01)),#0B0B0E}
+#S2 .wlien-q{display:flex;align-items:center;gap:10px;font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
+#S2 .wlien-why{margin:4px 0 0 18px;font-size:14px;line-height:19px;color:#C4C4CC}
+#S2 .wlien-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+#S2 .wlien-acts button{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font:500 15px var(--fa);color:#E8E8EC;cursor:pointer}
+#S2 .wlien-acts .wlien-oui{border-color:color-mix(in srgb,var(--penc) 60%,transparent);background:color-mix(in srgb,var(--penc) 16%,transparent);color:#fff;font-weight:600}
+#S2 .wlien-acts button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#S1 .h-dort-lie{display:block;font-size:13px;line-height:18px;font-weight:400;letter-spacing:0;color:#B4B4BA}
+#depot-screen .rl{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+#depot-screen .rl-lie,#depot-screen .rl-prop{display:block;width:100%;box-sizing:border-box;padding:10px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);text-align:left;font-family:var(--fa);color:inherit}
+#depot-screen .rl-lie{cursor:pointer;min-height:44px}
+#depot-screen .rl-prop{border-color:rgba(175,82,222,.45);background:linear-gradient(180deg,rgba(175,82,222,.10),rgba(255,255,255,.02))}
+#depot-screen .rl-k{display:block;font-size:13px;line-height:18px;color:#C4C4CC}
+#depot-screen .rl-q{display:block;font-size:15px;line-height:20px;color:#F5F5F7}
+#depot-screen .rl-voir{width:100%;min-height:44px;margin:0;padding:2px 0;border:0;background:none;text-align:left;font-family:var(--fa);cursor:pointer}
+#depot-screen .rl-w{display:block;font-size:13px;line-height:18px;color:#B4B4BA}
+#depot-screen .rl-prop .rg-acts{margin-top:8px}
+#depot-screen .rl-relier{border-color:rgba(175,82,222,.7)!important;background:rgba(175,82,222,.18)!important;color:#fff!important}
+#depot-screen .depot-item.rl-vu{animation:rlVu 1.4s ease-out}
+@keyframes rlVu{0%{box-shadow:0 0 0 2px rgba(175,82,222,.9)}100%{box-shadow:0 0 0 2px rgba(175,82,222,0)}}
+@media(prefers-reduced-motion:reduce){#depot-screen .depot-item.rl-vu{animation:none;box-shadow:0 0 0 2px rgba(175,82,222,.9)}}
 #S4 .wpen{--penc:#0a84ff}
 #S4 .psec-info{font-size:14px;letter-spacing:-.1px;color:var(--t2)}
 /* SANTÉ, LA MÉMOIRE (branche sante-socle, 11 octobre) : le titre et une ligne vraie ; les panneaux des pensées ; une seule
@@ -2374,6 +2401,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <button class="wtask-add-btn" id="task-add-btn">+ Ajouter</button>
         </div>
         <div id="tasks-container"></div>
+      </div>
+
+      <!-- PROJETS LIÉS : confirmés par Rayan, et propositions d'ARC avec leur raison (absente s'il n'y a rien) -->
+      <div class="wsec" id="wsec-liens" hidden>
+        <div class="wsec-head"><span class="wsec-lbl">Projets liés</span><div class="wsec-line"></div><span class="wsec-info" id="wlien-n"></span></div>
+        <p class="wlien-dort" id="wlien-dort" hidden></p>
+        <div id="wlien-list"></div>
       </div>
 
       <!-- PENSÉES : celles que tu as déposées et qui sont rangées dans ce projet (absente s'il n'y en a aucune) -->
@@ -4149,6 +4183,7 @@ function mondesConstruire() {
 /* Valeurs par défaut et migrations : appelé au chargement local et après une récupération cloud */
 function normalizeS(){
   if(!S.mondes) S.mondes={};
+  if(!S.liens||typeof S.liens!=='object') S.liens={};
   mondesConstruire();
   if(!S.focus) S.focus={};
   migrateWorlds();
@@ -4397,7 +4432,7 @@ function renderCards(){
     if(tog) tog.setAttribute("aria-expanded",_dortOuvert?"true":"false");
     list.hidden=!_dortOuvert;
     list.innerHTML=dort.map(function(wd){
-      return '<div class="h-dort-row" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'"><span class="h-dort-ring" aria-hidden="true"></span><span class="h-dort-nom">'+esc(wd.name)+'</span><button class="h-dort-btn" type="button" data-action="wake-world" data-wid="'+wd.id+'" aria-label="Réveiller '+esc(wd.name)+'">Réveiller</button></div>';
+      return '<div class="h-dort-row" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'"><span class="h-dort-ring" aria-hidden="true"></span><span class="h-dort-nom">'+esc(wd.name)+(function(){ var n=rlLieAEveille(wd); return n.length?'<span class="h-dort-lie">Lié à '+esc(n.join(", "))+'</span>':''; })()+'</span><button class="h-dort-btn" type="button" data-action="wake-world" data-wid="'+wd.id+'" aria-label="Réveiller '+esc(wd.name)+'">Réveiller</button></div>';
     }).join("");
   }
   var sub=document.getElementById("h-projets-sub");
@@ -6150,7 +6185,9 @@ function depotSubmit() {
   depotRender();
   _rangeLastDeposit = { id: id, at: Date.now() };
   horizonRepond('etincelle');
-  depotNote(getUID() ? 'Déposé · à ranger' : 'Déposé sur cet appareil seulement.', false, true);
+  var rj = rlAuDepot(id);
+  if(rj) depotNote('Déposé · ça rejoint une pensée déposée ' + ilYA(new Date(rj.t.created_at).getTime()), false, true);
+  else depotNote(getUID() ? 'Déposé · à ranger' : 'Déposé sur cet appareil seulement.', false, true);
   setTimeout(depotFlush, 0);
 }
 
@@ -6294,6 +6331,8 @@ function depotRender(force) {
     meta.appendChild(when); meta.appendChild(st);
     var body = document.createElement('div'); body.className = 'depot-body'; body.textContent = t.body;
     item.appendChild(meta); item.appendChild(body);
+    var rl = rlBloc(t, all.filter(function(x) { return x.status !== 'rejected'; }));
+    if(rl) item.appendChild(rl);
     if(_range) item.appendChild(rangeBlock(t));
     list.appendChild(item);
   });
@@ -6500,6 +6539,7 @@ function penseesDe(key) {
 function renderPenseesProjet() {
   var w = (typeof CUR !== 'undefined' && CUR.wid >= 0) ? monde(CUR.wid) : null;
   renderPensees('wsec-pensees', 'wpen-list', 'wpen-n', penseesDuProjet(w));
+  renderLiensProjet();
 }
 // Juridique (10 octobre) : la même section, pour les pensées rangées dans l'espace « juridique ». Santé n'en a pas :
 // son contenu attend la décision de Rayan.
@@ -6537,6 +6577,246 @@ function penseeOuvrir(tid) {
   var el = document.querySelector('#depot-list [data-id="' + tid + '"]');
   if(el) el.scrollIntoView({ block: 'center' });
 }
+/* ═══ RELIER (branche relier, 11 octobre) ═══
+   Rayan : « les liens doivent être réels et non décoratifs ». ARC propose, Rayan confirme ; rien ne se relie sans lui.
+   Tout se calcule sur l'appareil, sans IA, et rien de nouveau ne part ailleurs que dans sa propre ligne arc_data.
+   - Projets liés : deux projets qui partagent des mots rares (noms, sujets, outils, pensées rangées), ou dont l'un
+     nomme l'autre (ATLAS parle d'« Amazon FBA »). La raison s'affiche : les mots en commun.
+   - La mémoire qui revient : sous une pensée, la plus proche des pensées plus anciennes (mots rares en commun).
+   Stockage : S.liens[id] = { id, type 'projet'|'pensee', a, b, etat 'oui'|'non', mots, at } ; id 'p_a_b' ou 't_a_b'
+   (a < b). La synchronisation fusionne cet objet champ par champ, comme S.mondes. Un refus n'est plus jamais proposé. */
+var RL_VIDES = {};
+('les la le des une un pour avec dans sur par pas plus que qui quoi est sont mon ma mes ton ta tes son sa ses nos vos leur leurs ' +
+ 'aux du de et ou en au ce cet cette ces tout tous toute toutes faire fait etre avoir comme mais donc car sans sous vers chez ' +
+ 'entre apres avant puis aussi bien tres peu non oui deja encore ici cela ceci elle elles ils nous vous lui eux rayan valence ' +
+ 'etc via selon chaque autre autres meme dont quand comment pourquoi lors sera seront ont avait faut peut doit dois veux ' +
+ 'mettre prendre voir avoir aller dire jour jours semaine mois heure heures demain soir matin aujourd hui etat avant pendant ' +
+ 'premier premiere premiers deux trois quatre cinq six sept huit neuf dix tache taches projet projets etape etapes chose choses ' +
+ 'faites coche bouge depuis reconstitue session sessions juillet aout septembre octobre complet complete formulaire telephone ' +
+ 'paiement test essai simple vrai vraie reel reelle nouveau nouvelle petit grand bon bonne mieux point base niveau page').split(' ').forEach(function(m) { RL_VIDES[m] = 1; });
+// Les mots d'un texte : sans accents ni casse, 3 lettres au moins, sans mots vides, pluriel simple retiré.
+// Rend { cle: forme d'origine } pour pouvoir afficher le mot tel que Rayan l'a écrit.
+function rlMots(txt) {
+  var out = {};
+  String(txt || '').split(/[^0-9A-Za-zÀ-ÖØ-öø-ÿŒœ]+/).forEach(function(o) {
+    if(o.length < 3) return;
+    var k = o.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/œ/g, 'oe');
+    if(/^\d+$/.test(k) || RL_VIDES[k]) return;
+    if(k.length > 4 && /[sx]$/.test(k)) k = k.slice(0, -1);
+    if(RL_VIDES[k] || out[k]) return;
+    // Verbes et participes (obtenir, valider, validé…) : ils disent une action, pas un sujet commun
+    if(k.length >= 5 && /(er|ir)$/.test(k) && !/(ier|eur)$/.test(k)) return;
+    if(/[éÉ]e?s?$/.test(o)) return;
+    out[k] = o;
+  });
+  return out;
+}
+function rlId(type, a, b) { a = String(a); b = String(b); return (type === 'projet' ? 'p_' : 't_') + (a < b ? a + '_' + b : b + '_' + a); }
+function rlLien(type, a, b) { return (S.liens || {})[rlId(type, a, b)] || null; }
+function rlPoser(type, a, b, etat, mots) {
+  if(!S.liens) S.liens = {};
+  var id = rlId(type, a, b), A = String(a), B = String(b);
+  S.liens[id] = { id: id, type: type, a: A < B ? A : B, b: A < B ? B : A, etat: etat, mots: (mots || []).slice(0, 4), at: new Date().toISOString() };
+  saveS(true);
+}
+// Forme affichée d'un mot : celle du texte, en capitales si c'est le nom d'un projet
+function rlForme(o) { return o.length <= 4 && o === o.toUpperCase() ? o : o.charAt(0).toUpperCase() + o.slice(1); }
+
+/* Projets : les mots de chacun, puis le poids de chaque mot (rare = fort) */
+function rlTexteProjet(w) {
+  var parts = [w.name, w.cat, w.desc, w.mission, (w.tags || []).join(' ')];
+  (w.tasks_done || []).concat(w.tasks_todo || []).forEach(function(t) { parts.push(t.t); });
+  ((S.custom || {})[w.id] || []).forEach(function(t) { parts.push(t.t || t.title || ''); });
+  (w.etapes || []).forEach(function(e) { parts.push(e.t); });
+  penseesDuProjet(w).forEach(function(x) { parts.push(x.t.body); });
+  return parts.join(' ');
+}
+function rlProjetsIndex() {
+  var ps = WORLDS.map(function(w) { return { w: w, m: rlMots(rlTexteProjet(w)), n: rlMots(w.name) }; });
+  var df = {};
+  ps.forEach(function(p) { Object.keys(p.m).forEach(function(k) { df[k] = (df[k] || 0) + 1; }); });
+  return { ps: ps, df: df, N: ps.length };
+}
+// Le lien entre deux projets, s'il y en a un : { score, mots } ; sinon null.
+function rlScoreProjets(ix, p, q) {
+  var mots = [], score = 0, nomme = false;
+  Object.keys(p.m).forEach(function(k) {
+    if(!q.m[k]) return;
+    var idf = Math.log(ix.N / ix.df[k]);
+    if(idf <= 0) return;
+    var nom = !!(p.n[k] || q.n[k]);
+    if(nom) nomme = true;
+    score += idf + (nom ? 3 : 0);
+    mots.push({ k: k, o: p.n[k] ? p.m[k] : (q.n[k] ? q.m[k] : p.m[k]), poids: idf + (nom ? 3 : 0) });
+  });
+  if(!(nomme || (mots.length >= 3 && score >= 4))) return null;
+  mots.sort(function(x, y) { return y.poids - x.poids || y.k.length - x.k.length; });
+  return { score: score, mots: mots.slice(0, 4).map(function(x) { return rlForme(x.o); }) };
+}
+// Pour un projet : les liens confirmés et les propositions (ni confirmées ni refusées), du plus fort au plus faible
+function rlLiensProjet(w) {
+  var ix = rlProjetsIndex(), p = ix.ps.filter(function(x) { return x.w.id === w.id; })[0];
+  var oui = [], props = [];
+  if(!p) return { oui: oui, props: props };
+  ix.ps.forEach(function(q) {
+    if(q.w.id === w.id) return;
+    var l = rlLien('projet', w.id, q.w.id);
+    if(l && l.etat === 'non') return;
+    if(l && l.etat === 'oui') { oui.push({ w: q.w, mots: l.mots || [] }); return; }
+    var s = rlScoreProjets(ix, p, q);
+    if(s) props.push({ w: q.w, mots: s.mots, score: s.score });
+  });
+  props.sort(function(a, b) { return b.score - a.score; });
+  return { oui: oui, props: props.slice(0, 2) };
+}
+function rlEtatProjet(w) {
+  if(mondeDort(w.id)) return 'Endormi';
+  var act = projetActivite(w);
+  return projetEtatMots(act, act && Date.now() - act > 7 * 86400000);
+}
+function renderLiensProjet() {
+  var sec = document.getElementById('wsec-liens'), list = document.getElementById('wlien-list'); if(!sec || !list) return;
+  var w = (typeof CUR !== 'undefined' && CUR.wid >= 0) ? monde(CUR.wid) : null;
+  if(!w || typeof _depot === 'undefined' || !_depot || !_range) { sec.hidden = true; return; }
+  var L = rlLiensProjet(w);
+  sec.hidden = !L.oui.length && !L.props.length;
+  list.innerHTML = '';
+  document.getElementById('wlien-n').textContent = L.oui.length ? String(L.oui.length) : '';
+  var dort = document.getElementById('wlien-dort');
+  var reveil = mondeDort(w.id) ? L.oui.filter(function(x) { return !mondeDort(x.w.id) && projetActivite(x.w); }) : [];
+  dort.hidden = !reveil.length;
+  if(reveil.length) dort.textContent = 'Ce projet dort. ' + reveil.map(function(x) { return x.w.name; }).join(' et ') +
+    (reveil.length > 1 ? ', liés, avancent\u00A0: ' : ', lié, avance\u00A0: ') + rlEtatProjet(reveil[0].w).toLowerCase() + '.';
+  if(!sec.hidden) {
+    var box = document.createElement('div'); box.className = 'wpen'; list.appendChild(box);
+    L.oui.forEach(function(x) {
+      var row = document.createElement('button'); row.type = 'button'; row.className = 'wpen-row wlien-row';
+      row.style.setProperty('--penc', x.w.color); row.setAttribute('data-lien', x.w.id);
+      var pt = document.createElement('span'); pt.className = 'wpen-pt'; pt.setAttribute('aria-hidden', 'true');
+      if(mondeDort(x.w.id)) row.classList.add('fait');
+      var tx = document.createElement('span'); tx.className = 'wpen-txt';
+      var nom = document.createElement('span'); nom.className = 'wpen-t wlien-nom'; nom.textContent = x.w.name;
+      var np = penseesDuProjet(x.w).length;
+      var meta = [rlEtatProjet(x.w), np ? np + (np > 1 ? ' pensées' : ' pensée') : '', x.mots.length ? 'en commun : ' + x.mots.join(', ') : ''].filter(Boolean).join(' · ');
+      var mm = document.createElement('span'); mm.className = 'wpen-m wlien-m'; mm.textContent = meta;
+      tx.appendChild(nom); tx.appendChild(mm);
+      var ch = document.createElement('i'); ch.className = 'wpen-chev'; ch.setAttribute('aria-hidden', 'true');
+      row.appendChild(pt); row.appendChild(tx); row.appendChild(ch);
+      row.addEventListener('click', function() { enterWorld(x.w.id); });
+      box.appendChild(row);
+    });
+    L.props.forEach(function(x) {
+      var c = document.createElement('div'); c.className = 'wlien-prop'; c.style.setProperty('--penc', x.w.color);
+      c.setAttribute('data-prop', x.w.id);
+      var t = document.createElement('div'); t.className = 'wlien-q';
+      var pt = document.createElement('span'); pt.className = 'wpen-pt'; pt.setAttribute('aria-hidden', 'true');
+      var tt = document.createElement('span'); tt.textContent = 'ARC voit un lien avec ' + x.w.name;
+      t.appendChild(pt); t.appendChild(tt);
+      var why = document.createElement('div'); why.className = 'wlien-why'; why.textContent = 'En commun : ' + x.mots.join(', ');
+      var acts = document.createElement('div'); acts.className = 'wlien-acts';
+      var oui = document.createElement('button'); oui.type = 'button'; oui.className = 'wlien-oui'; oui.textContent = 'Relier';
+      oui.addEventListener('click', function() { rlPoser('projet', w.id, x.w.id, 'oui', x.mots); renderLiensProjet(); toast(w.name + ' et ' + x.w.name + ' sont reliés'); });
+      var non = document.createElement('button'); non.type = 'button'; non.className = 'wlien-non'; non.textContent = 'Pas lié';
+      non.addEventListener('click', function() { rlPoser('projet', w.id, x.w.id, 'non', x.mots); renderLiensProjet(); });
+      acts.appendChild(non); acts.appendChild(oui);
+      c.appendChild(t); c.appendChild(why); c.appendChild(acts);
+      list.appendChild(c);
+    });
+  }
+}
+// Accueil, Endormis : « Lié à ATLAS » sous un projet qui dort quand un projet lié, lui, est éveillé
+function rlLieAEveille(w) {
+  var noms = [];
+  Object.keys(S.liens || {}).forEach(function(id) {
+    var l = S.liens[id]; if(l.type !== 'projet' || l.etat !== 'oui') return;
+    var autre = l.a === String(w.id) ? l.b : (l.b === String(w.id) ? l.a : null); if(autre === null) return;
+    var o = monde(isNaN(+autre) ? autre : +autre); if(o && !mondeDort(o.id)) noms.push(o.name);
+  });
+  return noms;
+}
+
+/* Pensées : la mémoire qui revient */
+var _rlCache = null;
+function rlPenseesIndex(liste) {
+  var cle = liste.map(function(t) { return t.id; }).join(',') + '|' + liste.length;
+  if(_rlCache && _rlCache.cle === cle) return _rlCache;
+  var m = {}, df = {};
+  liste.forEach(function(t) { m[t.id] = rlMots(t.body); Object.keys(m[t.id]).forEach(function(k) { df[k] = (df[k] || 0) + 1; }); });
+  return _rlCache = { cle: cle, m: m, df: df, N: liste.length, liste: liste };
+}
+// La pensée plus ancienne la plus proche de t, si elle l'est assez : { t, mots } ; sinon null.
+// Assez proche : deux mots rares en commun, ou un seul mot d'au moins 5 lettres que presque aucune autre pensée n'a.
+function rlProche(ix, t) {
+  var mt = ix.m[t.id] || {}, best = null, quand = new Date(t.created_at).getTime();
+  ix.liste.forEach(function(o) {
+    if(o.id === t.id || new Date(o.created_at).getTime() >= quand) return;
+    var l = rlLien('pensee', t.id, o.id); if(l) return;
+    var mo = ix.m[o.id] || {}, mots = [], score = 0;
+    Object.keys(mt).forEach(function(k) {
+      if(!mo[k]) return;
+      var rare = ix.df[k] <= Math.max(2, Math.ceil(ix.N * .15));
+      if(!rare) return;
+      score += Math.log(1 + ix.N / ix.df[k]) + k.length * .05;
+      mots.push({ k: k, o: mt[k], n: k.length });
+    });
+    var ok = mots.length >= 2 || (mots.length === 1 && mots[0].n >= 5);
+    if(ok && (!best || score > best.score)) best = { t: o, score: score, mots: mots.map(function(x) { return x.o; }) };
+  });
+  return best;
+}
+function rlReliees(tid, parId) {
+  var out = [];
+  Object.keys(S.liens || {}).forEach(function(id) {
+    var l = S.liens[id]; if(l.type !== 'pensee' || l.etat !== 'oui') return;
+    var autre = l.a === tid ? l.b : (l.b === tid ? l.a : null);
+    if(autre && parId[autre]) out.push(parId[autre]);
+  });
+  return out;
+}
+function rlCourt(txt, n) { txt = String(txt).replace(/\s+/g, ' ').trim(); return txt.length > n ? txt.slice(0, n - 1).trim() + '…' : txt; }
+function rlAller(tid) {
+  var el = document.querySelector('#depot-list [data-id="' + tid + '"]'); if(!el) return;
+  el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  el.classList.remove('rl-vu'); void el.offsetWidth; el.classList.add('rl-vu');
+}
+function rlBloc(t, liste) {
+  var ix = rlPenseesIndex(liste), parId = {};
+  liste.forEach(function(x) { parId[x.id] = x; });
+  var box = rgEl('div', 'rl'), reliees = rlReliees(t.id, parId);
+  reliees.forEach(function(o) {
+    var b = rgEl('button', 'rl-lie'); b.type = 'button';
+    b.appendChild(rgEl('span', 'rl-k', 'Reliée à'));
+    b.appendChild(rgEl('span', 'rl-q', '« ' + rlCourt(o.body, 70) + ' »'));
+    b.appendChild(rgEl('span', 'rl-w', 'déposée ' + ilYA(new Date(o.created_at).getTime())));
+    b.addEventListener('click', function(ev) { ev.stopPropagation(); rlAller(o.id); });
+    box.appendChild(b);
+  });
+  var p = rlProche(ix, t);
+  if(p) {
+    var c = rgEl('div', 'rl-prop');
+    c.appendChild(rgEl('div', 'rl-k', 'Ça rejoint une pensée déposée ' + ilYA(new Date(p.t.created_at).getTime())));
+    var q = rgEl('button', 'rl-q rl-voir', '« ' + rlCourt(p.t.body, 90) + ' »'); q.type = 'button';
+    q.addEventListener('click', function(ev) { ev.stopPropagation(); rlAller(p.t.id); });
+    c.appendChild(q);
+    c.appendChild(rgEl('div', 'rl-w', 'En commun : ' + p.mots.join(', ')));
+    var acts = rgEl('div', 'rg-acts');
+    acts.appendChild(rangeBtn('Pas lié', function() { rlPoser('pensee', t.id, p.t.id, 'non', p.mots); depotRender(true); }));
+    acts.appendChild(rangeBtn('Relier', function() { rlPoser('pensee', t.id, p.t.id, 'oui', p.mots); depotRender(true); }, 'rl-relier'));
+    c.appendChild(acts);
+    box.appendChild(c);
+  }
+  return box.childNodes.length ? box : null;
+}
+// Au dépôt : si la nouvelle pensée rejoint une ancienne, ARC le dit tout de suite
+function rlAuDepot(id) {
+  var liste = rlListeVivante(), t = liste.filter(function(x) { return x.id === id; })[0]; if(!t) return null;
+  return rlProche(rlPenseesIndex(liste), t);
+}
+function rlListeVivante() {
+  var idx = _range ? rangeIndex() : { latest: {} };
+  return depotList().filter(function(t) { var f = idx.latest[t.id]; return !(f && f.status === 'cancelled') && t.status !== 'rejected'; });
+}
+
 function rangeSpaceInfo(key) {
   var s = rangeSpaces().filter(function(x) { return x.key === key; })[0];
   return s || { key: 'inconnu', name: 'Sans espace', color: '#8e8e93' };
@@ -6690,7 +6970,8 @@ async function rangeRequestAll() {
       rangeAdd(t.id, { status: unsure ? 'unsure' : 'filed', space: f.space, step: f.step, moment: f.moment, extras: f.extras || [] }, 'ai', data.model, before);
       if(!unsure) horizonRepond('eclair', rangeSpaceInfo(f.space).color);
       if(_rangeLastDeposit && _rangeLastDeposit.id === t.id && Date.now() - _rangeLastDeposit.at < 60000) {
-        depotNote(unsure ? 'Déposé · ARC hésite' : 'Rangé dans ' + rangeSpaceInfo(f.space).name, false, true);
+        var rj = rlAuDepot(t.id);
+        depotNote((unsure ? 'Déposé · ARC hésite' : 'Rangé dans ' + rangeSpaceInfo(f.space).name) + (rj ? ' · ça rejoint une pensée déposée ' + ilYA(new Date(rj.t.created_at).getTime()) : ''), false, true);
       }
     } catch(e) {
       _rangeFailed[t.id] = true;
