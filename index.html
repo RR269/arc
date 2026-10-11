@@ -7759,19 +7759,22 @@ function plSol(G, u, v) {
 }
 
 /* La disposition : des rangées réglées, parallèles à l'horizon, chacune avec son rôle (Rayan, 11 octobre 20 h 14 :
-   « logique et réglé », « pas les unes sur les autres »). Du haut vers le bas : l'orbite (à ranger), les endormis (au
-   loin, près de l'horizon), les projets en cours (devant, en grand), puis Ma vie (Santé, Juridique) dans sa bande.
-   Chaque espace a sa case ; ses points, son nom et son état restent dans sa case : rien ne se chevauche. */
+   « logique et réglé », « pas les unes sur les autres »). Le champ, à gauche et au centre, est aux projets : l'orbite
+   (à ranger), les endormis (au loin, près de l'horizon), les projets en cours (devant, en grand). Ma vie (Santé,
+   Juridique) n'est pas dans le champ (Rayan, 21 h 31 : « le champ est fait pour être productif ») : une colonne sur le
+   bord droit, Santé en haut, Juridique dessous, un peu décalée. Chaque espace a sa case : rien ne se chevauche. */
 function plDisposer(G, D, carte) {
   var W = G.w, marge = carte ? 14 : 8, y = G.limbe + (carte ? 30 : 14), sections = [];
+  var colW = D.poles.length ? Math.round(Math.min(carte ? 150 : 110, Math.max(carte ? 112 : 92, W * (carte ? .3 : .26)))) : 0;
+  var FW = W - colW, y00 = y;
   var sag = function(x) { var dx = x - G.cx, d0 = G.R * G.R; return (G.cy - Math.sqrt(Math.max(0, d0 - dx * dx))) - (G.cy - G.R); };
   function rang(liste, cw, ch, titre, cle) {
     if(!liste.length) return;
     var sec = { titre: titre, cle: cle, y0: y };
     if(carte) y += 26;
-    var parRang = Math.max(1, Math.floor((W - 2 * marge) / cw));
+    var parRang = Math.max(1, Math.floor((FW - 2 * marge) / cw));
     for(var i = 0; i < liste.length; i += parRang) {
-      var ligne = liste.slice(i, i + parRang), n = ligne.length, pas = Math.min(cw * 1.6, (W - 2 * marge) / n), x0 = W / 2 - pas * (n - 1) / 2;
+      var ligne = liste.slice(i, i + parRang), n = ligne.length, pas = Math.min(cw * 1.6, (FW - 2 * marge) / n), x0 = FW / 2 - pas * (n - 1) / 2;
       ligne.forEach(function(e, j) {
         var x = x0 + j * pas;
         e.cap = [x, y + ch * (carte ? .36 : .42) + sag(x)];
@@ -7782,9 +7785,21 @@ function plDisposer(G, D, carte) {
     sec.y1 = y; sections.push(sec);
   }
   var eveilles = D.projets.filter(function(e) { return !e.dort; }), dormants = D.projets.filter(function(e) { return e.dort; });
-  if(carte) { rang(dormants, 112, 96, 'Endormis', 'dort'); rang(eveilles, 124, 176, 'En cours', 'cours'); rang(D.poles, 150, 176, 'Ma vie', 'vie'); }
-  else { rang(dormants, 64, 30, '', 'dort'); rang(eveilles, 96, 64, '', 'cours'); rang(D.poles, 120, 58, '', 'vie'); }
-  return { sections: sections, bas: y, sag: sag };
+  if(carte) { rang(dormants, 76, 96, 'Endormis', 'dort'); rang(eveilles, 116, 176, 'En cours', 'cours'); }
+  else { rang(dormants, 60, 30, '', 'dort'); rang(eveilles, 92, 64, '', 'cours'); }
+  // Ma vie : la colonne du bord droit, l'un sur l'autre, le second un peu décalé vers le champ
+  if(colW) {
+    var sec = { titre: 'Ma vie', cle: 'vie', y0: y00, x0: FW }, ch = carte ? 168 : 52, yc = y00 + (carte ? 30 : 4), xc = FW + colW / 2;
+    D.poles.forEach(function(e, i) {
+      var x = xc + (i % 2 ? -colW * .1 : colW * .06);
+      e.cap = [x, yc + ch * (carte ? .34 : .4) + sag(x)];
+      e.cellW = colW - (carte ? 8 : 4); e.cellR = Math.min(colW, ch) * (carte ? .28 : .24);
+      yc += ch;
+    });
+    sec.y1 = Math.max(yc, y); sections.push(sec);
+    y = Math.max(y, yc);
+  }
+  return { sections: sections, bas: y, sag: sag, colW: colW };
 }
 function plScene(G, carte) {
   var D = plDonnees(), parT = {}, L = plDisposer(G, D, carte);
@@ -7870,16 +7885,18 @@ function plDessiner(V, now) {
   ctx.save(); ctx.beginPath(); ctx.arc(C[0], C[1], Rr - .5, 0, Math.PI * 2); ctx.clip();
   ctx.lineWidth = .6; ctx.strokeStyle = 'rgba(160,170,220,.08)';
   sc.grille.forEach(function(ln) { ctx.beginPath(); ln.forEach(function(p, i) { var q = P(p); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.stroke(); });
-  // Ma vie : sa bande sur la planète, entre deux arcs parallèles à l'horizon
+  // Ma vie : sa colonne sur le bord droit, hors du champ ; un filet pointillé la sépare, une lueur douce l'habite
   sc.sections.forEach(function(sec) {
     if(sec.cle !== 'vie') return;
-    var haut0 = sec.y0 - 6, bas0 = sec.y1 - 8;
-    ctx.beginPath();
-    for(var q = 0; q <= 40; q++) { var x = -40 + q / 40 * (G.w + 80), p = P([x, haut0 + sc.sag(x)]); q ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }
-    for(var q2 = 40; q2 >= 0; q2--) { var x2 = -40 + q2 / 40 * (G.w + 80), p2 = P([x2, bas0 + sc.sag(x2)]); ctx.lineTo(p2[0], p2[1]); }
-    ctx.closePath(); ctx.fillStyle = 'rgba(120,200,255,.045)'; ctx.fill();
-    ctx.beginPath(); for(var q3 = 0; q3 <= 40; q3++) { var x3 = -40 + q3 / 40 * (G.w + 80), p3 = P([x3, haut0 + sc.sag(x3)]); q3 ? ctx.lineTo(p3[0], p3[1]) : ctx.moveTo(p3[0], p3[1]); }
-    ctx.setLineDash([3, 5]); ctx.strokeStyle = 'rgba(160,220,255,.3)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
+    var x0 = sec.x0, haut0 = sec.y0 - (V.carte ? 6 : 2), bas0 = sec.y1 + (V.carte ? 10 : 30), xa = P([x0, 0])[0], xr = P([G.w + 60, 0])[0];
+    var top = function(x) { return P([x, haut0 + sc.sag(x)])[1]; }, yb = P([0, bas0])[1];
+    ctx.beginPath(); ctx.moveTo(xa, top(x0));
+    for(var q = 1; q <= 12; q++) { var x = x0 + q / 12 * (G.w + 60 - x0); ctx.lineTo(P([x, 0])[0], top(x)); }
+    ctx.lineTo(xr, yb); ctx.lineTo(xa, yb); ctx.closePath();
+    var gz = ctx.createLinearGradient(xa, 0, xr, 0); gz.addColorStop(0, 'rgba(120,200,255,.02)'); gz.addColorStop(1, 'rgba(120,200,255,.075)');
+    ctx.fillStyle = gz; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(xa, top(x0)); ctx.lineTo(xa, yb);
+    ctx.setLineDash([3, 5]); ctx.strokeStyle = 'rgba(160,220,255,.28)'; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
   });
   // Ponts entre projets reliés : l'influx part de l'éveillé vers l'endormi
   sc.ponts.forEach(function(Pn) {
@@ -7962,9 +7979,11 @@ function plDessiner(V, now) {
     if(V.choix === e) { ctx.beginPath(); ctx.arc(q[0], q[1], rr + 9, 0, Math.PI * 2); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke(); }
     // Sur la bande de l'accueil, les endormis restent sans nom (ils sont dans la carte et sous « Endormis »)
     if(!V.carte && e.dort) return;
-    var large = Math.max(40, e.cellW * s - 10), y1 = q[1] + Math.max(rr + 8, e.rmax * s * .82 + 8) + (V.carte ? 9 : 7);
+    var large = Math.max(40, e.cellW * s - 4), y1 = q[1] + Math.max(rr + 8, e.rmax * s * .82 + 8) + (V.carte ? 9 : 7);
     var taille = V.carte ? (e.dort ? 13 : 15) : 12;
-    ctx.font = '600 ' + taille + 'px ' + fam; var nom = tronque(e.n, large), wn = ctx.measureText(nom).width;
+    ctx.font = '600 ' + taille + 'px ' + fam;
+    while(taille > 11 && ctx.measureText(e.n).width > large) { taille--; ctx.font = '600 ' + taille + 'px ' + fam; }
+    var nom = tronque(e.n, large), wn = ctx.measureText(nom).width;
     // L'état, en deux lignes courtes : quand il a bougé, puis ce qui l'attend et ce qui est fait
     var lignes = V.carte ? plEtatLignes(e) : [], we = 0;
     ctx.font = '500 12px ' + fam; lignes = lignes.map(function(l) { l = tronque(l, large); we = Math.max(we, ctx.measureText(l).width); return l; });
@@ -7982,8 +8001,10 @@ function plDessiner(V, now) {
   if(V.carte) {
     ctx.font = '600 13px ' + fam; ctx.textBaseline = 'middle';
     sc.sections.forEach(function(sec) {
-      var x = 16 / s - V.tx / s, p = P([Math.max(6, x), sec.y0 + 11 + sc.sag(Math.max(6, x))]);
-      p[0] = Math.max(16, p[0]);
+      var x = sec.cle === 'vie' ? sec.x0 + 10 : 16 / s - V.tx / s;
+      x = sec.cle === 'vie' ? x : Math.max(6, x);
+      var p = P([x, sec.y0 + 11 + sc.sag(x)]);
+      if(sec.cle !== 'vie') p[0] = Math.max(16, p[0]);
       var r = [p[0], p[1] - 9, ctx.measureText(sec.titre).width, 18];
       if(!dedans(p, 0) || !libre(r)) return;
       poses.push(r);
