@@ -1,6 +1,6 @@
 // ARC — service worker. Réseau d'abord, cache en secours (hors ligne).
 // Une nouvelle version d'ARC est donc visible dès le rechargement, sans vider le cache à la main.
-var CACHE = 'arc-v6';
+var CACHE = 'arc-v7';
 var SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function(e){
@@ -20,8 +20,12 @@ self.addEventListener('fetch', function(e){
   var url = new URL(req.url);
   if(url.hostname.indexOf('supabase.co') !== -1) return; // données et Claude : toujours en direct
   if(url.hostname.indexOf('bigdatacloud.net') !== -1) return; // nom de la ville : en direct, jamais gardé en cache (l'adresse contient la position)
+  // La page et les fichiers d'ARC sont toujours revalidés auprès du serveur (cache:'no-cache') : sans cela, le cache
+  // HTTP du navigateur (GitHub Pages sert la page avec max-age=600) montrait l'ancienne version jusqu'à 10 minutes
+  // après une mise en ligne. Les bibliothèques des CDN, figées par leur version, restent servies comme avant.
+  var frais = url.origin === self.location.origin;
   e.respondWith(
-    fetch(req).then(function(resp){
+    (frais ? fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(req)).then(function(resp){
       if(resp && (resp.ok || resp.type === 'opaque')){
         var copy = resp.clone();
         caches.open(CACHE).then(function(c){ c.put(req, copy); });

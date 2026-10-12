@@ -250,6 +250,15 @@ const liens = page => page.evaluate(() => ({
   const sur = await page.evaluate(() => { const V = _pl.carte, P = document.getElementById('carte-panneau'), e = V.panneau; return { ouverte: carteOuverte(), t: document.getElementById('pn-t').textContent, vis: !P.hidden, dessus: e && (e.cap[1] * V.s + V.ty) + (e.rmax || 0) * V.s <= P.getBoundingClientRect().top, h: Math.round(document.getElementById('w-carte').getBoundingClientRect().height) }; });
   ok(sur.ouverte && sur.vis && sur.t === 'ATLAS' && sur.dessus, 'La carte dans chaque monde : « Voir sur la carte » ouvre la carte sur ATLAS, son panneau ouvert, ATLAS au-dessus du panneau', JSON.stringify(sur));
   await page.evaluate(() => carteFermer());
+  // Et depuis Santé et Juridique
+  const poles = [];
+  for (const id of ['sante', 'juridique']) {
+    await page.evaluate(i => enterPole(i), id); await page.waitForTimeout(250);
+    await page.click(`#S${id === 'sante' ? 3 : 4} [data-carte="${id}"]`); await page.waitForTimeout(250);
+    poles.push(await page.evaluate(() => ({ ouverte: carteOuverte(), k: document.getElementById('pn-k').textContent, t: document.getElementById('pn-t').textContent })));
+    await page.evaluate(() => carteFermer());
+  }
+  ok(poles.every(p => p.ouverte && p.k === 'Ma vie') && poles.map(p => p.t).join() === 'Santé,Juridique', 'La carte depuis Santé et Juridique : « Voir sur la carte » ouvre leur panneau', JSON.stringify(poles));
   ok(!errors.length, 'Aucune erreur de console (planète et carte)', errors.join(' | '));
   await ctx.close();
 }
