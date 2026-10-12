@@ -466,6 +466,26 @@ const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('onlin
   await ctx.close();
 }
 
+/* 21. « C'est fait » touché par erreur : « Rouvrir » rend la pensée telle qu'elle était (12 octobre : avant, une pensée
+   faite n'avait plus aucune touche, l'erreur était sans retour) */
+{
+  const fk = fakeSupabase();
+  fk.proxy = filingReply({ space: 'aryan', confidence: 'sure', step: '', moment: { type: 'none' }, extras: [] });
+  const { ctx, page } = await open({ fk });
+  await deposit(page, 'Dentiste'); const id = await idOf(page, 'Dentiste'); await waitFiled(page, id);
+  await page.click('#depot-open');
+  await btn(page, id, 'C\'est fait').click(); await page.waitForTimeout(200);
+  const fait = await latestOf(page, id);
+  const ro = await btn(page, id, 'Rouvrir').count();
+  await btn(page, id, 'Rouvrir').click(); await page.waitForTimeout(200);
+  const rouverte = await latestOf(page, id);
+  const actions = await btn(page, id, 'C\'est fait').count();
+  ok(fait.status === 'done' && ro === 1 && rouverte.status === 'filed' && rouverte.space === 'aryan' && rouverte.origin === 'user' && actions === 1,
+     '« C\'est fait » se rattrape : « Rouvrir » remet la pensée rangée, avec ses touches',
+     JSON.stringify({ fait, ro, rouverte, actions }));
+  await ctx.close();
+}
+
 /* 12. Balisage */
 {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');

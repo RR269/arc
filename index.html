@@ -7633,7 +7633,13 @@ function rangeBlock(t) {
     var ul = rgEl('ul'); f.extras.forEach(function(x) { ul.appendChild(rgEl('li', null, x)); }); ex.appendChild(ul);
     box.appendChild(ex);
   }
-  if(f.status === 'done') return box;
+  if(f.status === 'done') {
+    // Un « C'est fait » touché par erreur se rattrape (charte, règle 11) : la pensée reprend sa place, telle qu'elle était
+    var ro = rgEl('div', 'rg-acts');
+    ro.appendChild(rangeBtn('Rouvrir', function() { rangeAdd(t.id, { status: unsure ? 'unsure' : 'filed' }, 'user'); }, 'quiet'));
+    box.appendChild(ro);
+    return box;
+  }
   // Éditeurs du moment
   if(editing === 'moment') {
     var mm = rgEl('div', 'rg-acts');
@@ -7667,7 +7673,8 @@ function rangeBlock(t) {
   // Actions
   if(!editing) {
     var acts = rgEl('div', 'rg-acts');
-    acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(t.id, { status: 'done' }, 'user'); }, 'main'));
+    // Une note n'a rien à faire : « C'est fait » n'y est pas la touche blanche (Rayan l'a touchée pour valider, 12 octobre)
+    acts.appendChild(rangeBtn('C\'est fait', function() { rangeAdd(t.id, { status: 'done' }, 'user'); }, f.step ? 'main' : ''));
     acts.appendChild(rangeBtn(mt ? 'Changer le moment' : 'Fixer un moment', function() { rangeEditOpen(t.id, 'moment'); }));
     acts.appendChild(rangeBtn(f.step ? 'Modifier l\'étape' : 'Ajouter une étape', function() { rangeEditOpen(t.id, 'step'); }));
     if(!unsure) acts.appendChild(rangeBtn('Changer d\'espace', function() { rangeEditOpen(t.id, 'space'); }));

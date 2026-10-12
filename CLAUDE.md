@@ -1503,6 +1503,17 @@ ARC en orbite, et Relier (11 octobre) :
     (`rangeMayTry`, voulu) bloquait donc le nouvel essai. ARC n'est pas en cause. Le test avance l'horloge jusqu'à ce que
     la page voie la minute passée (cinq fois au plus) ; 30 passages sur 30 ensuite, cinq navigateurs en parallèle.
   - Tests : recherche 9/9 (un contrôle ajouté : Santé, démarche datée, « Fait » filtré), rangement 25/25.
+- **PR #48 fusionnée le 12 octobre à 6 h 41.**
+- **Essai réel sur l'iPhone (12 octobre, 17 h 30 à 19 h 10, captures de Rayan)** : il dépose « Dentiste » (sans jour ni
+  heure) ; ARC le range en Santé comme note, sans moment : pas de proposition, c'est voulu (ARC n'invente pas de date).
+  Il fixe ensuite le moment (jeudi 15 octobre, 14 h) puis touche **« C'est fait »**, la touche blanche de la note, sans
+  doute pour valider : la pensée passe « Fait », et une pensée faite n'est jamais proposée. **Défaut prouvé** :
+  `rangeBoxEl` (`index.html`, `if(f.status === 'done') return box;`) ne laissait aucune touche sur une pensée faite :
+  une erreur était sans retour (charte, règle 11).
+- **Rouvrir (branche `rouvrir-pensee`, 12 octobre 19 h 15)** : sous une pensée faite, « Rouvrir » (discrète) la remet
+  rangée, telle qu'elle était (`status` filed, ou unsure si ARC hésitait ; nouvelle ligne `origin` user). Sur une
+  **note** (rangée sans étape), « C'est fait » n'est plus la touche blanche (rien n'est à faire). Tests : rangement
+  26/26 (un contrôle ajouté : « C'est fait » puis « Rouvrir », la pensée revient rangée avec ses touches).
 
 ### Décisions de Rayan (5 octobre)
 
