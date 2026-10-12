@@ -3,6 +3,7 @@
 //   NODE_PATH=/tmp/arc-outils/node_modules node tests/recherche.mjs
 // Supabase est remplacé par un faux serveur : aucune requête ne part vers le vrai projet.
 //
+// Et « Demande à ARC » : une question reçoit une réponse tirée d'ARC, avec ses sources (faux proxy).
 // Ce qui est cherché : pensées (sauf annulées), tâches (titre ou notes), projets, journal des projets, Juridique ; sans
 // accents ni casse, tous les mots ; chaque ligne ouvre la chose là où elle vit ; Entrée et les flèches au clavier ;
 // texte posé sans innerHTML. Et la charte : cibles ≥ 44 px, textes ≥ 12 px, champ ≥ 16 px, contraste ≥ 4,5 : 1.
@@ -165,6 +166,73 @@ for (const vp of [{ n: 'iPhone 390 × 844', width: 390, height: 844, tel: true }
      && e.g['Juridique'] && /Dans 3 j/.test(e.g['Juridique'][0].meta) && o.sante && o.feuille && o.id === 'a' && jur.join() === 'todo,done' && !errors.length,
     'Santé dans la recherche : un rendez-vous par sa spécialité ou ses notes, un document par son nom, ouverts dans leur feuille ; une démarche datée dit quand ; dans Juridique filtré, « Fait » marque le bon élément (avant : celui du même rang dans la liste complète)',
     JSON.stringify({ a: a.g['Santé'], b: b.g['Santé'], c: c.g['Santé'], e: e.g['Juridique'], o, jur, errors }));
+  await page.context().close();
+}
+
+// ── Demande à ARC (13 octobre, accord de Rayan « oui, avec Santé ») : une question reçoit une réponse tirée d'ARC ──
+// Seuls les extraits utiles partent (jamais tout ARC ; une donnée de santé seulement si elle répond) ; la réponse cite
+// ses sources, qui s'ouvrent là où elles vivent ; une ligne vraie dit ce qui est parti ; rien trouvé : rien ne part.
+{
+  const { page, fk, errors } = await contexte({ width: 390, height: 844, tel: true });
+  const chats = [];
+  let reponse = { status: 200, json: { content: [{ type: 'text', text: '{"reponse": "Tu as vu le dentiste le 22 septembre, avec le Dr Martin.", "sources": [1]}' }] } };
+  fk.proxy = async body => {
+    if (body.task === 'file') return { status: 200, json: { filing: { space: 'atlas', confidence: 'sure', step: 'Envoyer le Kbis au greffe', moment: { type: 'none' }, extras: [] }, model: 'test' } };
+    chats.push(body); return typeof reponse === 'function' ? reponse(body) : reponse;
+  };
+  await deposit(page, 'Envoyer le Kbis au greffe pour ATLAS'); await page.waitForTimeout(800);
+  await page.evaluate(() => {
+    if (typeof matinClose === 'function') matinClose();
+    const d = new Date(); d.setDate(d.getDate() - 20); const p = n => (n < 10 ? '0' : '') + n, j = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j, heure: '10:00', qui: 'Dr Martin', sortie: 'Revenir en novembre' } };
+    S.sante.docs = { d: { id: 'd', titre: 'Ordonnance lunettes', spe: 'ophtalmo', date: '2026-03-20', ou: 'papier' } };
+    S.journal[4] = (S.journal[4] || []).concat([{ ts: Date.now() - 864e5, t: 'Le greffe attend le Kbis signé.' }]);
+    saveS();
+  });
+  // 1. Une question sur la santé : la touche « Demander à ARC », rien ne part avant le geste ; Entrée la pose
+  await chercher(page, 'Quand ai-je vu le dentiste ?');
+  const avant = await page.evaluate(() => ({ touche: !!document.getElementById('sr-ask'), texte: (document.getElementById('sr-ask') || {}).textContent || '' }));
+  const n0 = chats.length;
+  await page.keyboard.press('Enter'); await page.waitForTimeout(600);
+  const r1 = await page.evaluate(() => ({ rep: (document.querySelector('#sr-ans .sr-ans-txt') || {}).textContent, src: [...document.querySelectorAll('#sr-ans .sr-src')].map(b => b.textContent), parti: (document.querySelector('#sr-ans .sr-ans-parti') || {}).textContent }));
+  const c1 = chats[0] || { messages: [{ content: '' }], system: '' }, contenu1 = c1.messages[0].content;
+  await page.evaluate(() => document.getElementById('sr-ans').scrollIntoView({ block: 'center' })); await page.waitForTimeout(150);
+  const m = await mesurer(page, { racine: '#sr-ans', cadre: '#sr-ans' });
+  const h = await page.evaluate(() => [...document.querySelectorAll('#sr-ans button')].map(b => Math.round(b.getBoundingClientRect().height)));
+  await page.tap('#sr-ans .sr-src'); await page.waitForTimeout(400);
+  const ouvre = await page.evaluate(() => ({ feuille: document.getElementById('sante-modal').classList.contains('open'), id: _sm && _sm.id, fermee: !document.getElementById('search-modal').classList.contains('open') }));
+  await page.evaluate(() => { santeFermer(); goHome(); });
+  // 2. Une question sur un projet : aucune donnée de santé ne part
+  reponse = { status: 200, json: { content: [{ type: 'text', text: '```json\n{"reponse": "Envoyer le Kbis au greffe.", "sources": [1, 2, 99]}\n```' }] } };
+  await chercher(page, 'Je devais faire quoi pour ATLAS ?'); await page.keyboard.press('Enter'); await page.waitForTimeout(600);
+  const c2 = chats[1] || { messages: [{ content: '' }] }, contenu2 = c2.messages[0].content;
+  const r2 = await page.evaluate(() => ({ rep: (document.querySelector('#sr-ans .sr-ans-txt') || {}).textContent, n: document.querySelectorAll('#sr-ans .sr-src').length, parti: (document.querySelector('#sr-ans .sr-ans-parti') || {}).textContent }));
+  // 3. Rien dans ARC : ARC le dit, rien ne part
+  await chercher(page, 'xylophone turquoise ?'); await page.keyboard.press('Enter'); await page.waitForTimeout(300);
+  const r3 = await page.evaluate(() => ({ rep: (document.querySelector('#sr-ans .sr-ans-txt') || {}).textContent, parti: (document.querySelector('#sr-ans .sr-ans-parti') || {}).textContent }));
+  const n3 = chats.length;
+  // 4. Panne : la raison en mots, « Demander à nouveau » ; une réponse avec du code reste du texte
+  reponse = { status: 500, json: { error: { message: 'panne' } } };
+  await chercher(page, 'greffe ?'); await page.keyboard.press('Enter'); await page.waitForTimeout(600);
+  const r4 = await page.evaluate(() => ({ rep: (document.querySelector('#sr-ans .sr-ans-txt') || {}).textContent, re: !!document.querySelector('#sr-ans .sr-ask-re') }));
+  reponse = { status: 200, json: { content: [{ type: 'text', text: '{"reponse": "<img src=x onerror=\\"window.__x2=1\\"> Le greffe attend le Kbis.", "sources": [1]}' }] } };
+  await page.tap('#sr-ans .sr-ask-re'); await page.waitForTimeout(600);
+  const r5 = await page.evaluate(() => ({ rep: (document.querySelector('#sr-ans .sr-ans-txt') || {}).textContent, img: !!document.querySelector('#sr-ans img'), x: !!window.__x2 }));
+  // 5. Taper autre chose efface la réponse et rend la touche
+  await chercher(page, 'greffe Kbis');
+  const r6 = await page.evaluate(() => ({ ans: !!document.getElementById('sr-ans'), touche: !!document.getElementById('sr-ask'), items: document.querySelectorAll('#search-results .sr-item').length }));
+  const vraies = errors.filter(e => !/status of 500/.test(e));
+  ok(avant.touche && /Demander à ARC/.test(avant.texte) && /dentiste/.test(avant.texte) && n0 === 0
+     && /^Tu as vu le dentiste le 22 septembre/.test(r1.rep) && r1.src.length === 1 && /Dentiste · Dr Martin/.test(r1.src[0]) && /^Parti à Claude : 1 rendez-vous\.$/.test(r1.parti)
+     && /UNIQUEMENT avec les extraits/.test(c1.system) && /\[1\] Rendez-vous santé · Dentiste/.test(contenu1) && /Revenir en novembre/.test(contenu1) && !/Ordonnance|Kbis|ATLAS/.test(contenu1) && !c1.task
+     && m.pire.ratio >= 4.5 && h.every(x => x >= 44) && ouvre.feuille && ouvre.id === 'a' && ouvre.fermee
+     && /Kbis/.test(contenu2) && !/Rendez-vous santé|Document santé|Dentiste|Ordonnance/.test(contenu2) && (contenu2.match(/^\[\d+\]/gm) || []).length <= 20
+     && r2.rep === 'Envoyer le Kbis au greffe.' && r2.n === 2 && /pensée/.test(r2.parti) && !/rendez-vous|santé/.test(r2.parti)
+     && r3.rep === 'Je ne trouve rien dans ARC sur ça.' && /Rien n’est parti à Claude/.test(r3.parti) && n3 === 2
+     && /ARC n’a pas pu répondre : le service de Claude est en panne/.test(r4.rep) && r4.re
+     && /<img/.test(r5.rep) && !r5.img && !r5.x && !r6.ans && r6.touche && r6.items >= 1 && !vraies.length,
+    'Demande à ARC : rien ne part avant le geste ; une question sur le dentiste n\'envoie que le rendez-vous (ni la pensée ATLAS ni l\'ordonnance), la réponse cite sa source, qui ouvre la feuille ; « Parti à Claude : 1 rendez-vous » ; une question sur ATLAS n\'envoie aucune donnée de santé, sources hors liste écartées ; rien trouvé : ARC le dit et rien ne part ; panne dite en mots, « Demander à nouveau » ; du code reste du texte ; taper autre chose rend la touche ; contraste, cibles',
+    JSON.stringify({ avant, n0, r1, contenu1, contraste: m.pire, h, ouvre, contenu2: contenu2.slice(0, 600), r2, r3, n3, r4, r5, r6, erreurs: vraies }));
   await page.context().close();
 }
 

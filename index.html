@@ -2035,6 +2035,25 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #search-modal .sr-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:16px;line-height:1.35;letter-spacing:-.2px;color:#F5F5F7;overflow-wrap:anywhere}
 #search-modal .sr-text mark{border-radius:4px;padding:0 1px;background:rgba(255,179,64,.22);color:#FFE2B3}
 #search-modal .sr-meta{display:block;margin-top:2px;font-size:13px;line-height:18px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Demande à ARC : la touche (verre, filet aux couleurs d'ARC) et la réponse */
+#search-modal .sr-ask-zone{margin:4px 0 6px}
+#search-modal .sr-ask{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:9px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));text-align:left;font-family:var(--fa);cursor:pointer;overflow:hidden}
+#search-modal .sr-ask::before,#search-modal .sr-ans::before{content:'';position:absolute;left:14px;right:14px;top:0;height:1px;background:linear-gradient(90deg,transparent,#FF9500 18%,#FF2D55 50%,#AF52DE 82%,transparent)}
+#search-modal .sr-ask:hover{background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.03))}
+#search-modal .sr-arc{flex-shrink:0;width:22px;height:22px;background:linear-gradient(135deg,#FF9500,#FF2D55 55%,#AF52DE);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M3 17a9 9 0 0 1 18 0M7 17a5 5 0 0 1 10 0'/%3E%3Ccircle cx='12' cy='17' r='1.3' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M3 17a9 9 0 0 1 18 0M7 17a5 5 0 0 1 10 0'/%3E%3Ccircle cx='12' cy='17' r='1.3' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat}
+#search-modal .sr-ask-t{display:flex;flex-direction:column;min-width:0}
+#search-modal .sr-ask-l1{font-size:16px;font-weight:600;letter-spacing:-.25px;color:#F5F5F7}
+#search-modal .sr-ask-l2{font-size:14px;line-height:19px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#search-modal .sr-ans{position:relative;padding:12px 8px 8px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(175,82,222,.10),rgba(255,255,255,.02) 60%)}
+#search-modal .sr-ans-h{display:flex;align-items:center;gap:8px;padding:0 6px;font-size:15px;font-weight:600;color:#F5F5F7}
+#search-modal .sr-ans-h .sr-arc{width:18px;height:18px}
+#search-modal .sr-ans-txt{margin:8px 6px 10px;font-size:17px;line-height:1.4;letter-spacing:-.25px;color:#F5F5F7;overflow-wrap:anywhere}
+#search-modal .sr-ans-txt.doux{color:var(--t2)}
+#search-modal .sr-src{display:block;width:100%;min-height:54px;margin:0 0 4px;padding:8px 10px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(0,0,0,.25);text-align:left;font-family:var(--fa);cursor:pointer}
+#search-modal .sr-src:hover{background:rgba(255,255,255,.06)}
+#search-modal .sr-ans-parti{margin:8px 6px 2px;font-size:13px;line-height:18px;color:var(--t2)}
+#search-modal .sr-ask-re{min-height:44px;margin:6px 6px 0;padding:0 14px;border-radius:12px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC}
+#search-modal :is(.sr-ask,.sr-src,.sr-ask-re):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 #search-modal .sr-more{padding:2px 12px 6px;font-size:13px;color:var(--t2)}
 #search-footer{display:none;padding:10px 16px;border-top:1px solid var(--b1);font-size:13px;color:var(--t2)}
 @media(hover:hover) and (pointer:fine){#search-footer{display:block}}
@@ -3121,9 +3140,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 </div>
 <div id="search-modal" role="dialog" aria-modal="true" aria-label="Recherche">
   <div id="search-box">
-    <div id="search-inp-wrap"><span class="sr-loupe" aria-hidden="true"></span><input id="search-inp" type="search" enterkeyhint="search" placeholder="Rechercher dans ARC" aria-label="Rechercher dans ARC" autocomplete="off" spellcheck="false"><button id="search-close" type="button">Fermer</button></div>
+    <div id="search-inp-wrap"><span class="sr-loupe" aria-hidden="true"></span><input id="search-inp" type="search" enterkeyhint="search" placeholder="Rechercher ou demander à ARC" aria-label="Rechercher ou demander à ARC" autocomplete="off" spellcheck="false"><button id="search-close" type="button">Fermer</button></div>
     <div id="search-results"><div class="sr-empty">Tes pensées, tes tâches et leurs notes, tes projets, leur journal et ton dossier juridique.</div></div>
-    <div id="search-footer">Flèches pour choisir · Entrée pour ouvrir · Échap pour fermer</div>
+    <div id="search-footer">Flèches pour choisir · Entrée pour ouvrir · une question finie par « ? » : Entrée la pose à ARC · Échap pour fermer</div>
   </div>
 </div>
 <!-- EN FAIRE UN PROJET : depuis une pensée de « Déposé » -->
@@ -6289,7 +6308,7 @@ function searchQuery(q) {
   box.innerHTML = ''; _srItems = []; _srSel = 0;
   var vide = function(txt) { var e = document.createElement('div'); e.className = 'sr-empty'; e.textContent = txt; box.appendChild(e); };
   var mots = srNorm(q).split(/\s+/).filter(function(m) { return m; });
-  if(!mots.length || mots.join('').length < 2) { vide('Tes pensées, tes tâches et leurs notes, tes projets, leur journal, ta santé et ton dossier juridique.'); return; }
+  if(!mots.length || mots.join('').length < 2) { vide('Tes pensées, tes tâches et leurs notes, tes projets, leur journal, ta santé et ton dossier juridique. Pose aussi une question\u00A0: ARC te répond avec ce qu\u2019il garde.'); return; }
   var groupes = [];
   // Pensées déposées
   var gp = [];
@@ -6376,6 +6395,7 @@ function searchQuery(q) {
     if(g[1].length > 6) { var plus = document.createElement('div'); plus.className = 'sr-more'; plus.textContent = 'Et ' + (g[1].length - 6) + ' de plus : précise ta recherche.'; box.appendChild(plus); }
   });
   if(!total) vide('Rien pour « ' + q.trim() + ' ».');
+  askRendre(box, q);
   srChoisir(0);
 }
 function srChoisir(i) {
@@ -6388,8 +6408,226 @@ document.addEventListener('keydown', function(ev) {
   if(ev.target.id !== 'search-inp') return;
   if(ev.key === 'ArrowDown') { ev.preventDefault(); srChoisir(_srSel + 1); }
   else if(ev.key === 'ArrowUp') { ev.preventDefault(); srChoisir(_srSel - 1); }
-  else if(ev.key === 'Enter' && !ev.isComposing) { ev.preventDefault(); if(_srItems[_srSel]) _srItems[_srSel].click(); }
+  else if(ev.key === 'Enter' && !ev.isComposing) {
+    ev.preventDefault();
+    var q = ev.target.value.trim();
+    // Une question (finie par « ? ») ou une recherche sans résultat : Entrée la pose à ARC
+    if(q.length >= 2 && (/\?\s*$/.test(q) || !_srItems.length)) askLancer(q);
+    else if(_srItems[_srSel]) _srItems[_srSel].click();
+  }
 });
+/* ═══ DEMANDE À ARC (13 octobre, accord de Rayan : « oui, avec Santé ») ═══
+   Une question posée dans la recherche reçoit une réponse tirée de ce qu'ARC garde, et de rien d'autre.
+   1. L'appareil choisit les extraits utiles (askCorpus, askChoisir : mots rares de la question, sans accents ni casse ;
+      « aujourd'hui », « demain », « semaine »… ajoutent ce qui arrive bientôt) ; vingt au plus, jamais tout ARC.
+   2. Seuls ces extraits partent à Claude (chemin de la discussion du proxy, rien d'enregistré côté serveur) ; une
+      donnée de santé ne part que si elle répond à la question.
+   3. La réponse cite ses sources : chacune s'ouvre là où elle vit. Une ligne vraie dit ce qui est parti.
+   Rien trouvé sur l'appareil : ARC le dit, et rien ne part. */
+var ASK_SYSTEM = 'Tu es la mémoire d’ARC, le deuxième cerveau de Rayan. Tu réponds à sa question UNIQUEMENT avec les extraits ' +
+  'numérotés qu’il te donne : ses pensées, ses tâches, ses projets, son journal, son dossier juridique, ses rendez-vous et documents de santé. ' +
+  'N’invente rien, ne complète pas avec des connaissances extérieures. Si les extraits ne permettent pas de répondre, dis-le en une phrase ' +
+  '(par exemple « Je ne trouve rien dans ARC sur ça. »). Tu rapportes ce qui est noté : aucun avis médical ni juridique. ' +
+  'Réponds en français, en le tutoyant, en une à trois phrases courtes ; les dates en clair (« jeudi 15 octobre à 14 h »). ' +
+  'Réponds UNIQUEMENT par un objet JSON, sans texte autour : {"reponse": "…", "sources": [1, 3]} où sources liste les numéros des extraits utilisés.';
+var ASK_VIDES = ('je j ai a as avais avait avez le la les l un une des de du d et ou en au aux pour par sur dans avec sans ce cet cette ces c ca ' +
+  'que qu qui quoi quand comment pourquoi combien quel quelle quels quelles est sont etait suis es on nous vous tu te t me m moi toi mon ma mes ' +
+  'ton ta tes son sa ses il elle ils elles y se s ne n pas plus fait faire faut dois doit devais devait avoir etre chez rien tout tous toutes dit ' +
+  'dire estce alors donc mais si deja encore lui leur leurs mon mien vu voir quoi la-bas ici cela ceci comme moment chose choses').split(' ');
+var ASK_TEMPS = /\b(aujourd|demain|soir|matin|semaine|prochain|prochaine|bientot|venir|agenda|programme|planning|journee)/;
+var ASK_AFAIRE = /\b(faire|reste|restent|dois|devais|attend|attendent|todo)\b/;
+var _ask = { n: 0, q: '', etat: '', res: null };
+function askMots(t) {
+  return srNorm(t).replace(/[^a-z0-9]+/g, ' ').split(' ').filter(function(m) { return m.length > 1 && ASK_VIDES.indexOf(m) < 0; })
+    .map(function(m) { return m.length > 3 ? m.replace(/[sx]$/, '') : m; });
+}
+function askJour(ms) { var d = new Date(ms); return isNaN(d) ? '' : d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }); }
+// Tout ce qu'ARC garde, une entrée par chose : ce qu'on cherche (cherche), ce qui part à Claude (texte), comment l'ouvrir
+function askCorpus() {
+  var out = [], maintenant = Date.now();
+  var ajoute = function(o) { o.mots = askMots(o.cherche); out.push(o); };
+  if(_depot) {
+    var idx = _range ? rangeIndex() : { latest: {} };
+    depotList().forEach(function(t) {
+      var f = idx.latest[t.id]; if(f && f.status === 'cancelled') return; if(t.status === 'rejected') return;
+      var esp = f && f.space ? rangeSpaceInfo(f.space).name : '', fait = f && f.status === 'done';
+      var m = f ? rangeMomentText(f.moment) : '', at = f && f.moment && f.moment.type === 'datetime' ? +new Date(f.moment.at) : null;
+      ajoute({ k: 'pensee', cherche: [t.body, f && f.step, esp, f && f.space].filter(Boolean).join(' '), date: +new Date(t.created_at) || 0, afaire: !!(f && !fait && f.step), at: at, sante: f && f.space === 'sante',
+        texte: 'Pensée · ' + (esp ? 'rangée dans ' + esp : 'pas encore rangée') + ' · déposée le ' + askJour(t.created_at) + (fait ? ' · faite' : (f && f.step ? ' · à faire' : '')) +
+          (m ? ' · moment : ' + m : '') + (f && f.step && f.step !== t.body ? ' · étape : ' + f.step : '') + ' · « ' + t.body + ' »',
+        titre: t.body, meta: ['Pensée', esp || 'À ranger', fait ? 'Faite' : '', srDate(t.created_at)].filter(Boolean).join(' · '),
+        ouvrir: function() { closeSearch(); _rangeEdit = null; depotOpen(); var el = document.querySelector('#depot-list [data-id="' + t.id + '"]'); if(el) el.scrollIntoView({ block: 'center' }); } });
+    });
+  }
+  WORLDS.forEach(function(w) { var wid = w.id, dort = mondeDort(wid);
+    ajoute({ k: 'projet', cherche: [w.name, w.cat, w.mission, w.desc].join(' '), date: 0,
+      texte: 'Projet ' + w.name + (dort ? ' (endormi)' : '') + ' · ' + [w.cat, w.mission, w.desc].filter(Boolean).join(' · ').slice(0, 260),
+      titre: w.name, meta: ['Projet', w.cat, dort ? 'Endormi' : ''].filter(Boolean).join(' · '), ouvrir: function() { closeSearch(); enterWorld(wid); } });
+    var all = w.tasks_todo.concat(w.tasks_done).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
+    all.forEach(function(t) {
+      var note = (S.taskNotes[wid] || {})[t.id] || '', fait = !!(S.tasks[wid] && S.tasks[wid][t.id]);
+      ajoute({ k: 'tache', cherche: [t.t, note, w.name].join(' '), date: 0, afaire: !fait && !dort,
+        texte: 'Tâche du projet ' + w.name + ' · ' + (fait ? 'faite' : 'à faire') + ' · « ' + t.t + ' »' + (note ? ' · mes notes : ' + note.replace(/\s+/g, ' ').slice(0, 200) : ''),
+        titre: t.t, meta: ['Tâche', w.name, fait ? 'Faite' : ''].filter(Boolean).join(' · '), ouvrir: function() { closeSearch(); enterWorld(wid); openCockpit(wid, t.id); } });
+    });
+    (S.journal[wid] || []).forEach(function(j) {
+      ajoute({ k: 'journal', cherche: j.t + ' ' + w.name, date: j.ts || 0,
+        texte: 'Journal du projet ' + w.name + ' · le ' + askJour(j.ts) + ' · « ' + String(j.t).slice(0, 260) + ' »',
+        titre: j.t, meta: ['Journal', w.name, srDate(j.ts)].filter(Boolean).join(' · '), ouvrir: function() { closeSearch(); enterWorld(wid); allerA('journal'); } });
+    });
+  });
+  if(S.poles && S.poles.juridique) JUR_SECTIONS.forEach(function(sec) {
+    (S.poles.juridique[sec.id] || []).forEach(function(it) {
+      if(!it || !it.t) return;
+      var fait = it.status === 'done', dl = it.deadline ? +new Date(it.deadline + 'T12:00') : null;
+      ajoute({ k: 'jur', cherche: it.t + ' juridique ' + sec.title, date: it.ts || 0, afaire: !fait, at: fait ? null : dl,
+        texte: 'Juridique · ' + sec.title + ' · ' + (fait ? 'fait' : 'à faire') + (dl ? ' · échéance le ' + askJour(dl) : '') + ' · « ' + it.t + ' »',
+        titre: it.t, meta: ['Juridique', sec.title, fait ? 'Fait' : (it.deadline ? joQuand(joJours(it.deadline)) : '')].filter(Boolean).join(' · '),
+        ouvrir: function() { closeSearch(); enterPole('juridique'); jurOuvrirItem(sec.id, (S.poles.juridique[sec.id] || []).indexOf(it)); } });
+    });
+  });
+  if(S.sante) {
+    santeRdv().forEach(function(r) {
+      var nom = santeSpeNom(r.spe) || 'Rendez-vous', d = santeQuand(r), avenir = santeAVenir(r);
+      ajoute({ k: 'rdv', sante: true, cherche: [nom, r.spe, r.qui, r.lieu, r.apporter, r.questions, r.sortie, 'sante rendez-vous rdv medecin'].filter(Boolean).join(' '), date: d ? +d : 0, at: avenir && d ? +d : null,
+        texte: 'Rendez-vous santé · ' + nom + (r.qui ? ' · avec ' + r.qui : '') + (d ? ' · le ' + askJour(d) + (r.heure ? ' à ' + r.heure.replace(':', ' h ') : '') : '') + ' · ' + (avenir ? 'à venir' : 'passé') +
+          (r.lieu ? ' · lieu : ' + r.lieu : '') + (r.apporter ? ' · à apporter : ' + r.apporter.slice(0, 160) : '') + (r.questions ? ' · questions : ' + r.questions.slice(0, 160) : '') + (r.sortie ? ' · ce qui en est sorti : ' + r.sortie.slice(0, 200) : ''),
+        titre: [nom, r.qui].filter(Boolean).join(' · '), meta: ['Rendez-vous', d ? santeJour(d) : '', avenir ? 'à venir' : ''].filter(Boolean).join(' · '),
+        ouvrir: function() { closeSearch(); enterPole('sante'); santeOuvrir('rdv', r.id); } });
+    });
+    santeDocs().forEach(function(x) {
+      var d = x.date ? new Date(x.date + 'T12:00') : null;
+      ajoute({ k: 'doc', sante: true, cherche: [x.titre, santeSpeNom(x.spe), santeOuNom(x.ou), 'sante document'].join(' '), date: d && !isNaN(d) ? +d : 0,
+        texte: 'Document santé · « ' + x.titre + ' »' + (x.spe ? ' · ' + santeSpeNom(x.spe) : '') + (d && !isNaN(d) ? ' · du ' + askJour(d) : '') + (x.ou ? ' · où il est : ' + santeOuNom(x.ou) : ''),
+        titre: x.titre, meta: ['Document', santeSpeNom(x.spe), santeOuNom(x.ou)].filter(Boolean).join(' · '),
+        ouvrir: function() { closeSearch(); enterPole('sante'); santeOuvrir('doc', x.id); } });
+    });
+  }
+  return out;
+}
+// Les extraits qui répondent à la question : mots rares en commun (poids par rareté), puis ce qui arrive bientôt
+function askChoisir(q, corpus) {
+  var mots = askMots(q), brut = srNorm(q), maintenant = Date.now(), N = corpus.length || 1;
+  var df = {};
+  mots.forEach(function(m) { df[m] = corpus.filter(function(c) { return askContient(c.mots, m); }).length; });
+  var temps = ASK_TEMPS.test(brut), afaire = ASK_AFAIRE.test(brut);
+  corpus.forEach(function(c) {
+    var sc = 0;
+    mots.forEach(function(m) { if(df[m] && askContient(c.mots, m)) sc += Math.log(1 + N / df[m]); });
+    if(temps && c.at && c.at >= maintenant - 12 * 36e5 && c.at <= maintenant + 21 * 864e5) sc += 1.5;
+    if(afaire && c.afaire && (c.k === 'pensee' || c.k === 'jur')) sc += sc > 0 ? 0.6 : 0.8;
+    if(sc > 0) {
+      if(c.k === 'pensee') sc += 0.3;
+      if(c.afaire) sc += 0.2;
+      if(c.date) sc += 0.3 * Math.max(0, 1 - (maintenant - c.date) / (120 * 864e5));
+    }
+    c.sc = sc;
+  });
+  return corpus.filter(function(c) { return c.sc > 0; }).sort(function(a, b) { return b.sc - a.sc || b.date - a.date; }).slice(0, 20);
+}
+function askContient(liste, m) {
+  for(var i = 0; i < liste.length; i++) {
+    var w = liste[i];
+    if(w === m) return true;
+    if(m.length >= 5 && w.length >= 5 && (w.indexOf(m) === 0 || m.indexOf(w) === 0)) return true;
+  }
+  return false;
+}
+// Ce qui est parti, en mots vrais : « 2 pensées, 1 rendez-vous »
+var ASK_NOMS = { pensee: ['pensée', 'pensées'], tache: ['tâche', 'tâches'], projet: ['projet', 'projets'], journal: ['entrée de journal', 'entrées de journal'],
+  jur: ['élément juridique', 'éléments juridiques'], rdv: ['rendez-vous', 'rendez-vous'], doc: ['document de santé', 'documents de santé'] };
+function askParti(liste) {
+  var n = {}; liste.forEach(function(c) { n[c.k] = (n[c.k] || 0) + 1; });
+  return Object.keys(ASK_NOMS).filter(function(k) { return n[k]; }).map(function(k) { return n[k] + ' ' + ASK_NOMS[k][n[k] > 1 ? 1 : 0]; }).join(', ');
+}
+function askLire(txt, nb) {
+  txt = String(txt || '').replace(/```(?:json)?/gi, '').trim();
+  var a = txt.indexOf('{'), b = txt.lastIndexOf('}'), o = null;
+  if(a >= 0 && b > a) { try { o = JSON.parse(txt.slice(a, b + 1)); } catch(e) { o = null; } }
+  var rep = o ? (o.reponse || o['réponse'] || o.answer || o.texte || '') : (a < 0 ? txt : '');
+  rep = String(rep || '').replace(/\s+/g, ' ').trim().slice(0, 600).replace(/ ([?!:;»])/g, ' $1').replace(/« /g, '« ');
+  if(!rep) return { raison: 'format' };
+  var src = o && Array.isArray(o.sources) ? o.sources : [];
+  var vus = {}, sources = src.map(function(x) { return parseInt(x, 10); }).filter(function(x) { if(!(x >= 1 && x <= nb) || vus[x]) return false; vus[x] = 1; return true; }).slice(0, 5);
+  return { reponse: rep, sources: sources };
+}
+async function askLancer(q) {
+  q = String(q || '').trim(); if(q.length < 2) return;
+  var n = ++_ask.n;
+  _ask.q = srNorm(q); _ask.res = { attente: true };
+  askRedessiner();
+  var choisis = askChoisir(q, askCorpus());
+  if(!choisis.length) {
+    _ask.res = { reponse: 'Je ne trouve rien dans ARC sur ça.', sources: [], parti: 'Rien n’est parti à Claude.' };
+    askRedessiner(); return;
+  }
+  try {
+    if(!(_sb && getUID()) || navigator.onLine === false) throw projetErreur(navigator.onLine === false ? 'reseau' : 'session');
+    var sess = await _sb.auth.getSession(), token = sess.data && sess.data.session && sess.data.session.access_token;
+    if(!token) throw projetErreur('session');
+    var maintenant = new Date();
+    var contenu = 'Aujourd’hui : ' + askJour(maintenant) + ', ' + maintenant.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', ' h ') + '.\n' +
+      'Question de Rayan : « ' + q + ' »\n\nExtraits :\n' + choisis.map(function(c, i) { return '[' + (i + 1) + '] ' + c.texte.replace(/\s+/g, ' ').slice(0, 420); }).join('\n');
+    var resp;
+    try {
+      resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 600, system: ASK_SYSTEM, messages: [{ role: 'user', content: contenu }] }) });
+    } catch(e) { throw projetErreur('reseau'); }
+    if(!resp.ok) throw projetErreur(resp.status === 401 ? 'expire' : resp.status === 403 ? 'interdit' : resp.status === 429 ? 'trop' : resp.status >= 500 ? 'panne' : 'refus');
+    var data = await resp.json().catch(function() { return {}; });
+    var txt = (data.content || []).filter(function(c) { return c && c.type === 'text'; }).map(function(c) { return c.text; }).join('');
+    if(!txt.trim()) throw projetErreur('vide');
+    var lu = askLire(txt, choisis.length);
+    if(!lu.reponse) throw projetErreur(data.stop_reason === 'max_tokens' ? 'coupee' : lu.raison);
+    if(n !== _ask.n) return;
+    _ask.res = { reponse: lu.reponse, sources: lu.sources.map(function(i) { return choisis[i - 1]; }), parti: 'Parti à Claude : ' + askParti(choisis) + '.' };
+  } catch(e) {
+    if(n !== _ask.n) return;
+    var raison = e.raison || 'reseau';
+    console.warn('Demande à ARC : impossible :', raison);
+    _ask.res = { erreur: 'ARC n’a pas pu répondre : ' + PJ_RAISONS[raison] };
+  }
+  askRedessiner();
+}
+function askRedessiner() { var inp = document.getElementById('search-inp'); if(inp && document.getElementById('search-modal').classList.contains('open')) searchQuery(inp.value); }
+// En tête des résultats : la touche « Demander à ARC », ou la réponse si elle répond à ce qui est tapé
+function askRendre(box, q) {
+  q = String(q || '').trim(); if(q.length < 2) return;
+  var tete = document.createElement('div'); tete.className = 'sr-ask-zone';
+  var r = _ask.res && _ask.q === srNorm(q) ? _ask.res : null;
+  if(!r) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'sr-ask'; b.id = 'sr-ask';
+    var ic = document.createElement('span'); ic.className = 'sr-arc'; ic.setAttribute('aria-hidden', 'true'); b.appendChild(ic);
+    var tx = document.createElement('span'); tx.className = 'sr-ask-t';
+    var l1 = document.createElement('span'); l1.className = 'sr-ask-l1'; l1.textContent = 'Demander à ARC'; tx.appendChild(l1);
+    var l2 = document.createElement('span'); l2.className = 'sr-ask-l2'; l2.textContent = '« ' + q + ' »'; tx.appendChild(l2);
+    b.appendChild(tx);
+    b.addEventListener('click', function() { askLancer(q); });
+    tete.appendChild(b);
+  } else {
+    var c = document.createElement('div'); c.className = 'sr-ans'; c.id = 'sr-ans'; c.setAttribute('aria-live', 'polite');
+    var h = document.createElement('div'); h.className = 'sr-ans-h';
+    var ic2 = document.createElement('span'); ic2.className = 'sr-arc'; ic2.setAttribute('aria-hidden', 'true'); h.appendChild(ic2);
+    var hn = document.createElement('span'); hn.textContent = 'ARC'; h.appendChild(hn);
+    c.appendChild(h);
+    var p = document.createElement('p'); p.className = 'sr-ans-txt';
+    p.textContent = r.attente ? 'ARC cherche dans ta mémoire…' : (r.erreur || r.reponse);
+    if(r.attente || r.erreur) p.classList.add('doux');
+    c.appendChild(p);
+    (r.sources || []).forEach(function(it) {
+      var sb = document.createElement('button'); sb.type = 'button'; sb.className = 'sr-src';
+      var st = document.createElement('span'); st.className = 'sr-text'; st.textContent = String(it.titre || '').replace(/\s+/g, ' ').trim(); sb.appendChild(st);
+      var sm = document.createElement('span'); sm.className = 'sr-meta'; sm.textContent = it.meta; sb.appendChild(sm);
+      sb.addEventListener('click', it.ouvrir); c.appendChild(sb);
+    });
+    if(r.parti) { var pa = document.createElement('div'); pa.className = 'sr-ans-parti'; pa.textContent = r.parti; c.appendChild(pa); }
+    if(r.erreur) { var re = document.createElement('button'); re.type = 'button'; re.className = 'sr-ask-re'; re.textContent = 'Demander à nouveau'; re.addEventListener('click', function() { askLancer(q); }); c.appendChild(re); }
+    tete.appendChild(c);
+    var rien = box.querySelector('.sr-empty'); if(rien) rien.remove();   // sous une réponse, « Rien pour … » n'apprend rien
+  }
+  box.insertBefore(tete, box.firstChild);
+}
+
 
 
 
