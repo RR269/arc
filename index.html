@@ -2239,10 +2239,10 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #carte .lg-fait{border-radius:50%;background:rgba(199,199,204,.55);width:4px!important;height:4px!important}
 #carte .lg-orbite{border-radius:50%;background:#FFB340;box-shadow:0 0 6px 2px rgba(255,179,64,.5)}
 /* La carte dans chaque monde : ouvre la carte centrée sur ce projet, son panneau ouvert */
-#S2 .w-carte{display:inline-flex;align-items:center;gap:9px;min-height:44px;margin-top:12px;padding:0 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--wc,#fff) 38%,transparent);background:color-mix(in srgb,var(--wc,#fff) 8%,rgba(255,255,255,.03));font:500 15px var(--fa);color:#F2F2F7;cursor:pointer}
-#S2 .w-carte i{width:14px;height:14px;border-radius:50%;border:1.6px solid var(--wc,#fff);position:relative;box-sizing:border-box}
-#S2 .w-carte i::after{content:"";position:absolute;left:3px;top:3px;width:5px;height:5px;border-radius:50%;background:var(--wc,#fff);box-shadow:0 0 6px var(--wc,#fff)}
-#S2 .w-carte:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+:is(#S2,#S3,#S4) .w-carte{display:inline-flex;align-items:center;gap:9px;min-height:44px;margin-top:12px;padding:0 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--wc,#fff) 38%,transparent);background:color-mix(in srgb,var(--wc,#fff) 8%,rgba(255,255,255,.03));font:500 15px var(--fa);color:#F2F2F7;cursor:pointer}
+:is(#S2,#S3,#S4) .w-carte i{width:14px;height:14px;border-radius:50%;border:1.6px solid var(--wc,#fff);position:relative;box-sizing:border-box}
+:is(#S2,#S3,#S4) .w-carte i::after{content:"";position:absolute;left:3px;top:3px;width:5px;height:5px;border-radius:50%;background:var(--wc,#fff);box-shadow:0 0 6px var(--wc,#fff)}
+:is(#S2,#S3,#S4) .w-carte:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 /* Le panneau d'un espace : la carte situe, le panneau dit (étude de la carte, étape 3) */
 #carte .carte-panneau{position:absolute;left:0;right:0;bottom:0;max-height:min(58vh,calc(100% - 200px));display:flex;flex-direction:column;padding:0 16px calc(var(--depot-space,90px) + 6px);border-radius:24px 24px 0 0;border-top:1px solid color-mix(in srgb,var(--pn,#fff) 42%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--pn,#fff) 10%,transparent),rgba(255,255,255,0) 120px),rgba(10,10,14,.94);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);font-family:var(--fa);box-shadow:0 -18px 50px rgba(0,0,0,.65);transform:translateY(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 #carte .carte-panneau[hidden]{display:none}
@@ -2616,6 +2616,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <div class="sm-hero">
         <div class="sm-titre">Ma santé</div>
         <div class="sm-sous" id="sm-sous"></div>
+        <button class="w-carte" type="button" data-carte="sante" style="--wc:#30d158"><i aria-hidden="true"></i>Voir sur la carte</button>
       </div>
 
       <div class="x-horizon" aria-hidden="true"></div>
@@ -2860,6 +2861,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <div class="jur-hero-info">
           <div class="jur-hero-title">Mon dossier juridique</div>
           <div class="jur-stats-row" id="jur-stats-row"></div>
+          <button class="w-carte" type="button" data-carte="juridique" style="--wc:#0a84ff"><i aria-hidden="true"></i>Voir sur la carte</button>
         </div>
       </div>
 
@@ -5409,6 +5411,7 @@ document.addEventListener("click",function(ev){
   // Back buttons
   if(t.id==="btn-back"||t.closest("#btn-back")){ goHome(); return; }
   if(t.closest("#w-carte")){ if(CUR && CUR.wid!=null) carteSur(CUR.wid); return; }
+  var vc=t.closest("[data-carte]"); if(vc){ carteSur(vc.dataset.carte); return; }
   if(t.id==="wband-more"){ descRepli(t.getAttribute("aria-expanded")!=="true"); return; }
   if(t.id==="btn-back-sante"||t.closest("#btn-back-sante")){ goHome(); return; }
   if(t.id==="btn-back-jur"||t.closest("#btn-back-jur")){ goHome(); return; }
@@ -7809,6 +7812,7 @@ function plDisposer(G, D, carte) {
     var parRang = Math.max(1, Math.floor((FW - 2 * marge) / cw));
     for(var i = 0; i < liste.length; i += parRang) {
       var ligne = liste.slice(i, i + parRang), n = ligne.length, pas = Math.min(cw * 1.6, (FW - 2 * marge) / n), x0 = FW / 2 - pas * (n - 1) / 2;
+      sec.xg = Math.min(sec.xg == null ? 1e9 : sec.xg, x0 - pas / 2);
       ligne.forEach(function(e, j) {
         var x = x0 + j * pas;
         e.cap = [x, y + ch * (carte ? .36 : .42) + sag(x)];
@@ -7930,7 +7934,8 @@ function plDessiner(V, now) {
   if(V.carte) {
     ctx.font = '600 13px ' + fam;
     sc.sections.forEach(function(sec) {
-      var x = sec.cle === 'vie' ? sec.x0 + 10 : 16 / s - V.tx / s;
+      // Le titre se pose juste à gauche de la première case de sa rangée (pas au bord d'un écran large)
+      var x = sec.cle === 'vie' ? sec.x0 + 10 : Math.max(16 / s - V.tx / s, (sec.xg || 0) + 4);
       x = sec.cle === 'vie' ? x : Math.max(6, x);
       var p = P([x, sec.y0 + 11 + sc.sag(x)]);
       if(sec.cle !== 'vie') p[0] = Math.max(16, p[0]);

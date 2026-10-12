@@ -6,7 +6,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 - `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 750 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
-- `sw.js` : service worker, réseau d'abord, cache `arc-v6` en secours hors ligne.
+- `sw.js` : service worker, réseau d'abord (la page et les fichiers d'ARC toujours revalidés), cache `arc-v7` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
 - `tests/` (Playwright, outil de développement seulement ; mode d'emploi en tête de `tests/depot.mjs`) :
   `depot.mjs` (dépôt), `rangement.mjs` (rangement), `matin.mjs` (point du matin, horloge contrôlée),
@@ -24,7 +24,8 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `projet.mjs` (« En faire un projet » : proposition de Claude, création, accueil, rechargement, erreurs, autre appareil, charte),
   `relier.mjs` (projets liés et mémoire qui revient : proposition avec raison, « Relier », « Pas lié », rechargement, endormi, accueil, synchronisation, charte),
   `mesure.mjs` (outil commun : lecture d'image et mesure du contraste, sans dépendance),
-  `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`).
+  `proxy.mjs` (proxy hors ligne, sans dépendance : `node tests/proxy.mjs`),
+  `sw.mjs` (service worker : une page servie avec `max-age=600` est redemandée au serveur à chaque réouverture).
 - `manifest.json`, `icon-192.png`, `icon-512.png` : installation sur l'écran d'accueil.
 
 ## Ce que fait ARC
@@ -63,7 +64,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 - Une cause se prouve avant de se corriger : citer `fichier:ligne`, ou la commande et sa sortie.
 - Après chaque modification, charger la page dans un navigateur (Playwright) et vérifier : aucune erreur de console,
   les cinq mondes et les deux pôles s'ouvrent, le nombre de `<div` égale le nombre de `</div>`.
-  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/synchro.mjs`, `tests/projet.mjs`, `tests/depot.mjs`, `tests/rangement.mjs`, `tests/matin.mjs` et `tests/relier.mjs` ; ne jamais toucher
+  Relancer `tests/proxy.mjs`, `tests/connexion.mjs`, `tests/entree-fond.mjs`, `tests/accueil.mjs`, `tests/mondes.mjs`, `tests/poles.mjs`, `tests/cockpit.mjs`, `tests/recherche.mjs`, `tests/synchro.mjs`, `tests/projet.mjs`, `tests/depot.mjs`, `tests/rangement.mjs`, `tests/matin.mjs`, `tests/relier.mjs` et `tests/sw.mjs` ; ne jamais toucher
   au dépôt, au rangement ni au point du matin sans que leurs tests passent.
 - Aucun secret dans le code : le dépôt est public. La clé `anon` Supabase est publique par nature, rien d'autre ne l'est.
 - Aucune lecture ni écriture dans la base Supabase sans l'accord de Rayan.
@@ -1342,6 +1343,26 @@ ARC en orbite, et Relier (11 octobre) :
   - Tests : relier 32/32 (contrôles de la fiche réécrits pour le panneau, deux ajoutés : toucher une pensée l'ouvre
     dans « Déposé » ; « Voir sur la carte » depuis ATLAS) ; les 14 suites passent ; 497 `<div` / 497 `</div>`.
     Vérifié dans Chromium seulement.
+
+- **PR #41 fusionnée le 12 octobre à 1 h 48.**
+- **La carte finie, et la nouvelle version visible tout de suite (branche `carte-finie`, 12 octobre 2 h)**. Rayan
+  (1 h 49) : « on continue, que choisis-tu ? ». Fait :
+  - **Cause prouvée du « 10 minutes »** : GitHub Pages sert la page avec `Cache-Control: max-age=600`, et le service
+    worker (`sw.js`, « réseau d'abord ») appelait `fetch(req)`, qui passe par le cache HTTP du navigateur. Preuve
+    (`tests/sw.mjs`, serveur local qui répond comme GitHub Pages, aucune interception, car Playwright couperait le
+    cache HTTP) : sur `main`, rouvrir ARC deux fois → **0** demande au serveur ; avec le correctif → 2 (en-tête
+    `max-age=0`). Correctif : les fichiers d'ARC (même origine) sont demandés avec `cache: 'no-cache'` (revalidation,
+    réponse 304 si rien n'a changé) ; les bibliothèques des CDN, figées par leur version, ne changent pas ; cache
+    hors ligne `arc-v7` (l'ancien `arc-v6` est retiré à l'activation). **Ce qui change pour Rayan** : après une
+    fusion, rouvrir ARC suffit, une fois GitHub Pages déployé (environ une minute) ; il n'y a plus 10 minutes à attendre.
+    Une seule fois encore, la première ouverture après cette mise en ligne passe par l'ancien service worker.
+  - **« Voir sur la carte » dans Santé et Juridique** (`data-carte`, même bouton que les projets, à la couleur du pôle) :
+    ouvre la carte sur leur panneau « Ma vie ».
+  - **Titres de rangée près de leurs cases** (étape 4 de l'étude) : « Endormis » et « En cours » se posent juste à gauche
+    de la première case de leur rangée (`sec.xg`), au lieu du bord de l'écran (loin des cases sur Mac).
+  - Tests : sw 3/3 (nouveau ; échoue sur `main` : 0 demande, cache `arc-v6`), relier 33/33 (un contrôle ajouté :
+    Santé et Juridique ouvrent leur panneau). Vérifié dans Chromium seulement : **le comportement du service worker
+    de Safari sur iPhone reste à constater par Rayan** (il suit la même norme). Les 15 suites passent ; 497 `<div` / 497 `</div>`.
 
 ### Décisions de Rayan (5 octobre)
 
