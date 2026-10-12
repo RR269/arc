@@ -5428,7 +5428,7 @@ function searchJur(q){
 }
 
 /* ═══ ARC PROPOSE (docs/ETUDE-POLES.md § 7, geste 2) ═══
-   Une pensée rangée en Santé ou en Juridique, avec un moment daté (le proxy ne garde un moment que s'il cite les mots
+   Une pensée rangée en Santé ou en Juridique, avec un moment daté (le proxy ne garde un moment que s’il cite les mots
    de la pensée) : ARC propose d'en faire un rendez-vous ou une échéance. Rien n'est créé sans Rayan : « Ajouter »
    ouvre la feuille du rendez-vous déjà remplie (il l'enregistre), ou ajoute l'échéance aux démarches. La spécialité
    est reconnue sur l'appareil par une liste de mots, sans IA. « Pas maintenant » n'est jamais reproposé (S.propNon). */
@@ -5450,10 +5450,24 @@ function propositions(cle) {
   var non = S.propNon || {}, deja = {}, debut = new Date(); debut.setHours(0, 0, 0, 0);
   if(cle === 'sante') santeRdv().forEach(function(r) { if(r.from) deja[r.from] = 1; });
   else JUR_SECTIONS.forEach(function(sec) { ((S.poles.juridique || {})[sec.id] || []).forEach(function(it) { if(it && it.from) deja[it.from] = 1; }); });
+  // Avec une date (aujourd'hui ou plus tard) ; ou, en Santé, sans date mais avec une spécialité reconnue dans la pensée
+  // (« Dentiste ») : la feuille demandera la date. Une date passée n'est jamais proposée.
   return penseesDe(cle).filter(function(x) {
-    var m = x.f.moment, d = m && m.type === 'datetime' ? new Date(m.at) : null;
-    return x.f.status === 'filed' && d && !isNaN(d) && d >= debut && !deja[x.t.id] && !non[cle + ':' + x.t.id];
-  }).sort(function(a, b) { return new Date(a.f.moment.at) - new Date(b.f.moment.at); });
+    if(x.f.status !== 'filed' || deja[x.t.id] || non[cle + ':' + x.t.id]) return false;
+    var d = propDate(x);
+    if(d) return d >= debut;
+    if(x.f.moment && x.f.moment.type === 'datetime') return false;
+    return cle === 'sante' && !!propSpe(x.t.body + ' ' + (x.f.step || ''));
+  }).sort(function(a, b) {
+    var da = propDate(a), db = propDate(b);
+    if(da && db) return da - db;
+    if(da || db) return da ? -1 : 1;
+    return new Date(b.t.created_at) - new Date(a.t.created_at);
+  });
+}
+function propDate(x) {
+  var m = x.f.moment, d = m && m.type === 'datetime' ? new Date(m.at) : null;
+  return d && !isNaN(d) ? d : null;
 }
 function propQuand(d) {
   var j = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -5464,13 +5478,13 @@ function renderProps(cle) {
   var l = propositions(cle), coul = cle === 'sante' ? '#30d158' : '#6FB7FF';
   box.textContent = ''; box.hidden = !l.length;
   l.slice(0, 3).forEach(function(x) {
-    var d = new Date(x.f.moment.at), spe = cle === 'sante' ? propSpe(x.t.body + ' ' + (x.f.step || '')) : '';
+    var d = propDate(x), spe = cle === 'sante' ? propSpe(x.t.body + ' ' + (x.f.step || '')) : '';
     var c = document.createElement('div'); c.className = 'wlien-prop'; c.dataset.tid = x.t.id; c.style.setProperty('--penc', coul);
     var q = document.createElement('div'); q.className = 'wlien-q';
     var pt = document.createElement('span'); pt.className = 'prop-pt'; pt.setAttribute('aria-hidden', 'true'); q.appendChild(pt);
     var qt = document.createElement('span'); qt.textContent = cle === 'sante' ? 'ARC propose un rendez-vous' + (spe ? ' : ' + santeSpeNom(spe) : '') : 'ARC propose une échéance'; q.appendChild(qt);
     c.appendChild(q);
-    var k = document.createElement('span'); k.className = 'prop-k'; k.textContent = propQuand(d); c.appendChild(k);
+    var k = document.createElement('span'); k.className = 'prop-k'; k.textContent = d ? propQuand(d) : 'Date à choisir'; c.appendChild(k);
     var w = document.createElement('div'); w.className = 'wlien-why'; w.textContent = 'De ta pensée : « ' + (x.t.body || '').replace(/\s+/g, ' ').trim() + ' »'; c.appendChild(w);
     var a = document.createElement('div'); a.className = 'wlien-acts';
     var non = document.createElement('button'); non.type = 'button'; non.className = 'prop-non'; non.textContent = 'Pas maintenant';
@@ -5483,7 +5497,7 @@ function renderProps(cle) {
 }
 function propAjouter(cle, x, d, spe) {
   var p2 = function(n) { return (n < 10 ? '0' : '') + n; };
-  var date = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()), heure = p2(d.getHours()) + ':' + p2(d.getMinutes());
+  var date = d ? d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) : '', heure = d ? p2(d.getHours()) + ':' + p2(d.getMinutes()) : '';
   if(cle === 'sante') { santeOuvrir('rdv', null, { spe: spe, date: date, heure: heure, from: x.t.id }); return; }
   if(!S.poles.juridique.demarches) S.poles.juridique.demarches = [];
   S.poles.juridique.demarches.push({ t: (x.f.step || x.t.body || '').trim(), priority: '', status: 'todo', deadline: date, ts: Date.now(), from: x.t.id });
@@ -8159,7 +8173,7 @@ function santeOuvrir(mode, id, pre) {
   prepVisible();
   document.getElementById('sm-err').textContent = '';
   m.classList.add('open'); m.scrollTop = 0;
-  setTimeout(function() { var c = document.getElementById(mode === 'rdv' ? (r ? 'sm-date' : (pre && pre.spe ? 'sm-qui' : 'sm-spe')) : 'sm-doc-titre'); if(c && !r) c.focus(); }, 60);
+  setTimeout(function() { var c = document.getElementById(mode === 'rdv' ? (r ? 'sm-date' : (pre && pre.spe ? (pre.date ? 'sm-qui' : 'sm-date') : 'sm-spe')) : 'sm-doc-titre'); if(c && !r) c.focus(); }, 60);
 }
 function santeFermer() { document.getElementById('sante-modal').classList.remove('open'); }
 function santeEnregistrer() {

@@ -1527,6 +1527,21 @@ ARC en orbite, et Relier (11 octobre) :
   chargée), mondes 7/7 (le titre d'un projet attendu en écriture d'Apple). **Non vérifiable ici** : le Chromium de test
   n'a ni San Francisco ni l'ancienne police, les images avant / après y sont identiques ; seul l'iPhone de Rayan montre
   le changement.
+- **PR #49 et #50 fusionnées le 12 octobre.** Rayan (21 h 15) : « pourquoi le rendez-vous dentiste n'apparaît pas sur le
+  corps ? » Réponse : le corps ne lit que les rendez-vous et documents enregistrés ; une pensée n'y va qu'après
+  « Ajouter » puis « Enregistrer ». Constaté par lui à 23 h 22 (« j'ai trouvé, c'est ok »).
+- **Santé propose aussi sans date (branche `sante-sans-date`, 12 octobre 23 h 30)**. Rayan (23 h 22) : « passons à la
+  suite ». Constat de son essai : « Dentiste », déposé sans jour ni heure, ne proposait rien. Maintenant, en Santé, une
+  pensée rangée, pas faite, sans date mais dont les mots nomment une spécialité (`propSpe`) devient « ARC propose un
+  rendez-vous : Dentiste · Date à choisir » ; « Ajouter » ouvre la feuille sur la date, vide ; sans date, « Indique la
+  date du rendez-vous. », rien n'est créé. Sans spécialité reconnue : rien. Une date passée : rien. En Juridique, rien ne
+  change (une échéance demande une date). Les datées passent devant, puis les plus récentes (`propDate`).
+  **`tests/rangement.mjs`, contrôle 20, ne dépend plus de l'heure** : il échouait de 23 h à minuit, sur `main` aussi
+  (prouvé à 23 h 44) ; il modifie maintenant l'étape au lieu de fixer « Ce soir ». « Ce soir » après 23 h reste une
+  décision de Rayan. Tests : pôles 19/19 (le contrôle des propositions vérifie le kiné sans date, la feuille sur la
+  date, le refus sans date, « Boire plus d'eau » jamais proposé, « Voir le notaire » sans date jamais proposé en
+  Juridique), rangement 26/26 à 23 h 45, les 13 autres suites passent ; 515 `<div` / 515 `</div>`. Vérifié dans
+  Chromium seulement.
 
 ### Décisions de Rayan (5 octobre)
 

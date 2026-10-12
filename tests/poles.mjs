@@ -316,13 +316,14 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
 
 /* ARC propose (12 octobre, docs/ETUDE-POLES.md § 7) : une pensée rangée en Santé ou en Juridique avec un moment daté devient
    une proposition ; rien n'est créé sans un geste ; « Ajouter » remplit la feuille du rendez-vous (spécialité reconnue)
-   ou ajoute l'échéance ; « Pas maintenant » n'est jamais reproposé, même après rechargement ; une pensée sans moment ou
-   au moment passé n'est pas proposée. Le Point du jour cite le rendez-vous et l'échéance du jour. */
+   ou ajoute l'échéance ; « Pas maintenant » n'est jamais reproposé, même après rechargement ; une pensée au moment passé
+   n'est pas proposée ; en Santé, une pensée sans date est proposée si une spécialité y est reconnue (« Date à choisir »,
+   la feuille demande la date), jamais sans spécialité ; en Juridique, jamais sans date. Le Point du jour cite le rendez-vous et l'échéance du jour. */
 {
   const ctx = await contexte({ width: 390, height: 844, tel: true });
   const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
   await page.waitForTimeout(500);
-  const T = ['Dentiste jeudi à 14 h pour la couronne', 'URSSAF : déclarer avant vendredi', 'Kiné sans date', 'Ophtalmo hier 9 h', 'Relancer le greffe lundi'];
+  const T = ['Dentiste jeudi à 14 h pour la couronne', 'URSSAF : déclarer avant vendredi', 'Kiné sans date', 'Ophtalmo hier 9 h', 'Relancer le greffe lundi', 'Boire plus d’eau', 'Voir le notaire'];
   for (const t of T) { await deposit(page, t); await page.waitForTimeout(200); }
   await page.evaluate(T => {
     const id = t => Object.values(_depot.thoughts).find(x => x.body === t).id;
@@ -332,6 +333,8 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
     rangeAdd(id(T[2]), { space: 'sante', status: 'filed', step: 'Prendre rendez-vous chez le kiné' }, 'ai');
     rangeAdd(id(T[3]), { space: 'sante', status: 'filed', step: 'Ophtalmo', moment: at(-1, 9) }, 'ai');
     rangeAdd(id(T[4]), { space: 'juridique', status: 'filed', step: 'Relancer le greffe', moment: at(5, 10) }, 'ai');
+    rangeAdd(id(T[5]), { space: 'sante', status: 'filed', step: '' }, 'ai');
+    rangeAdd(id(T[6]), { space: 'juridique', status: 'filed', step: 'Voir le notaire' }, 'ai');
     if (typeof matinClose === 'function') matinClose();
     enterPole('sante');
   }, T);
@@ -344,7 +347,15 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
   await page.click('#sprop .prop-oui'); await page.waitForTimeout(300);
   const feuille = await page.evaluate(() => ({ open: document.getElementById('sante-modal').classList.contains('open'), spe: document.getElementById('sm-spe').value, date: document.getElementById('sm-date').value, heure: document.getElementById('sm-heure').value, rdv: Object.keys(S.sante.rdv).length }));
   await page.click('#sm-ok'); await page.waitForTimeout(300);
-  const apres = await page.evaluate(() => { const r = Object.values(S.sante.rdv)[0]; return { n: Object.keys(S.sante.rdv).length, from: !!(r && r.from), props: document.querySelectorAll('#sprop .wlien-prop').length, cache: document.getElementById('sprop').hidden }; });
+  const apres = await page.evaluate(() => { const r = Object.values(S.sante.rdv)[0]; return { n: Object.keys(S.sante.rdv).length, from: !!(r && r.from), props: [...document.querySelectorAll('#sprop .wlien-prop')].map(c => c.textContent) }; });
+  // Sans date : « Kiné sans date » ; la feuille s'ouvre sur la date, vide ; sans date, rien n'est créé
+  await page.click('#sprop .prop-oui'); await page.waitForTimeout(300);
+  const kine = await page.evaluate(() => ({ spe: document.getElementById('sm-spe').value, date: document.getElementById('sm-date').value, heure: document.getElementById('sm-heure').value, focus: document.activeElement && document.activeElement.id }));
+  await page.click('#sm-ok'); await page.waitForTimeout(300);
+  const kineSans = await page.evaluate(() => ({ n: Object.keys(S.sante.rdv).length, open: document.getElementById('sante-modal').classList.contains('open'), err: document.getElementById('sante-modal').textContent.includes('Indique la date du rendez-vous') }));
+  await page.fill('#sm-date', (() => { const d = new Date(); d.setDate(d.getDate() + 9); return d.toISOString().slice(0, 10); })());
+  await page.click('#sm-ok'); await page.waitForTimeout(300);
+  const kineFin = await page.evaluate(() => ({ n: Object.keys(S.sante.rdv).length, kine: Object.values(S.sante.rdv).some(r => r.spe === 'kine' && r.from), props: document.querySelectorAll('#sprop .wlien-prop').length, cache: document.getElementById('sprop').hidden, zone: !!document.querySelector('#sc-corps [data-spe="kine"], #sc-corps .sc-e') }));
   await page.evaluate(() => enterPole('juridique')); await page.waitForTimeout(600);
   const jur = await page.evaluate(() => [...document.querySelectorAll('#jprop .wlien-prop')].map(c => c.textContent));
   await page.evaluate(() => [...document.querySelectorAll('#jprop .wlien-prop')].find(c => /greffe/.test(c.textContent)).querySelector('.prop-non').click()); await page.waitForTimeout(200);
@@ -365,14 +376,17 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
   await page.evaluate(() => [...document.querySelectorAll('#matin-body .matin-row[data-kind="ech"] button')].find(b => /fait/.test(b.textContent)).click()); await page.waitForTimeout(300);
   const fait = await page.evaluate(() => ({ st: S.poles.juridique.statut[0].status, lignes: document.querySelectorAll('#matin-body .matin-row[data-kind="ech"]').length }));
   const vraies = errors.filter(e => !/status of 500/.test(e));
-  ok(sante.length === 1 && /ARC propose un rendez-vous : Dentiste/.test(sante[0]) && /couronne/.test(sante[0]) && m.pire.ratio >= 4.5 && hBtn.every(h => h >= 44)
+  ok(sante.length === 2 && /ARC propose un rendez-vous : Dentiste/.test(sante[0]) && /couronne/.test(sante[0])
+     && /ARC propose un rendez-vous : Kiné/.test(sante[1]) && /Date à choisir/.test(sante[1]) && !sante.some(x => /eau|Ophtalmo/.test(x)) && m.pire.ratio >= 4.5 && hBtn.every(h => h >= 44)
      && avant === 0 && feuille.open && feuille.spe === 'dentiste' && feuille.heure === '14:00' && feuille.date && feuille.rdv === 0
-     && apres.n === 1 && apres.from && apres.props === 0 && apres.cache
+     && apres.n === 1 && apres.from && apres.props.length === 1 && /Kiné/.test(apres.props[0])
+     && kine.spe === 'kine' && kine.date === '' && kine.heure === '' && kine.focus === 'sm-date'
+     && kineSans.n === 1 && kineSans.open && kineSans.err && kineFin.n === 2 && kineFin.kine && kineFin.props === 0 && kineFin.cache
      && jur.length === 2 && jur.every(x => /ARC propose une échéance/.test(x)) && jApres.props === 0 && jApres.dem.length === 1 && /URSSAF\|true\|true/.test(jApres.dem[0]) && jApres.pts === 1 && recharge === 0
      && /^Aujourd['’]hui$/.test(matin.sec) && matin.lignes.some(l => /^rdv:Kiné · Mme Leroy/.test(l)) && matin.lignes.some(l => /^ech:Envoyer le Kbis/.test(l))
      && fait.st === 'done' && fait.lignes === 0 && !vraies.length,
-    'ARC propose : une pensée rangée en Santé avec un moment daté propose un rendez-vous (Dentiste reconnu), rien n\'est créé avant « Enregistrer » ; la feuille est remplie (spécialité, date, heure) ; ajoutée, la proposition disparaît ; en Juridique, « Ajouter » met l\'échéance sur l\'orbite, « Pas maintenant » tient après rechargement ; sans moment ou au moment passé : rien ; le Point du jour cite le rendez-vous et l\'échéance du jour, « C\'est fait » l\'y retire ; contraste, cibles',
-    JSON.stringify({ sante, contraste: m.pire, hBtn, avant, feuille, apres, jur, jApres, recharge, matin, fait, erreurs: vraies }));
+    'ARC propose : une pensée rangée en Santé avec un moment daté propose un rendez-vous (Dentiste reconnu) ; sans date mais avec une spécialité (Kiné), « Date à choisir », la feuille s\'ouvre sur la date et refuse sans elle ; sans spécialité, rien ; rien n\'est créé avant « Enregistrer » ; la feuille est remplie (spécialité, date, heure) ; ajoutée, la proposition disparaît ; en Juridique, « Ajouter » met l\'échéance sur l\'orbite, « Pas maintenant » tient après rechargement ; sans moment ou au moment passé : rien ; le Point du jour cite le rendez-vous et l\'échéance du jour, « C\'est fait » l\'y retire ; contraste, cibles',
+    JSON.stringify({ sante, contraste: m.pire, hBtn, avant, feuille, apres, kine, kineSans, kineFin, jur, jApres, recharge, matin, fait, erreurs: vraies }));
   await ctx.close();
 }
 
