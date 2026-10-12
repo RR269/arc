@@ -43,7 +43,10 @@ const waitFiled = (page, id) => page.waitForFunction(i => !!rangeIndex().ai[i], 
   const failTxt = await item(page, idFail).locator('.rg-wait').textContent();
   // Réseau revenu, une minute plus tard (pas deux essais dans la même minute) : nouvel essai, réussi cette fois
   fk.proxy = filingReply(ATLAS);
-  await page.clock.fastForward('01:05');
+  // L'horloge de Playwright n'avance parfois pas sous charge (mesuré le 12 octobre : 60 ms au lieu de 65 s après
+  // fastForward('01:05'), une fois sur vingt avec quatre navigateurs en parallèle) : on avance jusqu'à ce que la page
+  // voie vraiment la minute passée, sinon l'écart d'une minute entre deux essais bloque le nouvel essai (voulu).
+  for (let n = 0; n < 5 && !(await page.evaluate(i => rangeMayTry(i), idFail)); n++) await page.clock.fastForward('01:05');
   await page.evaluate(() => window.dispatchEvent(new Event('online')));
   await waitFiled(page, idFail).catch(() => {});
   const retried = await page.evaluate(i => !!rangeIndex().ai[i], idFail);
