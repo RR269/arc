@@ -376,6 +376,52 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
   await ctx.close();
 }
 
+/* Préparer un rendez-vous (12 octobre) : rien ne part sans le geste ; la demande dit la spécialité et la date, la consigne
+   interdit tout avis ; les propositions s'affichent sans doublon de ce qui est déjà noté ; « Ajouter à la fiche »
+   remplit les champs, rien n'est enregistré avant « Enregistrer » ; panne dite en mots ; rendez-vous passé et document :
+   pas de section. */
+{
+  const ctx = await contexte({ width: 390, height: 844, tel: true });
+  const fk = fakeSupabase();
+  let rep = { status: 200, json: { content: [{ type: 'text', text: '```json\n{"questions":["Combien de séances faut-il prévoir ?","Quel est le coût du soin ?"],"apporter":["Carte Vitale","Radio panoramique de 2025"]}\n```' }], stop_reason: 'end_turn' } };
+  fk.proxy = async () => rep;
+  const { page, errors } = await openPage(browser, url, { ctx, fk });
+  await page.evaluate(() => {
+    if (typeof matinClose === 'function') matinClose();
+    const d = new Date(); d.setDate(d.getDate() + 3); const p = n => (n < 10 ? '0' : '') + n, j = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    const v = new Date(); v.setDate(v.getDate() - 10); const jv = v.getFullYear() + '-' + p(v.getMonth() + 1) + '-' + p(v.getDate());
+    S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j, heure: '14:00', apporter: 'Carte Vitale', questions: '' }, b: { id: 'b', spe: 'kine', date: jv } };
+    saveS(); enterPole('sante'); santeOuvrir('rdv', 'a');
+  });
+  await page.waitForTimeout(400);
+  const avant = await page.evaluate(() => ({ vis: !document.getElementById('sm-prep').hidden, note: document.getElementById('sm-prep-note').textContent }));
+  const appels0 = fk.log.proxyCalls.length;
+  await page.click('#sm-prep-btn'); await page.waitForTimeout(500);
+  const demande = fk.log.proxyCalls[fk.log.proxyCalls.length - 1] || {};
+  const res = await page.evaluate(() => ({ q: [...document.querySelectorAll('#sm-prep-q li')].map(l => l.textContent), a: [...document.querySelectorAll('#sm-prep-a li')].map(l => l.textContent), etat: document.getElementById('sm-prep-etat').textContent, h: [...document.querySelectorAll('#sm-prep button')].filter(b => b.offsetParent).map(b => Math.round(b.getBoundingClientRect().height)) }));
+  await page.evaluate(() => document.getElementById('sm-prep').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const m = await mesurer(page, { racine: '#sm-prep', cadre: '#sm-prep' });
+  await page.click('#sm-prep-ajout'); await page.waitForTimeout(200);
+  const fiche = await page.evaluate(() => ({ q: document.getElementById('sm-questions').value, a: document.getElementById('sm-apporter').value, garde: S.sante.rdv.a.questions }));
+  await page.click('#sm-ok'); await page.waitForTimeout(300);
+  const enreg = await page.evaluate(() => S.sante.rdv.a.questions);
+  // panne
+  rep = { status: 503, json: { error: { message: 'panne' } } };
+  await page.evaluate(() => santeOuvrir('rdv', 'a')); await page.waitForTimeout(300);
+  await page.click('#sm-prep-btn'); await page.waitForTimeout(500);
+  const panne = await page.evaluate(() => ({ etat: document.getElementById('sm-prep-etat').textContent, res: document.getElementById('sm-prep-res').hidden }));
+  const caches = await page.evaluate(() => { santeOuvrir('rdv', 'b'); const passe = document.getElementById('sm-prep').hidden; santeOuvrir('doc'); const doc = document.getElementById('sm-prep').hidden; santeFermer(); return { passe, doc }; });
+  const vraies = errors.filter(e => !/status of 50[03]/.test(e));
+  ok(avant.vis && /spécialité, la date/.test(avant.note) && appels0 === fk.log.proxyCalls.length - 2
+     && /aucun diagnostic/.test(demande.system || '') && /Spécialité : Dentiste/.test(JSON.stringify(demande.messages || [])) && /14 h 00/.test(JSON.stringify(demande.messages || [])) && !demande.task
+     && res.q.length === 2 && res.a.join() === 'Radio panoramique de 2025' && /ARC propose/.test(res.etat) && res.h.every(h => h >= 44) && m.pire.ratio >= 4.5
+     && /- Combien de séances/.test(fiche.q) && /Carte Vitale\n- Radio panoramique/.test(fiche.a) && !fiche.garde && /Quel est le coût/.test(enreg)
+     && /en panne/.test(panne.etat) && panne.res && caches.passe && caches.doc && !vraies.length,
+    'Préparer un rendez-vous : rien ne part avant le geste ; la demande porte la spécialité et la date, la consigne interdit tout diagnostic ; propositions sans doublon (« Carte Vitale » déjà noté) ; « Ajouter à la fiche » remplit les champs, rien n\'est gardé avant « Enregistrer » ; panne dite en mots ; rendez-vous passé et document sans section ; cibles, contraste',
+    JSON.stringify({ avant, appels0, demande: { system: (demande.system || '').slice(0, 60), messages: demande.messages }, res, contraste: m.pire, fiche, enreg, panne, caches, erreurs: vraies }));
+  await ctx.close();
+}
+
 await browser.close(); server.close();
 if (process.env.DETAIL) for (const [k, v] of Object.entries(detail)) console.log(k + '\n  ' + v.sort().join('\n  '));
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);

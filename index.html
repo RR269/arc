@@ -2251,6 +2251,19 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #sm-form input[type=date],#sm-form input[type=time]{color-scheme:dark}
 #sm-form :is(input,textarea,select):focus{outline:none;border-color:#30d158;box-shadow:0 0 0 3px rgba(48,209,88,.22)}
 #sm-form .sm-duo{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:10px}
+#sante-modal .sm-prep{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:16px;border:1px solid rgba(48,209,88,.28);background:linear-gradient(180deg,rgba(48,209,88,.08),rgba(255,255,255,.01))}
+#sante-modal .sm-prep[hidden],#sante-modal .sm-prep-res[hidden]{display:none}
+#sante-modal .sm-prep-btn{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(48,209,88,.55);background:rgba(48,209,88,.14);font:600 15px var(--fa);letter-spacing:-.15px;color:#fff;cursor:pointer}
+#sante-modal .sm-prep-btn:disabled{opacity:.6;cursor:default}
+#sante-modal .sm-prep-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#sante-modal .sm-prep-note{font-size:13px;line-height:18px;color:#C4C4CC}
+#sante-modal .sm-prep-etat{font-size:14px;line-height:19px;color:#E5E5EA}
+#sante-modal .sm-prep-etat:empty{display:none}
+#sante-modal .sm-prep-res{display:flex;flex-direction:column;gap:6px}
+#sante-modal .sm-prep-t{margin-top:4px;font-size:14px;line-height:19px;font-weight:600;color:#F5F5F7}
+#sante-modal .sm-prep-res ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+#sante-modal .sm-prep-res li{position:relative;padding-left:16px;font-size:15px;line-height:20px;color:#E8E8EC}
+#sante-modal .sm-prep-res li::before{content:'';position:absolute;left:2px;top:7px;width:6px;height:6px;border-radius:50%;background:#30d158}
 #sante-modal .npj-acts{flex-direction:column-reverse;align-items:stretch;gap:6px}
 #sante-modal #sm-annuler{width:100%}
 #sm-suppr{display:block;width:100%;min-height:48px;margin-top:2px;border-radius:14px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:#FF9F9F;cursor:pointer}
@@ -3152,6 +3165,16 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <label class="npj-champ"><span class="npj-lbl">Lieu</span><input id="sm-lieu" type="text" maxlength="120" autocomplete="off" placeholder="Facultatif"></label>
           <label class="npj-champ"><span class="npj-lbl">À apporter</span><textarea id="sm-apporter" rows="2" maxlength="300" placeholder="Carte Vitale, ordonnance, radios…"></textarea></label>
           <label class="npj-champ"><span class="npj-lbl">Mes questions</span><textarea id="sm-questions" rows="2" maxlength="600" placeholder="Ce que tu veux demander"></textarea></label>
+          <div class="sm-prep" id="sm-prep" hidden>
+            <button type="button" class="sm-prep-btn" id="sm-prep-btn">Préparer ce rendez-vous avec ARC</button>
+            <div class="sm-prep-note" id="sm-prep-note">Part à Claude&nbsp;: la spécialité, la date, le lieu et ce que tu as écrit dans ce rendez-vous. Claude organise, il ne donne aucun avis médical.</div>
+            <div class="sm-prep-etat" id="sm-prep-etat" role="status"></div>
+            <div class="sm-prep-res" id="sm-prep-res" hidden>
+              <div class="sm-prep-t">Questions à poser</div><ul id="sm-prep-q"></ul>
+              <div class="sm-prep-t">À apporter</div><ul id="sm-prep-a"></ul>
+              <button type="button" class="sm-prep-btn" id="sm-prep-ajout">Ajouter à la fiche</button>
+            </div>
+          </div>
           <label class="npj-champ" id="sm-sortie-champ"><span class="npj-lbl">Ce qui en est sorti</span><textarea id="sm-sortie" rows="2" maxlength="600" placeholder="Ce qu'on t'a dit, la suite prévue"></textarea></label>
         </div>
         <div class="sm-mode" data-mode="doc">
@@ -5487,6 +5510,96 @@ function matinPoleRow(x) {
   }, x.k === 'rdv' ? 'main' : ''));
   row.appendChild(acts);
   return row;
+}
+/* ═══ PRÉPARER UN RENDEZ-VOUS (docs/ETUDE-POLES.md § 7, geste 3) ═══
+   Accord de Rayan (12 octobre, 5 h 48). Seulement quand il touche « Préparer ce rendez-vous avec ARC » : la spécialité,
+   la date, le lieu et ce qu'il a écrit dans ce rendez-vous partent au proxy (chemin de la discussion, rien d'enregistré
+   côté serveur). Claude propose des questions et des choses à apporter ; jamais d'avis, de diagnostic ni de traitement.
+   Rien n'est écrit dans la fiche sans « Ajouter à la fiche », ni enregistré sans « Enregistrer le rendez-vous ». */
+var PREP_SYSTEM = 'Tu aides Rayan à préparer un rendez-vous médical. Tu organises, tu ne soignes pas : aucun diagnostic, aucun avis sur son cas, ' +
+  'aucun traitement, aucune posologie, aucune interprétation de résultat. Propose seulement des questions qu’il pourrait poser au professionnel ' +
+  'et des choses utiles à apporter (carte Vitale, ordonnances, comptes rendus, résultats, liste de médicaments…), sans répéter ce qu’il a déjà noté. ' +
+  'Réponds UNIQUEMENT par un objet JSON, sans texte autour : {"questions": ["…"], "apporter": ["…"]}, 3 à 5 éléments chacun, courts ' +
+  '(moins de 90 caractères), en français, en le tutoyant.';
+var _prep = { n: 0, q: [], a: [] };
+function prepNorm(x) { return propNorm(x).replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+function prepLire(txt, dejaQ, dejaA) {
+  txt = String(txt || '').replace(/```(?:json)?/gi, '');
+  var a = txt.indexOf('{'), b = txt.lastIndexOf('}');
+  if(a < 0 || b <= a) return { raison: 'format' };
+  var o; try { o = JSON.parse(txt.slice(a, b + 1)); } catch(e) { return { raison: 'format' }; }
+  var cles = {};
+  Object.keys(o || {}).forEach(function(k) { cles[prepNorm(k).replace(/ /g, '')] = o[k]; });
+  var liste = function(v, deja) {
+    if(typeof v === 'string') v = v.split(/\n+/);
+    if(!Array.isArray(v)) return [];
+    var vus = {}; String(deja || '').split(/\n+/).forEach(function(l) { var n = prepNorm(l.replace(/^[\s\-–•]+/, '')); if(n) vus[n] = 1; });
+    return v.map(function(x) { return typeof x === 'string' ? x : (x && (x.t || x.texte || x.question || x.item) || ''); })
+      .map(function(x) { return String(x).replace(/\s+/g, ' ').replace(/^[\s\-–•\d.)]+/, '').trim().slice(0, 90).replace(/ ([?!:;»])/g, '\u00A0$1'); })
+      .filter(function(x) { var n = prepNorm(x); if(!n || vus[n]) return false; vus[n] = 1; return true; }).slice(0, 5);
+  };
+  var q = liste(cles.questions || cles.question, dejaQ), ap = liste(cles.apporter || cles.aapporter || cles.documents || cles.bring, dejaA);
+  if(!q.length && !ap.length) return { raison: 'format' };
+  return { q: q, a: ap };
+}
+function prepVisible() {
+  var box = document.getElementById('sm-prep'); if(!box) return;
+  var r = _sm && _sm.id ? S.sante.rdv[_sm.id] : null;
+  box.hidden = !(_sm && _sm.mode === 'rdv') || !!(r && !santeAVenir(r));
+  document.getElementById('sm-prep-res').hidden = true;
+  document.getElementById('sm-prep-etat').textContent = '';
+  document.getElementById('sm-prep-btn').disabled = false;
+  _prep.n++;
+}
+async function prepDemander() {
+  var g = function(i) { return document.getElementById(i).value.trim(); }, etat = document.getElementById('sm-prep-etat');
+  if(!g('sm-spe')) { etat.textContent = 'Choisis d’abord la spécialité.'; document.getElementById('sm-spe').focus(); return; }
+  if(!(_sb && getUID()) || navigator.onLine === false) { etat.textContent = 'Hors connexion : Claude n’est pas joignable.'; return; }
+  var n = ++_prep.n, btn = document.getElementById('sm-prep-btn'), m = document.getElementById('sante-modal');
+  btn.disabled = true; etat.textContent = 'ARC prépare ton rendez-vous…'; document.getElementById('sm-prep-res').hidden = true;
+  var quand = g('sm-date') ? new Date(g('sm-date') + 'T' + (g('sm-heure') || '12:00')).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + (g('sm-heure') ? ' à ' + g('sm-heure').replace(':', ' h ') : '') : 'pas encore fixée';
+  var lignes = ['Spécialité : ' + santeSpeNom(g('sm-spe')), 'Date : ' + quand];
+  if(g('sm-qui')) lignes.push('Praticien : ' + g('sm-qui'));
+  if(g('sm-lieu')) lignes.push('Lieu : ' + g('sm-lieu'));
+  if(g('sm-apporter')) lignes.push('Déjà prévu d’apporter : ' + g('sm-apporter'));
+  if(g('sm-questions')) lignes.push('Questions déjà notées : ' + g('sm-questions'));
+  try {
+    var sess = await _sb.auth.getSession(), token = sess.data && sess.data.session && sess.data.session.access_token;
+    if(!token) throw projetErreur('session');
+    var resp;
+    try {
+      resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 700, system: PREP_SYSTEM, messages: [{ role: 'user', content: lignes.join('\n') }] }) });
+    } catch(e) { throw projetErreur('reseau'); }
+    if(!resp.ok) throw projetErreur(resp.status === 401 ? 'expire' : resp.status === 403 ? 'interdit' : resp.status === 429 ? 'trop' : resp.status >= 500 ? 'panne' : 'refus');
+    var data = await resp.json().catch(function() { return {}; });
+    var txt = (data.content || []).filter(function(c) { return c && c.type === 'text'; }).map(function(c) { return c.text; }).join('');
+    if(!txt.trim()) throw projetErreur('vide');
+    var lu = prepLire(txt, g('sm-questions'), g('sm-apporter'));
+    if(!lu.q) throw projetErreur(data.stop_reason === 'max_tokens' ? 'coupee' : lu.raison);
+    if(n !== _prep.n || !m.classList.contains('open')) return;
+    _prep.q = lu.q; _prep.a = lu.a;
+    var remplir = function(id, l) { var ul = document.getElementById(id); ul.textContent = ''; l.forEach(function(x) { var li = document.createElement('li'); li.textContent = x; ul.appendChild(li); }); ul.previousElementSibling.hidden = !l.length; ul.hidden = !l.length; };
+    remplir('sm-prep-q', lu.q); remplir('sm-prep-a', lu.a);
+    document.getElementById('sm-prep-res').hidden = false;
+    etat.textContent = 'ARC propose. Garde ce qui te sert.';
+  } catch(e) {
+    if(n !== _prep.n) return;
+    var raison = e.raison || 'reseau';
+    console.warn('Préparer : impossible :', raison);
+    etat.textContent = 'ARC n’a pas pu préparer ce rendez-vous : ' + PJ_RAISONS[raison];
+  }
+  btn.disabled = false;
+}
+function prepAjouter() {
+  var ajoute = function(id, l) {
+    var ta = document.getElementById(id), max = +ta.getAttribute('maxlength') || 600, v = ta.value.replace(/\s+$/, '');
+    l.forEach(function(x) { var nv = (v ? v + '\n' : '') + '- ' + x; if(nv.length <= max) v = nv; });
+    ta.value = v;
+  };
+  ajoute('sm-questions', _prep.q); ajoute('sm-apporter', _prep.a);
+  document.getElementById('sm-prep-res').hidden = true;
+  document.getElementById('sm-prep-etat').textContent = 'Ajouté à la fiche. Enregistre le rendez-vous pour le garder.';
 }
 /* ═══ L'ORBITE (docs/ETUDE-POLES.md, Juridique) ═══
    Source : les éléments du dossier qui ont une date et ne sont pas faits (S.poles.juridique, rien de nouveau dans S).
@@ -8008,6 +8121,7 @@ function santeOuvrir(mode, id, pre) {
   }
   document.getElementById('sm-suppr').hidden = !r;
   document.getElementById('sm-suppr').classList.remove('arme');
+  prepVisible();
   document.getElementById('sm-err').textContent = '';
   m.classList.add('open'); m.scrollTop = 0;
   setTimeout(function() { var c = document.getElementById(mode === 'rdv' ? (r ? 'sm-date' : (pre && pre.spe ? 'sm-qui' : 'sm-spe')) : 'sm-doc-titre'); if(c && !r) c.focus(); }, 60);
@@ -8054,6 +8168,8 @@ function santeSupprimer() {
   [].forEach.call(document.querySelectorAll('#sc-corps .sc-v'), function(b) { b.addEventListener('click', function() { _scVue = b.getAttribute('data-vue'); renderCorps(); }); });
   on('sc-t-range', 'input', function(e) { scTempsGlisse(e.target); });
   on('jo-ajout', 'click', joAjouter);
+  on('sm-prep-btn', 'click', prepDemander);
+  on('sm-prep-ajout', 'click', prepAjouter);
   on('sc-t-auj', 'click', function() { _scDate = null; renderCorps(); });
   on('sm-fermer', 'click', santeFermer); on('sm-annuler', 'click', santeFermer);
   on('sm-suppr', 'click', santeSupprimer);

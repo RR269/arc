@@ -1467,8 +1467,23 @@ ARC en orbite, et Relier (11 octobre) :
     proposition retirée une fois ajoutée, échéance sur l'orbite, « Pas maintenant » après rechargement, pensée sans moment
     ou au moment passé jamais proposée, Point du jour, « C'est fait » depuis le Point du jour, contraste, cibles).
     Vérifié dans Chromium seulement.
-  - **Pas fait, attend la réponse de Rayan sur les données** : « Préparer ce rendez-vous » avec Claude (enverrait le
-    rendez-vous et la spécialité au proxy).
+  - « Préparer ce rendez-vous » avec Claude : fait ensuite, voir plus bas (accord de Rayan, 5 h 48).
+- **Préparer un rendez-vous (branche `sante-preparer`, partie de `poles-gestes`, 12 octobre 6 h)**. À la question « la
+  spécialité, la date et tes notes du rendez-vous partiraient au proxy : d'accord ? », Rayan (5 h 48) : « go on
+  continue », lu comme oui. **La PR #46 se fusionne d'abord, celle-ci ensuite.** Fait :
+  - Dans la feuille d'un rendez-vous à venir (ou nouveau), sous « Mes questions » : « Préparer ce rendez-vous avec ARC »
+    et la ligne vraie « Part à Claude : la spécialité, la date, le lieu et ce que tu as écrit dans ce rendez-vous. Claude
+    organise, il ne donne aucun avis médical. » **Rien ne part sans ce geste** (contrôlé). Pas de section pour un
+    rendez-vous passé ni pour un document.
+  - Chemin de la discussion du proxy (`prepDemander`, 700 jetons, **aucun redéploiement**) ; consigne `PREP_SYSTEM` :
+    organiser seulement, aucun diagnostic, avis, traitement, posologie ni interprétation ; JSON `questions` / `apporter`,
+    3 à 5 chacun. Lecture tolérante (`prepLire`) ; ce qui est déjà noté n'est pas reproposé.
+  - « Questions à poser » et « À apporter » en listes ; « Ajouter à la fiche » (`prepAjouter`) les ajoute aux champs
+    (« - … », dans la limite de chaque champ) ; **rien n'est gardé avant « Enregistrer le rendez-vous »**.
+  - Panne, session, réseau : la raison en mots (`PJ_RAISONS`, partagé avec « En faire un projet »).
+  - Tests : pôles 19/19 (un contrôle ajouté : aucun appel avant le geste, demande et consigne, sans doublon, ajout à la
+    fiche, rien d'enregistré avant « Enregistrer », panne, sections cachées, cibles, contraste). Vérifié dans Chromium
+    seulement, contre un faux proxy : **le vrai Claude reste à essayer par Rayan.**
 
 ### Décisions de Rayan (5 octobre)
 
