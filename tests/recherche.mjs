@@ -139,6 +139,35 @@ for (const vp of [{ n: 'iPhone 390 × 844', width: 390, height: 844, tel: true }
   await page.context().close();
 }
 
+// ── Santé dans la recherche, et Juridique filtré qui marque le bon élément (12 octobre) ──
+{
+  const { page, errors } = await contexte({ width: 390, height: 844, tel: true });
+  await page.evaluate(() => {
+    if (typeof matinClose === 'function') matinClose();
+    const d = new Date(); d.setDate(d.getDate() + 3); const p = n => (n < 10 ? '0' : '') + n, j = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j, heure: '14:00', qui: 'Dr Martin', questions: 'Combien coûte la couronne ?' } };
+    S.sante.docs = { d: { id: 'd', titre: 'Ordonnance lunettes', spe: 'ophtalmo', date: '2026-03-20', ou: 'papier' } };
+    S.poles.juridique = { demarches: [{ t: 'Appeler la banque', status: 'todo' }, { t: 'Déclaration URSSAF', status: 'todo', deadline: j }] };
+    saveS();
+  });
+  await chercher(page, 'dentiste'); const a = await vus(page);
+  await chercher(page, 'couronne'); const b = await vus(page);
+  await chercher(page, 'ordonnance'); const c = await vus(page);
+  await chercher(page, 'urssaf'); const e = await vus(page);
+  await chercher(page, 'couronne'); await page.tap('#search-results .sr-item'); await page.waitForTimeout(400);
+  const o = await page.evaluate(() => ({ sante: !document.getElementById('S3').classList.contains('off'), feuille: document.getElementById('sante-modal').classList.contains('open'), id: _sm && _sm.id }));
+  await page.evaluate(() => { santeFermer(); enterPole('juridique'); searchJur('urssaf'); }); await page.waitForTimeout(300);
+  await page.click('#jur-body-demarches [data-action="jur-item-done"]'); await page.waitForTimeout(200);
+  const jur = await page.evaluate(() => S.poles.juridique.demarches.map(x => x.status));
+  ok(a.g['Santé'] && /^Dentiste · Dr Martin$/.test(a.g['Santé'][0].t) && /Rendez-vous · .* · à venir/.test(a.g['Santé'][0].meta)
+     && b.g['Santé'] && /couronne/.test(b.g['Santé'][0].t) && /Rendez-vous Dentiste/.test(b.g['Santé'][0].meta)
+     && c.g['Santé'] && /Ordonnance lunettes/.test(c.g['Santé'][0].t) && /Document · Ophtalmo/.test(c.g['Santé'][0].meta)
+     && e.g['Juridique'] && /Dans 3 j/.test(e.g['Juridique'][0].meta) && o.sante && o.feuille && o.id === 'a' && jur.join() === 'todo,done' && !errors.length,
+    'Santé dans la recherche : un rendez-vous par sa spécialité ou ses notes, un document par son nom, ouverts dans leur feuille ; une démarche datée dit quand ; dans Juridique filtré, « Fait » marque le bon élément (avant : celui du même rang dans la liste complète)',
+    JSON.stringify({ a: a.g['Santé'], b: b.g['Santé'], c: c.g['Santé'], e: e.g['Juridique'], o, jur, errors }));
+  await page.context().close();
+}
+
 await browser.close(); server.close();
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);
 const good = results.filter(r => r.ok).length;

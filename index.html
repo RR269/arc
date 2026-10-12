@@ -5318,6 +5318,9 @@ function renderJurSections(filter){
   var html = '';
   JUR_SECTIONS.forEach(function(sec){
     var items = S.poles.juridique[sec.id] || [];
+    // L'indice de chaque élément reste celui du dossier, même filtré (avant le 12 octobre, « Fait » et la croix visaient
+    // l'élément de même rang dans la liste complète : la recherche « urssaf » faisait marquer « Appeler la banque »).
+    var rang = new Map(items.map(function(it, i){ return [it, i]; }));
     if(filter) items = items.filter(function(it){ return it.t.toLowerCase().indexOf(filter.toLowerCase()) !== -1; });
     var doneCount = items.filter(function(it){ return it.status === 'done'; }).length;
     var urgentCount = items.filter(function(it){
@@ -5336,7 +5339,8 @@ function renderJurSections(filter){
       '</div>' +
       '<div class="jur-sec-body" id="jur-body-'+sec.id+'">';
     if(!items.length) html += '<div class="jur-empty">Aucun élément pour l\'instant.</div>';
-    items.forEach(function(item, idx){
+    items.forEach(function(item){
+      var idx = rang.get(item);
       var dotColor = item.status === 'done' ? '#30d158' : getUrgencyColor(item.deadline);
       var dlHtml = '';
       if(item.deadline && item.status !== 'done'){
@@ -6268,7 +6272,7 @@ function searchQuery(q) {
   box.innerHTML = ''; _srItems = []; _srSel = 0;
   var vide = function(txt) { var e = document.createElement('div'); e.className = 'sr-empty'; e.textContent = txt; box.appendChild(e); };
   var mots = srNorm(q).split(/\s+/).filter(function(m) { return m; });
-  if(!mots.length || mots.join('').length < 2) { vide('Tes pensées, tes tâches et leurs notes, tes projets, leur journal et ton dossier juridique.'); return; }
+  if(!mots.length || mots.join('').length < 2) { vide('Tes pensées, tes tâches et leurs notes, tes projets, leur journal, ta santé et ton dossier juridique.'); return; }
   var groupes = [];
   // Pensées déposées
   var gp = [];
@@ -6316,10 +6320,31 @@ function searchQuery(q) {
   if(S.poles && S.poles.juridique) JUR_SECTIONS.forEach(function(sec) {
     (S.poles.juridique[sec.id] || []).forEach(function(it) {
       if(!it || !srMatch(it.t, mots)) return;
-      gl.push({ texte: srExtrait(it.t, mots), meta: 'Juridique · ' + sec.title, ouvrir: function() { closeSearch(); enterPole('juridique'); var ji = document.getElementById('jur-search-inp'); if(ji) ji.value = q; searchJur(q); } });
+      var jj = it.deadline && it.status !== 'done' ? joJours(it.deadline) : null;
+      gl.push({ texte: srExtrait(it.t, mots), meta: ['Juridique · ' + sec.title, it.status === 'done' ? 'Fait' : (jj !== null ? joQuand(jj) : '')].filter(Boolean).join(' · '), ouvrir: function() { closeSearch(); enterPole('juridique'); var ji = document.getElementById('jur-search-inp'); if(ji) ji.value = q; searchJur(q); } });
     });
   });
   groupes.push(['Juridique', gl]);
+  // Santé : rendez-vous (spécialité, praticien, lieu, notes) et documents ; ouverts dans leur feuille
+  var gs = [];
+  if(S.sante) {
+    santeRdv().slice().sort(function(a, b) { return santeQuand(b) - santeQuand(a); }).forEach(function(r) {
+      var nom = santeSpeNom(r.spe) || 'Rendez-vous', tete = [nom, r.qui].filter(Boolean).join(' · ');
+      var notes = [r.lieu, r.apporter, r.questions, r.sortie].filter(Boolean).join(' · ');
+      var parTete = srMatch(tete, mots), parNotes = !parTete && notes && srMatch(tete + ' ' + notes, mots);
+      if(!parTete && !parNotes) return;
+      var d = santeQuand(r);
+      gs.push({ texte: parTete ? tete : srExtrait(notes, mots), meta: [parNotes ? 'Rendez-vous ' + nom : 'Rendez-vous', d ? santeJour(d) : '', santeAVenir(r) ? 'à venir' : ''].filter(Boolean).join(' · '),
+        ouvrir: function() { closeSearch(); enterPole('sante'); santeOuvrir('rdv', r.id); } });
+    });
+    santeDocs().forEach(function(x) {
+      if(!srMatch([x.titre, santeSpeNom(x.spe), santeOuNom(x.ou)].join(' '), mots)) return;
+      var d = x.date ? new Date(x.date + 'T12:00') : null;
+      gs.push({ texte: srExtrait(x.titre, mots), meta: ['Document', santeSpeNom(x.spe), d && !isNaN(d) ? d.toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }) : '', santeOuNom(x.ou)].filter(Boolean).join(' · '),
+        ouvrir: function() { closeSearch(); enterPole('sante'); santeOuvrir('doc', x.id); } });
+    });
+  }
+  groupes.push(['Santé', gs]);
   var total = 0;
   groupes.forEach(function(g) {
     if(!g[1].length) return;

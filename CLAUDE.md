@@ -1484,6 +1484,25 @@ ARC en orbite, et Relier (11 octobre) :
   - Tests : pôles 19/19 (un contrôle ajouté : aucun appel avant le geste, demande et consigne, sans doublon, ajout à la
     fiche, rien d'enregistré avant « Enregistrer », panne, sections cachées, cibles, contraste). Vérifié dans Chromium
     seulement, contre un faux proxy : **le vrai Claude reste à essayer par Rayan.**
+- **PR #46 et #47 fusionnées le 12 octobre (avant 6 h 14).**
+- **Recherche dans Santé, un défaut de Juridique, un test intermittent (branche `recherche-poles`, 12 octobre 6 h 20)**.
+  Rayan (6 h 14) : « continue go ». Fait :
+  - **Santé dans la recherche** : un rendez-vous par sa spécialité et son praticien (« Dentiste · Dr Martin »,
+    « Rendez-vous · Jeudi · à venir »), ou par ses notes (lieu, à apporter, questions, ce qui en est sorti : l'extrait,
+    « Rendez-vous Dentiste ») ; un document par son nom, sa spécialité ou l'endroit où il est (« Document · Ophtalmo ·
+    mars 2026 · Papier, chez moi »). Toucher la ligne ouvre sa feuille dans Santé. Une démarche datée dit quand
+    (« Juridique · Démarches en cours · Dans 3 j », ou « Fait »).
+  - **Défaut prouvé puis réparé (en ligne depuis toujours)** : dans Juridique, avec la recherche du dossier remplie,
+    « Fait » et la croix visaient l'élément de même rang dans la liste complète. Preuve : démarches « Appeler la banque »,
+    « Déclaration URSSAF », recherche « urssaf », « Fait » → `["Appeler la banque:done","Déclaration URSSAF:todo"]`
+    (la croix aurait supprimé « Appeler la banque »). `renderJurSections` garde maintenant le rang du dossier
+    (`rang`, une `Map`) ; après : `["Appeler la banque:todo","Déclaration URSSAF:done"]`.
+  - **Test intermittent de `tests/rangement.mjs` (contrôle 1), cause prouvée** : l'horloge de Playwright n'avance
+    parfois pas après `page.clock.fastForward('01:05')` quand la machine est chargée. Mesuré avec quatre navigateurs en
+    parallèle : la page voyait 60 ms passer au lieu de 65 s (une fois sur vingt) ; l'écart d'une minute entre deux essais
+    (`rangeMayTry`, voulu) bloquait donc le nouvel essai. ARC n'est pas en cause. Le test avance l'horloge jusqu'à ce que
+    la page voie la minute passée (cinq fois au plus) ; 30 passages sur 30 ensuite, cinq navigateurs en parallèle.
+  - Tests : recherche 9/9 (un contrôle ajouté : Santé, démarche datée, « Fait » filtré), rangement 25/25.
 
 ### Décisions de Rayan (5 octobre)
 
