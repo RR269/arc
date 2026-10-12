@@ -9298,6 +9298,52 @@ function matinData() {
   out.nomoment = out.nomoment.slice(0, 3);
   return out;
 }
+/* ═══ ÇA REVIENT (13 octobre) ═══ Une note (pensée rangée sans étape : une idée, un nom, un « Dentiste ») ne revenait
+   jamais : ni dans le Point du jour, ni sur l'accueil. Chaque matin, le Point du jour en ressort une, la plus ancienne,
+   déposée il y a 3 jours au moins : « Ajouter une étape », « En faire un projet », « Garder » (elle ne revient pas avant
+   30 jours, S.revient[tid], synchronisé), « Plus besoin » (le dépôt est annulé, rétablissable dans Déposé).
+   Calculé sur l'appareil, sans IA ; une seule à la fois. */
+var REVIENT_AGE = 3 * 864e5, REVIENT_PAUSE = 30 * 864e5;
+function revientChoisir() {
+  if(!_depot || !_range) return null;
+  var idx = rangeIndex(), now = Date.now(), pause = S.revient || {}, cand = [];
+  depotList().forEach(function(t) {
+    if(t.status === 'rejected') return;
+    var f = idx.latest[t.id];
+    if(!f || f.status !== 'filed' || f.step || !f.space || f.space === 'inconnu') return;
+    var cree = +new Date(t.created_at); if(!(cree <= now - REVIENT_AGE)) return;
+    var p = pause[t.id]; if(p && +new Date(p.jusqua) > now) return;
+    cand.push({ t: t, f: f, cree: cree });
+  });
+  cand.sort(function(x, y) { return x.cree - y.cree; });
+  return cand[0] || null;
+}
+function revientDepuis(ms) {
+  var j = Math.floor((Date.now() - ms) / 864e5);
+  return j < 30 ? 'Notée il y a ' + j + '\u00A0jours' : j < 60 ? 'Notée il y a un mois' : 'Notée il y a ' + Math.floor(j / 30) + '\u00A0mois';
+}
+function revientRowEl(r) {
+  var row = rgEl('div', 'matin-row'); row.setAttribute('data-id', r.t.id); row.setAttribute('data-kind', 'revient');
+  var top = rgEl('div', 'rg-row');
+  top.appendChild(rgEl('span', 'rg-lbl', revientDepuis(r.cree)));
+  top.appendChild(rangePill(r.f.space));
+  row.appendChild(top);
+  row.appendChild(rgEl('div', 'matin-step', '« ' + String(r.t.body || '').replace(/\s+/g, ' ').trim() + ' »'));
+  var acts = rgEl('div', 'rg-acts');
+  acts.appendChild(rangeBtn('Ajouter une étape', function() {
+    matinClose(); depotOpen(); rangeEditOpen(r.t.id, 'step');
+    var el = document.querySelector('#depot-list [data-id="' + r.t.id + '"]'); if(el) el.scrollIntoView({ block: 'center' });
+  }));
+  if(r.f.space !== 'sante' && r.f.space !== 'juridique' && !projetDe(r.t.id)) acts.appendChild(rangeBtn('En faire un projet', function() { matinClose(); projetOuvrir(r.t.id); }));
+  acts.appendChild(rangeBtn('Garder', function() {
+    if(!S.revient) S.revient = {};
+    S.revient[r.t.id] = { at: new Date().toISOString(), jusqua: new Date(Date.now() + REVIENT_PAUSE).toISOString() };
+    saveS(); matinRender();
+  }, 'quiet'));
+  acts.appendChild(rangeBtn('Plus besoin', function() { rangeAdd(r.t.id, { status: 'cancelled' }, 'user'); matinRender(); }, 'quiet'));
+  row.appendChild(acts);
+  return row;
+}
 // « Demain » : même heure si le moment n'est pas encore passé, sinon 9 h
 function matinTomorrow(m) {
   var now = new Date(), at = new Date(now); at.setDate(at.getDate() + 1);
@@ -9346,10 +9392,18 @@ function matinRender() {
   data.replace.forEach(function(r) { rows.push({ sec: 'replace', r: r }); });
   data.nomoment.forEach(function(r) { rows.push({ sec: 'nomoment', r: r }); });
   var body = document.getElementById('matin-body'); body.textContent = '';
-  var lead = document.getElementById('matin-lead');
+  var lead = document.getElementById('matin-lead'), revient = revientChoisir();
+  var revientSec = function() {
+    if(!revient) return;
+    var rs = rgEl('section', 'matin-sec'); rs.setAttribute('data-sec', 'revient');
+    rs.appendChild(rgEl('div', 'matin-sec-t', 'Ça revient'));
+    rs.appendChild(rgEl('div', 'matin-sec-s', 'Une idée que tu as notée, jamais reprise. Elle mérite peut-être une suite.'));
+    rs.appendChild(revientRowEl(revient)); body.appendChild(rs);
+  };
   if(!rows.length && !data.toRange) {
     lead.textContent = '';
     body.appendChild(rgEl('div', 'matin-empty', 'Rien n\'attend aujourd\'hui. Dépose ce qui te vient.'));
+    revientSec();
     return;
   }
   lead.textContent = 'Voici ce qui t\'attend, en quelques lignes.';
@@ -9376,6 +9430,7 @@ function matinRender() {
     more.appendChild(rangeBtn(_matinAll ? 'Voir moins' : 'Voir tout (' + (rows.length - MATIN_MAX_ROWS) + ' de plus)', function() { _matinAll = !_matinAll; matinRender(); }));
     body.appendChild(more);
   }
+  revientSec();
   if(data.toRange) {
     // Une seule ligne discrète : ce qui attend un choix se règle dans « Déposé »
     var tr = rangeBtn(data.toRange + (data.toRange > 1 ? ' pensées à ranger' : ' pensée à ranger'), function() { matinClose(); depotOpen(); }, 'matin-torange');
