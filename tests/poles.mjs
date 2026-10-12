@@ -51,7 +51,7 @@ const remplir = async (page, cle) => {
     // Santé, la mémoire (11 octobre) : un rendez-vous ajouté par la feuille, un document, une note au journal
     await page.click('#srdv-ajout'); await page.waitForTimeout(250);
     await page.selectOption('#sm-spe', 'dentiste'); await page.fill('#sm-qui', 'Dr Martin');
-    await page.fill('#sm-date', new Date(Date.now() + 4 * 864e5).toISOString().slice(0, 10)); await page.fill('#sm-heure', '09:30');
+    await page.fill('#sm-date', new Date(Date.now() + 4 * 864e5).toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })); await page.fill('#sm-heure', '09:30');
     await page.click('#sm-ok'); await page.waitForTimeout(250);
     await page.click('#sdoc-ajout'); await page.waitForTimeout(250);
     await page.fill('#sm-doc-titre', 'Ordonnance lunettes'); await page.selectOption('#sm-doc-spe', 'ophtalmo'); await page.selectOption('#sm-doc-ou', 'mes');
@@ -62,11 +62,11 @@ const remplir = async (page, cle) => {
   await page.click('#S4 .jur-sec-head[data-sec="statut"]');
   await page.click('#S4 [data-action="jur-open-form"][data-sec="statut"]');
   await page.fill('#jur-inp-statut', 'Déposer le dossier au guichet unique'); await page.selectOption('#jur-sel-prio-statut', 'haute');
-  await page.fill('#jur-dl-statut', new Date(Date.now() + 5 * 864e5).toISOString().slice(0, 10));
+  await page.fill('#jur-dl-statut', new Date(Date.now() + 5 * 864e5).toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }));
   await page.click('#S4 [data-action="jur-add-item"][data-sec="statut"]'); await page.waitForTimeout(150);
   const reste = await page.evaluate(() => document.getElementById('jur-body-statut').classList.contains('open') && document.querySelectorAll('#jur-body-statut .jur-item').length === 1);
   await page.click('#S4 [data-action="jur-open-form"][data-sec="statut"]');
-  await page.fill('#jur-inp-statut', 'Relire les statuts'); await page.fill('#jur-dl-statut', new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10));
+  await page.fill('#jur-inp-statut', 'Relire les statuts'); await page.fill('#jur-dl-statut', new Date(Date.now() - 2 * 864e5).toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }));
   await page.click('#S4 [data-action="jur-add-item"][data-sec="statut"]'); await page.waitForTimeout(150);
   await page.click('#S4 [data-action="jur-open-form"][data-sec="statut"]');
   await page.fill('#jur-inp-statut', 'Assurance responsabilité civile'); await page.selectOption('#jur-sel-prio-statut', 'basse');
@@ -145,7 +145,7 @@ for (const vp of ECRANS) {
   const e1 = await page.evaluate(() => document.getElementById('sm-err').textContent);
   await page.selectOption('#sm-spe', 'kine'); await page.click('#sm-ok'); await page.waitForTimeout(100);
   const e2 = await page.evaluate(() => [document.getElementById('sm-err').textContent, document.getElementById('sante-modal').classList.contains('open')]);
-  const j = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+  const j = n => new Date(Date.now() + n * 864e5).toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' });
   await page.fill('#sm-date', j(3)); await page.fill('#sm-heure', '18:00'); await page.fill('#sm-lieu', 'Cabinet du centre');
   await page.click('#sm-ok'); await page.waitForTimeout(250);
   const apres = await page.evaluate(() => ({ lignes: [...document.querySelectorAll('#srdv-list .wpen-row')].map(e => e.textContent), n: document.getElementById('srdv-n').textContent,
@@ -189,7 +189,7 @@ for (const [W, H] of [[390, 844], [360, 740], [430, 932]]) {
   });
   const vide = await lire();
   await page.evaluate(() => {
-    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }); };
     S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j(33), heure: '14:00' }, b: { id: 'b', spe: 'kine', date: j(-5) }, c: { id: 'c', spe: 'cardio', date: j(-120) }, e: { id: 'e', spe: 'laboratoire', date: j(-2) } };
     S.sante.docs = { d: { id: 'd', titre: 'Ordonnance', spe: 'ophtalmo', date: j(-200), ou: 'mes' }, f: { id: 'f', titre: 'Bilan', spe: 'generaliste', date: j(-40), ou: 'papier' } };
     saveS(); renderSanteMemoire();
@@ -218,7 +218,7 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
   await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); enterPole('sante'); }); await page.waitForTimeout(400);
   const sansFait = await page.evaluate(() => document.getElementById('sc-temps').hidden);
   await page.evaluate(() => {
-    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }); };
     S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j(33), heure: '14:00' }, b: { id: 'b', spe: 'kine', date: j(-5) }, c: { id: 'c', spe: 'cardio', date: j(-120) }, e: { id: 'e', spe: 'laboratoire', date: j(-2) } };
     S.sante.docs = { d: { id: 'd', titre: 'Ordonnance', spe: 'ophtalmo', date: j(-200), ou: 'mes' }, f: { id: 'f', titre: 'Bilan', spe: 'generaliste', date: j(-40), ou: 'papier' }, g: { id: 'g', titre: 'Sans date', spe: 'dermato', ou: 'mes' } };
     saveS(); renderSanteMemoire();
@@ -267,7 +267,7 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
   await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); enterPole('juridique'); }); await page.waitForTimeout(500);
   const vide = await page.evaluate(() => ({ vide: !document.getElementById('jo-vide').hidden, pts: document.querySelectorAll('#jo-pts .jo-p').length, liste: document.getElementById('jo-liste').hidden, blanc: getComputedStyle(document.getElementById('jo-ajout')).backgroundColor }));
   await page.evaluate(() => {
-    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }); };
     S.poles.juridique = {
       statut: [{ t: 'Immatriculer ATLAS', status: 'todo', deadline: j(12) }, { t: 'Déclaration URSSAF', status: 'todo', deadline: j(3) }],
       contrats: [{ t: 'Relire les CGV', status: 'progress', deadline: j(45) }, { t: 'Signer le bail', status: 'done', deadline: j(-3) }],
@@ -353,7 +353,7 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
   const kine = await page.evaluate(() => ({ spe: document.getElementById('sm-spe').value, date: document.getElementById('sm-date').value, heure: document.getElementById('sm-heure').value, focus: document.activeElement && document.activeElement.id }));
   await page.click('#sm-ok'); await page.waitForTimeout(300);
   const kineSans = await page.evaluate(() => ({ n: Object.keys(S.sante.rdv).length, open: document.getElementById('sante-modal').classList.contains('open'), err: document.getElementById('sante-modal').textContent.includes('Indique la date du rendez-vous') }));
-  await page.fill('#sm-date', (() => { const d = new Date(); d.setDate(d.getDate() + 9); return d.toISOString().slice(0, 10); })());
+  await page.fill('#sm-date', (() => { const d = new Date(); d.setDate(d.getDate() + 9); return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' }); })());
   await page.click('#sm-ok'); await page.waitForTimeout(300);
   const kineFin = await page.evaluate(() => ({ n: Object.keys(S.sante.rdv).length, kine: Object.values(S.sante.rdv).some(r => r.spe === 'kine' && r.from), props: document.querySelectorAll('#sprop .wlien-prop').length, cache: document.getElementById('sprop').hidden, zone: !!document.querySelector('#sc-corps [data-spe="kine"], #sc-corps .sc-e') }));
   await page.evaluate(() => enterPole('juridique')); await page.waitForTimeout(600);

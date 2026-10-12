@@ -19,7 +19,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
   `mondes.mjs` (écran des cinq mondes : tailles de texte, champs, cibles, contraste mesuré dans l'image),
   `poles.mjs` (Santé et Juridique, vides et remplis : mêmes mesures, barre du haut sur petit téléphone),
   `cockpit.mjs` (cockpit d'une tâche : mêmes mesures, réponse de Claude visible sur iPhone, notes, journal, « C'est fait », minuteur, Échap),
-  `recherche.mjs` (recherche : pensées, tâches et notes, projets, journal, Juridique ; ouverture au bon endroit ; clavier ; charte),
+  `recherche.mjs` (recherche : pensées, tâches et notes, projets, journal, Juridique, Santé ; ouverture au bon endroit ; clavier ; charte ; « Demande à ARC »),
   `synchro.mjs` (deux appareils sur le même compte : fusion, hors réseau, suppression, conflit, écriture conditionnelle),
   `projet.mjs` (« En faire un projet » : proposition de Claude, création, accueil, rechargement, erreurs, autre appareil, charte),
   `relier.mjs` (projets liés et mémoire qui revient : proposition avec raison, « Relier », « Pas lié », rechargement, endormi, accueil, synchronisation, charte),
@@ -1542,6 +1542,36 @@ ARC en orbite, et Relier (11 octobre) :
   date, le refus sans date, « Boire plus d'eau » jamais proposé, « Voir le notaire » sans date jamais proposé en
   Juridique), rangement 26/26 à 23 h 45, les 13 autres suites passent ; 515 `<div` / 515 `</div>`. Vérifié dans
   Chromium seulement.
+- **PR #51 fusionnée le 12 octobre.**
+- **Demande à ARC (branche `demande-arc`, 13 octobre 0 h 10)**. Rayan (0 h 01) : « que choisis-tu ? on se veut futuriste et
+  utile au max pour devenir indispensable ». Choix : ARC répond aux questions avec ce qu'il garde (vision : « la valeur est
+  dans le retour »). **Accord de Rayan sur les données (0 h 04, « go » après « oui, avec Santé » conseillé)** : les extraits
+  utiles de ses pensées, tâches, projets, journal, Juridique **et Santé** partent à Claude quand il pose une question ; une
+  donnée de santé seulement si elle répond à la question. **Règle à garder : jamais tout ARC ; rien ne part sans le geste ;
+  une ligne vraie dit ce qui est parti.** Fait (module « DEMANDE À ARC », après la recherche) :
+  - Dans la recherche (placeholder « Rechercher ou demander à ARC ») : dès deux lettres, en tête, la touche « Demander à
+    ARC · « question » » (`#sr-ask`, verre, filet aux couleurs d'ARC). Entrée pose la question si elle finit par « ? » ou
+    si la recherche ne trouve rien ; sinon Entrée ouvre la ligne choisie, comme avant.
+  - Sur l'appareil (`askCorpus`, `askChoisir`) : une entrée par chose (pensée avec espace, étape, moment, état ; tâche et
+    notes ; projet ; journal ; Juridique ; rendez-vous et documents de santé) ; mots de la question sans mots vides, pesés
+    par rareté, mots entiers ou débuts communs de 5 lettres ; « aujourd'hui », « demain », « semaine »… ajoutent ce qui
+    arrive dans les 21 jours ; « faire », « reste »… les pensées et démarches à faire ; vingt extraits au plus.
+  - Rien trouvé : « Je ne trouve rien dans ARC sur ça. » et « Rien n'est parti à Claude. » (aucun appel).
+  - Sinon : chemin de la discussion du proxy (`askLancer`, 600 jetons, **aucun redéploiement**), consigne `ASK_SYSTEM`
+    (répondre seulement avec les extraits numérotés, ne rien inventer, aucun avis médical ni juridique, une à trois
+    phrases, JSON `reponse` / `sources`), la date du jour fournie. Lecture tolérante (`askLire`, sources hors liste écartées).
+  - La réponse (`#sr-ans`) : « ARC », le texte (posé par `textContent`), une ligne par source (jusqu'à cinq) qui s'ouvre
+    là où elle vit (Déposé, cockpit, journal, Juridique, feuille de Santé), puis « Parti à Claude : 1 pensée,
+    1 rendez-vous. » (`askParti`). Panne : la raison en mots (`PJ_RAISONS`) et « Demander à nouveau ». Taper autre chose
+    efface la réponse.
+  - Tests : recherche 10/10 (un contrôle ajouté : rien ne part avant le geste ; la question sur le dentiste n'envoie que le
+    rendez-vous ; celle sur ATLAS aucune donnée de santé ; rien trouvé, rien ne part ; panne ; code affiché en texte ;
+    contraste ; cibles). Vérifié dans Chromium seulement, contre un faux proxy : **le vrai Claude reste à essayer par Rayan.**
+  - **`tests/poles.mjs` échouait entre minuit et 2 h, sur `main` aussi (4 sur 19, prouvé à 0 h 27)** : ses dates étaient
+    faites par `toISOString()` (heure universelle), donc la veille pour Paris ; une échéance « dans 2 j » tombait « À
+    replacer ». ARC calcule en heure locale, il n'est pas en cause. Les dates du test sont maintenant celles de Paris
+    (`toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })`) : 19/19 à 0 h 31. Les 15 suites passent ; 515 `<div` /
+    515 `</div>`.
 
 ### Décisions de Rayan (5 octobre)
 
