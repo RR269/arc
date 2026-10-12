@@ -1514,6 +1514,19 @@ ARC en orbite, et Relier (11 octobre) :
   rangée, telle qu'elle était (`status` filed, ou unsure si ARC hésitait ; nouvelle ligne `origin` user). Sur une
   **note** (rangée sans étape), « C'est fait » n'est plus la touche blanche (rien n'est à faire). Tests : rangement
   26/26 (un contrôle ajouté : « C'est fait » puis « Rouvrir », la pensée revient rangée avec ses touches).
+- **L'écriture d'Apple partout (branche `police-apple`, 12 octobre 20 h 45)**. Rayan (20 h 41) : « tu te dois d'utiliser
+  la calligraphie Apple sur tout ARC ». **Règle à garder : une seule écriture dans ARC, celle d'Apple** (`-apple-system`,
+  San Francisco sur iPhone et Mac). `--f`, `--fm`, `--fa` et `--ft` valent la même pile (`-apple-system,
+  BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif`) ; le corps aussi, avec
+  `tabular-nums` (les chiffres s'alignent sans police à chasse fixe) ; le canevas de la carte suit le corps. Plus Jakarta
+  Sans (titres : « Un cerveau. Huit espaces. », noms des projets, « Ma santé », « Déposé »…), JetBrains Mono et Azeret
+  Mono ne sont plus chargées. **Seul le logo ARC garde son dessin (Big Shoulders)** : c'est une marque, pas un texte
+  (à changer si Rayan le demande). Le code dans une réponse de Claude reste en `ui-monospace` (SF Mono sur Apple).
+  Tests : accueil 28/28 (un contrôle ajouté : sur l'entrée, l'accueil, Déposé, le Point du jour, un projet, Santé,
+  Juridique, la recherche et la carte, chaque texte visible commence par `-apple-system`, hors logo ; aucune autre police
+  chargée), mondes 7/7 (le titre d'un projet attendu en écriture d'Apple). **Non vérifiable ici** : le Chromium de test
+  n'a ni San Francisco ni l'ancienne police, les images avant / après y sont identiques ; seul l'iPhone de Rayan montre
+  le changement.
 
 ### Décisions de Rayan (5 octobre)
 

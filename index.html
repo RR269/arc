@@ -16,12 +16,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Azeret+Mono:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&display=swap" rel="stylesheet">
 <style>
 /* === RESET === */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#f5f5f7;font-family:'Plus Jakarta Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-:root{--bg:#000;--bg1:#0d0d0d;--bg2:#161616;--bg3:#1f1f1f;--bg4:#2a2a2a;--bg5:#333;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.12);--b3:rgba(255,255,255,.18);--t1:#f5f5f7;--t2:#86868b;--t3:#48484a;--green:#30d158;--red:#FF2D55;--orange:#FF9500;--blue:#0a84ff;--purple:#AF52DE;--teal:#5ac8fa;--f:'Plus Jakarta Sans',-apple-system,sans-serif;--fm:'JetBrains Mono',monospace}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+:root{--bg:#000;--bg1:#0d0d0d;--bg2:#161616;--bg3:#1f1f1f;--bg4:#2a2a2a;--bg5:#333;--b1:rgba(255,255,255,.07);--b2:rgba(255,255,255,.12);--b3:rgba(255,255,255,.18);--t1:#f5f5f7;--t2:#86868b;--t3:#48484a;--green:#30d158;--red:#FF2D55;--orange:#FF9500;--blue:#0a84ff;--purple:#AF52DE;--teal:#5ac8fa;--f:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif;--fm:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif}
+/* 12 octobre (Rayan : « tu te dois d'utiliser la calligraphie Apple sur tout ARC ») : une seule écriture, celle d'Apple
+   (San Francisco par -apple-system) ; plus de Plus Jakarta Sans ni de chasse fixe ; les chiffres s'alignent par
+   tabular-nums. Seul le logo ARC garde son dessin (Big Shoulders) : c'est une marque, pas un texte. */
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
 button{cursor:pointer;font-family:var(--f);border:none;background:none;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 input,textarea{font-family:var(--f);color:var(--t1);outline:none;-webkit-tap-highlight-color:transparent}
@@ -939,7 +942,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
      Ensuite une lumière descend la frise (Penser → Développer → Entreprendre) puis file le long de l'horizon vert.
      Rien d'autre ne bouge. Tout est en transform et opacity, sans mode de fusion, et s'arrête si l'appareil demande
      moins d'animations. */
-#auth-screen{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Plus Jakarta Sans",sans-serif;--g0:-10deg;--g1:24deg}
+#auth-screen{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif;--ft:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif;--g0:-10deg;--g1:24deg}
 .auth-proof,.auth-card{font-family:var(--fa)}
 /* La frise (8 octobre, 1 h 41, demande de Rayan) : typographie façon Apple bien visible (le mot en grand, serré, la
    phrase en gris dessous) ; points rouge, orange, vert, comme des feux de départ. Chaque point a deux états : éteint
@@ -1444,7 +1447,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
      synchronisation qui se raccourcit au lieu de pousser les boutons hors de l'écran).
    - Charte : pictogrammes au trait d'une seule famille (trait de 1,7) à la place des emoji, textes ≥ 12 px,
      cibles ≥ 44 px, contraste ≥ 4,5 : 1. Contrôle : tests/accueil.mjs. */
-:root{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","Plus Jakarta Sans",sans-serif;--ft:"Plus Jakarta Sans",-apple-system,sans-serif}
+:root{--fa:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif;--ft:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif}
 #S1{--f:var(--fa);font-family:var(--fa);--t2:#C4C4CC;--t3:#A6A6AE;--bord:28px;background:#000;letter-spacing:-.1px}
 #S1::before{height:520px;background:radial-gradient(60% 45% at 14% 0%,rgba(255,149,0,.13),transparent 70%),radial-gradient(45% 40% at 78% 4%,rgba(175,82,222,.11),transparent 70%)}
 #S1 .h-h1{font-family:var(--ft)}

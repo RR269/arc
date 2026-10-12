@@ -68,7 +68,7 @@ for (const vp of ECRANS) {
     if (!r.horizon || r.fait !== 'fait') defauts.push(`${r.nom} : horizon ${r.horizon}, libellé « ${r.fait} »`);
     if (!r.large) defauts.push(`${r.nom} : débordement horizontal`);
     if (r.mono.length || r.capit.length) defauts.push(`${r.nom} : chasse fixe ${r.mono.slice(0, 4).join(', ') || 'aucune'}, capitales ${r.capit.slice(0, 4).join(', ') || 'aucune'}`);
-    if (r.systeme.some(f => !/apple-system|BlinkMacSystemFont/i.test(f)) || !/Plus Jakarta Sans/.test(r.titre) || r.section !== '17px') defauts.push(`${r.nom} : écriture ${r.systeme.join(' / ')}, titre ${r.titre}, section ${r.section}`);
+    if (r.systeme.some(f => !/apple-system|BlinkMacSystemFont/i.test(f)) || !/apple-system|BlinkMacSystemFont/i.test(r.titre) || r.section !== '17px') defauts.push(`${r.nom} : écriture ${r.systeme.join(' / ')}, titre ${r.titre}, section ${r.section}`);
     if (r.reperes !== 1 || !/^\d+[\u00A0\u202F]%$/.test(r.pct)) defauts.push(`${r.nom} : ${r.reperes} repères de progression, « ${r.pct} »`);
     if (r.lignesDesc > 3 || r.suite !== r.deborde || r.poignee) defauts.push(`${r.nom} : description sur ${r.lignesDesc} lignes, « Lire la suite » ${r.suite}, dépasse ${r.deborde}, poignée ${r.poignee}`);
     // contraste : la barre du haut, puis tout ce qui défile, écran par écran ; sur Mac, le panneau Claude aussi
