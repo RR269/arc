@@ -257,6 +257,63 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
   await ctx.close();
 }
 
+/* Juridique, l'orbite (12 octobre, docs/ETUDE-POLES.md) : au centre aujourd'hui, anneaux 7 / 30 / 90 jours ; un point par
+   échéance vraie (datée, pas faite, à 90 jours ou moins), plus proche du centre quand elle approche ; passée, elle touche
+   le centre (« À replacer », sans rouge) ; la liste par date ; toucher un point le signale, le toucher encore ouvre
+   l'élément ; « Ajouter une échéance » ; plus de bouton « Aides » ni de Valence ; 360 et 390 px. */
+for (const [W, H] of [[390, 844], [360, 740]]) {
+  const ctx = await contexte({ width: W, height: H, tel: true });
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); enterPole('juridique'); }); await page.waitForTimeout(500);
+  const vide = await page.evaluate(() => ({ vide: !document.getElementById('jo-vide').hidden, pts: document.querySelectorAll('#jo-pts .jo-p').length, liste: document.getElementById('jo-liste').hidden, blanc: getComputedStyle(document.getElementById('jo-ajout')).backgroundColor }));
+  await page.evaluate(() => {
+    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    S.poles.juridique = {
+      statut: [{ t: 'Immatriculer ATLAS', status: 'todo', deadline: j(12) }, { t: 'Déclaration URSSAF', status: 'todo', deadline: j(3) }],
+      contrats: [{ t: 'Relire les CGV', status: 'progress', deadline: j(45) }, { t: 'Signer le bail', status: 'done', deadline: j(-3) }],
+      aides: [{ t: 'Dossier ACRE', status: 'todo', deadline: j(-2) }, { t: 'Demande CAPE', status: 'todo', deadline: j(120) }],
+      demarches: [{ t: 'Appeler le comptable', status: 'todo', deadline: j(0) }, { t: 'Assurance pro', status: 'todo', deadline: j(70) }, { t: 'Sans date', status: 'todo' }]
+    };
+    saveS(); enterPole('juridique');
+  });
+  await page.waitForTimeout(1200);
+  const plein = await page.evaluate(() => {
+    const svg = document.getElementById('jo-svg'), sr = svg.getBoundingClientRect(), cx = sr.left + sr.width / 2, cy = sr.top + sr.height / 2;
+    const pts = [...document.querySelectorAll('#jo-pts .jo-p')], dist = {};
+    pts.forEach(p => { const r = p.querySelector('i').getBoundingClientRect(); dist[p.getAttribute('aria-label').split(',')[0]] = Math.hypot(r.left + r.width / 2 - cx, r.top + r.height / 2 - cy); });
+    const mots = [...svg.querySelectorAll('rect'), ...document.querySelectorAll('.jo-coins span')].map(e => e.getBoundingClientRect());
+    const surMot = pts.filter(p => { const a = p.querySelector('i').getBoundingClientRect(); return mots.some(m => a.left < m.right && a.right > m.left && a.top < m.bottom && a.bottom > m.top); }).map(p => p.getAttribute('aria-label'));
+    const hero = document.getElementById('jur-stats-row').textContent, s4 = document.getElementById('S4');
+    const rouges = [...s4.querySelectorAll('.jur-stat-badge,.jur-count-badge,.jur-item-dl')].filter(e => /255, 55, 95|255, 143, 163|255, 45, 85/.test(getComputedStyle(e).color)).length;
+    return { pts: pts.length, h: pts.map(p => Math.round(p.getBoundingClientRect().height)), passe: pts.filter(p => p.classList.contains('passe')).map(p => p.getAttribute('aria-label').split(',')[0]),
+      dist, surMot, lignes: [...document.querySelectorAll('#jo-liste .wpen-row')].map(r => r.querySelector('.wpen-t').textContent + ' · ' + r.querySelector('.sm-quand b').textContent),
+      n: document.getElementById('jo-n').textContent, vide: !document.getElementById('jo-vide').hidden, hero, rouges,
+      aides: [...s4.querySelectorAll('.p-act')].map(b => b.textContent.trim()), valence: /Valence/.test(s4.innerHTML), chrono: !!document.getElementById('jur-timeline') };
+  });
+  await page.evaluate(() => document.getElementById('jo').scrollIntoView({ block: 'center' })); await page.waitForTimeout(300);
+  const m = await mesurer(page, { racine: '#jo', cadre: '#jo' });
+  const imm = await page.$('#jo-pts .jo-p[aria-label^="Immatriculer"]');
+  await imm.click(); await page.waitForTimeout(300);
+  const choisi = await page.evaluate(() => ({ pt: document.querySelector('#jo-pts .jo-p.sel').getAttribute('aria-label'), row: (document.querySelector('#jo-liste .wpen-row.sel .wpen-t') || {}).textContent, ouvert: document.getElementById('jur-body-statut').classList.contains('open') }));
+  await imm.click(); await page.waitForTimeout(500);
+  const ouvre = await page.evaluate(() => ({ ouvert: document.getElementById('jur-body-statut').classList.contains('open'), flash: document.getElementById('jit-statut-0').classList.contains('flash') }));
+  await page.evaluate(() => document.getElementById('jo-ajout').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  await page.click('#jo-ajout'); await page.waitForTimeout(500);
+  const ajout = await page.evaluate(() => ({ form: document.getElementById('jur-form-demarches').style.display, focus: document.activeElement && document.activeElement.id }));
+  const d = plein.dist;
+  ok(vide.vide && vide.pts === 0 && vide.liste && vide.blanc === 'rgb(245, 245, 247)'
+     && plein.pts === 6 && plein.h.every(h => h >= 44) && plein.passe.join() === 'Dossier ACRE' && !plein.surMot.length
+     && d['Dossier ACRE'] < d['Appeler le comptable'] && d['Appeler le comptable'] < d['Déclaration URSSAF'] && d['Déclaration URSSAF'] < d['Immatriculer ATLAS'] && d['Immatriculer ATLAS'] < d['Relire les CGV'] && d['Relire les CGV'] < d['Assurance pro']
+     && plein.lignes.length === 7 && plein.lignes[0] === 'Dossier ACRE · À replacer' && plein.lignes[1] === 'Appeler le comptable · Aujourd’hui' && plein.lignes[6] === 'Demande CAPE · Dans 120 j' && !plein.lignes.some(l => /bail|Sans date/.test(l))
+     && plein.n === '6 à venir · 1 à replacer' && !plein.vide && /2 cette semaine/.test(plein.hero) && /1 à replacer/.test(plein.hero) && plein.rouges === 0
+     && plein.aides.join() === 'Export' && !plein.valence && !plein.chrono && m.pire.ratio >= 4.5
+     && choisi.pt.startsWith('Immatriculer') && choisi.row === 'Immatriculer ATLAS' && !choisi.ouvert && ouvre.ouvert && ouvre.flash
+     && ajout.form === 'block' && ajout.focus === 'jur-inp-demarches' && !errors.length,
+    `Juridique, l'orbite (${W} px) : vide, l'orbite seule et « Ajouter une échéance » en blanc ; un point par échéance datée, pas faite, à 90 jours ou moins, plus près du centre quand elle approche, la passée en anneau contre le centre ; aucun point sur un mot ; la liste par date (« À replacer », « Aujourd'hui », au-delà de 90 jours), sans les faites ni les non datées ; en-tête sans rouge ; plus de bouton « Aides » ni de Valence ; toucher un point le signale dans la liste, le toucher encore ouvre l'élément ; « Ajouter une échéance » ouvre les démarches ; cibles ≥ 44 px, contraste ≥ 4,5 : 1`,
+    JSON.stringify({ vide, plein, contraste: m.pire, choisi, ouvre, ajout, errors }));
+  await ctx.close();
+}
+
 await browser.close(); server.close();
 if (process.env.DETAIL) for (const [k, v] of Object.entries(detail)) console.log(k + '\n  ' + v.sort().join('\n  '));
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);

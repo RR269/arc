@@ -1414,6 +1414,35 @@ ARC en orbite, et Relier (11 octobre) :
     toucher 130 jours avant n'allume que l'ophtalmo ; aimant sur le cardio ; après le rendez-vous à venir, le dentiste ;
     retour ; cibles ≥ 44 px ; contraste ; date lue). Vérifié dans Chromium seulement : **le glisser du doigt dans Safari
     reste à essayer par Rayan.**
+- **PR #44 fusionnée le 12 octobre à 4 h 24.**
+- **Juridique : l'orbite (branche `juridique-orbite`, 12 octobre 4 h 30)**. Rayan (4 h 24) : « go ». Partie Juridique de
+  l'étape 2 de `docs/ETUDE-POLES.md`. Fait :
+  - **Source** : les éléments du dossier qui ont une date et ne sont pas faits (`S.poles.juridique`, champ `deadline`).
+    **Rien de nouveau dans `S`, aucune migration** (l'étude prévoyait `S.juridique.echeances` : pas nécessaire tant que
+    la date vit dans l'élément ; `jurEcheances`, `joJours`).
+  - **L'orbite** (`#jsec-orbite`, juste sous l'horizon, `renderJurOrbite` ; `renderJurTimeline` l'appelle, donc chaque
+    ajout, « Fait » ou suppression la redessine) : SVG écrit par le code, au centre « Toi », trois anneaux nommés 7 j,
+    30 j, 90 j (pointillé). Un point par échéance à 90 jours ou moins, d'autant plus près du centre qu'elle approche
+    (`joRayon`) ; passée, un anneau contre le centre. Chaque section a son quart, nommé dans son coin (Statut, Contrats,
+    Démarches, Aides) et sa couleur ; les points d'un quart s'écartent de ±22° pour ne jamais toucher un mot (contrôlé).
+    Les points se posent à l'arrivée sur le pôle (`_joPose`), une fois ; rien si l'appareil demande moins de mouvement.
+  - **La liste**, sous l'orbite, par date : passées d'abord (« À replacer »), puis « Aujourd'hui », « Demain »,
+    « Dans 12 j » avec la date ; au-delà de 90 jours, dans la liste seulement. Toucher une ligne ouvre l'élément dans sa
+    section (`jurOuvrirItem` : section dépliée, élément centré et éclairé). Toucher un point le signale dans la liste ;
+    le toucher encore ouvre l'élément (`joChoisir`). En tête : « 6 à venir · 1 à replacer ».
+  - **« Ajouter une échéance »**, la seule touche blanche (`joAjouter`) : ouvre le formulaire des démarches (date
+    comprise). Vide : l'orbite seule et « Aucune échéance. Donne une date à une démarche : elle se placera ici. »
+  - **La « Chronologie » est retirée** (l'orbite la remplace, même source). **Le bouton « Aides » (Valence en dur) est
+    retiré** (réponse par défaut de l'étude) ; la suggestion de Claude « Aides création » ne nomme plus Valence.
+  - **Sans rouge** : en-tête « 2 cette semaine », « 1 à replacer » en ambre (au lieu de « 2 urgents » en rouge) ; sections
+    « 1 à 7 j » ; un élément passé dit « À replacer » (au lieu de « Dépassée de 2 j »). **Défaut corrigé en passant** :
+    `renderJurHero` testait `!it.status !== 'done'` (toujours vrai), les éléments faits entraient dans le compte.
+  - Les lignes et la touche blanche de Santé sont partagées (`#S4 .sm-row`, `.sm-quand`, `.sm-ajout`).
+  - Tests : pôles 17/17 (deux contrôles ajoutés, 390 et 360 px : vide ; six points, la passée contre le centre ; distances
+    dans l'ordre des dates ; aucun point sur un mot ; liste et ses mots ; aucun rouge ; plus de « Aides » ni de Valence ;
+    toucher, toucher encore ; « Ajouter une échéance » ; cibles ≥ 44 px ; contraste). La section est descendue de 18 px
+    sous la lueur de l'horizon (« 1 à venir · 1 à replacer » y tombait à 4,20 : 1). Vérifié dans Chromium seulement.
+  - **Pas encore** : « C'est fait » depuis l'orbite (la comète) ; documents juridiques ; Juridique dans le Point du jour.
 
 ### Décisions de Rayan (5 octobre)
 
