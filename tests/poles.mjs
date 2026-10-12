@@ -10,7 +10,7 @@
 // Santé : un objectif se coche (la case existait dans le code mais n'avait aucun dessin). Juridique : une section
 // reste ouverte quand on y ajoute un élément.
 
-import { chromium, startServer, fakeSupabase, openPage, sessionScript } from './outils.mjs';
+import { chromium, startServer, fakeSupabase, openPage, sessionScript, deposit } from './outils.mjs';
 import { mesurer } from './mesure.mjs';
 
 const { server, url } = await startServer();
@@ -311,6 +311,114 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
      && ajout.form === 'block' && ajout.focus === 'jur-inp-demarches' && !errors.length,
     `Juridique, l'orbite (${W} px) : vide, l'orbite seule et « Ajouter une échéance » en blanc ; un point par échéance datée, pas faite, à 90 jours ou moins, plus près du centre quand elle approche, la passée en anneau contre le centre ; aucun point sur un mot ; la liste par date (« À replacer », « Aujourd'hui », au-delà de 90 jours), sans les faites ni les non datées ; en-tête sans rouge ; plus de bouton « Aides » ni de Valence ; toucher un point le signale dans la liste, le toucher encore ouvre l'élément ; « Ajouter une échéance » ouvre les démarches ; cibles ≥ 44 px, contraste ≥ 4,5 : 1`,
     JSON.stringify({ vide, plein, contraste: m.pire, choisi, ouvre, ajout, errors }));
+  await ctx.close();
+}
+
+/* ARC propose (12 octobre, docs/ETUDE-POLES.md § 7) : une pensée rangée en Santé ou en Juridique avec un moment daté devient
+   une proposition ; rien n'est créé sans un geste ; « Ajouter » remplit la feuille du rendez-vous (spécialité reconnue)
+   ou ajoute l'échéance ; « Pas maintenant » n'est jamais reproposé, même après rechargement ; une pensée sans moment ou
+   au moment passé n'est pas proposée. Le Point du jour cite le rendez-vous et l'échéance du jour. */
+{
+  const ctx = await contexte({ width: 390, height: 844, tel: true });
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.waitForTimeout(500);
+  const T = ['Dentiste jeudi à 14 h pour la couronne', 'URSSAF : déclarer avant vendredi', 'Kiné sans date', 'Ophtalmo hier 9 h', 'Relancer le greffe lundi'];
+  for (const t of T) { await deposit(page, t); await page.waitForTimeout(200); }
+  await page.evaluate(T => {
+    const id = t => Object.values(_depot.thoughts).find(x => x.body === t).id;
+    const at = (n, h) => { const d = new Date(); d.setDate(d.getDate() + n); d.setHours(h, 0, 0, 0); return { type: 'datetime', at: rangeIsoLocal(d) }; };
+    rangeAdd(id(T[0]), { space: 'sante', status: 'filed', step: 'Aller chez le dentiste', moment: at(3, 14) }, 'ai');
+    rangeAdd(id(T[1]), { space: 'juridique', status: 'filed', step: 'Déclarer à l’URSSAF', moment: at(4, 18) }, 'ai');
+    rangeAdd(id(T[2]), { space: 'sante', status: 'filed', step: 'Prendre rendez-vous chez le kiné' }, 'ai');
+    rangeAdd(id(T[3]), { space: 'sante', status: 'filed', step: 'Ophtalmo', moment: at(-1, 9) }, 'ai');
+    rangeAdd(id(T[4]), { space: 'juridique', status: 'filed', step: 'Relancer le greffe', moment: at(5, 10) }, 'ai');
+    if (typeof matinClose === 'function') matinClose();
+    enterPole('sante');
+  }, T);
+  await page.waitForTimeout(600);
+  const sante = await page.evaluate(() => [...document.querySelectorAll('#sprop .wlien-prop')].map(c => c.textContent));
+  await page.evaluate(() => document.getElementById('sprop').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const m = await mesurer(page, { racine: '#sprop', cadre: '#sprop' });
+  const hBtn = await page.evaluate(() => [...document.querySelectorAll('#sprop button')].map(b => Math.round(b.getBoundingClientRect().height)));
+  const avant = await page.evaluate(() => Object.keys(S.sante.rdv).length);
+  await page.click('#sprop .prop-oui'); await page.waitForTimeout(300);
+  const feuille = await page.evaluate(() => ({ open: document.getElementById('sante-modal').classList.contains('open'), spe: document.getElementById('sm-spe').value, date: document.getElementById('sm-date').value, heure: document.getElementById('sm-heure').value, rdv: Object.keys(S.sante.rdv).length }));
+  await page.click('#sm-ok'); await page.waitForTimeout(300);
+  const apres = await page.evaluate(() => { const r = Object.values(S.sante.rdv)[0]; return { n: Object.keys(S.sante.rdv).length, from: !!(r && r.from), props: document.querySelectorAll('#sprop .wlien-prop').length, cache: document.getElementById('sprop').hidden }; });
+  await page.evaluate(() => enterPole('juridique')); await page.waitForTimeout(600);
+  const jur = await page.evaluate(() => [...document.querySelectorAll('#jprop .wlien-prop')].map(c => c.textContent));
+  await page.evaluate(() => [...document.querySelectorAll('#jprop .wlien-prop')].find(c => /greffe/.test(c.textContent)).querySelector('.prop-non').click()); await page.waitForTimeout(200);
+  await page.evaluate(() => document.querySelector('#jprop .prop-oui').click()); await page.waitForTimeout(400);
+  const jApres = await page.evaluate(() => ({ props: document.querySelectorAll('#jprop .wlien-prop').length, dem: S.poles.juridique.demarches.map(x => x.t + '|' + !!x.from + '|' + !!x.deadline), pts: document.querySelectorAll('#jo-pts .jo-p').length }));
+  await page.reload(); await page.waitForTimeout(1200);
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); enterPole('juridique'); }); await page.waitForTimeout(600);
+  const recharge = await page.evaluate(() => document.querySelectorAll('#jprop .wlien-prop').length);
+  // Le Point du jour : un rendez-vous et une échéance aujourd'hui
+  await page.evaluate(() => {
+    const d = new Date(), p = n => (n < 10 ? '0' : '') + n, j = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    S.sante.rdv.z = { id: 'z', spe: 'kine', date: j, heure: '23:58', qui: 'Mme Leroy' };
+    S.poles.juridique.statut = [{ t: 'Envoyer le Kbis', status: 'todo', deadline: j }];
+    saveS(); goHome(); matinShow('ask');
+  });
+  await page.waitForTimeout(600);
+  const matin = await page.evaluate(() => ({ lignes: [...document.querySelectorAll('#matin-body .matin-row')].map(r => r.getAttribute('data-kind') + ':' + r.querySelector('.matin-step').textContent), sec: (document.querySelector('#matin-body .matin-sec-t') || {}).textContent }));
+  await page.evaluate(() => [...document.querySelectorAll('#matin-body .matin-row[data-kind="ech"] button')].find(b => /fait/.test(b.textContent)).click()); await page.waitForTimeout(300);
+  const fait = await page.evaluate(() => ({ st: S.poles.juridique.statut[0].status, lignes: document.querySelectorAll('#matin-body .matin-row[data-kind="ech"]').length }));
+  const vraies = errors.filter(e => !/status of 500/.test(e));
+  ok(sante.length === 1 && /ARC propose un rendez-vous : Dentiste/.test(sante[0]) && /couronne/.test(sante[0]) && m.pire.ratio >= 4.5 && hBtn.every(h => h >= 44)
+     && avant === 0 && feuille.open && feuille.spe === 'dentiste' && feuille.heure === '14:00' && feuille.date && feuille.rdv === 0
+     && apres.n === 1 && apres.from && apres.props === 0 && apres.cache
+     && jur.length === 2 && jur.every(x => /ARC propose une échéance/.test(x)) && jApres.props === 0 && jApres.dem.length === 1 && /URSSAF\|true\|true/.test(jApres.dem[0]) && jApres.pts === 1 && recharge === 0
+     && /^Aujourd['’]hui$/.test(matin.sec) && matin.lignes.some(l => /^rdv:Kiné · Mme Leroy/.test(l)) && matin.lignes.some(l => /^ech:Envoyer le Kbis/.test(l))
+     && fait.st === 'done' && fait.lignes === 0 && !vraies.length,
+    'ARC propose : une pensée rangée en Santé avec un moment daté propose un rendez-vous (Dentiste reconnu), rien n\'est créé avant « Enregistrer » ; la feuille est remplie (spécialité, date, heure) ; ajoutée, la proposition disparaît ; en Juridique, « Ajouter » met l\'échéance sur l\'orbite, « Pas maintenant » tient après rechargement ; sans moment ou au moment passé : rien ; le Point du jour cite le rendez-vous et l\'échéance du jour, « C\'est fait » l\'y retire ; contraste, cibles',
+    JSON.stringify({ sante, contraste: m.pire, hBtn, avant, feuille, apres, jur, jApres, recharge, matin, fait, erreurs: vraies }));
+  await ctx.close();
+}
+
+/* Préparer un rendez-vous (12 octobre) : rien ne part sans le geste ; la demande dit la spécialité et la date, la consigne
+   interdit tout avis ; les propositions s'affichent sans doublon de ce qui est déjà noté ; « Ajouter à la fiche »
+   remplit les champs, rien n'est enregistré avant « Enregistrer » ; panne dite en mots ; rendez-vous passé et document :
+   pas de section. */
+{
+  const ctx = await contexte({ width: 390, height: 844, tel: true });
+  const fk = fakeSupabase();
+  let rep = { status: 200, json: { content: [{ type: 'text', text: '```json\n{"questions":["Combien de séances faut-il prévoir ?","Quel est le coût du soin ?"],"apporter":["Carte Vitale","Radio panoramique de 2025"]}\n```' }], stop_reason: 'end_turn' } };
+  fk.proxy = async () => rep;
+  const { page, errors } = await openPage(browser, url, { ctx, fk });
+  await page.evaluate(() => {
+    if (typeof matinClose === 'function') matinClose();
+    const d = new Date(); d.setDate(d.getDate() + 3); const p = n => (n < 10 ? '0' : '') + n, j = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    const v = new Date(); v.setDate(v.getDate() - 10); const jv = v.getFullYear() + '-' + p(v.getMonth() + 1) + '-' + p(v.getDate());
+    S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j, heure: '14:00', apporter: 'Carte Vitale', questions: '' }, b: { id: 'b', spe: 'kine', date: jv } };
+    saveS(); enterPole('sante'); santeOuvrir('rdv', 'a');
+  });
+  await page.waitForTimeout(400);
+  const avant = await page.evaluate(() => ({ vis: !document.getElementById('sm-prep').hidden, note: document.getElementById('sm-prep-note').textContent }));
+  const appels0 = fk.log.proxyCalls.length;
+  await page.click('#sm-prep-btn'); await page.waitForTimeout(500);
+  const demande = fk.log.proxyCalls[fk.log.proxyCalls.length - 1] || {};
+  const res = await page.evaluate(() => ({ q: [...document.querySelectorAll('#sm-prep-q li')].map(l => l.textContent), a: [...document.querySelectorAll('#sm-prep-a li')].map(l => l.textContent), etat: document.getElementById('sm-prep-etat').textContent, h: [...document.querySelectorAll('#sm-prep button')].filter(b => b.offsetParent).map(b => Math.round(b.getBoundingClientRect().height)) }));
+  await page.evaluate(() => document.getElementById('sm-prep').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const m = await mesurer(page, { racine: '#sm-prep', cadre: '#sm-prep' });
+  await page.click('#sm-prep-ajout'); await page.waitForTimeout(200);
+  const fiche = await page.evaluate(() => ({ q: document.getElementById('sm-questions').value, a: document.getElementById('sm-apporter').value, garde: S.sante.rdv.a.questions }));
+  await page.click('#sm-ok'); await page.waitForTimeout(300);
+  const enreg = await page.evaluate(() => S.sante.rdv.a.questions);
+  // panne
+  rep = { status: 503, json: { error: { message: 'panne' } } };
+  await page.evaluate(() => santeOuvrir('rdv', 'a')); await page.waitForTimeout(300);
+  await page.click('#sm-prep-btn'); await page.waitForTimeout(500);
+  const panne = await page.evaluate(() => ({ etat: document.getElementById('sm-prep-etat').textContent, res: document.getElementById('sm-prep-res').hidden }));
+  const caches = await page.evaluate(() => { santeOuvrir('rdv', 'b'); const passe = document.getElementById('sm-prep').hidden; santeOuvrir('doc'); const doc = document.getElementById('sm-prep').hidden; santeFermer(); return { passe, doc }; });
+  const vraies = errors.filter(e => !/status of 50[03]/.test(e));
+  ok(avant.vis && /spécialité, la date/.test(avant.note) && appels0 === fk.log.proxyCalls.length - 2
+     && /aucun diagnostic/.test(demande.system || '') && /Spécialité : Dentiste/.test(JSON.stringify(demande.messages || [])) && /14 h 00/.test(JSON.stringify(demande.messages || [])) && !demande.task
+     && res.q.length === 2 && res.a.join() === 'Radio panoramique de 2025' && /ARC propose/.test(res.etat) && res.h.every(h => h >= 44) && m.pire.ratio >= 4.5
+     && /- Combien de séances/.test(fiche.q) && /Carte Vitale\n- Radio panoramique/.test(fiche.a) && !fiche.garde && /Quel est le coût/.test(enreg)
+     && /en panne/.test(panne.etat) && panne.res && caches.passe && caches.doc && !vraies.length,
+    'Préparer un rendez-vous : rien ne part avant le geste ; la demande porte la spécialité et la date, la consigne interdit tout diagnostic ; propositions sans doublon (« Carte Vitale » déjà noté) ; « Ajouter à la fiche » remplit les champs, rien n\'est gardé avant « Enregistrer » ; panne dite en mots ; rendez-vous passé et document sans section ; cibles, contraste',
+    JSON.stringify({ avant, appels0, demande: { system: (demande.system || '').slice(0, 60), messages: demande.messages }, res, contraste: m.pire, fiche, enreg, panne, caches, erreurs: vraies }));
   await ctx.close();
 }
 

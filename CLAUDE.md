@@ -1443,6 +1443,47 @@ ARC en orbite, et Relier (11 octobre) :
     toucher, toucher encore ; « Ajouter une échéance » ; cibles ≥ 44 px ; contraste). La section est descendue de 18 px
     sous la lueur de l'horizon (« 1 à venir · 1 à replacer » y tombait à 4,20 : 1). Vérifié dans Chromium seulement.
   - **Pas encore** : « C'est fait » depuis l'orbite (la comète) ; documents juridiques ; Juridique dans le Point du jour.
+- **PR #45 fusionnée le 12 octobre à 5 h 17.**
+- **Les gestes d'ARC dans les pôles (branche `poles-gestes`, 12 octobre 5 h 20)**. Rayan (5 h 17) : « on continue ».
+  Étape 4 de `docs/ETUDE-POLES.md`, sans ce qui enverrait des données de santé au proxy (question toujours ouverte).
+  Fait, tout sur l'appareil, sans IA nouvelle, rien de nouveau envoyé :
+  - **ARC propose** (`propositions`, `renderProps`, `propAjouter`) : une pensée rangée en Santé ou en Juridique, pas
+    faite, avec un moment daté d'aujourd'hui ou plus tard (le proxy ne garde un moment que s'il cite la pensée), devient
+    une carte en tête de « Rendez-vous » (`#sprop`) ou d'« Échéances » (`#jprop`) : « ARC propose un rendez-vous :
+    Dentiste », le jour et l'heure, « De ta pensée : « … » », « Pas maintenant » et « Ajouter » (la carte de Relier,
+    partagée : `.wlien-prop`). Trois au plus, la plus proche d'abord.
+  - **Rien n'est créé sans Rayan** : en Santé, « Ajouter » ouvre la feuille du rendez-vous remplie (spécialité, date,
+    heure ; `santeOuvrir(mode, id, pre)`), il l'enregistre ; en Juridique, « Ajouter » met l'échéance dans les démarches
+    (elle arrive sur l'orbite). L'origine est gardée (`from` = id de la pensée) : une pensée n'est proposée qu'une fois.
+    « Pas maintenant » n'est jamais reproposé (`S.propNon['sante:'|'juridique:' + id]`, synchronisé).
+  - **La spécialité est reconnue sur l'appareil** (`PROP_SPE`, `propSpe` : mots sans accents ni casse, mots entiers :
+    dentiste, kiné, ostéo, ophtalmo, lunettes, ORL, cardio, dermato, psy, prise de sang, radio, IRM, pharmacie, médecin…) ;
+    sans mot reconnu, la feuille demande la spécialité.
+  - **Le Point du jour cite les rendez-vous et les échéances du jour** (`matinPoles`, `matinPoleRow`), dans « Aujourd'hui »,
+    rangés par heure avec les étapes (une échéance sans heure ferme la journée) : « Rendez-vous · 18:00 · Santé · Kiné ·
+    Mme Leroy » avec « Ouvrir » ; « Échéance · Juridique · Envoyer le Kbis » avec « C'est fait » et « Ouvrir ». Le chiffre
+    du poste de l'accueil les compte (« vu · 1 étape · 1 rendez-vous »).
+  - Tests : pôles 18/18 (un contrôle ajouté : proposition et spécialité, rien créé avant « Enregistrer », feuille remplie,
+    proposition retirée une fois ajoutée, échéance sur l'orbite, « Pas maintenant » après rechargement, pensée sans moment
+    ou au moment passé jamais proposée, Point du jour, « C'est fait » depuis le Point du jour, contraste, cibles).
+    Vérifié dans Chromium seulement.
+  - « Préparer ce rendez-vous » avec Claude : fait ensuite, voir plus bas (accord de Rayan, 5 h 48).
+- **Préparer un rendez-vous (branche `sante-preparer`, partie de `poles-gestes`, 12 octobre 6 h)**. À la question « la
+  spécialité, la date et tes notes du rendez-vous partiraient au proxy : d'accord ? », Rayan (5 h 48) : « go on
+  continue », lu comme oui. **La PR #46 se fusionne d'abord, celle-ci ensuite.** Fait :
+  - Dans la feuille d'un rendez-vous à venir (ou nouveau), sous « Mes questions » : « Préparer ce rendez-vous avec ARC »
+    et la ligne vraie « Part à Claude : la spécialité, la date, le lieu et ce que tu as écrit dans ce rendez-vous. Claude
+    organise, il ne donne aucun avis médical. » **Rien ne part sans ce geste** (contrôlé). Pas de section pour un
+    rendez-vous passé ni pour un document.
+  - Chemin de la discussion du proxy (`prepDemander`, 700 jetons, **aucun redéploiement**) ; consigne `PREP_SYSTEM` :
+    organiser seulement, aucun diagnostic, avis, traitement, posologie ni interprétation ; JSON `questions` / `apporter`,
+    3 à 5 chacun. Lecture tolérante (`prepLire`) ; ce qui est déjà noté n'est pas reproposé.
+  - « Questions à poser » et « À apporter » en listes ; « Ajouter à la fiche » (`prepAjouter`) les ajoute aux champs
+    (« - … », dans la limite de chaque champ) ; **rien n'est gardé avant « Enregistrer le rendez-vous »**.
+  - Panne, session, réseau : la raison en mots (`PJ_RAISONS`, partagé avec « En faire un projet »).
+  - Tests : pôles 19/19 (un contrôle ajouté : aucun appel avant le geste, demande et consigne, sans doublon, ajout à la
+    fiche, rien d'enregistré avant « Enregistrer », panne, sections cachées, cibles, contraste). Vérifié dans Chromium
+    seulement, contre un faux proxy : **le vrai Claude reste à essayer par Rayan.**
 
 ### Décisions de Rayan (5 octobre)
 

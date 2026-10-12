@@ -2112,13 +2112,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 #wsec-liens[hidden],#S2 .wlien-dort[hidden]{display:none}
 #S2 .wlien-dort{margin:0 0 12px;font-size:15px;line-height:21px;color:#E8E8EC}
 #S2 .wlien-m{white-space:normal}
-#S2 .wlien-prop{margin-top:10px;padding:14px 16px 12px;border-radius:18px;border:1px solid color-mix(in srgb,var(--penc) 38%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--penc) 10%,transparent),rgba(255,255,255,.01)),#0B0B0E}
-#S2 .wlien-q{display:flex;align-items:center;gap:10px;font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
-#S2 .wlien-why{margin:4px 0 0 18px;font-size:14px;line-height:19px;color:#C4C4CC}
-#S2 .wlien-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
-#S2 .wlien-acts button{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font:500 15px var(--fa);color:#E8E8EC;cursor:pointer}
-#S2 .wlien-acts .wlien-oui{border-color:color-mix(in srgb,var(--penc) 60%,transparent);background:color-mix(in srgb,var(--penc) 16%,transparent);color:#fff;font-weight:600}
-#S2 .wlien-acts button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+:is(#S2,#S3,#S4) .wlien-prop{margin-top:10px;padding:14px 16px 12px;border-radius:18px;border:1px solid color-mix(in srgb,var(--penc) 38%,transparent);background:linear-gradient(180deg,color-mix(in srgb,var(--penc) 10%,transparent),rgba(255,255,255,.01)),#0B0B0E}
+:is(#S2,#S3,#S4) .wlien-q{display:flex;align-items:center;gap:10px;font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
+:is(#S2,#S3,#S4) .wlien-why{margin:4px 0 0 18px;font-size:14px;line-height:19px;color:#C4C4CC}
+:is(#S2,#S3,#S4) .wlien-acts{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
+:is(#S2,#S3,#S4) .wlien-acts button{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);font:500 15px var(--fa);color:#E8E8EC;cursor:pointer}
+:is(#S2,#S3,#S4) .wlien-acts .wlien-oui{border-color:color-mix(in srgb,var(--penc) 60%,transparent);background:color-mix(in srgb,var(--penc) 16%,transparent);color:#fff;font-weight:600}
+:is(#S2,#S3,#S4) .wlien-acts button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#S3 .props,#S4 .props{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+#S3 .props[hidden],#S4 .props[hidden]{display:none}
+#S3 .props .wlien-prop,#S4 .props .wlien-prop{margin-top:0}
+:is(#S3,#S4) .prop-k{display:block;margin-left:18px;font-size:13px;line-height:18px;color:#C4C4CC}
+:is(#S3,#S4) .prop-pt{flex:none;width:8px;height:8px;border-radius:50%;background:var(--penc);box-shadow:0 0 8px var(--penc)}
 #S1 .h-dort-lie{display:block;font-size:13px;line-height:18px;font-weight:400;letter-spacing:0;color:#B4B4BA}
 #depot-screen .rl{display:flex;flex-direction:column;gap:8px;margin-top:10px}
 #depot-screen .rl-lie,#depot-screen .rl-prop{display:block;width:100%;box-sizing:border-box;padding:10px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);text-align:left;font-family:var(--fa);color:inherit}
@@ -2246,6 +2251,19 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #sm-form input[type=date],#sm-form input[type=time]{color-scheme:dark}
 #sm-form :is(input,textarea,select):focus{outline:none;border-color:#30d158;box-shadow:0 0 0 3px rgba(48,209,88,.22)}
 #sm-form .sm-duo{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:10px}
+#sante-modal .sm-prep{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border-radius:16px;border:1px solid rgba(48,209,88,.28);background:linear-gradient(180deg,rgba(48,209,88,.08),rgba(255,255,255,.01))}
+#sante-modal .sm-prep[hidden],#sante-modal .sm-prep-res[hidden]{display:none}
+#sante-modal .sm-prep-btn{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(48,209,88,.55);background:rgba(48,209,88,.14);font:600 15px var(--fa);letter-spacing:-.15px;color:#fff;cursor:pointer}
+#sante-modal .sm-prep-btn:disabled{opacity:.6;cursor:default}
+#sante-modal .sm-prep-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#sante-modal .sm-prep-note{font-size:13px;line-height:18px;color:#C4C4CC}
+#sante-modal .sm-prep-etat{font-size:14px;line-height:19px;color:#E5E5EA}
+#sante-modal .sm-prep-etat:empty{display:none}
+#sante-modal .sm-prep-res{display:flex;flex-direction:column;gap:6px}
+#sante-modal .sm-prep-t{margin-top:4px;font-size:14px;line-height:19px;font-weight:600;color:#F5F5F7}
+#sante-modal .sm-prep-res ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:4px}
+#sante-modal .sm-prep-res li{position:relative;padding-left:16px;font-size:15px;line-height:20px;color:#E8E8EC}
+#sante-modal .sm-prep-res li::before{content:'';position:absolute;left:2px;top:7px;width:6px;height:6px;border-radius:50%;background:#30d158}
 #sante-modal .npj-acts{flex-direction:column-reverse;align-items:stretch;gap:6px}
 #sante-modal #sm-annuler{width:100%}
 #sm-suppr{display:block;width:100%;min-height:48px;margin-top:2px;border-radius:14px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:#FF9F9F;cursor:pointer}
@@ -2713,6 +2731,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <!-- RENDEZ-VOUS -->
       <div class="psec" id="ssec-rdv">
         <div class="psec-head"><span class="psec-lbl">Rendez-vous</span><div class="psec-line"></div><span class="psec-info" id="srdv-n"></span></div>
+        <div class="props" id="sprop" hidden></div>
         <div class="wpen" id="srdv-list"></div>
         <div class="sm-vide" id="srdv-vide">Aucun rendez-vous à venir.</div>
         <button class="sm-ajout" id="srdv-ajout" type="button">Ajouter un rendez-vous</button>
@@ -2958,6 +2977,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <!-- ÉCHÉANCES : l'orbite (docs/ETUDE-POLES.md) ; au centre aujourd'hui, anneaux 7, 30 et 90 jours -->
       <div class="psec" id="jsec-orbite">
         <div class="psec-head"><span class="psec-lbl">Échéances</span><div class="psec-line"></div><span class="psec-info" id="jo-n"></span></div>
+        <div class="props" id="jprop" hidden></div>
         <div class="jo" id="jo">
           <div class="jo-scene">
             <svg class="jo-svg" id="jo-svg" viewBox="0 0 360 300" aria-hidden="true"></svg>
@@ -3145,6 +3165,16 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <label class="npj-champ"><span class="npj-lbl">Lieu</span><input id="sm-lieu" type="text" maxlength="120" autocomplete="off" placeholder="Facultatif"></label>
           <label class="npj-champ"><span class="npj-lbl">À apporter</span><textarea id="sm-apporter" rows="2" maxlength="300" placeholder="Carte Vitale, ordonnance, radios…"></textarea></label>
           <label class="npj-champ"><span class="npj-lbl">Mes questions</span><textarea id="sm-questions" rows="2" maxlength="600" placeholder="Ce que tu veux demander"></textarea></label>
+          <div class="sm-prep" id="sm-prep" hidden>
+            <button type="button" class="sm-prep-btn" id="sm-prep-btn">Préparer ce rendez-vous avec ARC</button>
+            <div class="sm-prep-note" id="sm-prep-note">Part à Claude&nbsp;: la spécialité, la date, le lieu et ce que tu as écrit dans ce rendez-vous. Claude organise, il ne donne aucun avis médical.</div>
+            <div class="sm-prep-etat" id="sm-prep-etat" role="status"></div>
+            <div class="sm-prep-res" id="sm-prep-res" hidden>
+              <div class="sm-prep-t">Questions à poser</div><ul id="sm-prep-q"></ul>
+              <div class="sm-prep-t">À apporter</div><ul id="sm-prep-a"></ul>
+              <button type="button" class="sm-prep-btn" id="sm-prep-ajout">Ajouter à la fiche</button>
+            </div>
+          </div>
           <label class="npj-champ" id="sm-sortie-champ"><span class="npj-lbl">Ce qui en est sorti</span><textarea id="sm-sortie" rows="2" maxlength="600" placeholder="Ce qu'on t'a dit, la suite prévue"></textarea></label>
         </div>
         <div class="sm-mode" data-mode="doc">
@@ -4382,6 +4412,7 @@ function mondesConstruire() {
 function normalizeS(){
   if(!S.mondes) S.mondes={};
   if(!S.liens||typeof S.liens!=='object') S.liens={};
+  if(!S.propNon||typeof S.propNon!=='object') S.propNon={};
   mondesConstruire();
   if(!S.focus) S.focus={};
   migrateWorlds();
@@ -5389,6 +5420,187 @@ function searchJur(q){
   });
 }
 
+/* ═══ ARC PROPOSE (docs/ETUDE-POLES.md § 7, geste 2) ═══
+   Une pensée rangée en Santé ou en Juridique, avec un moment daté (le proxy ne garde un moment que s'il cite les mots
+   de la pensée) : ARC propose d'en faire un rendez-vous ou une échéance. Rien n'est créé sans Rayan : « Ajouter »
+   ouvre la feuille du rendez-vous déjà remplie (il l'enregistre), ou ajoute l'échéance aux démarches. La spécialité
+   est reconnue sur l'appareil par une liste de mots, sans IA. « Pas maintenant » n'est jamais reproposé (S.propNon). */
+var PROP_SPE = [
+  ['dentiste', 'dentiste|dentaire|dents?|carie|detartrage|orthodontiste'], ['kine', 'kine|kines?itherapeute|reeducation|osteo|osteopathe'],
+  ['ophtalmo', 'ophtalmo|ophtalmologue|ophtalmologiste|lunettes|lentilles|yeux|orthoptiste'], ['orl', 'orl|oreilles?|audition'],
+  ['cardio', 'cardio|cardiologue|coeur|cardiaque'], ['dermato', 'dermato|dermatologue|peau|grain de beaute'],
+  ['psy', 'psy|psychologue|psychiatre|therapeute'], ['laboratoire', 'prise de sang|analyses?|labo|laboratoire|bilan sanguin'],
+  ['imagerie', 'radio|radiographie|irm|scanner|echographie|mammographie|imagerie'], ['pharmacie', 'pharmacie|pharmacien'],
+  ['generaliste', 'generaliste|medecin|docteur|toubib']
+];
+function propNorm(x) { return String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/œ/g, 'oe').replace(/[’']/g, ' '); }
+function propSpe(txt) {
+  var n = ' ' + propNorm(txt) + ' ';
+  for(var i = 0; i < PROP_SPE.length; i++) if(new RegExp('[^a-z](' + PROP_SPE[i][1] + ')[^a-z]').test(n)) return PROP_SPE[i][0];
+  return '';
+}
+function propositions(cle) {
+  var non = S.propNon || {}, deja = {}, debut = new Date(); debut.setHours(0, 0, 0, 0);
+  if(cle === 'sante') santeRdv().forEach(function(r) { if(r.from) deja[r.from] = 1; });
+  else JUR_SECTIONS.forEach(function(sec) { ((S.poles.juridique || {})[sec.id] || []).forEach(function(it) { if(it && it.from) deja[it.from] = 1; }); });
+  return penseesDe(cle).filter(function(x) {
+    var m = x.f.moment, d = m && m.type === 'datetime' ? new Date(m.at) : null;
+    return x.f.status === 'filed' && d && !isNaN(d) && d >= debut && !deja[x.t.id] && !non[cle + ':' + x.t.id];
+  }).sort(function(a, b) { return new Date(a.f.moment.at) - new Date(b.f.moment.at); });
+}
+function propQuand(d) {
+  var j = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  return j.charAt(0).toUpperCase() + j.slice(1) + ' · ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', ' h ');
+}
+function renderProps(cle) {
+  var box = document.getElementById(cle === 'sante' ? 'sprop' : 'jprop'); if(!box) return;
+  var l = propositions(cle), coul = cle === 'sante' ? '#30d158' : '#6FB7FF';
+  box.textContent = ''; box.hidden = !l.length;
+  l.slice(0, 3).forEach(function(x) {
+    var d = new Date(x.f.moment.at), spe = cle === 'sante' ? propSpe(x.t.body + ' ' + (x.f.step || '')) : '';
+    var c = document.createElement('div'); c.className = 'wlien-prop'; c.dataset.tid = x.t.id; c.style.setProperty('--penc', coul);
+    var q = document.createElement('div'); q.className = 'wlien-q';
+    var pt = document.createElement('span'); pt.className = 'prop-pt'; pt.setAttribute('aria-hidden', 'true'); q.appendChild(pt);
+    var qt = document.createElement('span'); qt.textContent = cle === 'sante' ? 'ARC propose un rendez-vous' + (spe ? ' : ' + santeSpeNom(spe) : '') : 'ARC propose une échéance'; q.appendChild(qt);
+    c.appendChild(q);
+    var k = document.createElement('span'); k.className = 'prop-k'; k.textContent = propQuand(d); c.appendChild(k);
+    var w = document.createElement('div'); w.className = 'wlien-why'; w.textContent = 'De ta pensée : « ' + (x.t.body || '').replace(/\s+/g, ' ').trim() + ' »'; c.appendChild(w);
+    var a = document.createElement('div'); a.className = 'wlien-acts';
+    var non = document.createElement('button'); non.type = 'button'; non.className = 'prop-non'; non.textContent = 'Pas maintenant';
+    non.addEventListener('click', function() { if(!S.propNon) S.propNon = {}; S.propNon[cle + ':' + x.t.id] = new Date().toISOString(); saveS(); renderProps(cle); });
+    var oui = document.createElement('button'); oui.type = 'button'; oui.className = 'wlien-oui prop-oui'; oui.textContent = 'Ajouter';
+    oui.addEventListener('click', function() { propAjouter(cle, x, d, spe); });
+    a.appendChild(non); a.appendChild(oui); c.appendChild(a);
+    box.appendChild(c);
+  });
+}
+function propAjouter(cle, x, d, spe) {
+  var p2 = function(n) { return (n < 10 ? '0' : '') + n; };
+  var date = d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()), heure = p2(d.getHours()) + ':' + p2(d.getMinutes());
+  if(cle === 'sante') { santeOuvrir('rdv', null, { spe: spe, date: date, heure: heure, from: x.t.id }); return; }
+  if(!S.poles.juridique.demarches) S.poles.juridique.demarches = [];
+  S.poles.juridique.demarches.push({ t: (x.f.step || x.t.body || '').trim(), priority: '', status: 'todo', deadline: date, ts: Date.now(), from: x.t.id });
+  saveS(); renderJurSections(); renderJurHero(); renderJurTimeline();
+  toast('Échéance ajoutée · elle est sur l’orbite');
+}
+// Le Point du jour : les rendez-vous et les échéances d'aujourd'hui (un fait de Santé ou de Juridique, pas une étape)
+function matinPoles() {
+  var out = [], auj = new Date().toDateString();
+  santeRdv().forEach(function(r) { var d = santeQuand(r); if(d && d.toDateString() === auj) out.push({ k: 'rdv', r: r, d: d, h: !!r.heure }); });
+  if(typeof jurEcheances === 'function' && S.poles && S.poles.juridique) jurEcheances().forEach(function(e) { if(e.j === 0) out.push({ k: 'ech', e: e, d: new Date(e.d + 'T23:59'), h: false }); });
+  return out.sort(function(a, b) { return a.d - b.d; });
+}
+function matinPoleRow(x) {
+  var row = rgEl('div', 'matin-row'); row.setAttribute('data-kind', x.k);
+  var top = rgEl('div', 'rg-row');
+  top.appendChild(rgEl('span', 'rg-lbl', x.k === 'rdv' ? 'Rendez-vous' : 'Échéance'));
+  if(x.h) top.appendChild(rgEl('span', 'matin-when', x.d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })));
+  top.appendChild(rangePill(x.k === 'rdv' ? 'sante' : 'juridique'));
+  row.appendChild(top);
+  row.appendChild(rgEl('div', 'matin-step', x.k === 'rdv' ? [santeSpeNom(x.r.spe) || 'Rendez-vous', x.r.qui, x.r.lieu].filter(Boolean).join(' · ') : x.e.t));
+  var acts = rgEl('div', 'rg-acts');
+  if(x.k === 'ech') acts.appendChild(rangeBtn('C\'est fait', function() {
+    var it = (S.poles.juridique[x.e.sec] || [])[x.e.idx]; if(it) { it.status = 'done'; it.doneDate = new Date().toISOString(); saveS(); }
+    matinRender(); matinLabels();
+  }, 'main'));
+  acts.appendChild(rangeBtn('Ouvrir', function() {
+    matinClose();
+    if(x.k === 'rdv') { enterPole('sante'); santeOuvrir('rdv', x.r.id); }
+    else { enterPole('juridique'); setTimeout(function() { jurOuvrirItem(x.e.sec, x.e.idx); }, 60); }
+  }, x.k === 'rdv' ? 'main' : ''));
+  row.appendChild(acts);
+  return row;
+}
+/* ═══ PRÉPARER UN RENDEZ-VOUS (docs/ETUDE-POLES.md § 7, geste 3) ═══
+   Accord de Rayan (12 octobre, 5 h 48). Seulement quand il touche « Préparer ce rendez-vous avec ARC » : la spécialité,
+   la date, le lieu et ce qu'il a écrit dans ce rendez-vous partent au proxy (chemin de la discussion, rien d'enregistré
+   côté serveur). Claude propose des questions et des choses à apporter ; jamais d'avis, de diagnostic ni de traitement.
+   Rien n'est écrit dans la fiche sans « Ajouter à la fiche », ni enregistré sans « Enregistrer le rendez-vous ». */
+var PREP_SYSTEM = 'Tu aides Rayan à préparer un rendez-vous médical. Tu organises, tu ne soignes pas : aucun diagnostic, aucun avis sur son cas, ' +
+  'aucun traitement, aucune posologie, aucune interprétation de résultat. Propose seulement des questions qu’il pourrait poser au professionnel ' +
+  'et des choses utiles à apporter (carte Vitale, ordonnances, comptes rendus, résultats, liste de médicaments…), sans répéter ce qu’il a déjà noté. ' +
+  'Réponds UNIQUEMENT par un objet JSON, sans texte autour : {"questions": ["…"], "apporter": ["…"]}, 3 à 5 éléments chacun, courts ' +
+  '(moins de 90 caractères), en français, en le tutoyant.';
+var _prep = { n: 0, q: [], a: [] };
+function prepNorm(x) { return propNorm(x).replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim(); }
+function prepLire(txt, dejaQ, dejaA) {
+  txt = String(txt || '').replace(/```(?:json)?/gi, '');
+  var a = txt.indexOf('{'), b = txt.lastIndexOf('}');
+  if(a < 0 || b <= a) return { raison: 'format' };
+  var o; try { o = JSON.parse(txt.slice(a, b + 1)); } catch(e) { return { raison: 'format' }; }
+  var cles = {};
+  Object.keys(o || {}).forEach(function(k) { cles[prepNorm(k).replace(/ /g, '')] = o[k]; });
+  var liste = function(v, deja) {
+    if(typeof v === 'string') v = v.split(/\n+/);
+    if(!Array.isArray(v)) return [];
+    var vus = {}; String(deja || '').split(/\n+/).forEach(function(l) { var n = prepNorm(l.replace(/^[\s\-–•]+/, '')); if(n) vus[n] = 1; });
+    return v.map(function(x) { return typeof x === 'string' ? x : (x && (x.t || x.texte || x.question || x.item) || ''); })
+      .map(function(x) { return String(x).replace(/\s+/g, ' ').replace(/^[\s\-–•\d.)]+/, '').trim().slice(0, 90).replace(/ ([?!:;»])/g, '\u00A0$1'); })
+      .filter(function(x) { var n = prepNorm(x); if(!n || vus[n]) return false; vus[n] = 1; return true; }).slice(0, 5);
+  };
+  var q = liste(cles.questions || cles.question, dejaQ), ap = liste(cles.apporter || cles.aapporter || cles.documents || cles.bring, dejaA);
+  if(!q.length && !ap.length) return { raison: 'format' };
+  return { q: q, a: ap };
+}
+function prepVisible() {
+  var box = document.getElementById('sm-prep'); if(!box) return;
+  var r = _sm && _sm.id ? S.sante.rdv[_sm.id] : null;
+  box.hidden = !(_sm && _sm.mode === 'rdv') || !!(r && !santeAVenir(r));
+  document.getElementById('sm-prep-res').hidden = true;
+  document.getElementById('sm-prep-etat').textContent = '';
+  document.getElementById('sm-prep-btn').disabled = false;
+  _prep.n++;
+}
+async function prepDemander() {
+  var g = function(i) { return document.getElementById(i).value.trim(); }, etat = document.getElementById('sm-prep-etat');
+  if(!g('sm-spe')) { etat.textContent = 'Choisis d’abord la spécialité.'; document.getElementById('sm-spe').focus(); return; }
+  if(!(_sb && getUID()) || navigator.onLine === false) { etat.textContent = 'Hors connexion : Claude n’est pas joignable.'; return; }
+  var n = ++_prep.n, btn = document.getElementById('sm-prep-btn'), m = document.getElementById('sante-modal');
+  btn.disabled = true; etat.textContent = 'ARC prépare ton rendez-vous…'; document.getElementById('sm-prep-res').hidden = true;
+  var quand = g('sm-date') ? new Date(g('sm-date') + 'T' + (g('sm-heure') || '12:00')).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + (g('sm-heure') ? ' à ' + g('sm-heure').replace(':', ' h ') : '') : 'pas encore fixée';
+  var lignes = ['Spécialité : ' + santeSpeNom(g('sm-spe')), 'Date : ' + quand];
+  if(g('sm-qui')) lignes.push('Praticien : ' + g('sm-qui'));
+  if(g('sm-lieu')) lignes.push('Lieu : ' + g('sm-lieu'));
+  if(g('sm-apporter')) lignes.push('Déjà prévu d’apporter : ' + g('sm-apporter'));
+  if(g('sm-questions')) lignes.push('Questions déjà notées : ' + g('sm-questions'));
+  try {
+    var sess = await _sb.auth.getSession(), token = sess.data && sess.data.session && sess.data.session.access_token;
+    if(!token) throw projetErreur('session');
+    var resp;
+    try {
+      resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 700, system: PREP_SYSTEM, messages: [{ role: 'user', content: lignes.join('\n') }] }) });
+    } catch(e) { throw projetErreur('reseau'); }
+    if(!resp.ok) throw projetErreur(resp.status === 401 ? 'expire' : resp.status === 403 ? 'interdit' : resp.status === 429 ? 'trop' : resp.status >= 500 ? 'panne' : 'refus');
+    var data = await resp.json().catch(function() { return {}; });
+    var txt = (data.content || []).filter(function(c) { return c && c.type === 'text'; }).map(function(c) { return c.text; }).join('');
+    if(!txt.trim()) throw projetErreur('vide');
+    var lu = prepLire(txt, g('sm-questions'), g('sm-apporter'));
+    if(!lu.q) throw projetErreur(data.stop_reason === 'max_tokens' ? 'coupee' : lu.raison);
+    if(n !== _prep.n || !m.classList.contains('open')) return;
+    _prep.q = lu.q; _prep.a = lu.a;
+    var remplir = function(id, l) { var ul = document.getElementById(id); ul.textContent = ''; l.forEach(function(x) { var li = document.createElement('li'); li.textContent = x; ul.appendChild(li); }); ul.previousElementSibling.hidden = !l.length; ul.hidden = !l.length; };
+    remplir('sm-prep-q', lu.q); remplir('sm-prep-a', lu.a);
+    document.getElementById('sm-prep-res').hidden = false;
+    etat.textContent = 'ARC propose. Garde ce qui te sert.';
+  } catch(e) {
+    if(n !== _prep.n) return;
+    var raison = e.raison || 'reseau';
+    console.warn('Préparer : impossible :', raison);
+    etat.textContent = 'ARC n’a pas pu préparer ce rendez-vous : ' + PJ_RAISONS[raison];
+  }
+  btn.disabled = false;
+}
+function prepAjouter() {
+  var ajoute = function(id, l) {
+    var ta = document.getElementById(id), max = +ta.getAttribute('maxlength') || 600, v = ta.value.replace(/\s+$/, '');
+    l.forEach(function(x) { var nv = (v ? v + '\n' : '') + '- ' + x; if(nv.length <= max) v = nv; });
+    ta.value = v;
+  };
+  ajoute('sm-questions', _prep.q); ajoute('sm-apporter', _prep.a);
+  document.getElementById('sm-prep-res').hidden = true;
+  document.getElementById('sm-prep-etat').textContent = 'Ajouté à la fiche. Enregistre le rendez-vous pour le garder.';
+}
 /* ═══ L'ORBITE (docs/ETUDE-POLES.md, Juridique) ═══
    Source : les éléments du dossier qui ont une date et ne sont pas faits (S.poles.juridique, rien de nouveau dans S).
    Au centre aujourd'hui ; anneaux 7, 30 et 90 jours ; au-delà, l'échéance n'est que dans la liste. */
@@ -5423,6 +5635,7 @@ function joRayon(j) {
 function renderJurTimeline() { renderJurOrbite(); }
 function renderJurOrbite() {
   var box = document.getElementById('jo'); if(!box) return;
+  renderProps('juridique');
   var svg = document.getElementById('jo-svg'), pts = document.getElementById('jo-pts'), liste = document.getElementById('jo-liste');
   var ech = jurEcheances(), C = JO;
   if(_joSel && !ech.some(function(e) { return e.k === _joSel; })) _joSel = null;
@@ -7824,6 +8037,7 @@ function scTempsGlisse(rg) {
 }
 function renderSanteMemoire() {
   var liste = document.getElementById('srdv-list'); if(!liste) return;
+  renderProps('sante');
   var tout = santeRdv(), avenir = tout.filter(santeAVenir), passes = tout.filter(function(r) { return !santeAVenir(r); });
   avenir.sort(function(a, b) { return santeQuand(a) - santeQuand(b); });
   passes.sort(function(a, b) { return santeQuand(b) - santeQuand(a); });
@@ -7880,8 +8094,8 @@ function renderSanteMemoire() {
 
 /* La feuille : ajouter ou modifier un rendez-vous, un document. Supprimer demande un second geste (charte, règle 11). */
 var _sm = { mode: 'rdv', id: null, suppr: false };
-function santeOuvrir(mode, id) {
-  _sm = { mode: mode, id: id || null, suppr: false };
+function santeOuvrir(mode, id, pre) {
+  _sm = { mode: mode, id: id || null, suppr: false, from: pre && pre.from || '' };
   var m = document.getElementById('sante-modal'), f = document.getElementById('sm-form');
   f.reset();
   [].forEach.call(f.querySelectorAll('.sm-mode'), function(z) { z.hidden = z.getAttribute('data-mode') !== mode; });
@@ -7895,6 +8109,7 @@ function santeOuvrir(mode, id) {
     v('sm-lieu', r && r.lieu); v('sm-apporter', r && r.apporter); v('sm-questions', r && r.questions); v('sm-sortie', r && r.sortie);
     // « Ce qui en est sorti » ne sert qu'à un rendez-vous déjà enregistré
     document.getElementById('sm-sortie-champ').hidden = !r;
+    if(!r && pre) { v('sm-spe', pre.spe); v('sm-date', pre.date); v('sm-heure', pre.heure); }
   } else {
     document.getElementById('sm-titre').textContent = r ? r.titre : 'Nouveau document';
     document.getElementById('sm-ok').textContent = 'Enregistrer le document';
@@ -7906,9 +8121,10 @@ function santeOuvrir(mode, id) {
   }
   document.getElementById('sm-suppr').hidden = !r;
   document.getElementById('sm-suppr').classList.remove('arme');
+  prepVisible();
   document.getElementById('sm-err').textContent = '';
   m.classList.add('open'); m.scrollTop = 0;
-  setTimeout(function() { var c = document.getElementById(mode === 'rdv' ? (r ? 'sm-date' : 'sm-spe') : 'sm-doc-titre'); if(c && !r) c.focus(); }, 60);
+  setTimeout(function() { var c = document.getElementById(mode === 'rdv' ? (r ? 'sm-date' : (pre && pre.spe ? 'sm-qui' : 'sm-spe')) : 'sm-doc-titre'); if(c && !r) c.focus(); }, 60);
 }
 function santeFermer() { document.getElementById('sante-modal').classList.remove('open'); }
 function santeEnregistrer() {
@@ -7919,7 +8135,7 @@ function santeEnregistrer() {
     if(!g('sm-date')) { err.textContent = 'Indique la date du rendez-vous.'; document.getElementById('sm-date').focus(); return; }
     var id = _sm.id || santeId(), ancien = S.sante.rdv[id] || {};
     S.sante.rdv[id] = Object.assign({}, ancien, { id: id, spe: g('sm-spe'), qui: g('sm-qui'), date: g('sm-date'), heure: g('sm-heure'),
-      lieu: g('sm-lieu'), apporter: g('sm-apporter'), questions: g('sm-questions'), sortie: _sm.id ? g('sm-sortie') : (ancien.sortie || ''), cree: ancien.cree || now, maj: now });
+      lieu: g('sm-lieu'), apporter: g('sm-apporter'), questions: g('sm-questions'), sortie: _sm.id ? g('sm-sortie') : (ancien.sortie || ''), from: ancien.from || _sm.from || '', cree: ancien.cree || now, maj: now });
   } else {
     if(!g('sm-doc-titre')) { err.textContent = 'Donne un nom au document.'; document.getElementById('sm-doc-titre').focus(); return; }
     var di = _sm.id || santeId(), da = S.sante.docs[di] || {};
@@ -7952,6 +8168,8 @@ function santeSupprimer() {
   [].forEach.call(document.querySelectorAll('#sc-corps .sc-v'), function(b) { b.addEventListener('click', function() { _scVue = b.getAttribute('data-vue'); renderCorps(); }); });
   on('sc-t-range', 'input', function(e) { scTempsGlisse(e.target); });
   on('jo-ajout', 'click', joAjouter);
+  on('sm-prep-btn', 'click', prepDemander);
+  on('sm-prep-ajout', 'click', prepAjouter);
   on('sc-t-auj', 'click', function() { _scDate = null; renderCorps(); });
   on('sm-fermer', 'click', santeFermer); on('sm-annuler', 'click', santeFermer);
   on('sm-suppr', 'click', santeSupprimer);
@@ -7977,7 +8195,7 @@ function rangeToSortCount() {
 function rangeHomeRender() {
   // L'écran d'un projet ouvert suit aussi les rangements qui arrivent (ses pensées)
   var s2 = document.getElementById('S2'); if(s2 && !s2.classList.contains('off')) renderPenseesProjet();
-  var s4 = document.getElementById('S4'); if(s4 && !s4.classList.contains('off')) renderPenseesJur();
+  var s4 = document.getElementById('S4'); if(s4 && !s4.classList.contains('off')) { renderPenseesJur(); renderProps('juridique'); }
   var s3 = document.getElementById('S3'); if(s3 && !s3.classList.contains('off') && typeof renderSanteMemoire === 'function') renderSanteMemoire();
   if(_matin) { if(_matinOpen && !document.getElementById('matin-view').hidden) matinRender(); matinLabels(); }
   var poste = document.getElementById('h-poste'); if(!poste) return;
@@ -8832,9 +9050,12 @@ function matinRender() {
   var now = new Date();
   var date = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
   document.getElementById('matin-date').textContent = date.charAt(0).toUpperCase() + date.slice(1);
-  var data = matinData();
+  var data = matinData(), poles = matinPoles();
   var rows = [];
-  data.today.forEach(function(r) { rows.push({ sec: 'today', r: r }); });
+  poles.forEach(function(x) { rows.push({ sec: 'today', p: x, d: x.d }); });
+  data.today.forEach(function(r) { rows.push({ sec: 'today', r: r, d: r.d }); });
+  // « Aujourd'hui » : rendez-vous, échéances et étapes ensemble, par heure (une échéance sans heure ferme la journée)
+  rows.sort(function(a, b) { return a.d - b.d; });
   data.replace.forEach(function(r) { rows.push({ sec: 'replace', r: r }); });
   data.nomoment.forEach(function(r) { rows.push({ sec: 'nomoment', r: r }); });
   var body = document.getElementById('matin-body'); body.textContent = '';
@@ -8850,7 +9071,7 @@ function matinRender() {
                  nomoment: ['Sans moment', 'Les plus anciennes. Un moment les rend plus faciles à tenir.'] };
   var sec = null, box = null;
   // « Aujourd'hui » est toujours là, même vide, pour que la suite se lise
-  if(!data.today.length) {
+  if(!data.today.length && !poles.length) {
     var s0 = rgEl('section', 'matin-sec'); s0.appendChild(rgEl('div', 'matin-sec-t', 'Aujourd\'hui'));
     s0.appendChild(rgEl('div', 'matin-sec-s', 'Rien de prévu à heure fixe.')); body.appendChild(s0);
   }
@@ -8861,7 +9082,7 @@ function matinRender() {
       if(titles[sec][1]) box.appendChild(rgEl('div', 'matin-sec-s', titles[sec][1]));
       body.appendChild(box);
     }
-    box.appendChild(matinRowEl(x.sec, x.r));
+    box.appendChild(x.p ? matinPoleRow(x.p) : matinRowEl(x.sec, x.r));
   });
   if(rows.length > MATIN_MAX_ROWS) {
     var more = rgEl('div', 'rg-acts matin-more');
@@ -8913,10 +9134,12 @@ function matinLabels() {
     if(!st.enabled) sub = 'Désactivé';
     else if(new Date() < matinHourToday()) { val = st.hour; sub = 'à venir'; }
     else {
-      var day = _matin.days[matinDayKey(new Date())], d = matinData(), k = d.today.length + d.replace.length;
-      var etapes = k ? k + ' étape' + (k > 1 ? 's' : '') : '';
-      if(day && day.shownAt) { val = new Date(day.shownAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); sub = 'vu' + (etapes ? ' · ' + etapes : ''); }
-      else if(k) { val = String(k); sub = 'étape' + (k > 1 ? 's' : '') + ' aujourd\u2019hui'; }
+      var day = _matin.days[matinDayKey(new Date())], d = matinData(), k = d.today.length + d.replace.length, mp = matinPoles();
+      var nr = mp.filter(function(x) { return x.k === 'rdv'; }).length, ne = mp.length - nr;
+      var parts = [k ? k + ' étape' + (k > 1 ? 's' : '') : '', nr ? nr + ' rendez-vous' : '', ne ? ne + ' échéance' + (ne > 1 ? 's' : '') : ''].filter(Boolean);
+      var tot = k + mp.length;
+      if(day && day.shownAt) { val = new Date(day.shownAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); sub = 'vu' + (parts.length ? ' · ' + parts.join(' · ') : ''); }
+      else if(tot) { val = String(tot); sub = parts.length === 1 && k ? 'étape' + (k > 1 ? 's' : '') + ' aujourd\u2019hui' : 'aujourd\u2019hui'; }
       else sub = 'Rien n\u2019attend';
     }
     n.textContent = sub; if(v) v.textContent = val;
