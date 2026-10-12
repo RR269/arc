@@ -456,8 +456,9 @@ const kick = page => page.evaluate(() => { window.dispatchEvent(new Event('onlin
   }, id);
   await page.click('#depot-open'); await page.click('#depot-back');
   const before = await labels();
-  // Rayan fixe le moment (bouton « Ce soir ») : ce n'est plus une proposition d'ARC
-  await page.evaluate(i => rangeAdd(i, { moment: rangeTonight() }, 'user'), id);
+  // Rayan modifie l'étape : ce n'est plus une proposition d'ARC. (Avant le 12 octobre, le test fixait « Ce soir » ; après
+  // 23 h, rangeTonight() tombe le lendemain et la pensée quittait le Point du jour : le test échouait de 23 h à minuit.)
+  await page.evaluate(i => rangeAdd(i, { step: 'Vérifier l’immatriculation au greffe' }, 'user'), id);
   const after = await labels();
   const ok1 = Object.values(before).every(v => v === 'ARC propose');
   const ok2 = Object.values(after).every(v => v === 'Rangé');
