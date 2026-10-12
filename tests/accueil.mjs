@@ -94,7 +94,7 @@ for (const vp of ECRANS) {
     d(!r.large || r.hors.length, `débordement horizontal : ${r.hors.join(', ')}`);
     d(r.ids.length, `identifiants en double : ${r.ids.join(', ')}`);
     d(!r.horizon, 'l\'horizon d\'ARC manque sous le titre');
-    d(r.systeme.some(f => f !== '-apple-system') || !/Jakarta/.test(r.titre), `écriture : texte ${r.systeme.join(' / ')}, titre ${r.titre}`);
+    d(r.systeme.some(f => f !== '-apple-system') || !/apple-system/.test(r.titre), `écriture : texte ${r.systeme.join(' / ')}, titre ${r.titre}`);
     d(r.mondes !== 2 || r.dort !== 3 || r.poles !== 2, `${r.mondes} projets en cours, ${r.dort} endormis, ${r.poles} pôles`);
     d(r.date !== 1, `la date est écrite ${r.date} fois`);
     d(r.agenda || !r.poste, r.agenda ? 'une liste d\'étapes est revenue sur l\'accueil' : 'le poste manque');
@@ -485,6 +485,46 @@ for (const vp of ECRANS) {
      && ouvert && !fba.vu && atlas.vu && atlas.lignes.length === 1 && atlas.lignes[0].t === 'Relire les statuts' && jur.vu && jur.n === '1 à faire' && jur.lignes.join() === 'Relancer la banque' && !mj.sous.length && !sante && !m.sous.length && m.n >= 6 && !vraies.length,
      'Projet et Juridique : leurs pensées rangées s\'y retrouvent (à faire puis faites, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section (Santé comprise) ; contraste ≥ 4,5 : 1',
      `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.vu ? 'section visible' : 'sans section'} ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; Juridique « ${jur.n} » ${jur.lignes.join(', ')}, le plus faible ${mj.pire ? fmt(mj.pire.ratio) : '?'} ; Santé ${sante ? 'section visible sans pensée' : 'section cachée (aucune pensée)'} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
+  await ctx.close();
+}
+
+/* L'écriture d'Apple partout (12 octobre, Rayan : « tu te dois d'utiliser la calligraphie Apple sur tout ARC ») : sur
+   l'écran d'entrée, l'accueil, Déposé, le Point du jour, un projet, Santé, Juridique, la recherche et la carte, chaque
+   texte visible commence par -apple-system ; seul le logo ARC garde son dessin ; aucune police chargée hors du logo. */
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase(), session: false });
+  const lire = (ou) => page.evaluate(ou => {
+    const hors = [];
+    const tw = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let nd; (nd = tw.nextNode());) {
+      const e = nd.parentElement; if (!nd.nodeValue.trim() || !e || e.closest('code,pre,.h-logo-name,.auth-brand-name,script,style')) continue;
+      const r = e.getBoundingClientRect(), cs = getComputedStyle(e);
+      if (!r.width || !r.height || cs.visibility === 'hidden' || parseFloat(cs.fontSize) === 0 || r.bottom < 0 || r.top > innerHeight) continue;
+      if (e.closest('[hidden],.off')) continue;
+      const f = cs.fontFamily.split(',')[0].trim().replace(/["']/g, '');
+      if (f !== '-apple-system') hors.push(ou + ' : ' + (e.id || e.className || e.tagName) + ' « ' + nd.nodeValue.trim().slice(0, 20) + ' » ' + f);
+    }
+    return hors;
+  }, ou);
+  const hors = [];
+  hors.push(...await lire('entrée'));
+  await ctx.addInitScript(sessionScript()); await page.reload(); await page.waitForTimeout(900);
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
+  hors.push(...await lire('accueil'));
+  await page.evaluate(() => depotOpen()); await page.waitForTimeout(300); hors.push(...await lire('Déposé')); await page.evaluate(() => depotClose());
+  await page.evaluate(() => matinShow('ask')); await page.waitForTimeout(300); hors.push(...await lire('Point du jour')); await page.evaluate(() => matinClose());
+  await page.evaluate(() => enterWorld(0)); await page.waitForTimeout(300); hors.push(...await lire('ARYAN'));
+  await page.evaluate(() => enterPole('sante')); await page.waitForTimeout(300); hors.push(...await lire('Santé'));
+  await page.evaluate(() => enterPole('juridique')); await page.waitForTimeout(300); hors.push(...await lire('Juridique'));
+  await page.evaluate(() => { goHome(); openSearch(); }); await page.waitForTimeout(300); hors.push(...await lire('recherche'));
+  await page.evaluate(() => { closeSearch(); carteOuvrir(); }); await page.waitForTimeout(400); hors.push(...await lire('carte'));
+  const polices = await page.evaluate(() => [...document.querySelectorAll('link[href*="fonts.googleapis"]')].map(l => l.href).join(' '));
+  const canevas = await page.evaluate(() => getComputedStyle(document.body).fontFamily.split(',')[0]);
+  const vraies = errors.filter(e => !/status of 500/.test(e));
+  ok(!hors.length && !/Jakarta|JetBrains|Azeret/.test(polices) && /apple-system/.test(canevas) && !vraies.length,
+     'L\'écriture d\'Apple partout : entrée, accueil, Déposé, Point du jour, projet, Santé, Juridique, recherche, carte ; seul le logo garde son dessin ; plus aucune autre police chargée',
+     hors.slice(0, 8).join(' | ') + (hors.length > 8 ? ` (+${hors.length - 8})` : '') + ` ; polices : ${polices} ; corps : ${canevas}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
   await ctx.close();
 }
 
