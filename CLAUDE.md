@@ -1394,6 +1394,26 @@ ARC en orbite, et Relier (11 octobre) :
     essai réussi ensuite », échoue de temps en temps (« rangée au nouvel essai : false ») **sur `main` aussi** (1 fois sur
     13 le 12 octobre ; 3 sur 7 sur la branche, sans code de rangement touché). Cause non prouvée ; piste : le premier
     appel lent (5 s réelles) est encore en cours quand le test envoie « online ». À éclaircir à part.
+- **PR #43 fusionnée le 12 octobre.**
+- **Santé, étape 3 : la ligne du temps (branche `sante-temps`, 12 octobre 4 h)**. Rayan (3 h 56) : « go ». Fait (dans
+  `#sc-corps`, sous la silhouette) :
+  - **Une ligne horizontale** (`#sc-temps`, `scTemps`) : un point par rendez-vous et par document datés, toutes
+    spécialités (`scDates`) ; un rendez-vous à venir est un anneau ; un trait blanc marque « Aujourd'hui » ; bornes
+    (`scBornes`) : du premier fait (au plus tôt six mois avant) au dernier à venir (au moins trois mois après), plus
+    15 jours ; mois de début et de fin dessous. Cachée s'il n'y a aucun fait daté.
+  - **Le curseur est la date du corps** (`<input type=range>` natif, transparent, pouce blanc de 22 px, piste de 44 px ;
+    `_scDate`, `scTempsGlisse`) : glisser montre le corps tel qu'il était à cette date (`scFaits(date)` : seuls les faits
+    datés de ce jour ou d'avant ; un document sans date n'y est pas) ; les points d'après s'éteignent ; la date s'écrit
+    en tête (« Le 4 juin 2026 ») avec « Revenir à aujourd'hui ». Il se pose sur un fait proche (2 % de la ligne) et sur
+    aujourd'hui. Au-delà d'aujourd'hui, un rendez-vous à venir garde « RDV 14 nov. » (`scResume` ne dit plus « Vu » pour
+    un rendez-vous pas encore passé). Le lecteur d'écran lit la date (`aria-valuetext`).
+  - Aucune bibliothèque, aucun mode de fusion, aucune animation en boucle. Aucune donnée nouvelle.
+  - **Défaut corrigé avant fusion** : `auj + 90 * j` concaténait une date et un nombre (`scBornes`) ; les dates sont
+    maintenant des nombres.
+  - Tests : pôles 15/15 (deux contrôles ajoutés, 390 et 360 px : cachée sans fait ; six points, l'anneau à venir ; un vrai
+    toucher 130 jours avant n'allume que l'ophtalmo ; aimant sur le cardio ; après le rendez-vous à venir, le dentiste ;
+    retour ; cibles ≥ 44 px ; contraste ; date lue). Vérifié dans Chromium seulement : **le glisser du doigt dans Safari
+    reste à essayer par Rayan.**
 
 ### Décisions de Rayan (5 octobre)
 
