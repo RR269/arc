@@ -2166,6 +2166,23 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S3 .sm-chip.on i{background:#30d158;box-shadow:0 0 7px #30d158}
 #S3 .sm-sec-btn{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
 #S3 :is(.sm-ajout,.sm-passes-tog,.sm-sec-btn):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+/* LE CORPS : une silhouette-hologramme dessinée dans la page (aucune bibliothèque, aucun mode de fusion). Une zone ne
+   s'allume que pour un fait vrai ; l'étiquette dit lequel et l'ouvre. */
+#S3 .sc-corps{position:relative;margin:4px auto 0;max-width:560px;border-radius:22px;border:1px solid rgba(48,209,88,.22);background:radial-gradient(70% 55% at 50% 38%,rgba(48,209,88,.10),transparent 70%),linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),rgba(8,10,9,.86);overflow:hidden}
+#S3 .sc-svg{display:block;width:100%;height:auto}
+#S3 .sc-bascule{position:absolute;z-index:2;top:12px;left:12px;display:flex;padding:3px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(10,12,11,.82)}
+#S3 .sc-v{position:relative;min-width:64px;min-height:44px;padding:0 14px;border:0;border-radius:11px;background:none;font:500 15px var(--fa);color:#D6D6DC;cursor:pointer}
+#S3 .sc-v[aria-pressed="true"]{background:rgba(48,209,88,.18);color:#C8FAD6;box-shadow:inset 0 0 0 1px rgba(48,209,88,.45)}
+#S3 .sc-v .sc-n{position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#30d158;box-shadow:0 0 6px #30d158}
+#S3 .sc-etiqs{position:absolute;inset:0;pointer-events:none}
+#S3 .sc-e{position:absolute;pointer-events:auto;display:flex;flex-direction:column;justify-content:center;min-height:44px;max-width:calc(32% - 8px);padding:4px 8px;border-radius:12px;border:1px solid rgba(48,209,88,.5);background:rgba(8,12,10,.9);text-align:left;cursor:pointer;font-family:var(--fa);transform:translateY(-50%)}
+#S3 .sc-e b{font:600 13px/17px var(--fa);color:#F5F5F7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S3 .sc-e small{font:500 12px/16px var(--fa);color:#C7C7CC;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S3 .sc-e.g{left:10px}#S3 .sc-e.d{right:10px;text-align:right}
+#S3 .sc-e:focus-visible,#S3 .sc-v:focus-visible{outline:2px solid #fff;outline-offset:2px}
+#S3 .sc-vide{position:absolute;left:16px;right:16px;bottom:14px;padding:10px 14px;border-radius:14px;background:rgba(8,10,9,.92);border:1px solid rgba(48,209,88,.22);text-align:center;font:500 15px/21px var(--fa);color:#E5E5EA}
+@media(prefers-reduced-motion:no-preference){#S3:not(.off) .sc-svg .sc-pt{animation:scPose .6s cubic-bezier(.2,.8,.2,1) both}}
+@keyframes scPose{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
 @media(min-width:700px){#S3 .sm-hero{padding-top:30px}#S3 .sm-titre{font-size:40px;letter-spacing:-1.2px}}
 @media(prefers-reduced-motion:reduce){#S3 .sm-ajout:active{transform:none}#S3 .sm-passes-tog i{transition:none}}
 /* La feuille santé : les champs de « Nouveau projet », plus les listes déroulantes */
@@ -2620,6 +2637,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
 
       <div class="x-horizon" aria-hidden="true"></div>
+
+      <!-- LE CORPS (branche sante-corps, 12 octobre ; docs/ETUDE-POLES.md, étape 2). Une silhouette-hologramme, Face et
+           Dos ; une zone ne s'allume que pour un fait vrai (un rendez-vous ou un document de sa spécialité). -->
+      <div class="sc-corps" id="sc-corps">
+        <div class="sc-bascule" role="group" aria-label="Vue du corps">
+          <button type="button" class="sc-v" data-vue="face" aria-pressed="true">Face</button>
+          <button type="button" class="sc-v" data-vue="dos" aria-pressed="false">Dos</button>
+        </div>
+        <svg class="sc-svg" id="sc-svg" viewBox="0 0 360 400" aria-hidden="true"></svg>
+        <div class="sc-etiqs" id="sc-etiqs"></div>
+        <div class="sc-vide" id="sc-vide" hidden>Ajoute un rendez-vous ou un document : sa zone s’allumera ici.</div>
+      </div>
 
       <!-- RENDEZ-VOUS -->
       <div class="psec" id="ssec-rdv">
@@ -7499,6 +7528,91 @@ function santeLigne(titre, meta, jour, heure, fait, couleur, ouvrir) {
   return row;
 }
 var _smPassesOuverts = false;
+/* ═══ LE CORPS (docs/ETUDE-POLES.md, étape 2) ═══
+   Chaque spécialité a une zone, sur une seule vue (Face ou Dos) ; imagerie, laboratoire, pharmacie et autre n'en ont
+   pas (elles restent dans « Spécialités »). Une zone s'allume si au moins un rendez-vous ou un document de cette
+   spécialité existe. Aucune zone n'est allumée sans fait. */
+var SC_ZONES = {
+  psy: { vue: 'face', x: 180, y: 38 }, ophtalmo: { vue: 'face', x: 171, y: 56 }, orl: { vue: 'face', x: 203, y: 63 },
+  dentiste: { vue: 'face', x: 180, y: 76 }, cardio: { vue: 'face', x: 194, y: 136 }, generaliste: { vue: 'face', x: 180, y: 182 },
+  dermato: { vue: 'face', x: 113, y: 214 }, kine: { vue: 'dos', x: 180, y: 196 }
+};
+var _scVue = 'face';
+function scFaits() {
+  var z = {};
+  santeRdv().forEach(function(r) { if(SC_ZONES[r.spe]) (z[r.spe] = z[r.spe] || { rdv: [], docs: [] }).rdv.push(r); });
+  santeDocs().forEach(function(d) { if(SC_ZONES[d.spe]) (z[d.spe] = z[d.spe] || { rdv: [], docs: [] }).docs.push(d); });
+  return z;
+}
+// Ce que dit l'étiquette, et ce qu'elle ouvre : le prochain rendez-vous, sinon le fait le plus récent
+function scResume(f) {
+  var avenir = f.rdv.filter(santeAVenir).sort(function(a, b) { return santeQuand(a) - santeQuand(b); });
+  if(avenir.length) return { t: 'RDV ' + santeJour(santeQuand(avenir[0])).toLowerCase(), ouvre: ['rdv', avenir[0].id] };
+  var passes = f.rdv.map(function(r) { return { k: 'rdv', id: r.id, d: santeQuand(r) }; });
+  var docs = f.docs.map(function(d) { return { k: 'doc', id: d.id, d: d.date ? new Date(d.date) : null }; });
+  var tout = passes.concat(docs).filter(function(x) { return x.d && !isNaN(x.d); }).sort(function(a, b) { return b.d - a.d; });
+  var dernier = tout[0] || (f.docs[0] ? { k: 'doc', id: f.docs[0].id, d: null } : { k: 'rdv', id: f.rdv[0].id, d: null });
+  var mois = dernier.d ? dernier.d.toLocaleDateString('fr-FR', { month: 'short', year: dernier.d.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined }) : '';
+  // Court, pour tenir dans l'étiquette d'un iPhone : « Doc. de sept. », « Vu en juin »
+  return { t: dernier.k === 'doc' ? (mois ? 'Doc. de ' + mois : 'Document') : (mois ? 'Vu en ' + mois : 'Vu'), ouvre: [dernier.k, dernier.id] };
+}
+function scSilhouette(vue) {
+  var c = '#30d158';
+  var corps = 'M140 106 Q180 94 220 106 L226 150 Q222 196 212 222 Q180 232 148 222 Q138 196 134 150 Z';
+  var membres = 'M140 110 Q122 122 118 160 L113 208 L109 244 M220 110 Q238 122 242 160 L247 208 L251 244 M158 226 L154 302 L152 370 M202 226 L206 302 L208 370';
+  var h = '<defs><linearGradient id="scg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c + '" stop-opacity=".95"/><stop offset="1" stop-color="' + c + '" stop-opacity=".3"/></linearGradient>' +
+    '<pattern id="scs" width="6" height="6" patternUnits="userSpaceOnUse"><path d="M0 5.5H6" stroke="' + c + '" stroke-opacity=".2" stroke-width="1"/></pattern>' +
+    '<radialGradient id="scp"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#8CF5AC"/><stop offset="1" stop-color="' + c + '" stop-opacity="0"/></radialGradient></defs>' +
+    '<ellipse cx="180" cy="374" rx="84" ry="11" fill="none" stroke="' + c + '" stroke-opacity=".35"/><ellipse cx="180" cy="374" rx="122" ry="17" fill="none" stroke="' + c + '" stroke-opacity=".14"/>' +
+    '<g fill="none" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="' + membres + '" stroke="' + c + '" stroke-opacity=".14" stroke-width="16"/>' +
+    '<path d="' + corps + '" fill="url(#scs)" stroke="none"/>' +
+    '<g stroke="url(#scg)" stroke-width="1.6"><ellipse cx="180" cy="60" rx="22" ry="27"/><path d="M171 86 L172 98 M189 86 L188 98"/><path d="' + corps + '"/><path d="' + membres + '"/>' +
+    '<circle cx="109" cy="250" r="5"/><circle cx="251" cy="250" r="5"/><path d="M152 370 L140 376 M208 370 L220 376"/></g>' +
+    '<g stroke="' + c + '" stroke-opacity=".35" stroke-width="4"><ellipse cx="180" cy="60" rx="22" ry="27"/><path d="' + corps + '"/></g>';
+  // Dos : la colonne et les omoplates ; Face : rien de plus (les zones disent le reste)
+  if(vue === 'dos') h += '<path d="M180 102 L180 222" stroke="' + c + '" stroke-opacity=".55" stroke-width="1.4" stroke-dasharray="3 5"/><path d="M152 122 Q160 146 170 134 M208 122 Q200 146 190 134" stroke="' + c + '" stroke-opacity=".45" stroke-width="1.2"/>';
+  return h + '</g>';
+}
+function renderCorps() {
+  var svg = document.getElementById('sc-svg'), et = document.getElementById('sc-etiqs'); if(!svg || !et) return;
+  var faits = scFaits(), vues = { face: 0, dos: 0 };
+  Object.keys(faits).forEach(function(k) { vues[SC_ZONES[k].vue]++; });
+  [].forEach.call(document.querySelectorAll('#sc-corps .sc-v'), function(b) {
+    var v = b.getAttribute('data-vue'); b.setAttribute('aria-pressed', v === _scVue ? 'true' : 'false');
+    var n = b.querySelector('.sc-n'); if(n) n.remove();
+    if(v !== _scVue && vues[v]) { n = document.createElement('i'); n.className = 'sc-n'; n.setAttribute('aria-hidden', 'true'); b.appendChild(n); b.setAttribute('aria-label', v === 'dos' ? 'Dos, ' + vues[v] + ' zone allumée' : 'Face, ' + vues[v] + ' zone allumée'); }
+    else b.removeAttribute('aria-label');
+  });
+  var ici = Object.keys(faits).filter(function(k) { return SC_ZONES[k].vue === _scVue; }).map(function(k) { var z = SC_ZONES[k]; return { k: k, x: z.x, y: z.y, r: scResume(faits[k]) }; });
+  // Deux colonnes d'étiquettes : à gauche ce qui est à gauche du corps, à droite le reste ; le milieu équilibre
+  var g = [], d = [];
+  ici.sort(function(a, b) { return a.y - b.y; }).forEach(function(z) { if(z.x < 178) g.push(z); else if(z.x > 182) d.push(z); else (g.length <= d.length ? g : d).push(z); });
+  // La colonne de gauche commence sous la bascule Face / Dos ; 52 unités entre deux étiquettes (44 px de cible)
+  var place = function(col, haut) { var dernier = -1e9; col.forEach(function(z) { z.ly = Math.max(z.y, haut, dernier + 52); dernier = z.ly; }); var trop = dernier - 340; if(trop > 0) col.forEach(function(z) { z.ly -= trop; }); };
+  var bs = document.querySelector('#sc-corps .sc-bascule'), larg = svg.getBoundingClientRect().width || 360;
+  var sousBascule = bs && bs.offsetHeight ? (bs.offsetTop + bs.offsetHeight + 26) * 360 / larg : 88;
+  place(g, Math.max(88, sousBascule)); place(d, 30);
+  var h = scSilhouette(_scVue);
+  g.concat(d).forEach(function(z) {
+    var bord = g.indexOf(z) >= 0 ? 108 : 252;
+    h += '<path d="M' + z.x + ' ' + z.y + ' L' + (z.x + bord) / 2 + ' ' + z.ly + ' L' + bord + ' ' + z.ly + '" fill="none" stroke="#30d158" stroke-opacity=".55" stroke-width="1"/>';
+    h += '<circle class="sc-pt" style="transform-origin:' + z.x + 'px ' + z.y + 'px" cx="' + z.x + '" cy="' + z.y + '" r="10" fill="url(#scp)"/>';
+  });
+  svg.innerHTML = h;
+  et.textContent = '';
+  g.concat(d).forEach(function(z) {
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'sc-e ' + (g.indexOf(z) >= 0 ? 'g' : 'd'); b.dataset.zone = z.k;
+    b.style.top = (z.ly / 400 * 100) + '%';
+    var n = document.createElement('b'); n.textContent = santeSpeNom(z.k); var m = document.createElement('small'); m.textContent = z.r.t;
+    b.appendChild(n); b.appendChild(m);
+    b.addEventListener('click', function() { santeOuvrir(z.r.ouvre[0] === 'doc' ? 'doc' : 'rdv', z.r.ouvre[1]); });
+    et.appendChild(b);
+  });
+  var vide = document.getElementById('sc-vide');
+  vide.hidden = !!(vues.face + vues.dos);
+  svg.style.opacity = (vues.face + vues.dos) ? '' : '.55';
+}
 function renderSanteMemoire() {
   var liste = document.getElementById('srdv-list'); if(!liste) return;
   var tout = santeRdv(), avenir = tout.filter(santeAVenir), passes = tout.filter(function(r) { return !santeAVenir(r); });
@@ -7552,6 +7666,7 @@ function renderSanteMemoire() {
   document.getElementById('sdoc-vide').hidden = !!docs.length;
   // pensées rangées en Santé (la section des projets et de Juridique)
   if(typeof renderPensees === 'function') renderPensees('ssec-pensees', 'spen-list', 'spen-n', penseesDe('sante'));
+  renderCorps();
 }
 
 /* La feuille : ajouter ou modifier un rendez-vous, un document. Supprimer demande un second geste (charte, règle 11). */
@@ -7625,6 +7740,7 @@ function santeSupprimer() {
   on('srdv-ajout', 'click', function() { santeOuvrir('rdv'); });
   on('sdoc-ajout', 'click', function() { santeOuvrir('doc'); });
   on('srdv-passes-tog', 'click', function() { _smPassesOuverts = !_smPassesOuverts; renderSanteMemoire(); });
+  [].forEach.call(document.querySelectorAll('#sc-corps .sc-v'), function(b) { b.addEventListener('click', function() { _scVue = b.getAttribute('data-vue'); renderCorps(); }); });
   on('sm-fermer', 'click', santeFermer); on('sm-annuler', 'click', santeFermer);
   on('sm-suppr', 'click', santeSupprimer);
   on('sm-form', 'submit', function(ev) { ev.preventDefault(); santeEnregistrer(); });
