@@ -1364,6 +1364,37 @@ ARC en orbite, et Relier (11 octobre) :
     Santé et Juridique ouvrent leur panneau). Vérifié dans Chromium seulement : **le comportement du service worker
     de Safari sur iPhone reste à constater par Rayan** (il suit la même norme). Les 15 suites passent ; 497 `<div` / 497 `</div>`.
 
+- **PR #42 fusionnée le 12 octobre à 2 h 43.** **Décision de Rayan (3 h 04) : la planète de l'accueil est gardée**
+  (« oui on la garde »). L'étape 1 de `docs/ETUDE-CARTE.md` (retirer la bande) n'est donc pas faite, et ne le sera pas.
+- **Santé, étape 2 : le corps (branche `sante-corps`, 12 octobre 3 h 10)**. Rayan (3 h 04) : « continuons, attaque ».
+  Étape 2 de `docs/ETUDE-POLES.md`, partie Santé (l'orbite de Juridique suit). Fait :
+  - **Le corps** (`#sc-corps`, sous l'horizon vert, avant « Rendez-vous ») : une silhouette-hologramme en SVG écrite par
+    le code (`scSilhouette` : tubes translucides pour le volume, trait net en dégradé, trame sur le torse, sol en deux
+    ellipses ; Dos : la colonne en pointillé et les omoplates). Aucune bibliothèque, aucun filtre, aucun mode de fusion.
+  - **Une zone par spécialité, sur une seule vue** (`SC_ZONES`) : de face, psy (haut de la tête), ophtalmo (yeux), ORL
+    (oreille), dentiste (bouche), cardio (cœur), généraliste (ventre), dermato (avant-bras) ; de dos, kiné (bas du dos).
+    Imagerie, laboratoire, pharmacie et autre n'ont pas de zone (ils restent dans « Spécialités »). **Une zone ne
+    s'allume que si un rendez-vous ou un document de sa spécialité existe** (`scFaits`) ; sans fait, le corps est
+    atténué et une ligne dit quoi faire (« Ajoute un rendez-vous ou un document : sa zone s'allumera ici. »).
+  - **Les étiquettes** (`.sc-e`, boutons de 44 px) : le nom de la spécialité, puis ce qui est vrai (`scResume`) :
+    « RDV 14 nov. » (le prochain à venir), sinon « Vu en juin » ou « Doc. de sept. » (le plus récent). Deux colonnes
+    (gauche, droite), reliées à leur point par un trait ; la colonne de gauche commence sous la bascule (mesurée).
+    Toucher une étiquette ouvre ce rendez-vous ou ce document dans la feuille.
+  - **Face / Dos** (`.sc-v`, `_scVue`) : un point sur l'autre vue quand elle a une zone allumée (« Dos, 1 zone allumée »
+    pour les lecteurs d'écran). Les points se posent à l'affichage (une fois, rien si l'appareil demande moins de
+    mouvement) ; aucune boucle.
+  - **Pas encore** (étape 3) : la ligne du temps sous le corps (glisser pour voir le corps à une date). Puis l'orbite de
+    Juridique.
+  - Tests : pôles 13/13 (trois contrôles ajoutés, à 390, 360 et 430 px : éteint sans fait ; quatre zones de face, le
+    laboratoire sans zone ; le kiné de dos et signalé sur « Dos » ; étiquettes entières, sans chevauchement, ni sur la
+    bascule, ni hors du panneau ; cibles ≥ 44 px ; contraste ≥ 4,5 : 1 ; « Dentiste » ouvre son rendez-vous). La bascule
+    passe à 44 px et la ligne de l'état vide prend un fond (elle tombait à 3,97 : 1 sur la silhouette).
+    Vérifié dans Chromium seulement. Les 15 suites passent ; 501 `<div` / 501 `</div>`.
+  - **Test intermittent signalé, pas encore réparé** : `tests/rangement.mjs`, « Dépôt instantané avec un proxy lent… nouvel
+    essai réussi ensuite », échoue de temps en temps (« rangée au nouvel essai : false ») **sur `main` aussi** (1 fois sur
+    13 le 12 octobre ; 3 sur 7 sur la branche, sans code de rangement touché). Cause non prouvée ; piste : le premier
+    appel lent (5 s réelles) est encore en cours quand le test envoie « online ». À éclaircir à part.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

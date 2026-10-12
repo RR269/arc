@@ -174,6 +174,41 @@ for (const vp of ECRANS) {
   await ctx.close();
 }
 
+/* Le corps (12 octobre, docs/ETUDE-POLES.md étape 2) : éteint sans fait ; une zone allumée par spécialité qui a un
+   rendez-vous ou un document (imagerie, laboratoire… n'ont pas de zone) ; Face et Dos ; étiquettes sans chevauchement,
+   hors de la bascule, cibles ≥ 44 px, contraste ; toucher une étiquette ouvre le bon rendez-vous ; 360 à 430 px. */
+for (const [W, H] of [[390, 844], [360, 740], [430, 932]]) {
+  const ctx = await contexte({ width: W, height: H, tel: true });
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); enterPole('sante'); }); await page.waitForTimeout(400);
+  const lire = () => page.evaluate(() => {
+    const P = document.getElementById('sc-corps'), et = [...P.querySelectorAll('.sc-e')], b = P.querySelector('.sc-bascule').getBoundingClientRect(), pr = P.getBoundingClientRect();
+    const rs = et.map(e => e.getBoundingClientRect()), croise = [];
+    for (let i = 0; i < rs.length; i++) { for (let j = i + 1; j < rs.length; j++) { const a = rs[i], c = rs[j]; if (a.left < c.right && a.right > c.left && a.top < c.bottom && a.bottom > c.top) croise.push(i + '×' + j); } const a = rs[i]; if (a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top) croise.push(i + '×bascule'); if (a.top < pr.top || a.bottom > pr.bottom || a.left < pr.left || a.right > pr.right) croise.push(i + '×bord'); }
+    return { pts: P.querySelectorAll('.sc-pt').length, zones: et.map(e => e.dataset.zone).sort().join(), textes: et.map(e => e.textContent), coupes: et.filter(e => [...e.children].some(c => c.scrollWidth > c.clientWidth + 1)).map(e => e.textContent), h: rs.map(r => Math.round(r.height)), croise, vide: !document.getElementById('sc-vide').hidden, dos: !!P.querySelector('[data-vue="dos"] .sc-n') };
+  });
+  const vide = await lire();
+  await page.evaluate(() => {
+    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j(33), heure: '14:00' }, b: { id: 'b', spe: 'kine', date: j(-5) }, c: { id: 'c', spe: 'cardio', date: j(-120) }, e: { id: 'e', spe: 'laboratoire', date: j(-2) } };
+    S.sante.docs = { d: { id: 'd', titre: 'Ordonnance', spe: 'ophtalmo', date: j(-200), ou: 'mes' }, f: { id: 'f', titre: 'Bilan', spe: 'generaliste', date: j(-40), ou: 'papier' } };
+    saveS(); renderSanteMemoire();
+  });
+  await page.waitForTimeout(700);
+  const face = await lire();
+  const m = await mesurer(page, { racine: '#sc-corps', cadre: '#sc-corps' });
+  await page.click('#sc-corps [data-vue="dos"]'); await page.waitForTimeout(400);
+  const dos = await lire();
+  await page.click('#sc-corps [data-vue="face"]'); await page.waitForTimeout(300);
+  await page.click('#sc-corps .sc-e[data-zone="dentiste"]'); await page.waitForTimeout(300);
+  const ouvert = await page.evaluate(() => ({ open: document.getElementById('sante-modal').classList.contains('open'), id: _sm && _sm.id, mode: _sm && _sm.mode }));
+  ok(vide.pts === 0 && vide.vide && face.pts === 4 && face.zones === 'cardio,dentiste,generaliste,ophtalmo' && !face.vide && face.dos && dos.zones === 'kine' && dos.pts === 1
+     && !face.croise.length && !dos.croise.length && !face.coupes.length && face.h.every(h => h >= 44) && m.pire.ratio >= 4.5 && ouvert.open && ouvert.id === 'a' && ouvert.mode === 'rdv' && !errors.length,
+    `Santé, le corps (${W} px) : éteint sans fait ; quatre zones allumées de face (le laboratoire n'a pas de zone), le kiné de dos et signalé sur « Dos » ; étiquettes entières, sans chevauchement ni sur la bascule, cibles ≥ 44 px, contraste ≥ 4,5 : 1 ; toucher « Dentiste » ouvre son rendez-vous`,
+    JSON.stringify({ vide, face, dos, contraste: m.pire.ratio, ouvert, errors }));
+  await ctx.close();
+}
+
 await browser.close(); server.close();
 if (process.env.DETAIL) for (const [k, v] of Object.entries(detail)) console.log(k + '\n  ' + v.sort().join('\n  '));
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);
