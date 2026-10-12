@@ -62,7 +62,7 @@ let ids;
   const after = await isOpen(page);
   const view = await page.evaluate(() => {
     const t = s => [...document.querySelectorAll('#matin-body [data-sec="' + s + '"] .matin-step')].map(e => e.textContent);
-    return { date: document.getElementById('matin-date').textContent, today: t('today'), replace: t('replace'), nomoment: t('nomoment'),
+    return { date: document.getElementById('matin-date').textContent, today: t('today'), replace: t('replace'), nomoment: t('nomoment'), revient: t('revient'),
              todayWhen: [...document.querySelectorAll('#matin-body [data-sec="today"] .matin-when')].map(e => e.textContent),
              sit: [...document.querySelectorAll('#matin-body .matin-sit')].map(e => e.textContent),
              torange: (document.querySelector('#matin-body .matin-torange') || {}).textContent,
@@ -87,7 +87,8 @@ let ids;
      'Sans moment et situation (ni due ni en retard) ; un moment des jours suivants n\'y est pas', `sans moment : ${view.nomoment.join(' | ')}`);
   ok(/^2 pensées à ranger$/.test((view.torange || '').trim()) && view.torangeSections === 0,
      '« À ranger » : une seule ligne discrète « N pensées à ranger »', `« ${view.torange} »`);
-  ok(!/Une note/.test(view.all) && view.nomoment.length === 2, 'Une pensée rangée sans étape (une note) n\'est pas dans le point', `sans moment : ${view.nomoment.length}`);
+  ok(![...view.today, ...view.replace, ...view.nomoment].some(x => /Une note/.test(x)) && view.nomoment.length === 2 && view.revient.join() === '« Une note »',
+     'Une pensée rangée sans étape (une note) n\'est pas parmi les actions du point ; elle revient sous « Ça revient » (13 octobre)', `sans moment : ${view.nomoment.length} ; ça revient : ${JSON.stringify(view.revient)}`);
   ok(/^Mardi 6 octobre$/.test(view.date) && !/\d+ jours?|série|bravo|félicit/i.test(view.all), 'Date, sans compteur de jours ni félicitation', `« ${view.date} »`);
   ok(day && day.shownAt && day.auto === true && day.opens === 2, 'Mesure sur l\'appareil : point vu, automatiquement, ouvert deux fois', JSON.stringify(day));
 
@@ -211,6 +212,46 @@ for (const vp of [{ n: 'iPhone 390×844', width: 390, height: 844 }, { n: 'Mac 1
 }
 
 /* 8. Balisage */
+/* Ça revient (13 octobre) : une note de 3 jours ou plus revient, la plus ancienne, une seule ; « Garder » l'écarte 30 jours
+   (synchronisé dans S.revient) ; « Plus besoin » annule le dépôt ; « Ajouter une étape » ouvre Déposé sur l'étape ;
+   « En faire un projet » seulement hors de Santé et Juridique ; une note trop récente ou une action ne revient pas. */
+{
+  const { ctx, page, errors } = await open({ clock: `${DAY}T09:00:00+02:00` });
+  const at = d => new Date(`2026-${d}T09:00:00+02:00`).toISOString();
+  const n = await seed(page, [
+    { body: 'Livraison par drone', step: '', space: 'aryan', created: at('09-10') },
+    { body: 'Dentiste', step: '', space: 'sante', created: at('09-20') },
+    { body: 'Nom de marque possible', step: '', space: 'atlas', created: at('10-05') },
+    { body: 'Une vraie action', step: 'Appeler le greffe', space: 'atlas', created: at('09-01') },
+  ]);
+  const vu = () => page.evaluate(() => { matinShow('ask'); const s = document.querySelector('#matin-body [data-sec="revient"]');
+    return s ? { n: s.querySelectorAll('.matin-row').length, txt: s.querySelector('.matin-step').textContent, lbl: s.querySelector('.rg-lbl').textContent,
+      btns: [...s.querySelectorAll('button')].map(b => b.textContent), h: [...s.querySelectorAll('button')].map(b => Math.round(b.getBoundingClientRect().height)) } : null; });
+  const a1 = await vu();
+  // Garder : la suivante (Dentiste, en Santé : pas de « En faire un projet »)
+  await page.evaluate(() => [...document.querySelectorAll('#matin-body [data-sec="revient"] button')].find(b => b.textContent === 'Garder').click()); await page.waitForTimeout(150);
+  const a2 = await vu();
+  const pause = await page.evaluate(id => S.revient && S.revient[id], n['Livraison par drone']);
+  // Plus besoin : le dépôt est annulé ; il reste « Nom de marque possible », trop récente (1 jour) : rien
+  await page.evaluate(() => [...document.querySelectorAll('#matin-body [data-sec="revient"] button')].find(b => b.textContent === 'Plus besoin').click()); await page.waitForTimeout(150);
+  const st = await latest(page, n['Dentiste']);
+  const a3 = await vu();
+  // 31 jours plus tard, « Livraison par drone » revient ; « Ajouter une étape » ouvre Déposé sur son étape
+  // (fastForward refuse un saut d'un mois : on règle l'heure, ARC fermé, puis on le rouvre)
+  await page.goto('about:blank'); await page.clock.setSystemTime(new Date('2026-11-06T09:00:00+01:00'));
+  await page.goto(URL0, { waitUntil: 'load' }); await page.waitForTimeout(600); await entrerSansSession(page);
+  const a4 = await vu();
+  await page.evaluate(() => [...document.querySelectorAll('#matin-body [data-sec="revient"] button')].find(b => b.textContent === 'Ajouter une étape').click()); await page.waitForTimeout(300);
+  const edit = await page.evaluate(id => ({ matin: document.getElementById('matin-screen').classList.contains('open'), depose: document.getElementById('depot-screen') ? document.getElementById('depot-screen').classList.contains('open') : null, champ: !!document.querySelector('#depot-list [data-id="' + id + '"] textarea, #depot-list [data-id="' + id + '"] input[type="text"]'), edit: _rangeEdit && _rangeEdit.kind }), n['Livraison par drone']);
+  ok(a1 && a1.n === 1 && a1.txt === '« Livraison par drone »' && /Notée il y a 26 jours/.test(a1.lbl) && a1.btns.join('|') === 'Ajouter une étape|En faire un projet|Garder|Plus besoin' && a1.h.every(h => h >= 44)
+     && a2 && a2.txt === '« Dentiste »' && !a2.btns.includes('En faire un projet') && pause && new Date(pause.jusqua) - new Date(pause.at) === 30 * 864e5
+     && st.status === 'cancelled' && st.origin === 'user' && a3 === null
+     && a4 && a4.txt === '« Livraison par drone »' && !edit.matin && edit.edit === 'step' && !errors.length,
+    'Ça revient : la note la plus ancienne revient, une seule, « Notée il y a 26 jours » ; « Garder » l\'écarte 30 jours (puis elle revient) ; « Plus besoin » annule le dépôt ; une note de moins de 3 jours et une action ne reviennent pas ; Santé sans « En faire un projet » ; « Ajouter une étape » ouvre Déposé sur l\'étape ; cibles ≥ 44 px',
+    JSON.stringify({ a1, a2, pause, st, a3, a4, edit, errors }));
+  await ctx.close();
+}
+
 {
   const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
   const o = (html.match(/<div/g) || []).length, c = (html.match(/<\/div>/g) || []).length;

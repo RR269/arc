@@ -1572,6 +1572,20 @@ ARC en orbite, et Relier (11 octobre) :
     replacer ». ARC calcule en heure locale, il n'est pas en cause. Les dates du test sont maintenant celles de Paris
     (`toLocaleDateString('sv-SE', { timeZone: 'Europe/Paris' })`) : 19/19 à 0 h 31. Les 15 suites passent ; 515 `<div` /
     515 `</div>`.
+- **PR #52 fusionnée le 13 octobre** (« c'est ok »).
+- **Ça revient (branche `ca-revient`, 13 octobre 1 h)**. Rayan (0 h 56) : « ensuite ! ». Constat : une pensée rangée sans
+  étape (une note, une idée) ne revenait jamais (`matinData` : « une note : rien à faire aujourd'hui »). **Règle à
+  garder : ce qui est déposé doit revenir, les idées aussi.** Fait, sur l'appareil, sans IA :
+  - Le Point du jour a une section « Ça revient » (`revientChoisir`, `revientRowEl`), après « Sans moment », hors de la
+    limite de sept lignes et même quand rien d'autre n'attend : **une seule** note, la plus ancienne, rangée (`filed`),
+    dans un espace connu, déposée il y a 3 jours au moins. « Notée il y a 12 jours », l'espace, les mots de la pensée.
+  - « Ajouter une étape » (ferme le point, ouvre Déposé sur l'étape à écrire) ; « En faire un projet » (hors Santé et
+    Juridique, et si la pensée n'a pas déjà son projet) ; « Garder » (elle ne revient pas avant 30 jours :
+    `S.revient[tid] = { at, jusqua }`, synchronisé) ; « Plus besoin » (dépôt annulé, ligne `origin` user, rétablissable).
+  - Tests : matin 28/28 (contrôle 3 réécrit : une note n'est toujours pas parmi les actions, elle revient sous « Ça
+    revient » ; un contrôle ajouté : la plus ancienne, une seule, « Garder » 30 jours puis retour, « Plus besoin »,
+    note trop récente et action jamais là, Santé sans « En faire un projet », « Ajouter une étape », cibles ≥ 44 px).
+    Vérifié dans Chromium seulement.
 
 ### Décisions de Rayan (5 octobre)
 
