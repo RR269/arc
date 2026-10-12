@@ -2183,6 +2183,29 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S3 .sc-vide{position:absolute;left:16px;right:16px;bottom:14px;padding:10px 14px;border-radius:14px;background:rgba(8,10,9,.92);border:1px solid rgba(48,209,88,.22);text-align:center;font:500 15px/21px var(--fa);color:#E5E5EA}
 @media(prefers-reduced-motion:no-preference){#S3:not(.off) .sc-svg .sc-pt{animation:scPose .6s cubic-bezier(.2,.8,.2,1) both}}
 @keyframes scPose{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+/* La ligne du temps : la quatrième dimension du corps */
+#S3 .sc-temps{position:relative;z-index:2;padding:4px 16px 14px;border-top:1px solid rgba(48,209,88,.16);background:rgba(6,9,7,.6)}
+#S3 .sc-temps[hidden]{display:none}
+#S3 .sc-t-tete{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px}
+#S3 .sc-t-date{font:600 16px var(--fa);letter-spacing:-.2px;color:#F5F5F7;font-variant-numeric:tabular-nums}
+#S3 .sc-t-auj{min-height:44px;padding:0 12px;margin-right:-8px;border:0;border-radius:12px;background:none;font:500 15px var(--fa);color:#8CF5AC;cursor:pointer}
+#S3 .sc-t-auj[hidden]{display:none}
+#S3 .sc-t-piste{position:relative;height:44px}
+#S3 .sc-t-ligne{position:absolute;left:11px;right:11px;top:21px;height:2px;border-radius:2px;background:rgba(255,255,255,.14)}
+#S3 .sc-t-pts{position:absolute;left:11px;right:11px;top:0;bottom:0;pointer-events:none}
+#S3 .sc-t-pts i{position:absolute;top:18px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#30d158;box-shadow:0 0 8px #30d158}
+#S3 .sc-t-pts i.av{background:none;box-shadow:inset 0 0 0 1.6px #8CF5AC}
+#S3 .sc-t-pts i.off{opacity:.35;box-shadow:none}
+#S3 .sc-t-pts i.av.off{box-shadow:inset 0 0 0 1.6px #8CF5AC}
+#S3 .sc-t-today{position:absolute;top:10px;width:2px;height:24px;margin-left:-1px;border-radius:1px;background:#F5F5F7;opacity:.8;pointer-events:none}
+#S3 .sc-t-range{-webkit-appearance:none;appearance:none;position:absolute;inset:0;width:100%;height:44px;margin:0;background:transparent;cursor:pointer;touch-action:pan-y}
+#S3 .sc-t-range:focus{outline:none}
+#S3 .sc-t-range::-webkit-slider-runnable-track{height:44px;background:transparent}
+#S3 .sc-t-range::-moz-range-track{height:44px;background:transparent}
+#S3 .sc-t-range::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;margin-top:11px;border-radius:50%;background:#F5F5F7;box-shadow:0 0 0 5px rgba(48,209,88,.25),0 0 12px rgba(48,209,88,.6)}
+#S3 .sc-t-range::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:#F5F5F7;box-shadow:0 0 0 5px rgba(48,209,88,.25),0 0 12px rgba(48,209,88,.6)}
+#S3 .sc-t-range:focus-visible::-webkit-slider-thumb{outline:2px solid #fff;outline-offset:3px}
+#S3 .sc-t-bornes{display:flex;justify-content:space-between;font:500 13px var(--fa);color:#C7C7CC}
 @media(min-width:700px){#S3 .sm-hero{padding-top:30px}#S3 .sm-titre{font-size:40px;letter-spacing:-1.2px}}
 @media(prefers-reduced-motion:reduce){#S3 .sm-ajout:active{transform:none}#S3 .sm-passes-tog i{transition:none}}
 /* La feuille santé : les champs de « Nouveau projet », plus les listes déroulantes */
@@ -2648,6 +2671,17 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <svg class="sc-svg" id="sc-svg" viewBox="0 0 360 400" aria-hidden="true"></svg>
         <div class="sc-etiqs" id="sc-etiqs"></div>
         <div class="sc-vide" id="sc-vide" hidden>Ajoute un rendez-vous ou un document : sa zone s’allumera ici.</div>
+        <!-- La ligne du temps (étape 3) : un point par rendez-vous ou document daté ; glisser montre le corps à une date -->
+        <div class="sc-temps" id="sc-temps" hidden>
+          <div class="sc-t-tete"><span class="sc-t-date" id="sc-t-date">Aujourd’hui</span><button type="button" class="sc-t-auj" id="sc-t-auj" hidden>Revenir à aujourd’hui</button></div>
+          <div class="sc-t-piste">
+            <div class="sc-t-ligne" aria-hidden="true"></div>
+            <div class="sc-t-pts" id="sc-t-pts" aria-hidden="true"></div>
+            <i class="sc-t-today" id="sc-t-today" aria-hidden="true"></i>
+            <input type="range" class="sc-t-range" id="sc-t-range" min="0" max="100" step="1" value="100" aria-label="Date du corps">
+          </div>
+          <div class="sc-t-bornes" aria-hidden="true"><span id="sc-t-debut"></span><span id="sc-t-fin"></span></div>
+        </div>
       </div>
 
       <!-- RENDEZ-VOUS -->
@@ -7537,15 +7571,30 @@ var SC_ZONES = {
   dentiste: { vue: 'face', x: 180, y: 76 }, cardio: { vue: 'face', x: 194, y: 136 }, generaliste: { vue: 'face', x: 180, y: 182 },
   dermato: { vue: 'face', x: 113, y: 214 }, kine: { vue: 'dos', x: 180, y: 196 }
 };
-var _scVue = 'face';
-function scFaits() {
-  var z = {};
-  santeRdv().forEach(function(r) { if(SC_ZONES[r.spe]) (z[r.spe] = z[r.spe] || { rdv: [], docs: [] }).rdv.push(r); });
-  santeDocs().forEach(function(d) { if(SC_ZONES[d.spe]) (z[d.spe] = z[d.spe] || { rdv: [], docs: [] }).docs.push(d); });
+var _scVue = 'face', _scDate = null;   // null = aujourd'hui (tout ce qui est noté, à venir compris)
+function scJourDe(x) { var d = new Date(x); d.setHours(12, 0, 0, 0); return d; }
+// Les faits datés, pour la ligne du temps : un point chacun (toutes spécialités, zone ou non)
+function scDates() {
+  var out = [];
+  santeRdv().forEach(function(r) { var d = santeQuand(r); if(d) out.push({ k: 'rdv', id: r.id, spe: r.spe, d: d, avenir: santeAVenir(r) }); });
+  santeDocs().forEach(function(x) { var d = x.date ? new Date(x.date + 'T12:00') : null; if(d && !isNaN(d)) out.push({ k: 'doc', id: x.id, spe: x.spe, d: d, avenir: false }); });
+  return out.sort(function(a, b) { return a.d - b.d; });
+}
+// Les bornes de la ligne : du premier fait (ou six mois avant) au dernier à venir (ou trois mois après), en jours
+function scBornes(dates) {
+  var auj = +scJourDe(Date.now()), j = 864e5;
+  var debut = dates.length ? Math.min(dates[0].d, auj - 180 * j) : auj - 180 * j, fin = dates.length ? Math.max(dates[dates.length - 1].d, auj + 90 * j) : auj + 90 * j;
+  debut = +scJourDe(+debut - 15 * j); fin = +scJourDe(+fin + 15 * j);
+  return { debut: debut, fin: fin, n: Math.round((fin - debut) / j), auj: Math.round((auj - debut) / j) };
+}
+function scFaits(date) {
+  var z = {}, fin = date ? new Date(date) : null; if(fin) fin.setHours(23, 59, 59, 999);
+  santeRdv().forEach(function(r) { if(!SC_ZONES[r.spe]) return; var d = santeQuand(r); if(fin && (!d || d > fin)) return; (z[r.spe] = z[r.spe] || { rdv: [], docs: [] }).rdv.push(r); });
+  santeDocs().forEach(function(x) { if(!SC_ZONES[x.spe]) return; var d = x.date ? new Date(x.date + 'T12:00') : null; if(fin && (!d || isNaN(d) || d > fin)) return; (z[x.spe] = z[x.spe] || { rdv: [], docs: [] }).docs.push(x); });
   return z;
 }
 // Ce que dit l'étiquette, et ce qu'elle ouvre : le prochain rendez-vous, sinon le fait le plus récent
-function scResume(f) {
+function scResume(f, date) {
   var avenir = f.rdv.filter(santeAVenir).sort(function(a, b) { return santeQuand(a) - santeQuand(b); });
   if(avenir.length) return { t: 'RDV ' + santeJour(santeQuand(avenir[0])).toLowerCase(), ouvre: ['rdv', avenir[0].id] };
   var passes = f.rdv.map(function(r) { return { k: 'rdv', id: r.id, d: santeQuand(r) }; });
@@ -7576,7 +7625,7 @@ function scSilhouette(vue) {
 }
 function renderCorps() {
   var svg = document.getElementById('sc-svg'), et = document.getElementById('sc-etiqs'); if(!svg || !et) return;
-  var faits = scFaits(), vues = { face: 0, dos: 0 };
+  var faits = scFaits(_scDate), vues = { face: 0, dos: 0 };
   Object.keys(faits).forEach(function(k) { vues[SC_ZONES[k].vue]++; });
   [].forEach.call(document.querySelectorAll('#sc-corps .sc-v'), function(b) {
     var v = b.getAttribute('data-vue'); b.setAttribute('aria-pressed', v === _scVue ? 'true' : 'false');
@@ -7584,7 +7633,7 @@ function renderCorps() {
     if(v !== _scVue && vues[v]) { n = document.createElement('i'); n.className = 'sc-n'; n.setAttribute('aria-hidden', 'true'); b.appendChild(n); b.setAttribute('aria-label', v === 'dos' ? 'Dos, ' + vues[v] + ' zone allumée' : 'Face, ' + vues[v] + ' zone allumée'); }
     else b.removeAttribute('aria-label');
   });
-  var ici = Object.keys(faits).filter(function(k) { return SC_ZONES[k].vue === _scVue; }).map(function(k) { var z = SC_ZONES[k]; return { k: k, x: z.x, y: z.y, r: scResume(faits[k]) }; });
+  var ici = Object.keys(faits).filter(function(k) { return SC_ZONES[k].vue === _scVue; }).map(function(k) { var z = SC_ZONES[k]; return { k: k, x: z.x, y: z.y, r: scResume(faits[k], _scDate) }; });
   // Deux colonnes d'étiquettes : à gauche ce qui est à gauche du corps, à droite le reste ; le milieu équilibre
   var g = [], d = [];
   ici.sort(function(a, b) { return a.y - b.y; }).forEach(function(z) { if(z.x < 178) g.push(z); else if(z.x > 182) d.push(z); else (g.length <= d.length ? g : d).push(z); });
@@ -7609,9 +7658,50 @@ function renderCorps() {
     b.addEventListener('click', function() { santeOuvrir(z.r.ouvre[0] === 'doc' ? 'doc' : 'rdv', z.r.ouvre[1]); });
     et.appendChild(b);
   });
-  var vide = document.getElementById('sc-vide');
-  vide.hidden = !!(vues.face + vues.dos);
+  var vide = document.getElementById('sc-vide'), dates = scDates();
+  vide.hidden = !!(vues.face + vues.dos) || !!_scDate || dates.length > 0;
   svg.style.opacity = (vues.face + vues.dos) ? '' : '.55';
+  scTemps(dates);
+}
+/* La ligne du temps : le curseur est la date du corps ; « Aujourd'hui » montre tout ce qui est noté */
+function scTemps(dates) {
+  var T = document.getElementById('sc-temps'); if(!T) return;
+  T.hidden = !dates.length;
+  if(!dates.length) { _scDate = null; return; }
+  var B = scBornes(dates), j = 864e5, rg = document.getElementById('sc-t-range'), pts = document.getElementById('sc-t-pts');
+  var pos = function(d) { return ((scJourDe(d) - B.debut) / j / B.n * 100) + '%'; };
+  rg.max = B.n;
+  var val = _scDate ? Math.round((scJourDe(_scDate) - B.debut) / j) : B.auj;
+  rg.value = val;
+  pts.textContent = '';
+  dates.forEach(function(x) {
+    var i = document.createElement('i'); i.style.left = pos(x.d);
+    if(x.avenir) i.className = 'av';
+    if(_scDate && x.d > new Date(+scJourDe(_scDate) + j / 2)) i.className += ' off';
+    pts.appendChild(i);
+  });
+  // Le trait « Aujourd'hui » suit la même échelle que le curseur (la piste du curseur garde 11 px de chaque côté)
+  var td = document.getElementById('sc-t-today'); td.style.left = 'calc(11px + (100% - 22px) * ' + (B.auj / B.n) + ')';
+  pts.style.left = '11px'; pts.style.right = '11px';
+  var dd = _scDate ? scJourDe(_scDate) : null;
+  var lib = dd ? dd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Aujourd’hui';
+  document.getElementById('sc-t-date').textContent = dd ? 'Le ' + lib : lib;
+  document.getElementById('sc-t-auj').hidden = !dd;
+  rg.setAttribute('aria-valuetext', dd ? lib : 'Aujourd’hui, avec ce qui est à venir');
+  var court = function(d) { return new Date(d).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }); };
+  document.getElementById('sc-t-debut').textContent = court(B.debut);
+  document.getElementById('sc-t-fin').textContent = court(B.fin);
+  rg._B = B; rg._dates = dates;
+}
+function scTempsGlisse(rg) {
+  var B = rg._B; if(!B) return;
+  var v = +rg.value, j = 864e5;
+  // Le curseur s'aimante sur un fait proche (deux pour cent de la ligne), et sur « Aujourd'hui »
+  var prise = Math.max(2, Math.round(B.n * .02)), meilleur = null, ecart = prise + 1;
+  (rg._dates || []).forEach(function(x) { var k = Math.round((scJourDe(x.d) - B.debut) / j), e = Math.abs(k - v); if(e < ecart) { ecart = e; meilleur = k; } });
+  if(Math.abs(B.auj - v) <= prise && Math.abs(B.auj - v) <= ecart) { _scDate = null; }
+  else { if(meilleur != null) v = meilleur; _scDate = new Date(+B.debut + v * j); }
+  renderCorps();
 }
 function renderSanteMemoire() {
   var liste = document.getElementById('srdv-list'); if(!liste) return;
@@ -7741,6 +7831,8 @@ function santeSupprimer() {
   on('sdoc-ajout', 'click', function() { santeOuvrir('doc'); });
   on('srdv-passes-tog', 'click', function() { _smPassesOuverts = !_smPassesOuverts; renderSanteMemoire(); });
   [].forEach.call(document.querySelectorAll('#sc-corps .sc-v'), function(b) { b.addEventListener('click', function() { _scVue = b.getAttribute('data-vue'); renderCorps(); }); });
+  on('sc-t-range', 'input', function(e) { scTempsGlisse(e.target); });
+  on('sc-t-auj', 'click', function() { _scDate = null; renderCorps(); });
   on('sm-fermer', 'click', santeFermer); on('sm-annuler', 'click', santeFermer);
   on('sm-suppr', 'click', santeSupprimer);
   on('sm-form', 'submit', function(ev) { ev.preventDefault(); santeEnregistrer(); });

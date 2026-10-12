@@ -209,6 +209,54 @@ for (const [W, H] of [[390, 844], [360, 740], [430, 932]]) {
   await ctx.close();
 }
 
+/* La ligne du temps (12 octobre, docs/ETUDE-POLES.md étape 3) : un point par fait daté ; glisser le curseur montre le
+   corps à cette date (seuls les faits d'avant s'allument) ; il s'aimante sur un fait ; une date après le rendez-vous
+   à venir l'allume ; « Revenir à aujourd'hui » ; cibles, contraste, lecteur d'écran ; 360 et 390 px. */
+for (const [W, H] of [[390, 844], [360, 740]]) {
+  const ctx = await contexte({ width: W, height: H, tel: true });
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); enterPole('sante'); }); await page.waitForTimeout(400);
+  const sansFait = await page.evaluate(() => document.getElementById('sc-temps').hidden);
+  await page.evaluate(() => {
+    const j = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+    S.sante.rdv = { a: { id: 'a', spe: 'dentiste', date: j(33), heure: '14:00' }, b: { id: 'b', spe: 'kine', date: j(-5) }, c: { id: 'c', spe: 'cardio', date: j(-120) }, e: { id: 'e', spe: 'laboratoire', date: j(-2) } };
+    S.sante.docs = { d: { id: 'd', titre: 'Ordonnance', spe: 'ophtalmo', date: j(-200), ou: 'mes' }, f: { id: 'f', titre: 'Bilan', spe: 'generaliste', date: j(-40), ou: 'papier' }, g: { id: 'g', titre: 'Sans date', spe: 'dermato', ou: 'mes' } };
+    saveS(); renderSanteMemoire();
+  });
+  await page.waitForTimeout(600);
+  await page.evaluate(() => document.getElementById('sc-temps').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const lire = () => page.evaluate(() => {
+    const rg = document.getElementById('sc-t-range'), pts = [...document.querySelectorAll('#sc-t-pts i')];
+    return { visible: !document.getElementById('sc-temps').hidden, date: document.getElementById('sc-t-date').textContent, auj: !document.getElementById('sc-t-auj').hidden,
+      aria: rg.getAttribute('aria-valuetext'), pts: pts.length, off: pts.filter(i => i.classList.contains('off')).length, avenir: pts.filter(i => i.classList.contains('av')).length,
+      zones: [...document.querySelectorAll('#sc-etiqs .sc-e')].map(e => e.dataset.zone).sort().join(), dent: (document.querySelector('#sc-etiqs .sc-e[data-zone="dentiste"]') || {}).textContent || '',
+      dos: !!document.querySelector('#sc-corps [data-vue="dos"] .sc-n'), h: Math.round(rg.getBoundingClientRect().height), hAuj: Math.round(document.getElementById('sc-t-auj').getBoundingClientRect().height),
+      deb: document.getElementById('sc-t-debut').textContent, fin: document.getElementById('sc-t-fin').textContent };
+  });
+  const auj = await lire();
+  // Un vrai toucher sur la piste, 130 jours avant aujourd'hui
+  const x = await page.evaluate(() => { const rg = document.getElementById('sc-t-range'), r = rg.getBoundingClientRect(), B = rg._B; return { x: r.left + 11 + (r.width - 22) * (B.auj - 130) / B.n, y: r.top + r.height / 2 }; });
+  await page.mouse.click(x.x, x.y); await page.waitForTimeout(400);
+  const passe = await lire();
+  const m = await mesurer(page, { racine: '#sc-temps', cadre: '#sc-corps' });
+  // Près d'un fait, le curseur s'y pose (cardio, 120 jours avant)
+  const glisse = v => page.evaluate(v => { const rg = document.getElementById('sc-t-range'); rg.value = rg._B.auj + v; rg.dispatchEvent(new Event('input', { bubbles: true })); }, v);
+  await glisse(-118); await page.waitForTimeout(200);
+  const aimant = await page.evaluate(() => ({ date: document.getElementById('sc-t-date').textContent, zones: [...document.querySelectorAll('#sc-etiqs .sc-e')].map(e => e.dataset.zone).sort().join(), attendu: 'Le ' + new Date(Date.now() - 120 * 864e5).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) }));
+  await glisse(45); await page.waitForTimeout(200);
+  const futur = await lire();
+  await page.click('#sc-t-auj'); await page.waitForTimeout(300);
+  const retour = await lire();
+  ok(sansFait && auj.visible && auj.date === 'Aujourd’hui' && !auj.auj && auj.pts === 6 && auj.avenir === 1 && auj.off === 0 && auj.zones === 'cardio,dentiste,dermato,generaliste,ophtalmo' && auj.dos && auj.h >= 44 && /^Aujourd’hui/.test(auj.aria) && auj.deb && auj.fin
+     && /^Le /.test(passe.date) && passe.auj && passe.hAuj >= 44 && passe.zones === 'ophtalmo' && !passe.dos && passe.off === 5 && passe.aria === passe.date.slice(3) && m.pire.ratio >= 4.5
+     && aimant.date === aimant.attendu && aimant.zones === 'cardio,ophtalmo'
+     && /dentiste/.test(futur.zones) && /^DentisteRDV /.test(futur.dent) && futur.dos && !/dermato/.test(futur.zones)
+     && retour.date === 'Aujourd’hui' && !retour.auj && retour.zones === auj.zones && !errors.length,
+    `Santé, la ligne du temps (${W} px) : cachée sans fait ; un point par fait daté, le rendez-vous à venir en anneau ; un toucher 130 jours avant montre le corps à cette date (seul l'ophtalmo, « Le … », « Revenir à aujourd'hui ») ; le curseur se pose sur un fait proche ; après le rendez-vous à venir, le dentiste s'allume ; retour à aujourd'hui ; cibles ≥ 44 px, contraste ≥ 4,5 : 1, date lue par le lecteur d'écran`,
+    JSON.stringify({ sansFait, auj, passe, contraste: m.pire, aimant, futur, retour, errors }));
+  await ctx.close();
+}
+
 await browser.close(); server.close();
 if (process.env.DETAIL) for (const [k, v] of Object.entries(detail)) console.log(k + '\n  ' + v.sort().join('\n  '));
 for (const r of results) console.log(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);
