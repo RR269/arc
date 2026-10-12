@@ -2141,17 +2141,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S3 .wpen{--penc:#30d158}
 #S3 .psec-info{font-size:14px;letter-spacing:-.1px;color:#D6D6DC}
 #S3 #ssec-rdv{margin-top:18px}
+#S4 #jsec-orbite{margin-top:18px}
 #S3 .sm-hero{padding:22px 2px 4px}
 #S3 .sm-titre{font-family:var(--ft);font-size:clamp(25px,7.3vw,31px);line-height:1.15;font-weight:700;letter-spacing:-.8px;color:#F5F5F7}
 #S3 .sm-sous{margin-top:6px;font-size:15px;line-height:1.4;letter-spacing:-.15px;color:#D6D6DC}
 #S3 .wpen[hidden],#S3 .sm-vide[hidden],#S3 .sm-passes[hidden],#S3 #srdv-passes-list[hidden]{display:none}
 #S3 .sm-vide{padding:14px 16px;border-radius:18px;border:1px dashed rgba(255,255,255,.14);font-size:15px;line-height:1.4;color:#C4C4CC}
-#S3 .sm-ajout{display:block;width:100%;min-height:50px;margin-top:10px;border-radius:16px;border:0;background:#F5F5F7;color:#0B0B0F;font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
+#S3 .sm-ajout,#S4 .sm-ajout{display:block;width:100%;min-height:50px;margin-top:10px;border-radius:16px;border:0;background:#F5F5F7;color:#0B0B0F;font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.3px;cursor:pointer}
 #S3 .sm-ajout:active{transform:scale(.985)}
-#S3 .sm-row{grid-template-columns:10px minmax(0,1fr) auto}
-#S3 .sm-quand{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-variant-numeric:tabular-nums;white-space:nowrap}
-#S3 .sm-quand b{font-size:15px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
-#S3 .sm-quand small{font-size:13px;color:#B4B4BA}
+#S3 .sm-row,#S4 .sm-row{grid-template-columns:10px minmax(0,1fr) auto}
+#S3 .sm-quand,#S4 .sm-quand{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#S3 .sm-quand b,#S4 .sm-quand b{font-size:15px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
+#S3 .sm-quand small,#S4 .sm-quand small{font-size:13px;color:#B4B4BA}
 #S3 .sm-row.fait .sm-quand b{font-weight:500;color:#C4C4CC}
 #S3 .sm-passes{margin-top:10px;border-radius:18px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02);overflow:hidden}
 #S3 .sm-passes-tog{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 16px;border:0;background:none;font-family:var(--fa);font-size:15px;font-weight:600;letter-spacing:-.2px;color:#D6D6DC;cursor:pointer;text-align:left}
@@ -2206,6 +2207,31 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S3 .sc-t-range::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:#F5F5F7;box-shadow:0 0 0 5px rgba(48,209,88,.25),0 0 12px rgba(48,209,88,.6)}
 #S3 .sc-t-range:focus-visible::-webkit-slider-thumb{outline:2px solid #fff;outline-offset:3px}
 #S3 .sc-t-bornes{display:flex;justify-content:space-between;font:500 13px var(--fa);color:#C7C7CC}
+/* JURIDIQUE, l'orbite : au centre aujourd'hui ; plus une échéance est proche, plus elle est près du centre ; chaque
+   section a son quart (son nom dans le coin) ; passée, elle touche le centre, en anneau (« À replacer », sans rouge).
+   Aucune animation en boucle : les points se posent à l'arrivée, une fois. */
+#S4 .jo{position:relative;margin:4px auto 10px;max-width:560px;border-radius:22px;border:1px solid rgba(10,132,255,.24);background:radial-gradient(60% 60% at 50% 50%,rgba(10,132,255,.10),transparent 72%),linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),rgba(8,9,12,.88);overflow:hidden}
+#S4 .jo-scene{position:relative;aspect-ratio:360/300;width:100%}
+#S4 .jo-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#S4 .jo-coins span{position:absolute;font:600 13px/18px var(--fa);letter-spacing:-.1px}
+#S4 .jo-coins [data-sec="statut"]{left:14px;top:12px;color:#6FB7FF}
+#S4 .jo-coins [data-sec="contrats"]{right:14px;top:12px;color:#D59BF0}
+#S4 .jo-coins [data-sec="demarches"]{left:14px;bottom:12px;color:#FFB04D}
+#S4 .jo-coins [data-sec="aides"]{right:14px;bottom:12px;color:#6EE08F}
+#S4 .jo.vide .jo-coins span{color:#AEAEB2}
+#S4 .jo-pts{position:absolute;inset:0;pointer-events:none}
+#S4 .jo-p{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;padding:0;border:0;border-radius:50%;background:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent}
+#S4 .jo-p i{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--jc);box-shadow:0 0 10px var(--jc)}
+#S4 .jo-p.passe i{background:#0B0B0E;box-shadow:inset 0 0 0 2px var(--jc)}
+#S4 .jo-p.sel i::after{content:'';position:absolute;inset:-6px;border-radius:50%;box-shadow:0 0 0 1.6px #F5F5F7}
+#S4 .jo-p:focus-visible{outline:2px solid #F5F5F7;outline-offset:-6px}
+#S4 .jo.pose .jo-p i{animation:joPose .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--jn) * 60ms + 120ms)}
+@keyframes joPose{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+#S4 .jo-vide{position:absolute;left:16px;right:16px;bottom:44px;padding:10px 14px;border-radius:14px;background:rgba(8,9,12,.94);border:1px solid rgba(10,132,255,.24);text-align:center;font:500 15px/21px var(--fa);color:#E5E5EA}
+#S4 .jo-vide[hidden]{display:none}
+#S4 .jo-liste .wpen-row.sel{background:rgba(111,183,255,.10)}
+#S4 .jur-item.flash{background:rgba(111,183,255,.12);transition:background-color .4s}
+@media(prefers-reduced-motion:reduce){#S4 .jo.pose .jo-p i{animation:none}}
 @media(min-width:700px){#S3 .sm-hero{padding-top:30px}#S3 .sm-titre{font-size:40px;letter-spacing:-1.2px}}
 @media(prefers-reduced-motion:reduce){#S3 .sm-ajout:active{transform:none}#S3 .sm-passes-tog i{transition:none}}
 /* La feuille santé : les champs de « Nouveau projet », plus les listes déroulantes */
@@ -2912,7 +2938,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
     </div>
     <div class="p-acts">
       <button class="p-act" onclick="exportJur()" style="border-color:rgba(10,132,255,.4);color:var(--blue)">Export</button>
-      <button class="p-act" onclick="jurCpSend('Aides disponibles &#224; Valence pour mon entreprise')" style="border-color:rgba(10,132,255,.4);color:var(--blue)">Aides</button>
     </div>
   </div>
   <div class="pbody">
@@ -2929,6 +2954,21 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
 
       <div class="x-horizon" aria-hidden="true"></div>
+
+      <!-- ÉCHÉANCES : l'orbite (docs/ETUDE-POLES.md) ; au centre aujourd'hui, anneaux 7, 30 et 90 jours -->
+      <div class="psec" id="jsec-orbite">
+        <div class="psec-head"><span class="psec-lbl">Échéances</span><div class="psec-line"></div><span class="psec-info" id="jo-n"></span></div>
+        <div class="jo" id="jo">
+          <div class="jo-scene">
+            <svg class="jo-svg" id="jo-svg" viewBox="0 0 360 300" aria-hidden="true"></svg>
+            <div class="jo-coins" aria-hidden="true"><span data-sec="statut">Statut</span><span data-sec="contrats">Contrats</span><span data-sec="demarches">Démarches</span><span data-sec="aides">Aides</span></div>
+            <div class="jo-pts" id="jo-pts"></div>
+          </div>
+          <div class="jo-vide" id="jo-vide" hidden>Aucune échéance. Donne une date à une démarche : elle se placera ici.</div>
+        </div>
+        <div class="wpen jo-liste" id="jo-liste"></div>
+        <button class="sm-ajout" id="jo-ajout" type="button">Ajouter une échéance</button>
+      </div>
 
       <!-- RECHERCHE -->
       <div class="jur-search-bar">
@@ -2947,12 +2987,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 
       <!-- SECTIONS ACCORDION -->
       <div id="jur-sections-list"></div>
-
-      <!-- CHRONOLOGIE -->
-      <div class="psec" style="margin-top:8px">
-        <div class="psec-head"><span class="psec-lbl">Chronologie</span><div class="psec-line"></div></div>
-        <div class="jur-tl-wrap" id="jur-timeline"></div>
-      </div>
 
       <!-- NOTES LIBRES -->
       <div class="psec">
@@ -2985,7 +3019,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           </div>
           <div class="cp-sugs">
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Quel statut juridique pour une app livraison halal en France ?')">Statut ARYAN</button>
-            <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Aides ACRE, CAPE et subventions Valence pour cr&#233;er entreprise')">Aides cr&#233;ation</button>
+            <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Aides ACRE et CAPE pour cr&#233;er une entreprise')">Aides cr&#233;ation</button>
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Obligations l&#233;gales app livraison alimentaire France')">Obligations app</button>
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Contrat type partenariat restaurateur halal')">Contrat restaurateur</button>
             <button class="cp-sug" style="--wc:#0a84ff" onclick="jurCpSend('Quel statut pour vendre Atlas, ma formation en ligne ?')">Statut Atlas</button>
@@ -4875,7 +4909,7 @@ function enterPole(poleId){
   if(document.getElementById(s).classList.contains("off")){ var pm=document.getElementById(poleId==="sante"?"pmain-sante":"pmain-jur"); if(pm) pm.scrollTop=0; }
   showScreen(s);
   if(poleId==="sante"){ renderSante(); }
-  else{ if(!S.poles.juridique) S.poles.juridique={}; JUR_SECTIONS.forEach(function(s){ if(!S.poles.juridique[s.id]) S.poles.juridique[s.id]=[]; }); renderJuridique(); renderPenseesJur(); }
+  else{ if(!S.poles.juridique) S.poles.juridique={}; JUR_SECTIONS.forEach(function(s){ if(!S.poles.juridique[s.id]) S.poles.juridique[s.id]=[]; }); _joPose = true; _joSel = null; renderJuridique(); renderPenseesJur(); }
   // Init Claude panel for this pole
   renderPoleTools(poleId);
   saveS();
@@ -5224,22 +5258,24 @@ function renderJuridique(){
 function renderJurHero(){
   var statsRow = document.getElementById('jur-stats-row');
   if(!statsRow) return;
-  var total = 0, done = 0, urgent = 0;
+  var total = 0, done = 0, urgent = 0, passees = 0;
   JUR_SECTIONS.forEach(function(sec){
     var items = (S.poles.juridique[sec.id] || []);
     total += items.length;
     items.forEach(function(it){
       if(it.status === 'done') done++;
-      if(it.deadline && !it.status !== 'done'){
-        var diff = Math.ceil((new Date(it.deadline) - new Date()) / (1000*60*60*24));
-        if(diff >= 0 && diff <= 7) urgent++;
+      if(it.deadline && it.status !== 'done'){
+        var diff = joJours(it.deadline);
+        if(diff !== null && diff >= 0 && diff <= 7) urgent++;
+        if(diff !== null && diff < 0) passees++;
       }
     });
   });
   statsRow.innerHTML =
     '<div class="jur-stat-badge" style="background:rgba(10,132,255,.1);color:#0a84ff;border:1px solid rgba(10,132,255,.2)">'+total+' élément'+(total>1?'s':'')+' au total</div>' +
     (done ? '<div class="jur-stat-badge" style="background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.2)">'+done+' fait'+(done>1?'s':'')+'</div>' : '') +
-    (urgent ? '<div class="jur-stat-badge" style="background:rgba(255,55,95,.1);color:var(--red);border:1px solid rgba(255,55,95,.2)">'+urgent+' urgent'+( urgent>1?'s':'')+'</div>' : '');
+    (urgent ? '<div class="jur-stat-badge" style="background:rgba(255,149,0,.1);color:#FFC36B;border:1px solid rgba(255,149,0,.24)">'+urgent+' cette semaine</div>' : '') +
+    (passees ? '<div class="jur-stat-badge" style="background:rgba(255,149,0,.1);color:#FFC36B;border:1px solid rgba(255,149,0,.24)">'+passees+' à replacer</div>' : '');
 }
 
 function renderJurSections(filter){
@@ -5256,14 +5292,14 @@ function renderJurSections(filter){
     var urgentCount = items.filter(function(it){
       if(it.status === 'done') return false;
       if(!it.deadline) return false;
-      return Math.ceil((new Date(it.deadline) - new Date()) / (1000*60*60*24)) <= 7;
+      var dj = joJours(it.deadline); return dj !== null && dj <= 7;
     }).length;
     html += '<div class="jur-section" id="jur-sec-'+sec.id+'">' +
       '<div class="jur-sec-head" data-action="jur-toggle" data-sec="'+sec.id+'">' +
         '<span class="jur-sec-icon">'+sec.icon+'</span>' +
         '<div class="jur-sec-info"><div class="jur-sec-title">'+sec.title+'</div><div class="jur-sec-sub">'+sec.desc+'</div></div>' +
         (items.length ? '<span class="jur-count-badge" style="background:rgba(10,132,255,.1);color:#0a84ff;border:1px solid rgba(10,132,255,.2)">'+items.length+'</span>' : '') +
-        (urgentCount ? '<span class="jur-count-badge" style="background:rgba(255,55,95,.1);color:var(--red);border:1px solid rgba(255,55,95,.2)">'+urgentCount+' urgent</span>' : '') +
+        (urgentCount ? '<span class="jur-count-badge" style="background:rgba(255,149,0,.1);color:#FFC36B;border:1px solid rgba(255,149,0,.24)">'+urgentCount+' à 7 j</span>' : '') +
         (doneCount && items.length ? '<span class="jur-count-badge" style="background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.2)">'+doneCount+' fait'+(doneCount>1?'s':'')+'</span>' : '') +
         '<span class="jur-sec-arr" id="jur-arr-'+sec.id+'">&#9658;</span>' +
       '</div>' +
@@ -5273,9 +5309,9 @@ function renderJurSections(filter){
       var dotColor = item.status === 'done' ? '#30d158' : getUrgencyColor(item.deadline);
       var dlHtml = '';
       if(item.deadline && item.status !== 'done'){
-        var diff = Math.ceil((new Date(item.deadline) - new Date()) / (1000*60*60*24));
-        var cls = diff < 0 ? 'urgent' : diff <= 3 ? 'urgent' : diff <= 7 ? 'soon' : 'ok';
-        var dlTxt = diff < 0 ? 'Dépassée de '+Math.abs(diff)+' j' : diff === 0 ? 'Aujourd\'hui' : 'Dans '+diff+' jour'+(diff>1?'s':'');
+        var diff = joJours(item.deadline);
+        var cls = diff <= 7 ? 'soon' : 'ok';
+        var dlTxt = diff < 0 ? 'À replacer' : diff === 0 ? 'Aujourd\'hui' : 'Dans '+diff+' jour'+(diff>1?'s':'');
         dlHtml = '<span class="jur-item-dl '+cls+'">'+dlTxt+'</span>';
       }
       var statusColors = {todo:'rgba(255,255,255,.2)',progress:'#FF9500',done:'#30d158',urgent:'#FF2D55'};
@@ -5353,29 +5389,112 @@ function searchJur(q){
   });
 }
 
-function renderJurTimeline(){
-  var tl = document.getElementById('jur-timeline'); if(!tl) return;
-  var events = [];
-  JUR_SECTIONS.forEach(function(sec){
-    (S.poles.juridique[sec.id] || []).forEach(function(it){
-      if(it.deadline) events.push({t:it.t, date:it.deadline, status:it.status||'todo', sec:sec.title, color:it.status==='done'?'#30d158':getUrgencyColor(it.deadline)});
-    });
-    (S.poles.juridique[sec.id] || []).forEach(function(it){
-      if(it.status === 'done' && it.doneDate) events.push({t:it.t+' (fait)', date:it.doneDate, status:'done', sec:sec.title, color:'#30d158'});
+/* ═══ L'ORBITE (docs/ETUDE-POLES.md, Juridique) ═══
+   Source : les éléments du dossier qui ont une date et ne sont pas faits (S.poles.juridique, rien de nouveau dans S).
+   Au centre aujourd'hui ; anneaux 7, 30 et 90 jours ; au-delà, l'échéance n'est que dans la liste. */
+var JO = { cx: 180, cy: 150, r0: 27, r7: 54, r30: 96, r90: 134 };
+var JO_ANGLE = { statut: 225, contrats: 315, aides: 45, demarches: 135 };
+var JO_CLAIR = { statut: '#6FB7FF', contrats: '#D59BF0', aides: '#6EE08F', demarches: '#FFB04D' };
+var _joSel = null, _joPose = false;
+function joJours(dl) {
+  var d = new Date(String(dl).length === 10 ? dl + 'T12:00' : dl); if(isNaN(d)) return null;
+  var a = new Date(); a.setHours(12, 0, 0, 0); d.setHours(12, 0, 0, 0);
+  return Math.round((d - a) / 864e5);
+}
+function jurEcheances() {
+  var out = [];
+  JUR_SECTIONS.forEach(function(sec) {
+    ((S.poles && S.poles.juridique && S.poles.juridique[sec.id]) || []).forEach(function(it, idx) {
+      if(!it || !it.deadline || it.status === 'done') return;
+      var j = joJours(it.deadline); if(j === null) return;
+      out.push({ sec: sec.id, titre: sec.title, idx: idx, t: it.t || '', d: it.deadline, j: j, k: sec.id + ':' + idx });
     });
   });
-  events.sort(function(a,b){ return new Date(a.date) - new Date(b.date); });
-  if(!events.length){ tl.innerHTML = '<div class="wjou-empty">Aucune échéance définie. Ajoute des dates dans tes éléments.</div>'; return; }
-  tl.innerHTML = events.slice(0,10).map(function(ev){
-    var diff = Math.ceil((new Date(ev.date) - new Date()) / (1000*60*60*24));
-    var dlTxt = ev.status === 'done' ? 'Terminé' : diff < 0 ? 'Dépassée de '+Math.abs(diff)+' j' : diff === 0 ? 'Aujourd\'hui' : 'Dans '+diff+' jour'+(diff>1?'s':'');
-    return '<div class="jur-tl-row">' +
-      '<div class="jur-tl-dot" style="background:'+ev.color+';border-color:'+ev.color+'"></div>' +
-      '<div class="jur-tl-body"><div class="jur-tl-title">'+esc(ev.t)+'</div><div class="jur-tl-meta">'+esc(ev.sec)+' · '+new Date(ev.date).toLocaleDateString('fr-FR')+' · '+dlTxt+'</div></div>' +
-    '</div>';
-  }).join('');
+  return out.sort(function(a, b) { return a.j - b.j || a.idx - b.idx; });
 }
-
+function joQuand(j) { return j < 0 ? 'À replacer' : j === 0 ? 'Aujourd’hui' : j === 1 ? 'Demain' : 'Dans ' + j + ' j'; }
+function joRayon(j) {
+  if(j < 0) return JO.r0;
+  if(j <= 7) return JO.r0 + 6 + (JO.r7 - JO.r0 - 6) * j / 7;
+  if(j <= 30) return JO.r7 + (JO.r30 - JO.r7) * (j - 7) / 23;
+  if(j <= 90) return JO.r30 + (JO.r90 - JO.r30) * (j - 30) / 60;
+  return null;
+}
+function renderJurTimeline() { renderJurOrbite(); }
+function renderJurOrbite() {
+  var box = document.getElementById('jo'); if(!box) return;
+  var svg = document.getElementById('jo-svg'), pts = document.getElementById('jo-pts'), liste = document.getElementById('jo-liste');
+  var ech = jurEcheances(), C = JO;
+  if(_joSel && !ech.some(function(e) { return e.k === _joSel; })) _joSel = null;
+  // la scène : trois anneaux nommés, aujourd'hui au centre
+  var ns = 'http://www.w3.org/2000/svg', h = '';
+  [[C.r90, '90 j'], [C.r30, '30 j'], [C.r7, '7 j']].forEach(function(r) {
+    h += '<circle cx="' + C.cx + '" cy="' + C.cy + '" r="' + r[0] + '" fill="none" stroke="rgba(111,183,255,.26)" stroke-width="1"' + (r[1] === '90 j' ? ' stroke-dasharray="2 4"' : '') + '/>';
+    h += '<rect x="' + (C.cx - 17) + '" y="' + (C.cy - r[0] - 9) + '" width="34" height="18" rx="9" fill="#08090C"/>';
+    h += '<text x="' + C.cx + '" y="' + (C.cy - r[0] + 4.5) + '" text-anchor="middle" font-size="12" font-weight="600" fill="#AEAEB2" font-family="-apple-system,BlinkMacSystemFont,sans-serif">' + r[1] + '</text>';
+  });
+  h += '<circle cx="' + C.cx + '" cy="' + C.cy + '" r="' + (C.r0 - 9) + '" fill="rgba(10,132,255,.28)" stroke="#6FB7FF" stroke-width="1.4"/>';
+  h += '<text x="' + C.cx + '" y="' + (C.cy + 4) + '" text-anchor="middle" font-size="12" font-weight="600" fill="#F5F5F7" font-family="-apple-system,BlinkMacSystemFont,sans-serif">Toi</text>';
+  svg.innerHTML = h;
+  // les points : un par échéance à 90 jours ou moins, dans le quart de sa section
+  pts.textContent = '';
+  var parSec = {};
+  ech.forEach(function(e) { if(joRayon(e.j) !== null) (parSec[e.sec] = parSec[e.sec] || []).push(e); });
+  var n = 0;
+  Object.keys(parSec).forEach(function(sk) {
+    var l = parSec[sk];
+    l.forEach(function(e, i) {
+      var off = l.length === 1 ? 0 : -22 + 44 * i / (l.length - 1), a = (JO_ANGLE[sk] + off) * Math.PI / 180, r = joRayon(e.j);
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'jo-p' + (e.j < 0 ? ' passe' : '') + (e.k === _joSel ? ' sel' : '');
+      b.dataset.k = e.k; b.style.setProperty('--jc', JO_CLAIR[sk]); b.style.setProperty('--jn', n++);
+      b.style.left = ((C.cx + r * Math.cos(a)) / 360 * 100) + '%'; b.style.top = ((C.cy + r * Math.sin(a)) / 300 * 100) + '%';
+      b.setAttribute('aria-label', e.t + ', ' + e.titre + ', ' + joQuand(e.j).toLowerCase());
+      b.appendChild(document.createElement('i'));
+      b.addEventListener('click', function() { joChoisir(e.k); });
+      pts.appendChild(b);
+    });
+  });
+  box.classList.toggle('vide', !ech.length);
+  document.getElementById('jo-vide').hidden = !!ech.length;
+  if(_joPose) { box.classList.remove('pose'); void box.offsetWidth; box.classList.add('pose'); _joPose = false; } else box.classList.remove('pose');
+  // la liste, par date : ce qui est passé d'abord (« À replacer »), puis le plus proche
+  liste.innerHTML = '';
+  ech.forEach(function(e) {
+    var dd = new Date(e.d + 'T12:00'), court = isNaN(dd) ? '' : dd.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    var row = santeLigne(e.t, e.titre, joQuand(e.j), court, false, JO_CLAIR[e.sec], function() { jurOuvrirItem(e.sec, e.idx); });
+    row.dataset.k = e.k; if(e.k === _joSel) row.classList.add('sel');
+    liste.appendChild(row);
+  });
+  liste.hidden = !ech.length;
+  var passees = ech.filter(function(e) { return e.j < 0; }).length, venir = ech.length - passees;
+  document.getElementById('jo-n').textContent = [venir ? venir + ' à venir' : '', passees ? passees + ' à replacer' : ''].filter(Boolean).join(' · ');
+}
+// Toucher un point : il se signale dans la liste ; le toucher encore ouvre l'élément dans son dossier
+function joChoisir(k) {
+  if(_joSel === k) { var p = k.split(':'); jurOuvrirItem(p[0], +p[1]); return; }
+  _joSel = k;
+  [].forEach.call(document.querySelectorAll('#jo-pts .jo-p, #jo-liste .wpen-row'), function(el) { el.classList.toggle('sel', el.dataset.k === k); });
+  var row = document.querySelector('#jo-liste .wpen-row[data-k="' + k + '"]');
+  var doux = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if(row) row.scrollIntoView({ block: 'nearest', behavior: doux ? 'smooth' : 'auto' });
+}
+function jurOuvrirItem(sec, idx) {
+  var b = document.getElementById('jur-body-' + sec), arr = document.getElementById('jur-arr-' + sec);
+  if(b) b.classList.add('open'); if(arr) arr.classList.add('open');
+  var el = document.getElementById('jit-' + sec + '-' + idx); if(!el) return;
+  var doux = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  el.scrollIntoView({ block: 'center', behavior: doux ? 'smooth' : 'auto' });
+  el.classList.add('flash'); setTimeout(function() { el.classList.remove('flash'); }, 1600);
+}
+// « Ajouter une échéance » : le formulaire des démarches, ouvert, date comprise
+function joAjouter() {
+  var sec = 'demarches', b = document.getElementById('jur-body-' + sec), arr = document.getElementById('jur-arr-' + sec), f = document.getElementById('jur-form-' + sec);
+  if(b) b.classList.add('open'); if(arr) arr.classList.add('open');
+  if(!f) return; f.style.display = 'block';
+  var doux = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  f.scrollIntoView({ block: 'center', behavior: doux ? 'smooth' : 'auto' });
+  var inp = document.getElementById('jur-inp-' + sec); if(inp) inp.focus({ preventScroll: true });
+}
 
 function exportSante(){
   var lines = ['EXPORT SANTE ARC — '+new Date().toLocaleDateString('fr-FR'),'','date,sommeil,energie,sport,mental,score'];
@@ -7832,6 +7951,7 @@ function santeSupprimer() {
   on('srdv-passes-tog', 'click', function() { _smPassesOuverts = !_smPassesOuverts; renderSanteMemoire(); });
   [].forEach.call(document.querySelectorAll('#sc-corps .sc-v'), function(b) { b.addEventListener('click', function() { _scVue = b.getAttribute('data-vue'); renderCorps(); }); });
   on('sc-t-range', 'input', function(e) { scTempsGlisse(e.target); });
+  on('jo-ajout', 'click', joAjouter);
   on('sc-t-auj', 'click', function() { _scDate = null; renderCorps(); });
   on('sm-fermer', 'click', santeFermer); on('sm-annuler', 'click', santeFermer);
   on('sm-suppr', 'click', santeSupprimer);
