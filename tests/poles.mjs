@@ -10,7 +10,7 @@
 // Santé : un objectif se coche (la case existait dans le code mais n'avait aucun dessin). Juridique : une section
 // reste ouverte quand on y ajoute un élément.
 
-import { chromium, startServer, fakeSupabase, openPage, sessionScript } from './outils.mjs';
+import { chromium, startServer, fakeSupabase, openPage, sessionScript, deposit } from './outils.mjs';
 import { mesurer } from './mesure.mjs';
 
 const { server, url } = await startServer();
@@ -311,6 +311,68 @@ for (const [W, H] of [[390, 844], [360, 740]]) {
      && ajout.form === 'block' && ajout.focus === 'jur-inp-demarches' && !errors.length,
     `Juridique, l'orbite (${W} px) : vide, l'orbite seule et « Ajouter une échéance » en blanc ; un point par échéance datée, pas faite, à 90 jours ou moins, plus près du centre quand elle approche, la passée en anneau contre le centre ; aucun point sur un mot ; la liste par date (« À replacer », « Aujourd'hui », au-delà de 90 jours), sans les faites ni les non datées ; en-tête sans rouge ; plus de bouton « Aides » ni de Valence ; toucher un point le signale dans la liste, le toucher encore ouvre l'élément ; « Ajouter une échéance » ouvre les démarches ; cibles ≥ 44 px, contraste ≥ 4,5 : 1`,
     JSON.stringify({ vide, plein, contraste: m.pire, choisi, ouvre, ajout, errors }));
+  await ctx.close();
+}
+
+/* ARC propose (12 octobre, docs/ETUDE-POLES.md § 7) : une pensée rangée en Santé ou en Juridique avec un moment daté devient
+   une proposition ; rien n'est créé sans un geste ; « Ajouter » remplit la feuille du rendez-vous (spécialité reconnue)
+   ou ajoute l'échéance ; « Pas maintenant » n'est jamais reproposé, même après rechargement ; une pensée sans moment ou
+   au moment passé n'est pas proposée. Le Point du jour cite le rendez-vous et l'échéance du jour. */
+{
+  const ctx = await contexte({ width: 390, height: 844, tel: true });
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.waitForTimeout(500);
+  const T = ['Dentiste jeudi à 14 h pour la couronne', 'URSSAF : déclarer avant vendredi', 'Kiné sans date', 'Ophtalmo hier 9 h', 'Relancer le greffe lundi'];
+  for (const t of T) { await deposit(page, t); await page.waitForTimeout(200); }
+  await page.evaluate(T => {
+    const id = t => Object.values(_depot.thoughts).find(x => x.body === t).id;
+    const at = (n, h) => { const d = new Date(); d.setDate(d.getDate() + n); d.setHours(h, 0, 0, 0); return { type: 'datetime', at: rangeIsoLocal(d) }; };
+    rangeAdd(id(T[0]), { space: 'sante', status: 'filed', step: 'Aller chez le dentiste', moment: at(3, 14) }, 'ai');
+    rangeAdd(id(T[1]), { space: 'juridique', status: 'filed', step: 'Déclarer à l’URSSAF', moment: at(4, 18) }, 'ai');
+    rangeAdd(id(T[2]), { space: 'sante', status: 'filed', step: 'Prendre rendez-vous chez le kiné' }, 'ai');
+    rangeAdd(id(T[3]), { space: 'sante', status: 'filed', step: 'Ophtalmo', moment: at(-1, 9) }, 'ai');
+    rangeAdd(id(T[4]), { space: 'juridique', status: 'filed', step: 'Relancer le greffe', moment: at(5, 10) }, 'ai');
+    if (typeof matinClose === 'function') matinClose();
+    enterPole('sante');
+  }, T);
+  await page.waitForTimeout(600);
+  const sante = await page.evaluate(() => [...document.querySelectorAll('#sprop .wlien-prop')].map(c => c.textContent));
+  await page.evaluate(() => document.getElementById('sprop').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const m = await mesurer(page, { racine: '#sprop', cadre: '#sprop' });
+  const hBtn = await page.evaluate(() => [...document.querySelectorAll('#sprop button')].map(b => Math.round(b.getBoundingClientRect().height)));
+  const avant = await page.evaluate(() => Object.keys(S.sante.rdv).length);
+  await page.click('#sprop .prop-oui'); await page.waitForTimeout(300);
+  const feuille = await page.evaluate(() => ({ open: document.getElementById('sante-modal').classList.contains('open'), spe: document.getElementById('sm-spe').value, date: document.getElementById('sm-date').value, heure: document.getElementById('sm-heure').value, rdv: Object.keys(S.sante.rdv).length }));
+  await page.click('#sm-ok'); await page.waitForTimeout(300);
+  const apres = await page.evaluate(() => { const r = Object.values(S.sante.rdv)[0]; return { n: Object.keys(S.sante.rdv).length, from: !!(r && r.from), props: document.querySelectorAll('#sprop .wlien-prop').length, cache: document.getElementById('sprop').hidden }; });
+  await page.evaluate(() => enterPole('juridique')); await page.waitForTimeout(600);
+  const jur = await page.evaluate(() => [...document.querySelectorAll('#jprop .wlien-prop')].map(c => c.textContent));
+  await page.evaluate(() => [...document.querySelectorAll('#jprop .wlien-prop')].find(c => /greffe/.test(c.textContent)).querySelector('.prop-non').click()); await page.waitForTimeout(200);
+  await page.evaluate(() => document.querySelector('#jprop .prop-oui').click()); await page.waitForTimeout(400);
+  const jApres = await page.evaluate(() => ({ props: document.querySelectorAll('#jprop .wlien-prop').length, dem: S.poles.juridique.demarches.map(x => x.t + '|' + !!x.from + '|' + !!x.deadline), pts: document.querySelectorAll('#jo-pts .jo-p').length }));
+  await page.reload(); await page.waitForTimeout(1200);
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); enterPole('juridique'); }); await page.waitForTimeout(600);
+  const recharge = await page.evaluate(() => document.querySelectorAll('#jprop .wlien-prop').length);
+  // Le Point du jour : un rendez-vous et une échéance aujourd'hui
+  await page.evaluate(() => {
+    const d = new Date(), p = n => (n < 10 ? '0' : '') + n, j = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    S.sante.rdv.z = { id: 'z', spe: 'kine', date: j, heure: '23:58', qui: 'Mme Leroy' };
+    S.poles.juridique.statut = [{ t: 'Envoyer le Kbis', status: 'todo', deadline: j }];
+    saveS(); goHome(); matinShow('ask');
+  });
+  await page.waitForTimeout(600);
+  const matin = await page.evaluate(() => ({ lignes: [...document.querySelectorAll('#matin-body .matin-row')].map(r => r.getAttribute('data-kind') + ':' + r.querySelector('.matin-step').textContent), sec: (document.querySelector('#matin-body .matin-sec-t') || {}).textContent }));
+  await page.evaluate(() => [...document.querySelectorAll('#matin-body .matin-row[data-kind="ech"] button')].find(b => /fait/.test(b.textContent)).click()); await page.waitForTimeout(300);
+  const fait = await page.evaluate(() => ({ st: S.poles.juridique.statut[0].status, lignes: document.querySelectorAll('#matin-body .matin-row[data-kind="ech"]').length }));
+  const vraies = errors.filter(e => !/status of 500/.test(e));
+  ok(sante.length === 1 && /ARC propose un rendez-vous : Dentiste/.test(sante[0]) && /couronne/.test(sante[0]) && m.pire.ratio >= 4.5 && hBtn.every(h => h >= 44)
+     && avant === 0 && feuille.open && feuille.spe === 'dentiste' && feuille.heure === '14:00' && feuille.date && feuille.rdv === 0
+     && apres.n === 1 && apres.from && apres.props === 0 && apres.cache
+     && jur.length === 2 && jur.every(x => /ARC propose une échéance/.test(x)) && jApres.props === 0 && jApres.dem.length === 1 && /URSSAF\|true\|true/.test(jApres.dem[0]) && jApres.pts === 1 && recharge === 0
+     && /^Aujourd['’]hui$/.test(matin.sec) && matin.lignes.some(l => /^rdv:Kiné · Mme Leroy/.test(l)) && matin.lignes.some(l => /^ech:Envoyer le Kbis/.test(l))
+     && fait.st === 'done' && fait.lignes === 0 && !vraies.length,
+    'ARC propose : une pensée rangée en Santé avec un moment daté propose un rendez-vous (Dentiste reconnu), rien n\'est créé avant « Enregistrer » ; la feuille est remplie (spécialité, date, heure) ; ajoutée, la proposition disparaît ; en Juridique, « Ajouter » met l\'échéance sur l\'orbite, « Pas maintenant » tient après rechargement ; sans moment ou au moment passé : rien ; le Point du jour cite le rendez-vous et l\'échéance du jour, « C\'est fait » l\'y retire ; contraste, cibles',
+    JSON.stringify({ sante, contraste: m.pire, hBtn, avant, feuille, apres, jur, jApres, recharge, matin, fait, erreurs: vraies }));
   await ctx.close();
 }
 
