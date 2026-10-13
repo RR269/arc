@@ -40,9 +40,9 @@ const releve = () => {
   // L'écriture de l'accueil : ni chasse fixe ni petites capitales, titres de section à 17 px, un seul repère de progression
   const mono = [], capit = []; const tw2 = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let nd; (nd = tw2.nextNode());) { const e = nd.parentElement; if (!nd.nodeValue.trim() || !vis(e)) continue; const cs = getComputedStyle(e); if (parseFloat(cs.fontSize) === 0) continue; if (/mono/i.test(cs.fontFamily)) mono.push(nom(e)); if (cs.textTransform === 'uppercase') capit.push(nom(e)); }
-  const desc = root.querySelector('.w-hero-desc'), lh = parseFloat(getComputedStyle(desc).lineHeight);
+  const desc = root.querySelector('.w-hero-desc');
   return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], champs, fusion, horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), mono: [...new Set(mono)], capit: [...new Set(capit)], systeme: [police('.w-hero-desc'), police('.wsec-lbl'), police('.wtask-txt'), police('.wm-l'), police('.w-back')], titre: police('.w-hero-name'), section: getComputedStyle(root.querySelector('.wsec-lbl')).fontSize,
-           reperes: [...root.querySelectorAll('.w-pct-b, .wband-ring-pct')].filter(vis).length, pct: root.querySelector('.wband-ring-pct').textContent, lignesDesc: Math.round(desc.getBoundingClientRect().height / lh), suite: !root.querySelector('.w-hero-more').hidden, deborde: desc.scrollHeight > desc.clientHeight + 1,
+           reperes: [...root.querySelectorAll('.w-pct-b, .wband-ring-pct')].filter(vis).length, pct: root.querySelector('.wband-ring-pct').textContent, descVue: desc.offsetParent !== null, suite: !root.querySelector('.w-hero-more').hidden, aDesc: !!desc.textContent.trim(),
            picto: picto.concat([...root.querySelectorAll('.wtask-row button, .wblk-arr, .w-focus-open')].filter(vis).filter(e => parseFloat(getComputedStyle(e).fontSize) > 0 && /[★✕↕→↗]/.test(e.textContent)).map(e => e.textContent.trim())), poignee: [...root.querySelectorAll('.drag-handle')].filter(vis).length, fait: root.querySelector('.wband-ring-lbl').textContent,
            large: document.documentElement.scrollWidth <= innerWidth && document.getElementById('wmain').scrollWidth <= document.getElementById('wmain').clientWidth + 1,
            nom: document.getElementById('wband-name').textContent, ouvert: !root.classList.contains('off') };
@@ -70,7 +70,7 @@ for (const vp of ECRANS) {
     if (r.mono.length || r.capit.length) defauts.push(`${r.nom} : chasse fixe ${r.mono.slice(0, 4).join(', ') || 'aucune'}, capitales ${r.capit.slice(0, 4).join(', ') || 'aucune'}`);
     if (r.systeme.some(f => !/apple-system|BlinkMacSystemFont/i.test(f)) || !/apple-system|BlinkMacSystemFont/i.test(r.titre) || r.section !== '17px') defauts.push(`${r.nom} : écriture ${r.systeme.join(' / ')}, titre ${r.titre}, section ${r.section}`);
     if (r.reperes !== 1 || !/^\d+[\u00A0\u202F]%$/.test(r.pct)) defauts.push(`${r.nom} : ${r.reperes} repères de progression, « ${r.pct} »`);
-    if (r.lignesDesc > 3 || r.suite !== r.deborde || r.poignee) defauts.push(`${r.nom} : description sur ${r.lignesDesc} lignes, « Lire la suite » ${r.suite}, dépasse ${r.deborde}, poignée ${r.poignee}`);
+    if (r.descVue || r.suite !== r.aDesc || r.poignee) defauts.push(`${r.nom} : description visible ${r.descVue}, « Lire la description » ${r.suite} (description ${r.aDesc}), poignée ${r.poignee}`);
     // contraste : la barre du haut, puis tout ce qui défile, écran par écran ; sur Mac, le panneau Claude aussi
     const zones = [{ racine: '#S2 .wtop' }]; if (!vp.tel) zones.push({ racine: '#wcp' });
     for (const z of zones) { const m = await mesurer(page, z); n += m.n; contrastes.push(...m.sous.map(x => ({ ...x, t: r.nom + ' › ' + x.t }))); if (m.pire.ratio < pire.ratio) pire = { ...m.pire, t: r.nom + ' › ' + m.pire.t }; }
@@ -85,7 +85,7 @@ for (const vp of ECRANS) {
     if (w === 0) { await page.evaluate(() => enterWorld(0)); await page.waitForTimeout(200); const haut = await page.evaluate(() => document.getElementById('wmain').scrollTop); if (haut !== 0) defauts.push(`ARYAN : au retour, la page est à ${haut} px du haut`); await page.evaluate(() => goHome()); await page.waitForTimeout(150); }
   }
   if (contrastes.length) { const g = {}; for (const m of contrastes) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0 }; e.nb++; e.min = Math.min(e.min, m.ratio); } detail[vp.n] = Object.entries(g).map(([k, e]) => `${e.min.toFixed(2)}  ${k}  (${e.nb})`); }
-  ok(noms.length === 5 && !defauts.length, `${vp.n} : les cinq mondes respectent la charte (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon ; écriture de l'accueil : police du système, ni chasse fixe ni capitales, sections à 17 px, un seul repère de progression, description en trois lignes au plus)`, defauts.slice(0, 4).join(' ; ') || noms.join(', '));
+  ok(noms.length === 5 && !defauts.length, `${vp.n} : les cinq mondes respectent la charte (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion, horizon ; écriture de l'accueil : police du système, ni chasse fixe ni capitales, sections à 17 px, un seul repère de progression, description repliée dans « Le projet » au plus)`, defauts.slice(0, 4).join(' ; ') || noms.join(', '));
   ok(n > 300 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout, dans les cinq mondes`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   ok(errors.length === 0, `${vp.n} : aucune erreur de console`, errors.join(' | '));
   await ctx.close();
@@ -112,6 +112,69 @@ for (const vp of ECRANS) {
   ok(ok4 && !reste.tiroir && !reste.contexte && !reste.fleches && reste.mission === 'none' && !errors.length,
      'iPhone : chaque compteur mène à sa section (Accomplies déplie les tâches faites), au doigt comme au clavier ; plus de tiroir qui recopiait la page, ni de flèche sur la mission et les bloquants',
      JSON.stringify({ ...vus, clavier, ...reste }));
+  await ctx.close();
+}
+
+
+// Le monde vivant et la liste unique (13 octobre, Rayan : « un nouveau monde s'ouvre en mode science-fiction
+// productive » ; la carte vivante en premier écran ; « une seule liste, repliée » ; la description longue sort de l'écran)
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  await ctx.addInitScript(sessionScript());
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  await page.evaluate(() => {
+    const mk = (body, status, jours) => { const id = depotUUID(); _depot.thoughts[id] = { id, body, source: 'text', device: 'iphone', created_at: new Date(Date.now() - jours * 864e5).toISOString(), status: 'pending' }; depotSave();
+      rangeAdd(id, { status, space: 'aryan', step: body, moment: { type: 'none' }, extras: [] }, 'ai', 'm'); return id; };
+    window._pA = mk('Relancer la boulangère pour le pilote', 'filed', 2); mk('Appeler le livreur', 'done', 5);
+    S.journal[0] = [{ ts: Date.now() - 864e5, t: 'Rendez-vous avec la boulangère.' }]; rlPoser('projet', 0, 4, 'oui', ['Supabase']); saveS();
+    if (typeof matinClose === 'function') matinClose(); enterWorld(0);
+  });
+  await page.waitForTimeout(500);
+  const r = await page.evaluate(() => {
+    const w = monde(0), fait = S.tasks[0] || {}, toutes = w.tasks_done.concat(w.tasks_todo);
+    const parType = {}; _wc.items.forEach(it => { parType[it.type] = (parType[it.type] || 0) + 1; });
+    const cv = document.getElementById('wcarte-cv').getBoundingClientRect(), fiche = document.getElementById('wcarte-fiche');
+    return { parType, attendu: { afaire: toutes.filter(t => !fait[t.id]).length, tache: toutes.filter(t => fait[t.id]).length, pensee: 1, 'pensee-faite': 1, journal: 1 },
+      dessines: _wc.pos.length, n: _wc.items.length, liens: _wc.liens.map(l => l.w.name), raf: !!_wc.raf, cvBas: Math.round(cv.bottom), ficheBas: Math.round(fiche.getBoundingClientRect().bottom),
+      legende: fiche.innerText.replace(/\n/g, ' · '), vieux: ['wsec-prio', 'wsec-na', 'w-focus-banner'].filter(id => document.getElementById(id)),
+      desc: document.getElementById('wband-desc').offsetParent !== null, plusDesc: document.getElementById('wband-more').textContent,
+      next: document.querySelector('#wnext .wnext-t').textContent, detail: !!document.querySelector('#wnext .wnext-d'), reste: document.getElementById('wtask-reste').hidden,
+      plus: document.getElementById('wtask-plus').textContent, prochaine: (_wc.items.find(it => it.next) || {}).id };
+  });
+  const typesOk = Object.entries(r.attendu).every(([k, v]) => (r.parType[k] || 0) === v) && r.n === r.dessines;
+  ok(typesOk && r.liens.join() === 'ATLAS' && !r.raf && r.cvBas < 844 && r.ficheBas < 844 && /À faire/.test(r.legende) && /Journal/.test(r.legende) && /Projet lié/.test(r.legende),
+     'Le monde vivant : un point par chose réelle (tâches à faire et faites, pensées à faire et faites, journal), le projet relié au bord, la carte et sa légende dans le premier écran ; image fixe sous mouvement réduit', JSON.stringify(r));
+  ok(!r.vieux.length && !r.desc && r.plusDesc === 'Lire la description' && /^Essai « Ma boutique »/.test(r.next) && r.detail && r.prochaine === 'a30' && r.reste && r.plus === '10 autres tâches · 21 faites',
+     'Une seule liste : la prochaine tâche en tête (celle de l\'action prioritaire, avec son détail), le reste replié ; plus d\'« Action prioritaire » ni de « Prochaines actions » ; la description repliée', JSON.stringify(r));
+  // Toucher un point : la fiche dit ce qu'il est, « Ouvrir » l'ouvre là où il vit
+  const pt = await page.evaluate(() => { const c = _wc.cv.getBoundingClientRect(), o = _wc.pos.find(x => x.it.next), p = _wc.pos.find(x => x.it.type === 'pensee'), l = _wc.coins[0].c;
+    return { next: [c.left + o.x, c.top + o.y], pensee: [c.left + p.x, c.top + p.y], lien: [c.left + l.x, c.top + l.y], coeur: [c.left + _wc.geo.cx, c.top + _wc.geo.cy] }; });
+  const fiche = () => page.evaluate(() => document.getElementById('wcarte-fiche').innerText.replace(/\n/g, ' · '));
+  await page.touchscreen.tap(...pt.next); await page.waitForTimeout(150); const f1 = await fiche();
+  await page.tap('#wcarte-fiche .wcf-ouvrir'); await page.waitForTimeout(300);
+  const ck = await page.evaluate(() => document.getElementById('cockpit').classList.contains('open') && /Ma boutique/.test(document.getElementById('cockpit').textContent));
+  await page.evaluate(() => closeCockpit()); await page.waitForTimeout(300);
+  await page.touchscreen.tap(...pt.pensee); await page.waitForTimeout(150); const f2 = await fiche();
+  await page.touchscreen.tap(...pt.coeur); await page.waitForTimeout(150); const f3 = await fiche();
+  await page.touchscreen.tap(...pt.lien); await page.waitForTimeout(150); const f4 = await fiche();
+  await page.tap('#wcarte-fiche .wcf-ouvrir'); await page.waitForTimeout(400);
+  const atlas = await page.evaluate(() => CUR.wid === 4 && !document.getElementById('S2').classList.contains('off') && _wc.liens.map(l => l.w.name).join() === 'ARYAN');
+  const cibles = await page.evaluate(() => [...document.querySelectorAll('#wcarte-fiche button, #wnext button, #wtask-plus')].filter(e => e.offsetParent).map(e => e.getBoundingClientRect()).filter(b => b.height < 44 || b.width < 44).length);
+  ok(/^Prochaine tâche · Essai « Ma boutique »/.test(f1) && /Ouvrir$/.test(f1) && ck && /^Pensée à faire · déposée il y a 2\s?j · Relancer la boulangère/.test(f2) && /^Projet( · .*)? · ARYAN · Voir sur la carte$/.test(f3)
+     && /^Projet lié( · .*)? · ATLAS · en commun : Supabase · Ouvrir ATLAS$/.test(f4) && atlas && !cibles,
+     'Toucher : la prochaine tâche (« Ouvrir » ouvre son cockpit), une pensée, la sphère (« Voir sur la carte »), le projet relié (« Ouvrir ATLAS » ouvre ATLAS, relié à ARYAN) ; cibles ≥ 44 px', JSON.stringify({ f1, ck, f2, f3, f4, atlas, cibles }));
+  // « C'est fait » sur la prochaine ; le reste se déplie ; un projet neuf n'est qu'une sphère
+  await page.evaluate(() => enterWorld(0)); await page.waitForTimeout(300);
+  await page.tap('#wnext .wnext-fait'); await page.waitForTimeout(250);
+  const apres = await page.evaluate(() => ({ fait: !!S.tasks[0].a30, next: document.querySelector('#wnext .wnext-t').textContent, pointFait: _wc.items.find(it => it.id === 'a30').type }));
+  await page.tap('#wtask-plus'); await page.waitForTimeout(150);
+  const deplie = await page.evaluate(() => ({ vu: !document.getElementById('wtask-reste').hidden, lignes: document.querySelectorAll('#tasks-container > .wtask-list .wtask-row').length, exp: document.getElementById('wtask-plus').getAttribute('aria-expanded') }));
+  const neuf = await page.evaluate(() => { const id = Date.now(); S.mondes[String(id)] = { id, name: 'Jardin partagé', key: 'jardinpartage', color: '#30D158', mission: 'Ouvrir un jardin.', desc: '', etapes: [], from: null }; normalizeS(); saveS(); enterWorld(id);
+    return { n: _wc.items.length, h: Math.round(document.getElementById('wcarte-cv').getBoundingClientRect().height), fiche: document.getElementById('wcarte-fiche').innerText, next: document.getElementById('wnext').hidden, plus: document.getElementById('wtask-plus').textContent, suite: document.getElementById('wband-more').hidden }; });
+  ok(apres.fait && apres.pointFait === 'tache' && /^Rapporter le groupe grisé/.test(apres.next) && deplie.vu && deplie.exp === 'true' && deplie.lignes === 9
+     && neuf.n === 0 && neuf.h < 300 && /^Rien encore autour de ce projet/.test(neuf.fiche) && neuf.next && neuf.plus === 'Ajouter une tâche' && neuf.suite,
+     '« C\'est fait » coche la prochaine (son point passe au fait) et la suivante monte ; le reste se déplie ; un projet neuf : aucun point, « Rien encore », « Ajouter une tâche », pas de description', JSON.stringify({ apres, deplie, neuf }));
+  ok(!errors.length, 'Le monde vivant : aucune erreur de console', errors.join(' | '));
   await ctx.close();
 }
 

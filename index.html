@@ -2420,6 +2420,62 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 @keyframes hEclair{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
 #S1 .h-ciel.va-eclair::before{animation:hEclair 1.1s ease-out both;background:radial-gradient(75% 62% at 50% 0%,color-mix(in srgb,var(--eclat,#fff) 70%,transparent),color-mix(in srgb,var(--eclat,#fff) 20%,transparent) 44%,transparent 72%)}
 @media(prefers-reduced-motion:reduce){#S1 .h-comete,#S1 .h-etincelle{display:none}#S1 .h-ciel.va-eclair::before{animation:none}}
+
+/* ═══ LE MONDE VIVANT ET LA LISTE UNIQUE (branche monde-interieur, 13 octobre) ═══
+   La carte du projet prend le premier écran ; une seule liste de tâches dessous, la prochaine en tête ; la description
+   passe dans « Le projet », repliée. Aucun mode de fusion. */
+#S2 .w-hero{padding-top:14px}
+#S2 .w-hero-left .w-carte{margin-top:10px}
+#S2 .x-horizon{margin-top:10px}
+#S2 .wcarte{position:relative;margin:2px 0 14px}
+#S2 #wcarte-cv{display:block;width:100%;height:300px;touch-action:pan-y;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#S2 .wcarte-fiche{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;min-height:84px;margin-top:2px;padding:12px 14px 12px 16px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+#S2 .wcarte-fiche:not(.sel){display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px}
+#S2 .wcarte-fiche.sel{border-color:color-mix(in srgb,var(--wc,#fff) 36%,transparent);background:radial-gradient(90% 120% at 0% 0%,color-mix(in srgb,var(--wc,#fff) 14%,transparent),transparent 70%),#0B0B0E}
+#S2 .wcf-leg{display:flex;flex-wrap:wrap;gap:6px 16px}
+#S2 .wcf-l{display:inline-flex;align-items:center;gap:8px;font-size:14px;line-height:20px;color:#E6E6EB}
+#S2 .wcf-aide,#S2 .wcf-vide{margin:0;font-size:14px;line-height:20px;color:var(--t2)}
+#S2 .wcf-vide{color:#E6E6EB}
+#S2 .wcf-s{flex-shrink:0;display:inline-block;width:8px;height:8px;border-radius:50%}
+#S2 .wcf-s-afaire{background:#fff;box-shadow:0 0 0 2px color-mix(in srgb,var(--wc,#fff) 70%,transparent),0 0 10px var(--wc,#fff)}
+#S2 .wcf-s-fait{width:6px;height:6px;background:color-mix(in srgb,var(--wc,#fff) 60%,transparent)}
+#S2 .wcf-s-journal{width:7px;height:7px;border-radius:1px;background:#E8E8EE;transform:rotate(45deg)}
+#S2 .wcf-s-lie,#S2 .wcf-s-coeur{width:10px;height:10px;background:radial-gradient(circle at 35% 35%,#fff,var(--wc,#fff) 55%,#000)}
+#S2 .wcf-txt{min-width:0}
+#S2 .wcf-k{display:flex;align-items:center;gap:8px;font-size:13px;line-height:18px;color:var(--t2)}
+#S2 .wcf-t{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:3px;font-size:16px;line-height:21px;font-weight:500;letter-spacing:-.2px;color:#F5F5F7}
+#S2 .wcf-ouvrir{min-height:44px;padding:0 16px;border-radius:13px;border:1px solid color-mix(in srgb,var(--wc,#fff) 45%,transparent);background:color-mix(in srgb,var(--wc,#fff) 16%,#0B0B0E);font-size:15px;font-weight:600;letter-spacing:-.2px;color:#fff;white-space:nowrap}
+#S2 .wmetrics{margin-bottom:26px}
+/* La prochaine tâche */
+#S2 .wnext{position:relative;isolation:isolate;overflow:hidden;padding:16px;border-radius:22px;border:1px solid color-mix(in srgb,var(--wc,#fff) 34%,transparent);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015)),#0C0C0F;box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 18px 40px -22px color-mix(in srgb,var(--wc,#fff) 60%,transparent)}
+#S2 .wnext::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(95% 80% at 8% 0%,color-mix(in srgb,var(--wc,#fff) 16%,transparent),transparent 65%)}
+#S2 .wnext[hidden]{display:none}
+#S2 .wnext-k{display:flex;align-items:center;gap:8px;font-size:13px;line-height:18px;font-weight:500;color:color-mix(in srgb,var(--wc,#fff) 55%,#fff)}
+#S2 .wnext-pt{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px color-mix(in srgb,var(--wc,#fff) 70%,transparent),0 0 10px var(--wc,#fff)}
+#S2 .wnext-t{display:block;width:100%;min-height:44px;margin:6px 0 0;padding:0;border:0;background:none;text-align:left;font-size:19px;line-height:1.3;font-weight:600;letter-spacing:-.4px;color:#fff;cursor:pointer}
+#S2 .wnext-d{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;margin:2px 0 0;font-size:15px;line-height:1.45;letter-spacing:-.15px;color:var(--t2)}
+#S2 .wnext-acts{display:flex;gap:10px;margin-top:14px}
+#S2 .wnext-fait,#S2 .wnext-ouvrir{min-height:44px;padding:0 18px;border-radius:14px;font-size:15px;font-weight:600;letter-spacing:-.2px;color:#fff}
+#S2 .wnext-fait{flex:1;border:1px solid color-mix(in srgb,var(--wc,#fff) 50%,transparent);background:color-mix(in srgb,var(--wc,#fff) 22%,#0B0B0E)}
+#S2 .wnext-ouvrir{border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06)}
+#S2 .wnext-vide{margin:0;font-size:16px;line-height:22px;color:#E6E6EB}
+/* Le reste des tâches, replié */
+#S2 .wtask-plus{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:52px;margin:10px 0 0;padding:0 16px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012)),#0B0B0E;font-size:15px;font-weight:500;letter-spacing:-.2px;color:#E6E6EB;text-align:left}
+#S2 .wtask-plus-chev,#S2 .wtask-grp-fait i{flex-shrink:0;width:8px;height:8px;margin-right:4px;border-right:1.7px solid var(--t2);border-bottom:1.7px solid var(--t2);transform:rotate(45deg) translateY(-2px);transition:transform .2s}
+#S2 .wtask-plus[aria-expanded="true"] .wtask-plus-chev,#S2 .wtask-grp-fait[aria-expanded="true"] i{transform:rotate(-135deg) translateY(-2px)}
+#S2 .wtask-reste{margin-top:12px}
+#S2 .wtask-reste[hidden]{display:none}
+#S2 .wtask-grp-fait{width:100%;justify-content:space-between;border:0;background:none;padding-left:0;padding-right:0;color:#8FE3A6;cursor:pointer}
+/* Le projet : mission, outils techniques, description repliée */
+#S2 .wprojet .wmission{margin:0}
+#S2 .wprojet .w-hero-tags{margin:12px 0 0}
+#S2 .wprojet .w-hero-tags[hidden]{display:none}
+#S2 .wprojet .w-hero-more{min-height:44px;margin:4px 0 0}
+#S2 .wprojet .w-hero-more::before{display:none}
+#S2 .wprojet .w-hero-desc{display:block;margin:2px 0 4px;-webkit-line-clamp:unset;overflow:visible}
+#S2 .wprojet .w-hero-desc[hidden]{display:none}
+@media(min-width:861px){
+}
 </style>
 </head>
 <body>
@@ -2502,22 +2558,12 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   <div class="wbody">
     <div class="wmain" id="wmain">
 
-      <!-- HERO WORLD : plein impact à l'entrée -->
+      <!-- HERO WORLD : la catégorie, le nom, l'anneau (13 octobre : la description passe dans « Le projet », repliée) -->
       <div class="w-hero" id="w-hero">
         <div class="w-hero-left">
           <div class="w-hero-cat" id="wband-cat"></div>
           <div class="w-hero-name" id="wband-name"></div>
-          <div class="w-hero-desc" id="wband-desc"></div>
-          <button class="w-hero-more" id="wband-more" type="button" aria-expanded="false" hidden>Lire la suite</button>
-          <div class="w-hero-tags" id="wband-tags"></div>
           <button class="w-carte" id="w-carte" type="button"><i aria-hidden="true"></i>Voir sur la carte</button>
-          <!-- FOCUS TASK en premier plan -->
-          <div class="w-focus-banner" id="w-focus-banner" style="display:none" data-open-focus="1">
-            <div class="w-focus-dot"></div>
-            <span class="w-focus-lbl">Focus</span>
-            <span class="w-focus-txt" id="w-focus-txt"></span>
-            <span class="w-focus-open">Ouvrir</span>
-          </div>
         </div>
         <div class="w-hero-right">
           <!-- Ring de progression -->
@@ -2535,6 +2581,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       </div>
 
       <div class="x-horizon" aria-hidden="true"></div>
+
+      <!-- LE MONDE VIVANT (13 octobre, Rayan : « un nouveau monde s'ouvre en mode science-fiction productive ») :
+           le projet au centre, ses vraies choses en orbite, ses projets reliés au bord. Toucher un point dit ce qu'il est. -->
+      <div class="wcarte" id="wcarte">
+        <canvas id="wcarte-cv" aria-hidden="true"></canvas>
+        <div class="wcarte-fiche" id="wcarte-fiche" aria-live="polite"></div>
+      </div>
 
       <!-- MÉTRIQUES RAPIDES -->
       <div class="wmetrics" id="wmetrics">
@@ -2556,45 +2609,29 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         </div>
       </div>
 
-      <!-- MISSION -->
-      <div class="wmission">
-        <div class="wmission-dot" id="miss-dot"></div>
-        <div>
-          <div class="wmission-lbl">Mission</div>
-          <div class="wmission-txt" id="miss-txt"></div>
-        </div>
-      </div>
-
-      <!-- ACTION PRIORITAIRE -->
-      <div class="wsec" id="wsec-prio">
-        <div class="wsec-head"><span class="wsec-lbl">Action prioritaire</span><div class="wsec-line"></div></div>
-        <div class="waction">
-          <div class="waction-bar" id="waction-bar"></div>
-          <div class="waction-brow">
-            <span id="waction-badge" class="waction-prio-b"></span>
-          </div>
-          <div class="waction-row">
-            <div class="waction-num" id="waction-num">1</div>
-            <div>
-              <div class="waction-title" id="waction-title"></div>
-              <div class="waction-detail" id="waction-detail"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TÂCHES -->
+      <!-- TÂCHES : une seule liste (13 octobre). La prochaine en tête, le reste replié. L'« Action prioritaire » et les
+           « Prochaines actions » d'avril recopiaient ces tâches : elles quittent l'écran, les données restent. -->
       <div class="wsec" id="wsec-taches">
         <div class="wsec-head">
           <span class="wsec-lbl">T&#226;ches</span>
           <div class="wsec-line"></div>
           <span class="wsec-info" id="wsec-tasks-count"></span>
         </div>
-        <div class="wtask-add-row">
-          <input class="wtask-inp" id="task-inp" placeholder="Nouvelle t&#226;che..." autocomplete="off">
-          <button class="wtask-add-btn" id="task-add-btn">+ Ajouter</button>
+        <div class="wnext" id="wnext"></div>
+        <button class="wtask-plus" id="wtask-plus" type="button" aria-expanded="false" aria-controls="wtask-reste"></button>
+        <div class="wtask-reste" id="wtask-reste" hidden>
+          <div class="wtask-add-row">
+            <input class="wtask-inp" id="task-inp" placeholder="Nouvelle t&#226;che..." autocomplete="off">
+            <button class="wtask-add-btn" id="task-add-btn">+ Ajouter</button>
+          </div>
+          <div id="tasks-container"></div>
         </div>
-        <div id="tasks-container"></div>
+      </div>
+
+      <!-- PENSÉES : celles que tu as déposées et qui sont rangées dans ce projet (absente s'il n'y en a aucune) -->
+      <div class="wsec" id="wsec-pensees" hidden>
+        <div class="wsec-head"><span class="wsec-lbl">Pensées</span><div class="wsec-line"></div><span class="wsec-info" id="wpen-n"></span></div>
+        <div class="wpen" id="wpen-list"></div>
       </div>
 
       <!-- PROJETS LIÉS : confirmés par Rayan, et propositions d'ARC avec leur raison (absente s'il n'y a rien) -->
@@ -2604,10 +2641,19 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <div id="wlien-list"></div>
       </div>
 
-      <!-- PENSÉES : celles que tu as déposées et qui sont rangées dans ce projet (absente s'il n'y en a aucune) -->
-      <div class="wsec" id="wsec-pensees" hidden>
-        <div class="wsec-head"><span class="wsec-lbl">Pensées</span><div class="wsec-line"></div><span class="wsec-info" id="wpen-n"></span></div>
-        <div class="wpen" id="wpen-list"></div>
+      <!-- LE PROJET : sa mission, ses outils techniques, sa description (repliée) -->
+      <div class="wsec wprojet" id="wsec-projet">
+        <div class="wsec-head"><span class="wsec-lbl">Le projet</span><div class="wsec-line"></div></div>
+        <div class="wmission">
+          <div class="wmission-dot" id="miss-dot"></div>
+          <div class="wmission-c">
+            <div class="wmission-lbl">Mission</div>
+            <div class="wmission-txt" id="miss-txt"></div>
+            <div class="w-hero-tags" id="wband-tags"></div>
+            <button class="w-hero-more" id="wband-more" type="button" aria-expanded="false" aria-controls="wband-desc">Lire la description</button>
+            <div class="w-hero-desc" id="wband-desc" hidden></div>
+          </div>
+        </div>
       </div>
 
       <!-- BLOQUANTS -->
@@ -2618,12 +2664,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
           <input class="wblk-inp" id="blk-inp" placeholder="Ajouter un bloquant...">
           <button class="wblk-add-btn" id="blk-add-btn">+ Ajouter</button>
         </div>
-      </div>
-
-      <!-- PROCHAINES ACTIONS -->
-      <div class="wsec" id="wsec-na">
-        <div class="wsec-head"><span class="wsec-lbl">Prochaines actions</span><div class="wsec-line"></div></div>
-        <div class="wna-list" id="na-list"></div>
       </div>
 
       <!-- NOTES -->
@@ -4713,7 +4753,7 @@ function renderCards(){
 /* ===== ENTER WORLD ===== */
 var wTimer={s:0,running:false,iv:null};
 function enterWorld(wid){
-  CUR.wid=wid; _secOuvertes={};
+  CUR.wid=wid; _secOuvertes={}; _tachesOuvertes=false; _wc.sel=null;
   var w=monde(wid);
   document.documentElement.style.setProperty("--wc",w.color);
   document.getElementById("S2").setAttribute("data-wid",wid);
@@ -4744,6 +4784,7 @@ function enterWorld(wid){
   showScreen("S2");
   renderWorld();
   renderSommeil();
+  wcOuvrir();
   // Track last active
   S.lastActive=S.lastActive.filter(function(x){ return x!==wid; });
   S.lastActive.unshift(wid);
@@ -4765,19 +4806,18 @@ function autoWorldBriefing(wid){
 /* ===== RENDER WORLD ===== */
 function renderWorld(){
   var wid=CUR.wid; var w=monde(wid);
-  // Band
   document.getElementById("wband-cat").textContent=w.cat;
   document.getElementById("wband-name").textContent=w.name;
-  document.getElementById("wband-desc").textContent=w.desc;
+  document.getElementById("wband-desc").textContent=w.desc||"";
   descRepli(false);
   var tagsEl=document.getElementById("wband-tags");
-  if(tagsEl){ tagsEl.innerHTML=""; w.tags.forEach(function(t){ var s=document.createElement("span"); s.className="wband-tag"; s.textContent=t; tagsEl.appendChild(s); }); }
+  if(tagsEl){ tagsEl.innerHTML=""; (w.tags||[]).forEach(function(t){ var s=document.createElement("span"); s.className="wband-tag"; s.textContent=t; tagsEl.appendChild(s); }); tagsEl.hidden=!(w.tags||[]).length; }
   var allT=w.tasks_done.concat(w.tasks_todo);
   var done=allT.filter(function(t){ return S.tasks[wid]&&S.tasks[wid][t.id]; }).length;
   var pct=allT.length>0?Math.round(done/allT.length*100):0;
   var arc=document.getElementById("ring-arc"); var ringPct=document.getElementById("ring-pct");
   if(arc){ var c=2*Math.PI*34; arc.style.strokeDashoffset=c*(1-pct/100); arc.style.stroke=w.color; }
-  if(ringPct) ringPct.textContent=pct+"\u202F%";   // espace fine insécable : « 100 % » tient dans l'anneau
+  if(ringPct) ringPct.textContent=pct+" %";   // espace fine insécable : « 100 % » tient dans l'anneau
   // Metrics
   var dm=allT.filter(function(t){return S.tasks[wid]&&S.tasks[wid][t.id];}).length;
   var tm=allT.filter(function(t){return !S.tasks[wid]||!S.tasks[wid][t.id];}).length;
@@ -4790,30 +4830,9 @@ function renderWorld(){
   // Mission
   document.getElementById("miss-txt").textContent=w.mission;
   var dot=document.getElementById("miss-dot"); if(dot) dot.style.background=w.color;
-  // Action prioritaire : écrite dans les cinq projets d'origine ; un projet né d'une pensée n'en a pas (ses étapes suffisent)
-  var prioSec=document.getElementById("wsec-prio"); if(prioSec) prioSec.hidden=!w.priority;
-  if(w.priority){
-  document.getElementById("waction-title").textContent=w.priority.title;
-  document.getElementById("waction-detail").textContent=w.priority.detail;
-  document.getElementById("waction-num").textContent=w.priority.num;
-  document.getElementById("waction-num").style.background=w.color;
-  document.getElementById("waction-badge").textContent=w.priority.badge;
-  document.getElementById("waction-badge").style.background="color-mix(in srgb,"+w.color+" 15%,transparent)";
-  document.getElementById("waction-badge").style.color=w.color;
-  }
-  // Focus banner
-  var fb=document.getElementById("w-focus-banner");
-  var ft=document.getElementById("w-focus-txt");
-  var focusId=S.focus[wid];
-  if(focusId){
-    var focusT=allT.find(function(t){ return t.id===focusId&&!(S.tasks[wid]&&S.tasks[wid][t.id]); });
-    if(focusT&&fb&&ft){ fb.style.display="flex"; ft.textContent=focusT.t; }
-    else if(fb){ fb.style.display="none"; S.focus[wid]=null; }
-  } else if(fb){ fb.style.display="none"; }
   renderTasks();
   renderBlockers();
   renderTools(wid);
-  renderNA();
   renderJournal();
   // Notes
   var na=document.getElementById("notes-ta"); if(na){ na.value=S.notes[wid]||""; updateNotesChars(); }
@@ -4842,25 +4861,25 @@ function sectionOuvrir(k){
   if(champ){ champ.focus(); champ.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}); }
 }
 
-// Description du monde : trois lignes au plus (charte : pas de pavé) ; « Lire la suite » ne se montre que si le
-// texte dépasse, et le déplie sur place.
+// La description du projet (13 octobre) : elle n'est plus dans l'en-tête ; dans « Le projet », repliée, elle se lit sur
+// place. Sans description, pas de bouton.
 function descRepli(ouvert){
   var d=document.getElementById("wband-desc"), b=document.getElementById("wband-more"); if(!d||!b) return;
-  d.classList.toggle("open",!!ouvert);
-  b.setAttribute("aria-expanded",ouvert?"true":"false");
-  b.textContent=ouvert?"Réduire":"Lire la suite";
-  b.hidden=!ouvert&&d.scrollHeight<=d.clientHeight+1;
+  var vide=!String(d.textContent||"").trim();
+  d.hidden=!ouvert||vide;
+  b.hidden=vide;
+  b.setAttribute("aria-expanded",ouvert&&!vide?"true":"false");
+  b.textContent=ouvert?"Réduire":"Lire la description";
 }
 
-function renderTasks(){
-  var wid=CUR.wid; var w=monde(wid);
-  var container=document.getElementById("tasks-container"); if(!container) return;
+/* TÂCHES : une seule liste (13 octobre, Rayan : « une seule liste, repliée »). En tête, la prochaine : le focus du jour,
+   sinon la tâche que l'« Action prioritaire » écrite du projet désigne, sinon la première à faire. Le reste se déplie. */
+var _tachesOuvertes=false, _wcNext=null;
+function tacheMots(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").split(/[^a-z0-9]+/).filter(function(m){ return m.length>=4; }); }
+function tachesDuMonde(wid){
+  var w=monde(wid), fait=S.tasks[wid]||{};
   var allT=w.tasks_done.concat(w.tasks_todo);
-  var custom=S.custom[wid]||[];
-  // Get focus id
-  var focusId=S.focus[wid];
-  // Sort: focus first, then todo, then done
-  var sorted=[].concat(allT,custom.map(function(t){ return {id:t.id,t:t.t,custom:true}; }));
+  var sorted=[].concat(allT,(S.custom[wid]||[]).map(function(t){ return {id:t.id,t:t.t,custom:true}; }));
   var order=S.taskOrder[wid]||[];
   if(order.length>0){
     sorted.sort(function(a,b){
@@ -4871,21 +4890,75 @@ function renderTasks(){
       return ai-bi;
     });
   }
-  // Split into done/todo groups
-  var todoItems=sorted.filter(function(t){ return !S.tasks[wid]||!S.tasks[wid][t.id]; });
-  var doneItems=sorted.filter(function(t){ return S.tasks[wid]&&S.tasks[wid][t.id]; });
+  var todo=sorted.filter(function(t){ return !fait[t.id]; }), done=sorted.filter(function(t){ return fait[t.id]; });
+  var next=null, viaPrio=false, focusId=S.focus[wid];
+  if(focusId) next=todo.filter(function(t){ return t.id===focusId; })[0]||null;
+  if(focusId&&!next) S.focus[wid]=null;   // le focus d'une tâche faite ou disparue n'a plus de sens
+  if(!next&&w.priority){
+    var pm=tacheMots(w.priority.title), best=0;
+    todo.forEach(function(t){ var n=tacheMots(t.t).filter(function(m){ return pm.indexOf(m)>=0; }).length; if(n>best){ best=n; next=t; } });
+    if(best<2) next=null; else viaPrio=true;
+  }
+  if(!next) next=todo[0]||null;
+  return { todo: todo, done: done, next: next, viaPrio: viaPrio, reste: todo.filter(function(t){ return t!==next; }) };
+}
+function renderTasks(){
+  var wid=CUR.wid; var w=monde(wid);
+  var container=document.getElementById("tasks-container"); if(!container) return;
+  var L=tachesDuMonde(wid), focusId=S.focus[wid];
+  _wcNext=L.next?L.next.id:null;
+  var info=document.getElementById("wsec-tasks-count");
+  if(info) info.textContent=L.todo.length?L.todo.length+" à faire":(L.done.length?"Toutes faites":"");
+  // La prochaine
+  var nx=document.getElementById("wnext");
+  if(nx){
+    nx.innerHTML="";
+    if(L.next){
+      var t=L.next, enFocus=t.id===focusId;
+      var k=document.createElement("div"); k.className="wnext-k"; k.innerHTML='<span class="wnext-pt" aria-hidden="true"></span>';
+      k.appendChild(document.createTextNode(enFocus?"Focus du jour":"Prochaine"));
+      var b=document.createElement("button"); b.type="button"; b.className="wnext-t"; b.setAttribute("data-action","open-cockpit"); b.setAttribute("data-wid",wid); b.setAttribute("data-tid",t.id); b.textContent=t.t;
+      nx.appendChild(k); nx.appendChild(b);
+      if(L.viaPrio&&w.priority.detail){ var d=document.createElement("p"); d.className="wnext-d"; d.textContent=w.priority.detail; nx.appendChild(d); }
+      var acts=document.createElement("div"); acts.className="wnext-acts";
+      acts.innerHTML='<button class="wnext-fait" type="button" data-action="toggle-task" data-wid="'+wid+'" data-tid="'+esc(t.id)+'">C’est fait</button><button class="wnext-ouvrir" type="button" data-action="open-cockpit" data-wid="'+wid+'" data-tid="'+esc(t.id)+'">Ouvrir</button>';
+      nx.appendChild(acts);
+      nx.hidden=false;
+    } else {
+      nx.hidden=!L.done.length;
+      if(L.done.length){ var p=document.createElement("p"); p.className="wnext-vide"; p.textContent="Toutes les tâches sont faites."; nx.appendChild(p); }
+    }
+  }
+  // Le reste, replié
+  var plus=document.getElementById("wtask-plus"), reste=document.getElementById("wtask-reste");
+  if(plus&&reste){
+    var n=L.reste.length, mots=[];
+    if(n) mots.push(n===1?"1 autre tâche":n+" autres tâches");
+    if(L.done.length) mots.push(L.done.length+(L.done.length>1?" faites":" faite"));
+    if(!mots.length) mots.push("Ajouter une tâche");
+    plus.innerHTML=""; var pt=document.createElement("span"); pt.className="wtask-plus-t"; pt.textContent=mots.join(" · "); plus.appendChild(pt);
+    var ch=document.createElement("i"); ch.className="wtask-plus-chev"; ch.setAttribute("aria-hidden","true"); plus.appendChild(ch);
+    plus.setAttribute("aria-expanded",_tachesOuvertes?"true":"false");
+    reste.hidden=!_tachesOuvertes;
+  }
   var html="";
-  if(todoItems.length>0){
-    html+='<div class="wtask-grp-lbl">En cours ('+(todoItems.length)+')</div><div class="wtask-list">';
-    todoItems.forEach(function(t){ html+=renderTaskRow(t,wid,false,focusId); });
+  if(L.reste.length>0){
+    html+='<div class="wtask-grp-lbl">À faire ('+L.reste.length+')</div><div class="wtask-list">';
+    L.reste.forEach(function(t){ html+=renderTaskRow(t,wid,false,focusId); });
     html+='</div>';
   }
-  if(doneItems.length>0){
-    html+='<div class="wtask-grp-lbl" style="color:var(--green);cursor:pointer" data-action="toggle-done-grp">Accomplies ('+(doneItems.length)+') ▸</div><div id="done-grp" style="display:none"><div class="wtask-list">';
-    doneItems.forEach(function(t){ html+=renderTaskRow(t,wid,true,focusId); });
+  if(L.done.length>0){
+    html+='<button type="button" class="wtask-grp-lbl wtask-grp-fait" data-action="toggle-done-grp" aria-expanded="false">Accomplies ('+(L.done.length)+')<i aria-hidden="true"></i></button><div id="done-grp" style="display:none"><div class="wtask-list">';
+    L.done.forEach(function(t){ html+=renderTaskRow(t,wid,true,focusId); });
     html+='</div></div>';
   }
   container.innerHTML=html;
+}
+function tachesDeplier(ouvert){
+  _tachesOuvertes=ouvert;
+  var plus=document.getElementById("wtask-plus"), reste=document.getElementById("wtask-reste");
+  if(plus) plus.setAttribute("aria-expanded",ouvert?"true":"false");
+  if(reste) reste.hidden=!ouvert;
 }
 
 function renderTaskRow(t,wid,done,focusId){
@@ -4921,17 +4994,6 @@ function renderBlockers(){
     html+='<div class="wblk">'+
       '<span class="wblk-num">B'+(i+1)+'</span>'+
       '<span class="wblk-text">'+esc(b)+'</span></div>';
-  });
-  list.innerHTML=html;
-}
-
-function renderNA(){
-  var wid=CUR.wid; var w=monde(wid);
-  var list=document.getElementById("na-list"); if(!list) return;
-  var html="";
-  var naSec=document.getElementById("wsec-na"); if(naSec) naSec.hidden=!(w.nextActions||[]).length;   // section vide : cachée
-  (w.nextActions||[]).forEach(function(a,i){
-    html+='<div class="wna-item"><span class="wna-num">'+(i+1)+'.</span><span class="wna-text">'+esc(a)+'</span></div>';
   });
   list.innerHTML=html;
 }
@@ -5920,7 +5982,8 @@ document.addEventListener("click",function(ev){
   if(delJou){ var ts=parseInt(delJou.getAttribute("data-ts")); var wid=CUR.wid; S.journal[wid]=S.journal[wid].filter(function(j){ return j.ts!==ts; }); saveS(); renderJournal(); return; }
   // Open blocker drawer
   // Toggle done group
-  if(t.closest("[data-action='toggle-done-grp']")){ var grp=document.getElementById("done-grp"); if(grp){ grp.style.display=grp.style.display==="none"?"block":"none"; t.closest("[data-action='toggle-done-grp']").innerHTML=t.closest("[data-action='toggle-done-grp']").innerHTML.replace(grp.style.display==="block"?"▸":"▾",grp.style.display==="block"?"▾":"▸"); } return; }
+  if(t.closest("[data-action='toggle-done-grp']")){ var grp=document.getElementById("done-grp"), lblG=t.closest("[data-action='toggle-done-grp']"); if(grp){ var ouvreG=grp.style.display==="none"; grp.style.display=ouvreG?"block":"none"; lblG.setAttribute("aria-expanded",ouvreG?"true":"false"); } return; }
+  if(t.closest("#wtask-plus")){ tachesDeplier(!_tachesOuvertes); return; }
   // Task row click → open task drawer
   var taskRow=t.closest(".wtask-row");
   if(taskRow&&!t.closest("[data-action]")&&!t.closest(".wtask-cb")&&!t.closest(".drag-handle")){ var tid=taskRow.getAttribute("data-tid"); var wid=parseInt(taskRow.getAttribute("data-wid")); if(tid&&wid>=0) openCockpit(wid,tid); return; }
@@ -6241,6 +6304,7 @@ function ccbTaille(){
 function allerA(quoi){
   var cible = null;
   if(quoi==="faites"){
+    tachesDeplier(true);
     var g = document.getElementById("done-grp"), lbl = document.querySelector('#S2 [data-action="toggle-done-grp"]');
     if(g && lbl){ if(g.style.display==="none") lbl.click(); cible = lbl; }
     else cible = document.getElementById("wsec-taches");
@@ -7338,6 +7402,7 @@ function renderPenseesProjet() {
   var w = (typeof CUR !== 'undefined' && CUR.wid >= 0) ? monde(CUR.wid) : null;
   renderPensees('wsec-pensees', 'wpen-list', 'wpen-n', penseesDuProjet(w));
   renderLiensProjet();
+  wcConstruire();
 }
 // Juridique (10 octobre) : la même section, pour les pensées rangées dans l'espace « juridique ». Santé n'en a pas :
 // son contenu attend la décision de Rayan.
@@ -7375,6 +7440,250 @@ function penseeOuvrir(tid) {
   var el = document.querySelector('#depot-list [data-id="' + tid + '"]');
   if(el) el.scrollIntoView({ block: 'center' });
 }
+/* ═══ LE MONDE VIVANT (branche monde-interieur, 13 octobre) ═══
+   Rayan, en ouvrant un projet : « un nouveau monde s'ouvre en mode science-fiction productive » ; son premier écran : la
+   carte vivante du projet. Le projet au centre, une sphère à sa couleur. Autour, sur trois orbites, ses vraies choses :
+   1. à faire (pensées à faire : lumière ; tâches à faire : anneau ; la prochaine : point blanc) ;
+   2. la mémoire (entrées du journal : losange ; pensées faites : anneau gris) ;
+   3. le fait (tâches faites : poussière).
+   Au bord, ses projets reliés (S.liens, confirmés par Rayan), avec leur pont ; l'influx part de l'éveillé vers l'endormi.
+   Une orbite sans rien n'est pas dessinée : un projet neuf n'est qu'une sphère. Règle : rien de décoratif, chaque point
+   est une chose d'ARC ; toucher un point dit ce qu'il est (la fiche, sous la carte) et l'ouvre. Rien ne passe sur un
+   mot. Canevas 2D, aucune bibliothèque, aucun mode de fusion. À l'ouverture, le monde se forme une fois (sphère, puis
+   orbites, puis points) ; ensuite les orbites tournent lentement. Mouvement réduit : une image fixe. L'animation
+   s'arrête quand la carte n'est pas à l'écran. */
+var _wc = { cv: null, w: null, items: [], liens: [], sel: null, t0: 0, raf: 0, pos: [], geo: null, entree: 0 };
+var WC_VIT = [0, .07, .045, .028];
+var WC_TYPES = { pensee: 'Pensée à faire', afaire: 'Tâche à faire', 'pensee-faite': 'Pensée faite', journal: 'Journal', tache: 'Tâche faite' };
+function wcMix(a, b, t) {
+  var p = function(h) { var n = parseInt(String(h).replace('#', '').slice(0, 6), 16); return isNaN(n) ? [255, 255, 255] : [n >> 16, n >> 8 & 255, n & 255]; };
+  var x = p(a), y = p(b); return 'rgb(' + x.map(function(v, i) { return Math.round(v + (y[i] - v) * t); }).join(',') + ')';
+}
+function wcItems(w) {
+  var out = [], wid = w.id, fait = S.tasks[wid] || {}, quand = (S.taskDone || {})[wid] || {};
+  (w.tasks_done || []).concat(w.tasks_todo || [], (S.custom || {})[wid] || []).forEach(function(t) {
+    if(!t || !t.id) return;
+    if(fait[t.id]) out.push({ ring: 3, type: 'tache', id: t.id, txt: t.t || '', ts: quand[t.id] || 0 });
+    else out.push({ ring: 1, type: 'afaire', id: t.id, txt: t.t || '', ts: 0, next: t.id === _wcNext });
+  });
+  penseesDuProjet(w).forEach(function(x) {
+    var f = x.f.status === 'done';
+    out.push({ ring: f ? 2 : 1, type: f ? 'pensee-faite' : 'pensee', id: x.t.id, txt: x.t.body, ts: new Date(x.t.created_at).getTime(), moment: x.f.moment });
+  });
+  ((S.journal || {})[wid] || []).forEach(function(j) { if(j && (j.t || j.txt)) out.push({ ring: 2, type: 'journal', id: 'j' + j.ts, ts: j.ts || 0, txt: j.t || j.txt }); });
+  // Sur chaque orbite, les plus anciens d'abord ; la prochaine tâche en tête de la sienne
+  out.sort(function(a, b) { return (a.ring - b.ring) || ((b.next ? 1 : 0) - (a.next ? 1 : 0)) || ((a.ts || 0) - (b.ts || 0)); });
+  var parRing = {}; out.forEach(function(it) { (parRing[it.ring] = parRing[it.ring] || []).push(it); });
+  Object.keys(parRing).forEach(function(r) { var l = parRing[r], a0 = plHash(w.id + ':' + r) * Math.PI * 2; l.forEach(function(it, k) { it.a = a0 + k / l.length * Math.PI * 2; it.k = k; it.n = l.length; }); });
+  return out;
+}
+function wcLiens(w) {
+  if(typeof rlLiensProjet !== 'function') return [];
+  return rlLiensProjet(w).oui.slice(0, 4).map(function(x, i) { return { w: x.w, mots: x.mots || [], i: i, ph: plHash(String(x.w.id)) }; });
+}
+function wcConstruire() {
+  var s2 = document.getElementById('S2'), cv = document.getElementById('wcarte-cv');
+  if(!cv || !s2 || s2.classList.contains('off') || typeof CUR === 'undefined') return;
+  var w = monde(CUR.wid); if(!w) return;
+  if(_wc.w !== w.id) _wc.sel = null;
+  _wc.cv = cv; _wc.w = w.id; _wc.items = wcItems(w); _wc.liens = wcLiens(w);
+  if(_wc.sel && !wcTrouver(_wc.sel)) _wc.sel = null;
+  wcTaille(); wcFiche(); wcDemarrer();
+}
+function wcOuvrir() { _wc.sel = null; _wc.entree = plCalme() ? 0 : performance.now(); _wc.t0 = performance.now(); wcConstruire(); }
+function wcTrouver(sel) {
+  if(sel.k === 'coeur') return true;
+  if(sel.k === 'lien') return _wc.liens.filter(function(l) { return String(l.w.id) === String(sel.id); })[0];
+  return _wc.items.filter(function(it) { return it.type === sel.type && String(it.id) === String(sel.id); })[0];
+}
+function wcTaille() {
+  var cv = _wc.cv; if(!cv) return;
+  var W = cv.clientWidth; if(!W) return;
+  // La hauteur suit ce qui existe : une bande en haut s'il y a un projet relié, une en bas s'il y en a plus de deux
+  var tilt = .56, nl = _wc.liens.length, bandeH = nl ? 48 : 8, bandeB = nl > 2 ? 48 : 8;
+  var ry = Math.min((W / 2 - 18) * tilt, W > 700 ? 130 : 110), H = Math.round(bandeH + bandeB + 2 * ry + 40);
+  if(cv.style.height !== H + 'px') cv.style.height = H + 'px';
+  var dpr = Math.min(3, window.devicePixelRatio || 1);
+  if(cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) { cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+  var Rc = Math.max(26, Math.min(44, ry * .36)), rMax = ry / tilt;
+  var rings = [0, Rc + (rMax - Rc) * .36, Rc + (rMax - Rc) * .68, rMax];
+  _wc.geo = { W: W, H: H, dpr: dpr, cx: W / 2, cy: bandeH + 20 + ry, Rc: Rc, tilt: tilt, rings: rings };
+}
+// Les projets reliés : aux quatre coins, dans une bande du haut et du bas que les orbites ne touchent pas ; le nom à côté de
+// la sphère, vers le milieu de la bande : aucun pont ne le croise (le pont arrive par-dessous ou par-dessus)
+function wcCoin(i, G) { var gauche = i % 2 === 0, haut = i < 2, dx = Math.min(G.W / 2 - 24, G.rings[3] + 70); return { x: gauche ? G.cx - dx : G.cx + dx, y: haut ? 24 : G.H - 24, gauche: gauche, haut: haut }; }
+function wcVisible() {
+  var s2 = document.getElementById('S2'), cv = _wc.cv;
+  if(!cv || !s2 || s2.classList.contains('off') || document.hidden) return false;
+  var r = cv.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 0;
+}
+function wcDemarrer() {
+  if(_wc.raf) return;
+  var pas = function(now) {
+    _wc.raf = 0;
+    if(!wcVisible()) return;
+    wcDessiner(now);
+    if(!plCalme()) _wc.raf = requestAnimationFrame(pas);
+  };
+  _wc.raf = requestAnimationFrame(pas);
+}
+function wcDessiner(now) {
+  var G = _wc.geo, cv = _wc.cv; if(!G || !cv) return;
+  var w = monde(_wc.w); if(!w) return;
+  var ctx = cv.getContext('2d'), calme = plCalme(), t = calme ? 0 : (now - _wc.t0) / 1000;
+  var e = (calme || !_wc.entree) ? 1 : Math.min(1, (now - _wc.entree) / 1400), ease = function(x) { x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); };
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, cv.width, cv.height); ctx.setTransform(G.dpr, 0, 0, G.dpr, 0, 0);
+  var col = w.color, cx = G.cx, cy = G.cy, Rc = G.Rc * (.55 + .45 * ease(e / .45));
+  // L'atmosphère : une lueur large derrière la sphère
+  var at = ctx.createRadialGradient(cx, cy, Rc * .6, cx, cy, G.rings[3] * 1.05);
+  at.addColorStop(0, plRgba(col, .22)); at.addColorStop(.45, plRgba(col, .07)); at.addColorStop(1, plRgba(col, 0));
+  ctx.fillStyle = at; ctx.fillRect(0, 0, G.W, G.H);
+  // Les orbites qui portent quelque chose
+  var parRing = [0, 0, 0, 0]; _wc.items.forEach(function(it) { parRing[it.ring]++; });
+  var prog = function(r) { return ease((e - .3 - (r - 1) * .12) / .4); };
+  for(var r = 1; r <= 3; r++) {
+    if(!parRing[r]) continue; var p = prog(r); if(p <= 0) continue;
+    ctx.beginPath(); ctx.ellipse(cx, cy, G.rings[r], G.rings[r] * G.tilt, 0, -Math.PI / 2, -Math.PI / 2 + p * Math.PI * 2);
+    ctx.strokeStyle = r === 1 ? plRgba(col, .42) : r === 2 ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.09)';
+    ctx.lineWidth = r === 1 ? 1.2 : 1; ctx.setLineDash(r === 3 ? [2, 5] : []); ctx.stroke(); ctx.setLineDash([]);
+  }
+  // Position de chaque chose (l'orbite tourne lentement ; la profondeur vient du sinus)
+  var pos = [];
+  _wc.items.forEach(function(it) {
+    var p = prog(it.ring); if(p <= 0 || it.k / it.n > p) return;
+    var a = it.a + WC_VIT[it.ring] * t, R = G.rings[it.ring];
+    var x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R * G.tilt, z = Math.sin(a);
+    pos.push({ it: it, x: x, y: y, z: z });
+  });
+  var coins = _wc.liens.map(function(l) { return { l: l, c: wcCoin(l.i, G) }; });
+  // Les ponts vers les projets reliés, puis l'influx qui y court (de l'éveillé vers l'endormi)
+  var pe = ease((e - .55) / .35);
+  if(pe > 0) coins.forEach(function(o) {
+    var c = o.c, cc = [(cx + c.x) / 2, (cy + c.y) / 2 + (c.haut ? 26 : -26)], a0 = [cx + (c.x - cx) * .2, cy + (c.y - cy) * .2];
+    ctx.globalAlpha = pe; ctx.beginPath(); ctx.moveTo(a0[0], a0[1]); ctx.quadraticCurveTo(cc[0], cc[1], c.x, c.y);
+    var gr = ctx.createLinearGradient(a0[0], a0[1], c.x, c.y); gr.addColorStop(0, plRgba(col, .5)); gr.addColorStop(1, plRgba(o.l.w.color, .5));
+    ctx.strokeStyle = gr; ctx.lineWidth = 1.3; ctx.stroke(); ctx.globalAlpha = 1;
+    if(calme || e < 1) return;
+    var periode = 4.6, u = ((t + o.l.ph * periode) % periode) / 1.5; if(u > 1) return;
+    var versLui = !mondeDort(w.id) || mondeDort(o.l.w.id);
+    for(var k = 5; k >= 0; k--) {
+      var v = u - k * .03; if(v < 0) continue; var q = versLui ? v : 1 - v, uu = 1 - q;
+      var px = uu * uu * a0[0] + 2 * uu * q * cc[0] + q * q * c.x, py = uu * uu * a0[1] + 2 * uu * q * cc[1] + q * q * c.y, z = k ? 10 - k : 12;
+      ctx.globalAlpha = (k ? .45 * (1 - k / 6) : 1) * Math.sin(Math.PI * u);
+      ctx.drawImage(plLueur(k ? (versLui ? o.l.w.color : col) : '#FFFFFF'), px - z / 2, py - z / 2, z, z);
+    }
+    ctx.globalAlpha = 1;
+  });
+  function point(o) {
+    var it = o.it, prof = o.z < 0 ? .5 : 1, s = o.z < 0 ? .86 : 1 + .08 * o.z;
+    ctx.globalAlpha = prof;
+    if(it.type === 'pensee') {
+      var b = calme ? 1 : 1 + .12 * Math.sin(t * 1.6 + it.k), z = 20 * s * b;
+      ctx.drawImage(plLueur(col), o.x - z / 2, o.y - z / 2, z, z);
+      ctx.beginPath(); ctx.arc(o.x, o.y, 2.3 * s, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill();
+    } else if(it.type === 'afaire') {
+      if(it.next) { var z2 = 22 * s; ctx.drawImage(plLueur(col), o.x - z2 / 2, o.y - z2 / 2, z2, z2); ctx.beginPath(); ctx.arc(o.x, o.y, 4.2 * s, 0, Math.PI * 2); ctx.fillStyle = '#fff'; ctx.fill(); }
+      else { ctx.beginPath(); ctx.arc(o.x, o.y, 3.6 * s, 0, Math.PI * 2); ctx.strokeStyle = wcMix(col, '#ffffff', .25); ctx.lineWidth = 1.6; ctx.stroke(); }
+    } else if(it.type === 'journal') {
+      var d = 4.4 * s; ctx.beginPath(); ctx.moveTo(o.x, o.y - d); ctx.lineTo(o.x + d, o.y); ctx.lineTo(o.x, o.y + d); ctx.lineTo(o.x - d, o.y); ctx.closePath(); ctx.fillStyle = '#E8E8EE'; ctx.fill();
+    } else if(it.type === 'pensee-faite') {
+      ctx.beginPath(); ctx.arc(o.x, o.y, 3.2 * s, 0, Math.PI * 2); ctx.strokeStyle = '#8E8E96'; ctx.lineWidth = 1.4; ctx.stroke();
+    } else {
+      ctx.beginPath(); ctx.arc(o.x, o.y, 1.9 * s, 0, Math.PI * 2); ctx.fillStyle = plRgba(col, .6); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  // Derrière la sphère, la sphère, devant
+  pos.filter(function(o) { return o.z < 0; }).forEach(point);
+  var sp = ctx.createRadialGradient(cx - Rc * .38, cy - Rc * .42, Rc * .08, cx, cy, Rc);
+  sp.addColorStop(0, wcMix(col, '#ffffff', .55)); sp.addColorStop(.42, col); sp.addColorStop(1, wcMix(col, '#000000', .78));
+  var halo = Rc * 2.5; ctx.globalAlpha = .55; ctx.drawImage(plLueur(col), cx - halo, cy - halo, halo * 2, halo * 2); ctx.globalAlpha = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, Rc, 0, Math.PI * 2); ctx.fillStyle = sp; ctx.fill();
+  pos.filter(function(o) { return o.z >= 0; }).forEach(point);
+  // Les projets reliés et leur nom
+  var fam = getComputedStyle(document.body).fontFamily;
+  if(pe > 0) coins.forEach(function(o) {
+    var c = o.c, lw = o.l.w, dort = mondeDort(lw.id), rr = 9;
+    ctx.globalAlpha = pe;
+    ctx.drawImage(plLueur(dort ? '#8E8E96' : lw.color), c.x - 18, c.y - 18, 36, 36);
+    var g2 = ctx.createRadialGradient(c.x - 3, c.y - 3, 1, c.x, c.y, rr); g2.addColorStop(0, wcMix(dort ? '#8E8E96' : lw.color, '#ffffff', .5)); g2.addColorStop(1, wcMix(dort ? '#8E8E96' : lw.color, '#000000', .7));
+    ctx.beginPath(); ctx.arc(c.x, c.y, rr, 0, Math.PI * 2); ctx.fillStyle = g2; ctx.fill();
+    ctx.font = '600 13px ' + fam; ctx.textAlign = c.gauche ? 'left' : 'right'; ctx.textBaseline = 'middle';
+    var tx = c.gauche ? c.x + 17 : c.x - 17, ty = c.y;
+    ctx.fillStyle = dort ? '#C4C4CC' : wcMix(lw.color, '#ffffff', .45); ctx.fillText(plCourt(lw.name, 16), tx, ty);
+    ctx.globalAlpha = 1;
+  });
+  // Ce qui est touché
+  var sel = _wc.sel, cible = null;
+  if(sel && sel.k === 'item') cible = pos.filter(function(o) { return o.it.type === sel.type && String(o.it.id) === String(sel.id); })[0];
+  else if(sel && sel.k === 'lien') { var cl = coins.filter(function(o) { return String(o.l.w.id) === String(sel.id); })[0]; if(cl) cible = { x: cl.c.x, y: cl.c.y, r: 15 }; }
+  else if(sel && sel.k === 'coeur') cible = { x: cx, y: cy, r: Rc + 6 };
+  if(cible) { ctx.beginPath(); ctx.arc(cible.x, cible.y, cible.r || 10, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.lineWidth = 1.5; ctx.stroke(); }
+  _wc.pos = pos; _wc.coins = coins;
+}
+// Toucher : la chose la plus proche (22 px), sinon un projet relié, sinon la sphère, sinon rien
+function wcToucher(ev) {
+  var G = _wc.geo, cv = _wc.cv; if(!G || !cv) return;
+  var r = cv.getBoundingClientRect(), x = ev.clientX - r.left, y = ev.clientY - r.top, best = null, bd = 22 * 22;
+  (_wc.pos || []).forEach(function(o) { var d = (o.x - x) * (o.x - x) + (o.y - y) * (o.y - y) - (o.z >= 0 ? 30 : 0); if(d < bd) { bd = d; best = { k: 'item', type: o.it.type, id: o.it.id }; } });
+  if(!best) (_wc.coins || []).forEach(function(o) { var d = Math.hypot(o.c.x - x, o.c.y - y); if(d < 28) best = { k: 'lien', id: o.l.w.id }; });
+  if(!best && Math.hypot(G.cx - x, G.cy - y) < G.Rc + 10) best = { k: 'coeur' };
+  _wc.sel = best && !(_wc.sel && best.k === _wc.sel.k && best.id === _wc.sel.id && best.type === _wc.sel.type) ? best : null;
+  wcFiche();
+  if(plCalme()) wcDessiner(performance.now());
+}
+// La fiche, sous la carte : ce que représente le point touché, et où l'ouvrir ; sinon la légende
+function wcFiche() {
+  var box = document.getElementById('wcarte-fiche'); if(!box) return;
+  var w = monde(_wc.w); if(!w) return;
+  box.innerHTML = ''; box.classList.toggle('sel', !!_wc.sel);
+  var el = function(tag, cls, txt) { var x = document.createElement(tag); if(cls) x.className = cls; if(txt != null) x.textContent = txt; return x; };
+  if(!_wc.sel) {
+    var types = {}; _wc.items.forEach(function(it) { types[it.type] = 1; });
+    if(!_wc.items.length && !_wc.liens.length) { box.appendChild(el('p', 'wcf-vide', 'Rien encore autour de ce projet. Dépose une pensée : elle viendra en orbite.')); return; }
+    var lg = el('div', 'wcf-leg');
+    [['afaire', 'À faire', types.pensee || types.afaire], ['journal', 'Journal', types.journal], ['fait', 'Fait', types.tache || types['pensee-faite']], ['lie', 'Projet lié', _wc.liens.length]].forEach(function(x) {
+      if(!x[2]) return; var s = el('span', 'wcf-l'); s.appendChild(el('i', 'wcf-s wcf-s-' + x[0])); s.appendChild(document.createTextNode(x[1])); lg.appendChild(s);
+    });
+    box.appendChild(lg); box.appendChild(el('p', 'wcf-aide', 'Touche un point : il dit ce qu’il est.'));
+    return;
+  }
+  var sel = _wc.sel, k = '', titre = '', bouton = '', agir = null, sw = '';
+  if(sel.k === 'coeur') {
+    var afP = _wc.items.filter(function(it) { return it.type === 'pensee'; }).length, afT = _wc.items.filter(function(it) { return it.type === 'afaire'; }).length;
+    k = 'Projet' + (rlEtatProjet(w) ? ' · ' + rlEtatProjet(w) : ''); titre = w.name; sw = 'coeur';
+    var parts = []; if(afP) parts.push(afP + (afP > 1 ? ' pensées à faire' : ' pensée à faire')); if(afT) parts.push(afT + (afT > 1 ? ' tâches à faire' : ' tâche à faire'));
+    if(parts.length) k += ' · ' + parts.join(' · ');
+    bouton = 'Voir sur la carte'; agir = function() { carteSur(w.id); };
+  } else if(sel.k === 'lien') {
+    var l = wcTrouver(sel); if(!l) return;
+    k = 'Projet lié' + (rlEtatProjet(l.w) ? ' · ' + rlEtatProjet(l.w) : ''); titre = l.w.name + (l.mots.length ? ' · en commun : ' + l.mots.slice(0, 3).join(', ') : ''); sw = 'lie';
+    bouton = 'Ouvrir ' + plCourt(l.w.name, 14); agir = function() { enterWorld(l.w.id); };
+  } else {
+    var it = wcTrouver(sel); if(!it) return;
+    sw = it.type; k = WC_TYPES[it.type] || '';
+    if(it.type === 'afaire' && it.next) k = S.focus[w.id] === it.id ? 'Focus du jour' : 'Prochaine tâche';
+    if(it.type === 'pensee' || it.type === 'pensee-faite') { var mt = it.type === 'pensee' && typeof rangeMomentText === 'function' ? rangeMomentText(it.moment) : ''; k += (mt ? ' · ' + mt : '') + ' · déposée ' + ilYA(it.ts); }
+    else if(it.type === 'journal' && it.ts) k += ' · ' + ilYA(it.ts);
+    else if(it.type === 'tache' && it.ts) k += ' · ' + ilYA(it.ts);
+    titre = String(it.txt).replace(/\s+/g, ' ').trim();
+    bouton = 'Ouvrir';
+    agir = it.type === 'journal' ? function() { allerA('journal'); } : (it.type === 'afaire' || it.type === 'tache') ? function() { openCockpit(w.id, it.id); } : function() { penseeOuvrir(it.id); };
+  }
+  var tx = el('div', 'wcf-txt'), tete = el('div', 'wcf-k');
+  tete.appendChild(el('i', 'wcf-s wcf-s-' + (sw === 'pensee' || sw === 'afaire' ? 'afaire' : sw === 'tache' || sw === 'pensee-faite' ? 'fait' : sw)));
+  tete.appendChild(document.createTextNode(k));
+  tx.appendChild(tete); tx.appendChild(el('div', 'wcf-t', titre));
+  var b = el('button', 'wcf-ouvrir', bouton); b.type = 'button'; b.addEventListener('click', function(ev) { ev.stopPropagation(); agir(); });
+  box.appendChild(tx); box.appendChild(b);
+}
+(function() {
+  var cv = document.getElementById('wcarte-cv'); if(!cv) return;
+  cv.addEventListener('click', wcToucher);
+  window.addEventListener('resize', function() { if(_wc.cv) { wcTaille(); wcDemarrer(); if(plCalme()) wcDessiner(performance.now()); } });
+  document.addEventListener('visibilitychange', function() { if(!document.hidden) wcDemarrer(); });
+  var wm = document.getElementById('wmain'); if(wm) wm.addEventListener('scroll', function() { if(!_wc.raf) wcDemarrer(); }, { passive: true });
+})();
 /* ═══ RELIER (branche relier, 11 octobre) ═══
    Rayan : « les liens doivent être réels et non décoratifs ». ARC propose, Rayan confirme ; rien ne se relie sans lui.
    Tout se calcule sur l'appareil, sans IA, et rien de nouveau ne part ailleurs que dans sa propre ligne arc_data.

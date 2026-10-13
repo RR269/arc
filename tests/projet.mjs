@@ -81,8 +81,8 @@ const outil = () => { window.pjv = id => document.getElementById(id).value; };
     const f = rangeIndex().latest[tid];
     return { n: WORLDS.length, nom: w.name, id: w.id, cle: w.key, taches: w.tasks_todo.map(t => t.t), mission: w.mission, desc: w.desc,
       ecran: document.getElementById('S2').classList.contains('off') ? 'non' : 'S2', titreMonde: document.getElementById('wband-name').textContent,
-      missionVue: document.getElementById('miss-txt').textContent, tachesVues: [...document.querySelectorAll('#tasks-container .wtask-txt')].map(e => e.textContent),
-      prio: document.getElementById('wsec-prio').hidden, anneau: document.getElementById('ring-pct').textContent,
+      missionVue: document.getElementById('miss-txt').textContent, tachesVues: [...document.querySelectorAll('#wnext .wnext-t, #tasks-container .wtask-txt')].map(e => e.textContent),
+      prio: !document.getElementById('wsec-prio') && !document.getElementById('wsec-na'), anneau: document.getElementById('ring-pct').textContent,
       rangee: f && f.space, origine: f && f.origin, titre: document.getElementById('h-espaces').textContent,
       feuille: document.getElementById('projet-modal').classList.contains('open'), depot: document.getElementById('depot-screen').classList.contains('open') };
   }, [PENSEE]);
@@ -112,7 +112,7 @@ const outil = () => { window.pjv = id => document.getElementById(id).value; };
      'Accueil : le projet né de la pensée est une ligne sous « Projets » (nom, « Actif aujourd\'hui », aucune étape : l\'accueil n\'est pas un agenda) ; le ciel prend sa couleur', JSON.stringify(h1));
   await page.evaluate(id => { S.tasks[id] = {}; saveS(); enterWorld(id); }, r.id); await page.waitForTimeout(200);
   // Cocher une étape dans le projet fait avancer l'anneau ; l'accueil montre le projet
-  await page.locator('#tasks-container .wtask-cb').first().click(); await page.waitForTimeout(200);
+  await page.locator('#wnext .wnext-fait').click(); await page.waitForTimeout(200);
   const an = await page.evaluate(() => document.getElementById('ring-pct').textContent);
   await page.evaluate(() => goHome()); await page.waitForTimeout(300);
   const acc = await page.evaluate(id => { const e = document.querySelector(`#S1 .pj[data-wid="${id}"]`); return e ? e.textContent : ''; }, r.id);

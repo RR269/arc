@@ -1618,6 +1618,49 @@ ARC en orbite, et Relier (11 octobre) :
     ondes de la planète, « Lié à FBA »), pôles 19/19 (le rendez-vous de Santé est lu sur la planète), les 12 autres suites
     passent ; 512 `<div` / 512 `</div>`. Vérifié dans Chromium seulement.
 
+- **PR #54 fusionnée le 13 octobre.** Ordre de Rayan : après l'accueil, l'intérieur d'un monde.
+- **L'intérieur d'un monde (branche `monde-interieur`, 13 octobre 6 h 30)**. Mesuré avant : ARYAN faisait 3 867 px sur
+  iPhone 390 (4,6 écrans) ; « Ma boutique / Q1-Q4 » écrit trois fois (Action prioritaire, 11 tâches, Prochaines actions) ;
+  les pensées, le journal et les liens tout en bas. Questions à choix de Rayan : en ouvrant un projet, « un nouveau monde
+  s'ouvre en mode science-fiction productive » ; premier écran : **sa carte vivante** ; les tâches : **une seule liste,
+  repliée** ; à sortir de l'écran : **la description longue** (rien d'autre). Fait :
+  - **Le monde vivant** (`#wcarte`, canevas `#wcarte-cv`, module « LE MONDE VIVANT » : `wcItems`, `wcLiens`, `wcConstruire`,
+    `wcOuvrir`, `wcTaille`, `wcDessiner`, `wcToucher`, `wcFiche`), sous l'horizon du projet : une sphère à sa couleur au
+    centre ; trois orbites inclinées, chacune dessinée seulement si elle porte quelque chose : **à faire** (pensées à faire
+    = lumière, tâches à faire = anneau, la prochaine = point blanc), **mémoire** (journal = losange, pensées faites =
+    anneau gris), **fait** (tâches faites = poussière, orbite en pointillé). Les points derrière la sphère sont plus
+    sombres (profondeur). Aux coins, dans une bande que les orbites ne touchent pas, les projets reliés (`S.liens`
+    confirmés, quatre au plus), leur nom à côté, et le pont où court l'influx (de l'éveillé vers l'endormi). **Règle à
+    garder : un point par chose d'ARC ; un projet neuf n'est qu'une sphère ; rien ne passe sur un nom.**
+  - À l'ouverture, le monde se forme une fois (la sphère grandit, les orbites se tracent, les points arrivent) ; ensuite
+    les orbites tournent lentement. Mouvement réduit : une image fixe. L'animation s'arrête quand la carte n'est pas à
+    l'écran ou que l'onglet est caché. La hauteur suit ce qui existe (sur iPhone 390 : 236 px pour un projet neuf,
+    276 px avec un ou deux projets reliés, 316 px au-delà). Aucune bibliothèque, aucun mode de fusion.
+  - **La fiche** (`#wcarte-fiche`), sous la carte : sans rien touché, la légende des signes présents et « Touche un
+    point : il dit ce qu'il est. » ; un point touché : ce qu'il est (« Prochaine tâche », « Pensée à faire · déposée il y a
+    2 j », « Journal », « Tâche faite »), ses mots, « Ouvrir » (cockpit, Déposé, journal) ; la sphère : l'état du projet et
+    « Voir sur la carte » ; un projet relié : son état, les mots en commun, « Ouvrir ATLAS ». Toucher encore ou dans le
+    vide referme.
+  - **Une seule liste de tâches** (`tachesDuMonde`, `renderTasks`, `tachesDeplier`) : en tête, la prochaine (`#wnext`) :
+    le focus du jour, sinon la tâche que l'action prioritaire écrite désigne (deux mots de 4 lettres en commun avec son
+    titre ; son détail s'affiche dessous), sinon la première à faire ; « C'est fait » (verre à la couleur du projet, pas
+    blanc : la touche blanche reste « Déposer ») et « Ouvrir ». Dessous, une ligne repliée (`#wtask-plus` : « 10 autres
+    tâches · 21 faites ») qui déplie l'ajout, les autres tâches et « Accomplies ». **Retirés de l'écran, données
+    gardées** : « Action prioritaire » (`w.priority` est encore lu par le cockpit), « Prochaines actions »
+    (`w.nextActions`), le bandeau du focus (`#w-focus-banner`). `renderNA` n'existe plus.
+  - **« Le projet »** (`#wsec-projet`) : la mission, les étiquettes techniques, « Lire la description » qui déplie la
+    description sur place (`descRepli`). L'en-tête ne garde que la catégorie, le nom, « Voir sur la carte » et l'anneau.
+  - Ordre : en-tête, horizon, monde vivant et fiche, compteurs, Tâches, Pensées, Projets liés, Le projet, Bloquants,
+    Notes, Journal, Outils, Endormir. ARYAN sur iPhone 390 : 2 663 px (3 867 avant), la carte et sa fiche dans le
+    premier écran.
+  - Tests : mondes 12/12 (la description se vérifie repliée ; cinq contrôles ajoutés : un point par chose réelle et
+    rien de plus, le projet relié au bord, carte et légende dans le premier écran, image fixe sous mouvement réduit ; la
+    prochaine tâche et son détail, le reste replié, plus d'Action prioritaire ni de Prochaines actions ; toucher la
+    prochaine, une pensée, la sphère, un projet relié et leurs « Ouvrir » ; « C'est fait », dépliage, projet neuf sans
+    point), projet 31/31 (la première étape se lit dans `#wnext`, « C'est fait » la coche).
+    Vérifié dans Chromium seulement : **la fluidité des orbites et le toucher des points restent à voir par Rayan sur
+    son iPhone.**
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
