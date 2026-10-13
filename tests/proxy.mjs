@@ -32,11 +32,20 @@ globalThis.fetch = async (url, init = {}) => {
       { sha: 'bce5472aaaaaaa', commit: { message: 'PANIER-ÉCRAN-1 : le panier verrouillé le dit à l\'écran (#467)\n\nDétail long', committer: { date: '2026-10-13T02:59:00Z' } } },
       { sha: '2ffe22ebbbbbbb', commit: { message: 'PANIER-VERROU-1 application', author: { date: '2026-10-13T00:03:00Z' } } }]);
     if (url.includes('/repos/RR269/aryan/pulls')) return Response.json([{ number: 61, title: 'Panier verrouillé', updated_at: '2026-10-13T03:00:00Z' }]);
+    if (url.endsWith('/repos/RR269/aryan/contents/docs/BOUSSOLE.md')) return new Response(BOUSSOLE_TEST, { status: 200, headers: { 'Content-Type': 'text/plain' } });
     return new Response('{}', { status: 404 });
   }
   throw new Error('URL inattendue ' + url);
 };
 const gh = []; let ghMode = 'ok';
+const BOUSSOLE_TEST = [
+  '# BOUSSOLE', '', '## 0. Tout de suite', '| 9 | pas ici | x |', '', '## 1. Le chemin critique — dans cet ordre', '',
+  '| # | Ce qui doit être vrai | Pourquoi | Tours | Protocole |', '|---|---|---|---|---|',
+  '| 1 | **Pouvoir payer un livreur, avec une trace** — la page admin. ✅ **CODE FAIT** | Sans elle | 2 | complet |',
+  '| 2 | ✅ **FAITE** — **le statut d\'un gain ne peut plus être vide** (#338). | — | 2 | — |',
+  '| 6 | ✅ **FAITE le 03/10/2026, AVEC RÉSERVES** — **Ce qu\'ARYAN ne vend pas est interdit au catalogue** (**D104**). | — | 1 | — |',
+  '| 8 | **Avant l\'entrée du premier commerçant** : la boutique d\'essai (**#392**) | Un vrai client | 1 à 2 | complet |',
+  '', '**Total estimé restant : 1 à 2 tours** (ligne 8).', '', '## 2. Ce qui ne dépend pas du code', '| 3 | **ailleurs** | x |'].join('\n');
 await import('../supabase/functions/ARC-CLAUDE-PROXY/index.ts');
 
 const call = (body, jwt = 'jwt-rayan') => handler(new Request('https://x/functions/v1/ARC-CLAUDE-PROXY', {
@@ -303,12 +312,13 @@ await t('Code : un projet hors liste est refusé (400), aucun dépôt arbitraire
   const a = await call({ task: 'code', projet: 'RR269/arc' }); const b = await call({ task: 'code', projet: '__proto__' }); const c = await call({ task: 'code' });
   return [a.status === 400 && b.status === 400 && c.status === 400 && gh.length === 0, `statuts ${a.status} ${b.status} ${c.status}`];
 });
-await t('Code : derniers envois et demandes ouvertes d\'ARYAN, première ligne seulement, jeton en en-tête', async () => {
+await t('Code : derniers envois, demandes ouvertes et chemin critique de la boussole d\'ARYAN (section 1 seulement), première ligne seulement, jeton en en-tête', async () => {
   gh.length = 0; env.GITHUB_TOKEN = ' ghp_test\n'; ghMode = 'ok';
   const r = await call({ task: 'code', projet: 'aryan' }); const j = await r.json();
   const ok = r.status === 200 && j.projet === 'aryan' && j.pushed_at === '2026-10-13T02:56:42Z' && j.commits.length === 2 && j.commits[0].sha === 'bce5472'
     && j.commits[0].titre === 'PANIER-ÉCRAN-1 : le panier verrouillé le dit à l\'écran (#467)' && j.commits[1].date === '2026-10-13T00:03:00Z' && j.prs[0].n === 61
-    && gh.length === 3 && gh.every(x => x.auth === 'Bearer ghp_test' && x.url.includes('/repos/RR269/aryan')) && sent.length === 0
+    && gh.length === 4 && gh.every(x => x.auth === 'Bearer ghp_test' && x.url.includes('/repos/RR269/aryan')) && sent.length === 0
+    && JSON.stringify(j.boussole) === JSON.stringify({ lignes: [{ n: 1, titre: 'Pouvoir payer un livreur, avec une trace', fait: false, reserves: false }, { n: 2, titre: 'le statut d\'un gain ne peut plus être vide', fait: true, reserves: false }, { n: 6, titre: 'Ce qu\'ARYAN ne vend pas est interdit au catalogue', fait: true, reserves: true }, { n: 8, titre: 'Avant l\'entrée du premier commerçant', fait: false, reserves: false }], reste: '1 à 2 tours' })
     && !logs.some(l => l.includes('PANIER')) && !logs.some(l => l.includes('ghp_test'));
   return [ok, JSON.stringify({ status: r.status, j, appels: gh.map(x => x.url) })];
 });
@@ -318,7 +328,7 @@ await t('Code : jeton refusé par GitHub → 502 dit en mots ; un autre compte �
   ghMode = 'ok'; const n = gh.length; gh.length = 0;
   const o = await call({ task: 'code', projet: 'aryan' }, 'jwt-autre');
   delete env.GITHUB_TOKEN;
-  return [r.status === 502 && /refuse le jeton/.test(j.error.message) && n === 3 && o.status === 403 && gh.length === 0, `${r.status} « ${j.error.message} », autre compte ${o.status}`];
+  return [r.status === 502 && /refuse le jeton/.test(j.error.message) && n === 4 && o.status === 403 && gh.length === 0, `${r.status} « ${j.error.message} », autre compte ${o.status}`];
 });
 
 for (const r of results) out(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);

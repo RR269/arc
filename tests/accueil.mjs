@@ -254,7 +254,7 @@ for (const vp of ECRANS) {
   await page.reload(); await page.waitForTimeout(900);
   await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
   const e3 = await etat();
-  ok(e0.cours.slice().sort((a, b) => a - b).join() === '0,4' && e0.dort.join() === '1,2,3' && e0.v === 3 && e0.plie && e0.noms === 'FBA, KITCHEN, TELENEUF' && deplie.etat === 'true' && deplie.vus === 3 && e3.plie && e1.chez && e1.cours.slice().sort((a, b) => a - b).join() === '0,1,4' && e1.dort.join() === '2,3' && e1.garde[1] === false && e1.sous === '3 en cours · 2 endormis'
+  ok(e0.cours.slice().sort((a, b) => a - b).join() === '0,4' && e0.dort.join() === '1,2,3' && e0.v === 4 && e0.plie && e0.noms === 'FBA, KITCHEN, TELENEUF' && deplie.etat === 'true' && deplie.vus === 3 && e3.plie && e1.chez && e1.cours.slice().sort((a, b) => a - b).join() === '0,1,4' && e1.dort.join() === '2,3' && e1.garde[1] === false && e1.sous === '3 en cours · 2 endormis'
      && dans.t === 'Endormir ce projet' && dans.h >= 44 && dans2 === 'Réveiller ce projet' && e2.cours.slice().sort((a, b) => a - b).join() === '1,4' && e2.dort.join() === '0,2,3' && e2.garde[0] === true
      && e3.cours.slice().sort((a, b) => a - b).join() === '1,4' && e3.dort.join() === '0,2,3' && errors.length === 0,
      'Projets endormis : FBA, KITCHEN et TELENEUF le sont au départ, repliés en une ligne ; dépliés, « Réveiller » depuis l\'accueil sans quitter l\'accueil, « Endormir ce projet » depuis le monde ; le choix est gardé et relu au lancement suivant',
