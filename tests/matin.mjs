@@ -13,7 +13,13 @@ const ok = (cond, name, detail = '') => results.push({ ok: !!cond, name, detail 
 
 // Mardi 6 octobre 2026, 7 h 30 à Paris
 const DAY = '2026-10-06', T0 = `${DAY}T07:30:00+02:00`;
-const open = (opts = {}) => openPage(browser, URL0, { session: false, clock: T0, keepMatin: true, ...opts });
+// Depuis le 13 octobre, la liste « Aujourd'hui » ne s'ouvre plus d'elle-même par défaut (l'accueil dit ce qui attend) ;
+// ces tests portent sur son ouverture automatique : l'appareil de test l'a activée (réglage de l'appareil, v 2).
+const open = async (opts = {}) => {
+  const ctx = opts.ctx || await browser.newContext({ viewport: opts.viewport || { width: 1440, height: 900 }, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', ...(opts.ctxOpts || {}) });
+  if (!opts.sansAuto) await ctx.addInitScript(() => { try { if (!localStorage.getItem('arc_matin_v1')) localStorage.setItem('arc_matin_v1', JSON.stringify({ settings: { enabled: true, hour: '08:00', updatedAt: '', v: 2 }, days: {} })); } catch (e) {} });
+  return openPage(browser, URL0, { session: false, clock: T0, keepMatin: true, ...opts, ctx });
+};
 const isOpen = page => page.evaluate(() => document.getElementById('matin-screen').classList.contains('open'));
 // Avancer le temps ARC fermé (page vide), puis rouvrir ARC : c'est une « ouverture après l'heure »,
 // pas la vérification de chaque minute d'un ARC resté ouvert
@@ -177,8 +183,8 @@ let ids;
   await leapClosed(page, 24 * 3600e3);
   const disabledNextDay = await isOpen(page);
   const entry = await page.textContent('#matin-entry-n');
-  ok(!at830 && at905 && label.replace(/\u00A0/g, ' ') === 'Point du matin · 09 h 00', 'Heure modifiée à 9 h : rien à 8 h 30, affiché à 9 h 05', `8 h 30 : ${at830}, 9 h 05 : ${at905}, menu : « ${label} »`);
-  ok(!disabledNextDay && entry === 'Désactivé', 'Désactivé : plus d\'affichage, l\'accueil le dit', `affiché : ${disabledNextDay}, accueil : « ${entry} »`);
+  ok(!at830 && at905 && label.replace(/\u00A0/g, ' ') === 'Aujourd’hui chaque matin · 09 h 00', 'Heure modifiée à 9 h : rien à 8 h 30, affiché à 9 h 05', `8 h 30 : ${at830}, 9 h 05 : ${at905}, menu : « ${label} »`);
+  ok(!disabledNextDay && entry !== 'Désactivé' && entry.length > 0, 'Désactivé : plus d\'ouverture automatique ; l\'accueil dit toujours ce qui attend aujourd\'hui (13 octobre)', `affiché : ${disabledNextDay}, accueil : « ${entry} »`);
   await ctx.close();
 }
 
@@ -250,6 +256,43 @@ for (const vp of [{ n: 'iPhone 390×844', width: 390, height: 844 }, { n: 'Mac 1
     'Ça revient : la note la plus ancienne revient, une seule, « Notée il y a 26 jours » ; « Garder » l\'écarte 30 jours (puis elle revient) ; « Plus besoin » annule le dépôt ; une note de moins de 3 jours et une action ne reviennent pas ; Santé sans « En faire un projet » ; « Ajouter une étape » ouvre Déposé sur l\'étape ; cibles ≥ 44 px',
     JSON.stringify({ a1, a2, pause, st, a3, a4, edit, errors }));
   await ctx.close();
+}
+
+/* L'accueil, 13 octobre : « Aujourd'hui » sur l'accueil, la liste ne s'ouvre plus d'elle-même par défaut ; un ancien réglage
+   (ouverture automatique, sans version) est coupé une fois ; la planète montre la progression de chaque projet, s'allume
+   là où quelque chose attend aujourd'hui, et la ligne d'un projet dit ses liens. */
+{
+  const ctxA = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR' });
+  const a = await open({ ctx: ctxA, sansAuto: true, clock: `${DAY}T08:10:00+02:00` });
+  const neuf = { ouvert: await isOpen(a.page), menu: await a.page.textContent('#btn-matin-lbl') };
+  await a.page.evaluate(() => {
+    const id = depotUUID(), id2 = depotUUID();
+    _depot.thoughts[id] = { id, body: 'Appeler le greffe', source: 'text', device: 'mac', created_at: new Date().toISOString(), status: 'pending' };
+    _depot.thoughts[id2] = { id: id2, body: 'Relire les CGV', source: 'text', device: 'mac', created_at: new Date().toISOString(), status: 'pending' }; depotSave();
+    rangeAdd(id, { status: 'filed', space: 'aryan', step: 'Appeler le greffe', moment: { type: 'datetime', at: '2026-10-06T14:00:00+02:00' }, extras: [] }, 'ai', 'm');
+    rangeAdd(id2, { status: 'filed', space: 'atlas', step: 'Relire les CGV', moment: { type: 'none' }, extras: [] }, 'ai', 'm');
+    S.sante.rdv = { k: { id: 'k', spe: 'kine', date: '2026-10-06', heure: '18:00' } };
+    S.liens = { l: { id: 'l', type: 'projet', a: '4', b: '1', etat: 'oui', mots: ['FBA'], at: new Date().toISOString() } };
+    saveS(); renderHome(); matinLabels(); if (typeof plRendre === 'function') plRendre();
+  });
+  await a.page.waitForTimeout(400);
+  const acc = await a.page.evaluate(() => {
+    const sc = _pl.band && _pl.band.sc, e = id => sc && sc.tous.find(x => String(x.id) === String(id));
+    return { auj: document.getElementById('matin-entry-n').textContent, aryan: e(0) && { auj: e(0).auj, pct: e(0).pct, attendu: projetPct(monde(0)) },
+             atlas: e(4) && { auj: e(4).auj, pct: e(4).pct }, sante: e('sante') && e('sante').auj,
+             lie: [...document.querySelectorAll('#S1 .pj')].map(x => (x.querySelector('.pj-lie') || {}).textContent || '') };
+  });
+  await ctxA.close();
+  // Un appareil qui avait l'ancien réglage (ouverture automatique, sans version) : coupé une fois
+  const ctxB = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR' });
+  await ctxB.addInitScript(() => { try { if (!sessionStorage.getItem('x')) { sessionStorage.setItem('x', '1'); localStorage.setItem('arc_matin_v1', JSON.stringify({ settings: { enabled: true, hour: '08:00', updatedAt: '2026-10-05T10:00:00Z' }, days: {} })); } } catch (e) {} });
+  const b = await open({ ctx: ctxB, sansAuto: true, clock: `${DAY}T08:10:00+02:00` });
+  const ancien = { ouvert: await isOpen(b.page), garde: await b.page.evaluate(() => JSON.parse(localStorage.getItem('arc_matin_v1')).settings) };
+  await ctxB.close();
+  ok(!neuf.ouvert && /non$/.test(neuf.menu) && acc.auj === '1 étape · 1 rendez-vous' && acc.aryan && acc.aryan.auj === 1 && acc.aryan.pct === acc.aryan.attendu && acc.atlas && acc.atlas.auj === 0 && acc.sante === 1
+     && acc.lie.some(t => /Lié à FBA/.test(t)) && !ancien.ouvert && ancien.garde.enabled === false && ancien.garde.v === 2 && !a.errors.length,
+    'Accueil (13 octobre) : à 8 h 10, la liste ne s\'ouvre pas d\'elle-même sur un appareil neuf (menu « … · non ») ; la console dit « 1 étape · 1 rendez-vous » ; sur la planète, ARYAN porte sa progression et s\'allume (une étape aujourd\'hui), Santé aussi (un rendez-vous), ATLAS non ; la ligne d\'ATLAS dit « Lié à FBA » ; un ancien réglage d\'ouverture automatique est coupé une fois',
+    JSON.stringify({ neuf, acc, ancien, erreurs: a.errors }));
 }
 
 {

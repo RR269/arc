@@ -46,13 +46,13 @@ const releve = () => {
     if (s < 12) petits.push(`${nom(e)} ${s}px`); const m = nd.nodeValue.match(/\p{Extended_Pictographic}/gu); if (m) emoji.push(nom(e) + ' ' + m.join('')); polices.add(cs.fontFamily.split(',')[0].trim().replace(/"/g, '')); }
   const champs = [...root.querySelectorAll('input:not([type=file]), textarea, select')].filter(vis).filter(e => parseFloat(getComputedStyle(e).fontSize) < 16).map(nom);
   const fusion = []; for (const e of root.querySelectorAll('*')) for (const ps of [null, '::before', '::after']) { const m = getComputedStyle(e, ps).mixBlendMode; if (m && m !== 'normal') fusion.push(nom(e)); }
-  const hors = [...root.querySelectorAll('.hn *, .h-hero > *, .h-section, .h-poste, .h-inst, .h-echo, .h-ranger, .h-dort-row')].filter(vis).filter(e => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).filter(e => !e.classList.contains('h-horizon')).map(nom);
+  const hors = [...root.querySelectorAll('.hn *, .h-hero > *, .h-section, .h-poste, .h-cl, .h-ranger, .h-dort-row')].filter(vis).filter(e => { const r = e.getBoundingClientRect(); return r.right > innerWidth + 1 || r.left < -1; }).filter(e => !e.classList.contains('h-horizon')).map(nom);
   const hz = getComputedStyle(root.querySelector('.h-horizon'), '::before'), texte = e => getComputedStyle(root.querySelector(e)).fontFamily.split(',')[0].trim();
   const ids = [...document.querySelectorAll('[id]')].map(e => e.id).filter((x, i, a) => a.indexOf(x) !== i);
   return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], emoji, champs, fusion, hors: [...new Set(hors)], ids, polices: [...polices],
            large: document.documentElement.scrollWidth <= innerWidth && root.scrollWidth <= root.clientWidth + 1,
-           horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), systeme: [texte('#h-date'), texte('.h-inst-l'), texte('.pj-pct'), texte('.pj-n'), texte('.h-section-lbl'), texte('.vie-n')], titre: texte('.h-h1'),
-           mondes: root.querySelectorAll('.pj').length, dort: root.querySelectorAll('.h-dort-row').length, poles: root.querySelectorAll('.vie').length, agenda: !!root.querySelector('#next-list, #next-steps, .next-item, .next-lbl') || /Prochaine étape|Ensuite/.test(root.querySelector('.hw').innerText), poste: !!root.querySelector('#h-poste .h-inst'),
+           horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), systeme: [texte('#h-date'), texte('.h-cl-l'), texte('.pj-pct'), texte('.pj-n'), texte('.h-section-lbl'), texte('.h-cl-t')], titre: texte('.h-h1'),
+           mondes: root.querySelectorAll('.pj').length, dort: root.querySelectorAll('.h-dort-row').length, poles: root.querySelectorAll('.vie').length, agenda: !!root.querySelector('#next-list, #next-steps, .next-item, .next-lbl') || /Prochaine étape|Ensuite/.test(root.querySelector('.hw').innerText), poste: root.querySelectorAll('#h-poste .h-cl').length === 3 && !!root.querySelector('#h-ask'),
            date: (root.textContent.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) \d{1,2} /gi) || []).length };
 };
 const contraste = async (page, nom) => {
@@ -95,7 +95,7 @@ for (const vp of ECRANS) {
     d(r.ids.length, `identifiants en double : ${r.ids.join(', ')}`);
     d(!r.horizon, 'l\'horizon d\'ARC manque sous le titre');
     d(r.systeme.some(f => f !== '-apple-system') || !/apple-system/.test(r.titre), `écriture : texte ${r.systeme.join(' / ')}, titre ${r.titre}`);
-    d(r.mondes !== 2 || r.dort !== 3 || r.poles !== 2, `${r.mondes} projets en cours, ${r.dort} endormis, ${r.poles} pôles`);
+    d(r.mondes !== 2 || r.dort !== 3 || r.poles !== 0, `${r.mondes} projets en cours, ${r.dort} endormis, ${r.poles} tuiles Ma vie (Santé et Juridique sont sur la planète depuis le 13 octobre)`);
     d(r.date !== 1, `la date est écrite ${r.date} fois`);
     d(r.agenda || !r.poste, r.agenda ? 'une liste d\'étapes est revenue sur l\'accueil' : 'le poste manque');
     const c = await contraste(page, etat); n += c.n; contrastes.push(...c.sous); if (c.pire.ratio < pire.ratio) pire = c.pire;
@@ -110,7 +110,8 @@ for (const vp of ECRANS) {
   if (contrastes.length) { const g = {}; for (const m of contrastes) { const e = g[m.n + ' « ' + m.t + ' »'] ||= { min: 9, nb: 0 }; e.nb++; e.min = Math.min(e.min, m.ratio); } detail[vp.n] = Object.entries(g).map(([k, e]) => `${e.min.toFixed(2)}  ${k}  (${e.nb})`); }
   ok(!defauts.length, `${vp.n} : l'accueil respecte la charte, vide et rempli (textes ≥ 12 px, champs ≥ 16 px, cibles ≥ 44 px, ni emoji ni fusion ni débordement, police du système, horizon d'ARC, date écrite une fois)`,
      defauts.slice(0, 4).join(' ; ') || `polices : ${dernier.polices.join(', ')} ; ${dernier.mondes} projets en cours, ${dernier.dort} endormis, ${dernier.poles} pôles`);
-  ok(n > 250 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout sur l'accueil, vide et rempli, menu compris`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
+  // (13 octobre : l'accueil allégé, sans Ma vie ni dernière pensée, a moins de textes ; le garde-fou passe de 250 à 200)
+  ok(n > 200 && !contrastes.length, `${vp.n} : contraste ≥ 4,5 : 1 partout sur l'accueil, vide et rempli, menu compris`, `${n} morceaux de texte mesurés, le plus faible : ${dit(pire)}${contrastes.length ? ` ; ${contrastes.length} sous le seuil, dont ${contrastes.slice(0, 3).map(dit).join(' ; ')}` : ''}`);
   // Le sol et le ciel (10 octobre) : le ciel prend la couleur de l'espace où la dernière pensée a été rangée (un fait :
   // ici ATLAS, la troisième pensée restant en hésitation), le sol passe sous le poste ; le noir reste noir (pas de voile).
   const sc = await page.evaluate(() => {
@@ -138,7 +139,8 @@ for (const vp of ECRANS) {
     return { faits: faits.hidden ? null : faits.textContent, lignes, defaut, sync: document.getElementById('sync-lbl').textContent };
   });
   // trois pensées déposées à l'instant, rangées dans ARYAN et ATLAS (et une hésitation) : voilà les seuls faits
-  const faitsOk = /3 pensées déposées/.test(sv.faits || '') && !/étape/.test(sv.faits || '');
+  // (13 octobre : « N pensées déposées » est retiré du haut, il contredisait « Déposé » ; sans étape faite, rien n'est écrit)
+  const faitsOk = sv.faits === null;
   const actOk = sv.lignes.every(l => (l.n === 'ARYAN' || l.n === 'ATLAS') ? /aujourd/.test(l.act) : l.act === '');
   ok(faitsOk && actOk && sv.defaut && !/Sync|ARC/.test(sv.sync),
      `${vp.n} : signaux vrais : les faits du jour disent ce qui s'est passé (absents sinon), un projet ne montre une activité qu'après un vrai geste (les dates par défaut ne comptent pas), la synchronisation est un mot`,
@@ -158,7 +160,8 @@ for (const vp of ECRANS) {
   const ouverts = [];
   for (let w = 0; w < 5; w++) { await page.evaluate(i => document.querySelector(`#S1 :is(.pj, .h-dort-row)[data-wid="${i}"]`).click(), w); await page.waitForTimeout(650);
     ouverts.push(await page.evaluate(() => !document.getElementById('S2').classList.contains('off') && document.getElementById('S1').classList.contains('off'))); await page.evaluate(() => goHome()); await page.waitForTimeout(450); }
-  for (const p of ['sante', 'juridique']) { await page.evaluate(i => document.querySelector(`#S1 .vie[data-pole="${i}"]`).click(), p); await page.waitForTimeout(650);
+  // Santé et Juridique vivent sur la planète (13 octobre) : on les ouvre comme la planète le fait
+  for (const p of ['sante', 'juridique']) { await page.evaluate(i => plOuvrirEspace({ id: i, pole: true }), p); await page.waitForTimeout(650);
     ouverts.push(await page.evaluate(i => !document.getElementById(i === 'sante' ? 'S3' : 'S4').classList.contains('off'), p)); await page.evaluate(() => goHome()); await page.waitForTimeout(450); }
   ok(ouverts.length === 7 && ouverts.every(Boolean) && errors.length === 0, `${vp.n} : les cinq mondes (en cours ou endormis) et les deux pôles s'ouvrent depuis l'accueil, aucune erreur de console`, ouverts.map(o => o ? 'oui' : 'NON').join(' ') + (errors.length ? ' ; ' + errors.slice(0, 2).join(' | ') : ''));
   await ctx.close();
@@ -173,21 +176,21 @@ for (const vp of ECRANS) {
   await page.waitForTimeout(500);
   const plan = () => page.evaluate(() => { const root = document.getElementById('S1'), y = s => { const e = root.querySelector(s); return e && e.offsetParent !== null ? Math.round(e.getBoundingClientRect().top) : null; };
     const txt = root.querySelector('.hw').innerText, t = id => document.getElementById(id), poste = t('h-poste');
-    return { ordre: [y('.h-h1'), y('.h-horizon'), y('#h-poste'), y('#hgrid'), y('#h-dort'), y('#poles-grid')],
+    return { ordre: [y('.h-h1'), y('.h-horizon'), y('#h-poste'), y('#hgrid'), y('#h-dort')], vieBloc: !!root.querySelector('#poles-grid, .vie'),
+             lignes: [...root.querySelectorAll('#h-poste > button')].filter(e => !e.hidden).map(e => e.id),
              sortis: ['.h-stats', '.h-prog', '#h-critical-badge', '#quick-add-bar', '.intel-card', '.pc-monde', '.pole-card', '.pole-dot', '.h-context-badge', '.h-sub', '.h-pied', '.h-logo-sub'].filter(s => root.querySelector(s)),
              mots: ['Résous', 'CRITIQUE', 'URGENCE', 'manquant', 'Veille', 'bien-être', 'bloquant', 'Valence', 'VALENCE', 'RAYAN', 'ARC v2'].filter(m => (txt + ' ' + root.querySelector('.hn').innerText).includes(m)),
-             haut: (() => { const c = [root, root.querySelector('.hw')].find(e => e.scrollHeight > e.clientHeight + 4) || root; return c.scrollHeight; })(), titreH: Math.round(root.querySelector('.h-h1').getBoundingClientRect().height), entrees: [...root.querySelectorAll('.h-poste-grid .h-inst')].map(e => Math.round(e.getBoundingClientRect().top)), vie: [...root.querySelectorAll('.vie')].map(e => Math.round(e.getBoundingClientRect().top)), mono: [...root.querySelectorAll('.hw > :not(.hn) *')].filter(e => e.offsetParent !== null && e.childNodes.length && [...e.childNodes].some(n => n.nodeType === 3 && n.nodeValue.trim()) && /Mono/.test(getComputedStyle(e).fontFamily)).map(e => e.className).slice(0, 3),
+             haut: (() => { const c = [root, root.querySelector('.hw')].find(e => e.scrollHeight > e.clientHeight + 4) || root; return c.scrollHeight; })(), titreH: Math.round(root.querySelector('.h-h1').getBoundingClientRect().height), hauts: [...root.querySelectorAll('#h-poste > button')].filter(e => !e.hidden).map(e => Math.round(e.getBoundingClientRect().height)), mono: [...root.querySelectorAll('.hw > :not(.hn) *')].filter(e => e.offsetParent !== null && e.childNodes.length && [...e.childNodes].some(n => n.nodeType === 3 && n.nodeValue.trim()) && /Mono/.test(getComputedStyle(e).fontFamily)).map(e => e.className).slice(0, 3),
              titre: document.getElementById('h-espaces').textContent, sous: document.getElementById('h-projets-sub').textContent,
              agenda: !!root.querySelector('#next-list, #next-steps, .next-item, .next-lbl'), motsAgenda: ['Prochaine étape', 'Ensuite', 'Rien en cours'].filter(m => txt.includes(m)),
              principaux: root.querySelectorAll('.rg-btn.main').length, posteBas: Math.round(poste.getBoundingClientRect().bottom), barre: Math.round(t('depot-bar').getBoundingClientRect().top),
              n: t('depot-n').textContent, mot: t('depot-count').textContent, pj: t('matin-entry-v').textContent, pjMot: t('matin-entry-n').textContent,
-             echo: t('h-echo').hidden ? null : { l: t('h-echo-l').textContent, t: t('h-echo-t').textContent }, ranger: t('h-ranger').hidden ? null : t('h-ranger-t').textContent,
-             grand: [...root.querySelectorAll('.h-inst-v')].map(e => Math.round(parseFloat(getComputedStyle(e).fontSize))) }; });
+             echo: !!t('h-echo'), ranger: t('h-ranger').hidden ? null : t('h-ranger-t').textContent, ask: t('h-ask') ? t('h-ask').textContent : null }; });
   const vide = await plan();
   const croissant = a => a.every((v, i) => v !== null && (i === 0 || v > a[i - 1]));
   ok(croissant(vide.ordre) && !vide.sortis.length && !vide.mots.length && vide.titre === 'Sept espaces.' && vide.sous === '2 en cours · 3 endormis' && !vide.agenda && !vide.motsAgenda.length
-     && vide.n === '0' && vide.mot === 'Aucune pensée' && !vide.echo && !vide.ranger && vide.principaux === 0 && /^(\u2014|\d{2}:\d{2}|\d+)$/.test(vide.pj) && vide.pjMot && !/Prêt|En ligne/.test(vide.pjMot),
-     'Accueil : dans l\'ordre, titre, horizon, le poste, Projets, Endormis, Ma vie ; aucune liste d\'étapes (ni « Prochaine étape », ni « Ensuite ») ; vide, le poste dit 0 pensée, ni écho ni « à ranger » ; compteurs, progression globale, ajout rapide, veille, descriptions, « Valence » en dur et mots pressants n\'y sont plus',
+     && vide.n === '0' && vide.mot === 'pensée' && !vide.echo && !vide.vieBloc && !vide.ranger && vide.principaux === 0 && vide.pjMot === 'Rien de prévu' && vide.lignes.join() === 'matin-open,depot-open,h-ask',
+     'Accueil : dans l\'ordre, titre, horizon, la console, Projets, Endormis ; plus de bloc Ma vie ni de dernière pensée (13 octobre) ; aucune liste d\'étapes (ni « Prochaine étape », ni « Ensuite ») ; vide, la console dit « Aujourd\'hui · Rien de prévu », « Déposé · 0 pensée », « Demande à ARC », sans « à ranger » ; compteurs, progression globale, ajout rapide, veille, descriptions, « Valence » en dur et mots pressants n\'y sont plus',
      `positions ${vide.ordre.join(', ')} ; « ${vide.titre} » ; « ${vide.sous} » ; poste ${vide.n} « ${vide.mot} », point du jour « ${vide.pj} » « ${vide.pjMot} »${vide.sortis.length ? ' ; restent ' + vide.sortis.join(', ') : ''}${vide.mots.length ? ' ; mots ' + vide.mots.join(', ') : ''}${vide.motsAgenda.length ? ' ; agenda : ' + vide.motsAgenda.join(', ') : ''}`);
 
   for (const t of ['Appeler la comptable pour la TVA', 'Relire les CGV d\'Atlas', 'idée de nom pour la boutique']) { await deposit(page, t); await page.waitForTimeout(250); }
@@ -197,38 +200,42 @@ for (const vp of ECRANS) {
   // Le poste : des chiffres vrais en grand (3 pensées ; une hésitation = 1 à ranger), l'écho de la dernière pensée avec ses
   // mots et depuis quand ; tout le poste dans le premier écran de l'iPhone ; aucune liste d'étapes, aucune touche blanche
   // (la seule est « Déposer », dans la barre)
-  ok(plein.n === '3' && plein.mot === 'pensées' && plein.echo && plein.echo.t === '« idée de nom pour la boutique »' && /^Dernière pensée · (à l’instant|il y a \d+\u00A0min)$/.test(plein.echo.l)
-     && plein.ranger === '1 pensée à ranger' && !plein.agenda && !plein.motsAgenda.length && plein.principaux === 0 && plein.posteBas < plein.barre && plein.grand.every(g => g >= 32),
-     'Accueil, le poste : « 3 pensées » et « 1 pensée à ranger » en chiffres vrais, l\'écho de la dernière pensée (ses mots, depuis quand), tout dans le premier écran de l\'iPhone ; aucune liste d\'étapes ni touche blanche sur l\'accueil',
-     `poste ${plein.n} « ${plein.mot} » ; écho « ${plein.echo?.l} » ${plein.echo?.t} ; « ${plein.ranger} » ; bas du poste ${plein.posteBas} px (barre à ${plein.barre} px) ; chiffres ${plein.grand.join(', ')} px ; ${plein.principaux} touche blanche${plein.motsAgenda.length ? ' ; agenda : ' + plein.motsAgenda.join(', ') : ''}`);
+  ok(plein.n === '3' && plein.mot === 'pensées' && plein.lignes.join() === 'matin-open,h-ranger,depot-open,h-ask' && /Demande à ARC/.test(plein.ask || '')
+     && plein.ranger === '1 pensée à ranger' && !plein.agenda && !plein.motsAgenda.length && plein.principaux === 0 && plein.posteBas < plein.barre,
+     'Accueil, la console : « Aujourd\'hui », « 1 pensée à ranger », « Déposé · 3 pensées », « Demande à ARC », dans cet ordre et en chiffres vrais, toute dans le premier écran de l\'iPhone ; aucune liste d\'étapes ni touche blanche sur l\'accueil',
+     `lignes ${plein.lignes.join(', ')} ; Déposé ${plein.n} « ${plein.mot} » ; « ${plein.ranger} » ; bas de la console ${plein.posteBas} px (barre à ${plein.barre} px) ; ${plein.principaux} touche blanche${plein.motsAgenda.length ? ' ; agenda : ' + plein.motsAgenda.join(', ') : ''}`);
 
   // À leur juste taille : le titre sur une ligne, Déposé et Point du jour côte à côte dans le poste, Santé et Juridique
   // côte à côte, aucune petite capitale à chasse fixe, et tout l'accueil rempli en moins de deux écrans d'iPhone
-  ok(plein.titreH <= 40 && plein.entrees.length === 2 && plein.entrees[0] === plein.entrees[1] && plein.vie.length === 2 && plein.vie[0] === plein.vie[1] && !plein.mono.length && plein.haut <= 1300 && vide.haut <= 1000,
-     'Accueil épuré : titre sur une ligne, Déposé et Point du jour côte à côte, Santé et Juridique côte à côte, écriture du système sans chasse fixe, moins de deux écrans d\'iPhone',
-     `titre ${plein.titreH} px de haut ; tuiles à ${plein.entrees.join(' et ')} px, Ma vie à ${plein.vie.join(' et ')} px ; hauteur de l'accueil : ${vide.haut} px vide, ${plein.haut} px rempli${plein.mono.length ? ' ; chasse fixe : ' + plein.mono.join(', ') : ''}`);
+  ok(plein.titreH <= 40 && plein.hauts.length === 4 && plein.hauts.every(h => h >= 44 && h <= 64) && !plein.mono.length && plein.haut <= 1300 && vide.haut <= 1000,
+     'Accueil épuré : titre sur une ligne, une console de lignes (44 à 64 px chacune, pas de briques), écriture du système sans chasse fixe, moins de deux écrans d\'iPhone',
+     `titre ${plein.titreH} px de haut ; lignes de la console ${plein.hauts.join(', ')} px ; hauteur de l'accueil : ${vide.haut} px vide, ${plein.haut} px rempli${plein.mono.length ? ' ; chasse fixe : ' + plein.mono.join(', ') : ''}`);
 
   // L'écho ouvre « Déposé » sur la dernière pensée ; « N pensées à ranger » ouvre « Déposé » ; « C'est fait » dans « Déposé »
   // se lit sur l'accueil (faits du jour), et le poste ne change pas de chiffre (une pensée faite reste déposée)
-  await page.click('#h-echo'); await page.waitForTimeout(300);
+  // « Demande à ARC » ouvre la recherche, prête pour une question ; « Déposé » ouvre la liste
+  await page.click('#h-ask'); await page.waitForTimeout(300);
+  const ask = await page.evaluate(() => ({ ouvert: document.getElementById('search-modal').classList.contains('open'), focus: document.activeElement && document.activeElement.id }));
+  await page.evaluate(() => closeSearch()); await page.waitForTimeout(150);
+  await page.click('#depot-open'); await page.waitForTimeout(300);
   const dep = await page.evaluate(() => { const l = document.getElementById('depot-list'), it = [...l.querySelectorAll('[data-id]')].find(e => e.textContent.includes('idée de nom pour la boutique'));
-    const r = it ? it.getBoundingClientRect() : null; return { ouvert: document.getElementById('depot-screen').classList.contains('open'), la: !!it, visible: !!r && r.top >= 0 && r.bottom <= innerHeight }; });
+    return { ouvert: document.getElementById('depot-screen').classList.contains('open'), la: !!it, visible: true }; });
   await page.evaluate(() => depotClose()); await page.waitForTimeout(200);
   await page.click('#h-ranger'); await page.waitForTimeout(300);
   const dep2 = await page.evaluate(() => document.getElementById('depot-screen').classList.contains('open'));
   await page.evaluate(() => { const b = [...document.querySelectorAll('#depot-list [data-id]')].filter(e => e.textContent.includes('Appeler la comptable')).flatMap(e => [...e.querySelectorAll('button')]).find(x => x.textContent === "C'est fait"); if (b) b.click(); depotClose(); }); await page.waitForTimeout(300);
   const apres = await plan(), faits = await page.evaluate(() => document.getElementById('h-faits').textContent);
-  ok(dep.ouvert && dep.la && dep.visible && dep2 && /1 étape faite aujourd/.test(faits) && apres.n === '3' && apres.ranger === '1 pensée à ranger' && !apres.agenda,
-     'Accueil : l\'écho ouvre « Déposé » sur la dernière pensée ; « N pensées à ranger » ouvre « Déposé » ; « C\'est fait » dans « Déposé » compte dans les faits du jour, le poste garde ses chiffres',
-     `Déposé ouvert ${dep.ouvert}, pensée présente ${dep.la} et visible ${dep.visible} ; à ranger ouvre ${dep2} ; faits « ${faits} » ; poste ${apres.n}, « ${apres.ranger} »`);
+  ok(ask.ouvert && ask.focus === 'search-inp' && dep.ouvert && dep.la && dep2 && /1 étape faite aujourd/.test(faits) && apres.n === '3' && apres.ranger === '1 pensée à ranger' && !apres.agenda,
+     'Accueil : « Demande à ARC » ouvre la recherche sur son champ ; « Déposé » et « N pensées à ranger » ouvrent « Déposé » ; « C\'est fait » dans « Déposé » compte dans les faits du jour, la console garde ses chiffres',
+     `Demande à ARC ${JSON.stringify(ask)} ; Déposé ouvert ${dep.ouvert}, pensée présente ${dep.la} ; à ranger ouvre ${dep2} ; faits « ${faits} » ; Déposé ${apres.n}, « ${apres.ranger} »`);
 
   // Annuler un dépôt : la pensée n'est plus comptée nulle part, ni dans « Déposé » ni dans « N pensées déposées »
   // (avant le 10 octobre, la ligne du haut la comptait encore : deux chiffres d'un même écran ne suivaient pas la même règle)
   await page.click('#depot-open'); await page.waitForTimeout(300);
   await page.evaluate(() => { const b = [...document.querySelectorAll('#depot-list [data-id]')].filter(e => e.textContent.includes('Relire les CGV')).flatMap(e => [...e.querySelectorAll('button')]).find(x => x.textContent === 'Annuler le dépôt'); if (b) b.click(); depotClose(); }); await page.waitForTimeout(300);
   const annule = await plan(), faits2 = await page.evaluate(() => document.getElementById('h-faits').textContent);
-  ok(annule.n === '2' && /2 pensées déposées/.test(faits2) && !errors.length,
-     'Accueil : une pensée dont le dépôt est annulé quitte les deux chiffres (« Déposé » et « N pensées déposées »)', `poste ${annule.n} ; haut « ${faits2} »`);
+  ok(annule.n === '2' && !/pensées? déposées?/.test(faits2) && !errors.length,
+     'Accueil : une pensée dont le dépôt est annulé quitte « Déposé » ; le haut ne compte plus les pensées déposées (il contredisait « Déposé »)', `Déposé ${annule.n} ; haut « ${faits2} »`);
 
   // Endormir, réveiller : depuis l'accueil et depuis le monde ; gardé dans S.sleep, relu au lancement suivant
   const etat = () => page.evaluate(() => ({ cours: [...document.querySelectorAll('#S1 .pj')].map(e => +e.dataset.wid), plie: document.getElementById('h-dort-list').hidden, noms: document.getElementById('h-dort-n').textContent, dort: [...document.querySelectorAll('#S1 .h-dort-row')].map(e => +e.dataset.wid),
@@ -392,7 +399,7 @@ for (const vp of ECRANS) {
   await page.waitForTimeout(3200); const t2 = await lu();
   // « C'est fait » dans « Déposé » : la comète attend que « Déposé » se referme, puis file une fois
   await page.evaluate(() => { depotClose(); goHome(); renderHome(); });
-  await page.waitForFunction(() => !document.getElementById('h-echo').hidden, null, { timeout: 8000 }).catch(() => {});
+  await page.waitForFunction(() => document.getElementById('depot-n').textContent === '1', null, { timeout: 8000 }).catch(() => {});
   await page.evaluate(() => { depotOpen(); const b = [...document.querySelectorAll('#depot-list [data-id]')].filter(e => e.textContent.includes('Appeler la comptable')).flatMap(e => [...e.querySelectorAll('button')]).find(x => x.textContent === "C'est fait"); if (b) b.click(); });
   await page.waitForTimeout(150); const t2b = await lu();
   await page.evaluate(() => depotClose());
@@ -423,13 +430,13 @@ for (const vp of ECRANS) {
     const pjs = document.querySelector('#S1 .h-pjs');
     return { lignes, tache: lignes.filter(l => taches.some(t => l.txt.includes(t))).map(l => l.wid),
              panneau: !!pjs && pjs.contains(document.getElementById('hgrid')) && pjs.contains(document.getElementById('h-dort')),
-             haut: Math.round(pjs.getBoundingClientRect().height), vie: [...document.querySelectorAll('#S1 .vie')].map(e => Math.round(e.getBoundingClientRect().height)) };
+             haut: Math.round(pjs.getBoundingClientRect().height), vie: document.querySelectorAll('#S1 .vie').length };
   });
   const ordre = r.lignes.map(l => l.wid).join(), etats = r.lignes.map(l => l.etat);
   ok(ordre === '4,1,0' && etats[0] === 'Actif aujourd’hui' && etats[1] === 'Actif il y a 3 j' && etats[2] === 'Calme depuis 10 j' && r.lignes[2].calme && !r.lignes[0].calme
-     && !r.tache.length && r.panneau && r.vie.length === 2 && r.vie.every(h => h >= 44) && !errors.length,
+     && !r.tache.length && r.panneau && r.vie === 0 && !errors.length,
      'Accueil, Projets : un seul panneau ; chaque ligne dit l\'état vrai du projet (actif, depuis quand, ou calme) et jamais une tâche ; ceux qui bougent devant, les calmes derrière',
-     `ordre ${ordre} ; états ${etats.join(' | ')} ; tâches affichées ${r.tache.join(',') || 'aucune'} ; panneau ${r.panneau} (${r.haut} px) ; Ma vie ${r.vie.join(' et ')} px`);
+     `ordre ${ordre} ; états ${etats.join(' | ')} ; tâches affichées ${r.tache.join(',') || 'aucune'} ; panneau ${r.panneau} (${r.haut} px) ; tuiles Ma vie ${r.vie}`);
   await ctx.close();
 }
 

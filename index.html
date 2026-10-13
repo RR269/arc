@@ -1575,6 +1575,20 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S1 .h-ranger::before{content:"";flex-shrink:0;width:7px;height:7px;border-radius:50%;background:#FFB340;box-shadow:0 0 8px rgba(255,179,64,.6)}
 #S1 .h-ranger .h-ranger-t{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 .h-ranger .h-chev{flex-shrink:0}
+/* LA CONSOLE (13 octobre) : des lignes, pas des briques. Le libellé à gauche, le fait vrai à droite, un chevron. */
+#S1 .h-cl{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:12px;width:100%;min-height:52px;margin:0;padding:0 16px;border:0;border-top:1px solid rgba(255,255,255,.08);background:none;font-family:var(--fa);text-align:left;color:var(--t1);cursor:pointer;transition:background .2s}
+#S1 .h-cl:first-child{border-top:0}
+#S1 .h-cl:hover{background:rgba(255,255,255,.03)}
+#S1 .h-cl-l{font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.25px;color:#F5F5F7;white-space:nowrap}
+#S1 .h-cl-t{min-width:0;font-size:15px;line-height:20px;letter-spacing:-.15px;color:#D6D6DC;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#S1 .h-cl .h-chev{width:7px;height:7px;margin:0 1px 0 0;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+#S1 .h-cl-auj{min-height:62px}
+#S1 .h-cl-auj .h-cl-l{font-size:18px;letter-spacing:-.35px}
+#S1 .h-cl-auj .h-cl-t{font-size:16px;color:#F5F5F7}
+#S1 .h-cl-ask{grid-template-columns:auto auto minmax(0,1fr) auto}
+#S1 .h-cl-arc{width:20px;height:20px;background:linear-gradient(135deg,#FF9500,#FF2D55 55%,#AF52DE);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M3 17a9 9 0 0 1 18 0M7 17a5 5 0 0 1 10 0'/%3E%3Ccircle cx='12' cy='17' r='1.3' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.9' stroke-linecap='round'%3E%3Cpath d='M3 17a9 9 0 0 1 18 0M7 17a5 5 0 0 1 10 0'/%3E%3Ccircle cx='12' cy='17' r='1.3' fill='%23000'/%3E%3C/svg%3E") center/contain no-repeat}
+#S1 .h-cl:focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:-2px}
+#S1 .pj-lie{color:#C9C9D0}
 /* Projets en cours : une ligne chacun. Le pictogramme et le nom portent sa couleur ; le trait du bas dit où il en est */
 /* PROJETS ET MA VIE (branche accueil-projets, 10 octobre) : deux panneaux sous l'horizon, plus calmes que le poste.
    Projets : un seul panneau, une ligne par projet (pictogramme au trait, nom, état vrai, où il en est) ; sa barre de
@@ -2424,7 +2438,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <button class="h-menu-item" id="btn-export"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 14V5M4 9l4-4 4 4M2 3h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Exporter</button>
         <button class="h-menu-item" id="btn-auth"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="5.5" r="2.8" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 14c.8-2.6 2.9-4 5.5-4s4.7 1.4 5.5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-auth-lbl">Se connecter</span></button>
         <button class="h-menu-item" id="btn-pass" hidden><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><rect x="3" y="7" width="10" height="7" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>Mon mot de passe</button>
-        <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-matin-lbl">Point du matin</span></button>
+        <button class="h-menu-item" id="btn-matin"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg><span id="btn-matin-lbl">Aujourd’hui chaque matin</span></button>
         <button class="h-menu-item" id="btn-lieu" type="button"><svg viewBox="0 0 16 16" fill="none" width="13" height="13"><path d="M8 14.2s4.6-4 4.6-7.6a4.6 4.6 0 0 0-9.200 0c0 3.600 4.600 7.600 4.600 7.600z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><circle cx="8" cy="6.600" r="1.700" stroke="currentColor" stroke-width="1.4"/></svg><span id="btn-lieu-lbl">Afficher ma ville</span></button>
       </div>
     </div>
@@ -2439,15 +2453,14 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   <div class="h-horizon" aria-hidden="true"><i class="h-comete"></i></div>
   <!-- LA PLANÈTE : la face de nuit sous l'horizon (canevas #h-planete, sous le contenu) ; cette bande lui laisse la place et porte le geste -->
   <div class="h-orbite" id="h-orbite" role="button" tabindex="0" aria-label="Ouvrir la carte de tes espaces"><span class="h-orbite-carte" aria-hidden="true"><i></i>Carte</span></div>
-  <!-- LE POSTE : ce qu'ARC tient pour la personne, en chiffres vrais. Pas un agenda (Rayan, 10 octobre) : les étapes
-       vivent dans le Point du jour et dans « Déposé ». Deux instruments, l'écho de la dernière pensée, ce qui attend un choix. -->
-  <section class="h-poste" id="h-poste" aria-label="Poste de commande">
-    <div class="h-poste-grid">
-      <button class="h-inst" id="depot-open" type="button"><span class="h-inst-l">Déposé</span><span class="h-inst-v" id="depot-n">0</span><span class="h-inst-s" id="depot-count">Aucune pensée</span></button>
-      <button class="h-inst" id="matin-open" type="button"><span class="h-inst-l">Point du jour</span><span class="h-inst-v" id="matin-entry-v">&#8212;</span><span class="h-inst-s" id="matin-entry-n"></span></button>
-    </div>
-    <button class="h-echo" id="h-echo" type="button" hidden><span class="h-echo-l" id="h-echo-l">Dernière pensée</span><span class="h-echo-t" id="h-echo-t"></span><i class="h-chev" aria-hidden="true"></i></button>
+  <!-- LA CONSOLE (13 octobre, Rayan : « voir où en sont mes projets, puis ce qui m'attend ») : sous la planète, une
+       seule console. « Aujourd'hui » (ce qui attend aujourd'hui, en chiffres vrais ; ouvre la liste), ce qui attend d'être
+       rangé, Déposé, et Demande à ARC. Le Point du jour n'est plus un objet à part sur l'accueil. -->
+  <section class="h-poste" id="h-poste" aria-label="Console">
+    <button class="h-cl h-cl-auj" id="matin-open" type="button"><span class="h-cl-l">Aujourd’hui</span><span class="h-cl-t" id="matin-entry-n">Rien de prévu</span><span id="matin-entry-v" hidden></span><i class="h-chev" aria-hidden="true"></i></button>
     <button class="h-ranger" id="h-ranger" type="button" hidden><span class="h-ranger-t" id="h-ranger-t"></span><i class="h-chev" aria-hidden="true"></i></button>
+    <button class="h-cl" id="depot-open" type="button"><span class="h-cl-l">Déposé</span><span class="h-cl-t"><span id="depot-n">0</span> <span id="depot-count">pensée</span></span><i class="h-chev" aria-hidden="true"></i></button>
+    <button class="h-cl h-cl-ask" id="h-ask" type="button"><span class="h-cl-arc" aria-hidden="true"></span><span class="h-cl-l">Demande à ARC</span><span class="h-cl-t">Pose ta question</span><i class="h-chev" aria-hidden="true"></i></button>
   </section>
   <!-- PROJETS : un seul panneau ; ceux qui bougent devant, les calmes derrière, les endormis repliés en bas -->
   <section class="h-section" aria-labelledby="h-projets-lbl">
@@ -2462,13 +2475,6 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <div id="h-dort-list" hidden></div>
     </div>
     </div>
-  </section>
-  <!-- MA VIE : à part, plus calme -->
-  <section class="h-section" aria-labelledby="h-vie-lbl">
-    <div class="h-section-head">
-      <h2 class="h-section-lbl" id="h-vie-lbl">Ma vie</h2>
-    </div>
-    <div class="vie-grid" id="poles-grid"></div>
   </section>
 </div></div>
 
@@ -3255,9 +3261,9 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <button class="matin-go" id="matin-close" type="button">C'est parti</button>
     </div>
     <form id="matin-settings" hidden>
-      <div class="matin-date">Point du matin</div>
-      <div class="matin-lead">ARC prépare un point à l'heure que tu choisis. Il s'affiche à la première ouverture d'ARC après cette heure, une fois par jour sur cet appareil.</div>
-      <label class="matin-field"><input type="checkbox" id="matin-enabled"> <span>Afficher le point du matin</span></label>
+      <div class="matin-date">Aujourd’hui, chaque matin</div>
+      <div class="matin-lead">Ce qui t'attend aujourd'hui est toujours sur l'accueil. Si tu veux, ARC peut aussi l'ouvrir de lui-même à la première ouverture après cette heure, une fois par jour sur cet appareil.</div>
+      <label class="matin-field"><input type="checkbox" id="matin-enabled"> <span>L'ouvrir chaque matin</span></label>
       <label class="matin-field"><span>Heure</span> <input type="time" id="matin-hour" step="300" required></label>
       <div class="rg-acts"><button class="rg-btn main" type="submit">Enregistrer</button><button class="rg-btn quiet" type="button" id="matin-settings-cancel">Annuler</button></div>
     </form>
@@ -4584,7 +4590,7 @@ function renderFaits() {
   var el = document.getElementById('h-faits'); if(!el) return;
   var f = faitsDuJour(), parts = [];
   if(f.etapes) parts.push(f.etapes + (f.etapes > 1 ? ' étapes faites' : ' étape faite') + ' aujourd\u2019hui');
-  if(f.pensees) parts.push(f.pensees + (f.pensees > 1 ? ' pensées déposées' : ' pensée déposée'));
+  // « N pensées déposées » est retiré (13 octobre) : à côté de « Déposé » (le total), il se lisait comme une contradiction
   el.hidden = !parts.length;
   el.textContent = parts.join(' · ');
 }
@@ -4644,6 +4650,19 @@ function renderPoles(){
   grid.innerHTML=html;
 }
 
+// Les projets reliés (S.liens, confirmés par Rayan) : leurs noms
+function projetLies(wid) {
+  var out = [];
+  Object.keys(S.liens || {}).forEach(function(k) { var l = S.liens[k]; if(!l || l.type !== 'projet' || l.etat !== 'oui') return;
+    var autre = String(l.a) === String(wid) ? l.b : String(l.b) === String(wid) ? l.a : null; if(autre == null) return;
+    var w = monde(isNaN(+autre) ? autre : +autre) || monde(autre); if(w && out.indexOf(w.name) < 0) out.push(w.name); });
+  return out;
+}
+function projetPct(wd) {
+  var allT = wd.tasks_done.concat(wd.tasks_todo);
+  var done = allT.filter(function(t){ return S.tasks[wd.id] && S.tasks[wd.id][t.id]; }).length;
+  return allT.length > 0 ? Math.round(done / allT.length * 100) : 0;
+}
 function renderCards(){
   var g=document.getElementById("hgrid"); if(!g) return;
   var html="", dort=[], actifs=0, lignes=[];
@@ -4665,10 +4684,10 @@ function renderCards(){
     return a.rang - b.rang;
   });
   lignes.forEach(function(l){
-    var wd=l.wd, etat=projetEtatMots(l.act, l.calme);
+    var wd=l.wd, etat=projetEtatMots(l.act, l.calme), lies=projetLies(wd.id);
     html+='<div class="pj'+(l.calme?' calme':'')+'" style="--pc:'+wd.color+'" data-action="enter-world" data-wid="'+wd.id+'" role="button" tabindex="0">';
     html+='<span class="pj-ico" aria-hidden="true"></span>';
-    html+='<span class="pj-txt"><span class="pj-n">'+esc(wd.name)+'</span>'+(etat?'<span class="pj-f pj-act">'+esc(etat)+'</span>':'')+'</span>';
+    html+='<span class="pj-txt"><span class="pj-n">'+esc(wd.name)+'</span>'+((etat||lies.length)?'<span class="pj-f pj-act">'+esc(etat)+(lies.length?'<span class="pj-lie">'+(etat?' · ':'')+'Lié à '+esc(lies.join(', '))+'</span>':'')+'</span>':'')+'</span>';
     html+='<span class="pj-pct">'+l.pct+'\u00A0%</span>';
     html+='<span class="pj-bar" aria-hidden="true"><span style="width:'+l.pct+'%"></span></span>';
     html+='</div>';
@@ -7082,7 +7101,7 @@ function depotRender(force) {
   var cnt = document.getElementById('depot-count'), val = document.getElementById('depot-n');
   if(cnt) {
     // Le poste : le nombre en grand, puis le mot ; « en attente » ou « sur cet appareil » seulement s'il y a lieu
-    var txt = all.length === 0 ? 'Aucune pensée' : 'pensée' + (all.length > 1 ? 's' : '');
+    var txt = 'pensée' + (all.length > 1 ? 's' : '');
     if(waiting) txt += ' · ' + waiting + (signed ? ' en attente' : ' sur cet appareil');
     cnt.textContent = txt;
     if(val) val.textContent = String(all.length);
@@ -8599,7 +8618,7 @@ function plARanger() {
   });
 }
 function plDonnees() {
-  var projets = WORLDS.map(function(w) { return plEspace(w.id, espaceCle(w), w.name, w.color, mondeDort(w.id), false, projetActivite(w)); });
+  var projets = WORLDS.map(function(w) { var e = plEspace(w.id, espaceCle(w), w.name, w.color, mondeDort(w.id), false, projetActivite(w)); e.pct = projetPct(w); return e; });
   var poles = POLES.map(function(p) { return plEspace(p.id, p.id, p.name, p.color, false, true, 0); });
   projets.sort(function(a, b) { return (a.dort - b.dort) || (b.p.length - a.p.length) || (b.act - a.act); });
   var liensP = [], liensT = [];
@@ -8690,6 +8709,7 @@ function plScene(G, carte) {
     e.lum = e.items.filter(function(it) { return it.type === 'pensee'; });
     e.afaire = e.lum.filter(function(x) { return !x.faite; }).length + (e.id === 'juridique' ? e.items.filter(function(it) { return it.type === 'jur' && !it.faite; }).length : 0) + (e.id === 'sante' ? e.items.filter(function(it) { return it.type === 'rdv' && !it.faite; }).length : 0);
     e.faits = e.items.filter(function(it) { return it.type === 'tache' || (it.type === 'jur' && it.faite); }).length;
+    e.auj = plAujourdhui(e);
   });
   var grille = [];
   [.08, .2, .36, .56, .8, 1.05].forEach(function(v) { var ln = []; for(var qq = 0; qq <= 48; qq++) ln.push(plSol(G, -.2 + qq / 48 * 1.4, v)); grille.push(ln); });
@@ -8706,6 +8726,22 @@ function plScene(G, carte) {
 
 /* Le dessin d'une vue : V = { cv, dpr, sc, s, tx, ty, carte, choix } */
 // À faire : une pensée pas faite, une démarche pas faite, un rendez-vous à venir. Tout le reste est le passé.
+// Ce qui attend aujourd'hui dans un espace (13 octobre : « ce qui t'attend aujourd'hui s'allume ») : une pensée à faire
+// dont le moment tombe aujourd'hui, un rendez-vous d'aujourd'hui, une échéance d'aujourd'hui. Les mêmes que la console.
+function plAujourdhui(e) {
+  var auj = new Date().toDateString(), n = 0;
+  e.p.forEach(function(x) { var m = x.f.moment; if(x.f.status === 'filed' && x.f.step && m && m.type === 'datetime' && new Date(m.at).toDateString() === auj) n++; });
+  if(e.id === 'sante' && typeof santeRdv === 'function') santeRdv().forEach(function(r) { var d = santeQuand(r); if(d && d.toDateString() === auj) n++; });
+  if(e.id === 'juridique' && typeof jurEcheances === 'function' && S.poles && S.poles.juridique) jurEcheances().forEach(function(x) { if(x.j === 0) n++; });
+  return n;
+}
+// Sous un nom, sur la bande de l'accueil : ce qui attend aujourd'hui, sinon l'état vrai du projet
+function plLigneBande(e) {
+  if(e.dort || e.pole) return '';   // Ma vie : sa colonne est étroite ; son onde dit qu'il y a quelque chose aujourd'hui
+  if(e.auj) return 'Aujourd\u2019hui · ' + e.auj;
+  if(!e.pole && e.act) return projetEtatMots(e.act, Date.now() - e.act > 7 * 864e5) || '';
+  return '';
+}
 function plAFaire(it) { return !it.faite && (it.type === 'pensee' || it.type === 'jur' || it.type === 'rdv'); }
 function plLigneCarte(e) {
   if(e.dort) return '';
@@ -8756,9 +8792,9 @@ function plDessiner(V, now) {
     ctx.font = '600 ' + taille + 'px ' + fam;
     while(taille > 11 && ctx.measureText(e.n).width > large) { taille--; ctx.font = '600 ' + taille + 'px ' + fam; }
     var nom = tronque(e.n, large), wn = ctx.measureText(nom).width;
-    var ligne = V.carte ? plLigneCarte(e) : '', we = 0;
-    if(ligne) { ctx.font = '500 13px ' + fam; ligne = tronque(ligne, large); we = ctx.measureText(ligne).width; }
-    var h = taille + 4 + (ligne ? 17 : 0), r = [q[0] - Math.max(wn, we) / 2, y1 - taille / 2 - 2, Math.max(wn, we), h];
+    var ligne = V.carte ? plLigneCarte(e) : plLigneBande(e), we = 0, tl = V.carte ? 13 : 12;
+    if(ligne) { ctx.font = '500 ' + tl + 'px ' + fam; ligne = tronque(ligne, large); we = ctx.measureText(ligne).width; }
+    var h = taille + 4 + (ligne ? tl + 4 : 0), r = [q[0] - Math.max(wn, we) / 2, y1 - taille / 2 - 2, Math.max(wn, we), h];
     if(!libre(r)) return;
     poses.push(r); V.etiquettes.push(r);
     noms.push({ e: e, q: q, y1: y1, taille: taille, nom: nom, ligne: ligne });
@@ -8875,7 +8911,21 @@ function plDessiner(V, now) {
     var rr = (e.dort ? 3.5 : 4.5) + Math.min(4, e.items.length * .2) + fe * 4;
     ctx.beginPath(); ctx.arc(q[0], q[1], rr, 0, Math.PI * 2); ctx.strokeStyle = plRgba(col, e.dort ? .6 : .95); ctx.lineWidth = 1.4; ctx.stroke();
     ctx.beginPath(); ctx.arc(q[0], q[1], 2, 0, Math.PI * 2); ctx.fillStyle = e.dort ? '#AEAEB2' : '#fff'; ctx.fill();
-    if(e.afaire && !e.dort && V.carte) {
+    // La progression (13 octobre) : un anneau autour du projet, rempli comme son pourcentage
+    if(!e.pole && !e.dort && e.pct != null) {
+      ctx.beginPath(); ctx.arc(q[0], q[1], rr + 3.5, 0, Math.PI * 2); ctx.strokeStyle = plRgba(col, .16); ctx.lineWidth = 2; ctx.stroke();
+      if(e.pct > 0) { ctx.beginPath(); ctx.arc(q[0], q[1], rr + 3.5, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, e.pct / 100)); ctx.strokeStyle = plRgba(col, .95); ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.stroke(); ctx.lineCap = 'butt'; }
+    }
+    // Ce qui attend aujourd'hui s'allume : deux ondes qui partent de l'espace (une image fixe si l'appareil demande moins de mouvement)
+    if(e.auj && !e.dort) {
+      for(var w2 = 0; w2 < 2; w2++) {
+        var ph = calme ? .45 : ((t / 2.4 + w2 / 2 + plHash(e.k)) % 1), ra = rr + 6 + 18 * ph;
+        ctx.beginPath(); ctx.arc(q[0], q[1], ra, 0, Math.PI * 2); ctx.strokeStyle = plRgba(col, .7 * (1 - ph)); ctx.lineWidth = 1.4; ctx.stroke();
+        if(calme) break;
+      }
+      ctx.globalAlpha = .55; ctx.drawImage(plLueur(col), q[0] - 18, q[1] - 18, 36, 36); ctx.globalAlpha = 1;
+    }
+    if(e.afaire && !e.dort && V.carte && !e.auj) {
       var k = calme ? .5 : (Math.sin(t * 1.6 + plHash(e.k) * 6) + 1) / 2;
       ctx.beginPath(); ctx.arc(q[0], q[1], rr + 6 + 5 * k, 0, Math.PI * 2); ctx.strokeStyle = plRgba(col, .18 + .22 * (1 - k)); ctx.lineWidth = 1; ctx.stroke();
     }
@@ -8889,7 +8939,7 @@ function plDessiner(V, now) {
       var e = n.e, col = e.dort ? '#8E8E93' : e.c;
       ctx.shadowColor = 'rgba(0,0,0,.95)'; ctx.shadowBlur = 6;
       ctx.font = '600 ' + n.taille + 'px ' + fam; ctx.fillStyle = e.dort ? '#C7C7CC' : col; ctx.fillText(n.nom, n.q[0], n.y1);
-      if(n.ligne) { ctx.font = '500 13px ' + fam; ctx.fillStyle = e.afaire ? '#F5F5F7' : '#C7C7CC'; ctx.fillText(n.ligne, n.q[0], n.y1 + n.taille / 2 + 11); }
+      if(n.ligne) { var tl2 = V.carte ? 13 : 12; ctx.font = '500 ' + tl2 + 'px ' + fam; ctx.fillStyle = (e.auj || (V.carte && e.afaire)) ? '#F5F5F7' : '#C7C7CC'; ctx.fillText(n.ligne, n.q[0], n.y1 + n.taille / 2 + tl2 - 2 + (V.carte ? 0 : 1)); }
       ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
     });
     ctx.textAlign = 'left'; ctx.font = '600 13px ' + fam;
@@ -9234,9 +9284,12 @@ var _matin = null, _matinOpen = false, _matinAll = false;
 
 function matinNorm(d) {
   if(!d || typeof d !== 'object') d = {};
-  if(!d.settings || typeof d.settings !== 'object') d.settings = { enabled: true, hour: '08:00', updatedAt: '' };
+  if(!d.settings || typeof d.settings !== 'object') d.settings = { enabled: false, hour: '08:00', updatedAt: '', v: 2 };
   if(!/^\d{2}:\d{2}$/.test(d.settings.hour || '')) d.settings.hour = '08:00';
-  if(typeof d.settings.enabled !== 'boolean') d.settings.enabled = true;
+  if(typeof d.settings.enabled !== 'boolean') d.settings.enabled = false;
+  // 13 octobre : l'accueil dit ce qui attend aujourd'hui ; la liste ne s'ouvre plus d'elle-même (Rayan : « je n'en comprends
+  // pas l'intérêt »). Une fois, sur chaque appareil, l'ouverture automatique est coupée ; le menu la remet.
+  if(d.settings.v !== 2) { d.settings.enabled = false; d.settings.v = 2; }
   if(!d.days || typeof d.days !== 'object') d.days = {};
   return d;
 }
@@ -9468,23 +9521,13 @@ function matinCheck() {
 function matinLabels() {
   var st = _matin.settings;
   var lbl = document.getElementById('btn-matin-lbl');
-  if(lbl) lbl.textContent = 'Point du matin · ' + (st.enabled ? st.hour.replace(':', '\u00A0h\u00A0') : 'désactivé');
-  var n = document.getElementById('matin-entry-n'), v = document.getElementById('matin-entry-v');
+  if(lbl) lbl.textContent = 'Aujourd\u2019hui chaque matin · ' + (st.enabled ? st.hour.replace(':', '\u00A0h\u00A0') : 'non');
+  // La console : « Aujourd'hui » dit ce qui attend aujourd'hui, en chiffres vrais (rien = « Rien de prévu »)
+  var n = document.getElementById('matin-entry-n');
   if(n) {
-    // Le poste : un chiffre vrai en grand (heure du point, ou nombre d'étapes du jour), le mot dessous ; « — » quand il n'y a rien
-    var val = '\u2014', sub = '';
-    if(!st.enabled) sub = 'Désactivé';
-    else if(new Date() < matinHourToday()) { val = st.hour; sub = 'à venir'; }
-    else {
-      var day = _matin.days[matinDayKey(new Date())], d = matinData(), k = d.today.length + d.replace.length, mp = matinPoles();
-      var nr = mp.filter(function(x) { return x.k === 'rdv'; }).length, ne = mp.length - nr;
-      var parts = [k ? k + ' étape' + (k > 1 ? 's' : '') : '', nr ? nr + ' rendez-vous' : '', ne ? ne + ' échéance' + (ne > 1 ? 's' : '') : ''].filter(Boolean);
-      var tot = k + mp.length;
-      if(day && day.shownAt) { val = new Date(day.shownAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); sub = 'vu' + (parts.length ? ' · ' + parts.join(' · ') : ''); }
-      else if(tot) { val = String(tot); sub = parts.length === 1 && k ? 'étape' + (k > 1 ? 's' : '') + ' aujourd\u2019hui' : 'aujourd\u2019hui'; }
-      else sub = 'Rien n\u2019attend';
-    }
-    n.textContent = sub; if(v) v.textContent = val;
+    var d = matinData(), mp = matinPoles(), k = d.today.length, nr = mp.filter(function(x) { return x.k === 'rdv'; }).length, ne = mp.length - nr;
+    var parts = [k ? k + ' étape' + (k > 1 ? 's' : '') : '', nr ? nr + ' rendez-vous' : '', ne ? ne + ' échéance' + (ne > 1 ? 's' : '') : '', d.replace.length ? d.replace.length + ' à replacer' : ''].filter(Boolean);
+    n.textContent = parts.length ? parts.join(' · ') : 'Rien de prévu';
   }
 }
 function matinSettingsOpen() {
@@ -9507,9 +9550,9 @@ function matinInit() {
     ev.preventDefault();
     var h = document.getElementById('matin-hour').value;
     if(!/^\d{2}:\d{2}$/.test(h)) return;
-    _matin.settings = { enabled: document.getElementById('matin-enabled').checked, hour: h, updatedAt: new Date().toISOString() };
+    _matin.settings = { enabled: document.getElementById('matin-enabled').checked, hour: h, updatedAt: new Date().toISOString(), v: 2 };
     matinSave(); matinClose(); matinLabels();
-    toast(_matin.settings.enabled ? 'Point du matin à ' + h.replace(':', '\u00A0h\u00A0') : 'Point du matin désactivé');
+    toast(_matin.settings.enabled ? 'Aujourd\u2019hui s\u2019ouvrira chaque matin à ' + h.replace(':', '\u00A0h\u00A0') : 'Aujourd\u2019hui ne s\u2019ouvrira plus seul');
   });
   // Un clic sur le fond (hors de la carte) ferme
   document.getElementById('matin-screen').addEventListener('click', function(ev) { if(ev.target.id === 'matin-screen') matinClose(); });
@@ -9653,10 +9696,8 @@ function depotInit() {
   document.getElementById('depot-open').addEventListener('click', depotOpen);
   document.getElementById('h-ranger').addEventListener('click', depotOpen);
   // L'écho ouvre « Déposé » sur la dernière pensée
-  document.getElementById('h-echo').addEventListener('click', function() {
-    depotOpen();
-    var target = _echoTid && document.querySelector('#depot-list [data-id="' + _echoTid + '"]'); if(target) target.scrollIntoView({ block: 'center' });
-  });
+  // Demande à ARC, depuis la console : la recherche s'ouvre, prête pour une question
+  document.getElementById('h-ask').addEventListener('click', function() { openSearch(); });
   document.getElementById('depot-back').addEventListener('click', depotClose);
   window.addEventListener('resize', depotLayout);
   window.addEventListener('resize', function() { if(typeof homeCiel === 'function') homeCiel(); });
