@@ -4,11 +4,16 @@
 //   ANTHROPIC_KEY      clé de l'API Anthropic
 //   ARC_OWNER_ID       identifiant du compte de Rayan (Authentication › Users)
 //   SUPABASE_URL, SUPABASE_ANON_KEY : fournis d'office par Supabase
+//   GITHUB_TOKEN       (facultatif) jeton GitHub en lecture seule sur les dépôts de CODE_REPOS ; sans lui, la
+//                      task « code » répond 501 et tout le reste marche comme avant
 //
 // Deux usages :
 //   - sans champ « task » : discussion (panneaux Claude d'ARC), comportement inchangé ;
 //   - task « file » : rangement d'une pensée déposée. Ici, c'est le proxy qui écrit la consigne et impose
 //     le format de sortie ; la page n'envoie que la pensée et la liste des espaces.
+//   - task « code » (13 octobre) : le travail réel d'un projet, lu dans son dépôt GitHub (derniers envois,
+//     demandes de fusion ouvertes). Lecture seule ; seuls les dépôts de CODE_REPOS sont lisibles ; rien n'est
+//     écrit nulle part, rien ne part à Anthropic.
 
 const ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
 
@@ -41,6 +46,14 @@ const SITUATION_MAX = 160;
 const EXTRA_MAX = 300;
 const EXTRAS_MAX = 5;
 const UNKNOWN_SPACE = "inconnu";
+
+// ── Le code des projets (task "code") ──
+// Clé envoyée par la page → dépôt GitHub. La page ne peut demander que ces dépôts-là.
+const CODE_REPOS: Record<string, string> = { aryan: "RR269/aryan", atlas: "RR269/atlas" };
+const CODE_COMMITS = 20;
+const CODE_PRS = 10;
+const CODE_TIMEOUT_MS = 12_000;
+const CODE_TITLE_MAX = 200;
 
 function corsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get("Origin") ?? "";
@@ -413,6 +426,66 @@ async function fileThought(req: Request, body: Record<string, unknown>, anthropi
   return reply(req, 200, { filing: checked.filing, model: typeof out.model === "string" ? out.model : FILE_MODEL });
 }
 
+// ═══ Le code d'un projet (task "code") ═══
+// Rien de ce qui est lu n'est gardé ni envoyé ailleurs qu'à la page ; les journaux ne gardent que le dépôt et le statut.
+async function github(path: string, token: string): Promise<{ ok: true; data: unknown } | { ok: false; status: number }> {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), CODE_TIMEOUT_MS);
+  try {
+    const r = await fetch("https://api.github.com" + path, {
+      headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "ARC-CLAUDE-PROXY" },
+      signal: ctl.signal,
+    });
+    if (!r.ok) return { ok: false, status: r.status };
+    return { ok: true, data: await r.json() };
+  } catch {
+    return { ok: false, status: 0 };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+function firstLine(x: unknown): string {
+  const t = String(x ?? "").split("\n")[0].trim();
+  return t.length > CODE_TITLE_MAX ? t.slice(0, CODE_TITLE_MAX - 1) + "…" : t;
+}
+async function projectCode(req: Request, body: Record<string, unknown>): Promise<Response> {
+  const key = typeof body.projet === "string" ? body.projet : "";
+  const repo = Object.prototype.hasOwnProperty.call(CODE_REPOS, key) ? CODE_REPOS[key] : null;
+  if (!repo) return fail(req, 400, "Projet sans dépôt connu");
+  const token = (Deno.env.get("GITHUB_TOKEN") ?? "").trim();
+  if (!token) {
+    console.log("code 501 : GITHUB_TOKEN absent");
+    return fail(req, 501, "Code non relié : GITHUB_TOKEN absent");
+  }
+  const [info, commits, prs] = await Promise.all([
+    github(`/repos/${repo}`, token),
+    github(`/repos/${repo}/commits?per_page=${CODE_COMMITS}`, token),
+    github(`/repos/${repo}/pulls?state=open&per_page=${CODE_PRS}`, token),
+  ]);
+  if (!info.ok || !commits.ok) {
+    const st = !info.ok ? info.status : (commits as { status: number }).status;
+    console.log(`code ${key} : GitHub ${st || "injoignable"}`);
+    return fail(req, 502, st === 401 || st === 403 ? "GitHub refuse le jeton" : st === 404 ? "Dépôt introuvable pour ce jeton" : "GitHub injoignable");
+  }
+  const i = info.data as Record<string, unknown>;
+  const list = Array.isArray(commits.data) ? commits.data as Record<string, any>[] : [];
+  const open = prs.ok && Array.isArray(prs.data) ? prs.data as Record<string, any>[] : [];
+  const out = {
+    projet: key,
+    pushed_at: typeof i.pushed_at === "string" ? i.pushed_at : null,
+    branche: typeof i.default_branch === "string" ? i.default_branch : null,
+    commits: list.map((c) => ({
+      sha: String(c?.sha ?? "").slice(0, 7),
+      titre: firstLine(c?.commit?.message),
+      date: String(c?.commit?.committer?.date ?? c?.commit?.author?.date ?? ""),
+    })).filter((c) => c.sha && c.titre),
+    prs: open.map((p) => ({ n: Number(p?.number) || 0, titre: firstLine(p?.title), maj: String(p?.updated_at ?? "") })).filter((p) => p.n),
+  };
+  console.log(`code ${key} : ${out.commits.length} envois, ${out.prs.length} demandes ouvertes`);
+  return reply(req, 200, out);
+}
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(req) });
   if (req.method !== "POST") return fail(req, 405, "Méthode non autorisée");
@@ -451,5 +524,6 @@ Deno.serve(async (req) => {
   if (!body || typeof body !== "object") return fail(req, 400, "Corps JSON invalide");
   if (body.task === undefined) return chat(req, body as ChatBody, anthropicKey);
   if (body.task === "file") return fileThought(req, body, anthropicKey);
+  if (body.task === "code") return projectCode(req, body);
   return fail(req, 400, "Tâche inconnue");
 });

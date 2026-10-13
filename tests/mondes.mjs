@@ -193,6 +193,64 @@ for (const vp of ECRANS) {
   await ctx.close();
 }
 
+// Le code d'un projet (13 octobre, Rayan : « je bosse sur ARYAN et ATLAS tous les jours, la synchronisation ne s'est
+// jamais faite ») : ARC lit le dépôt par le proxy (task « code ») ; section « Le code », points sur la carte, activité
+// vraie sur l'accueil, contexte d'Avec ARC et « Déjà faite » cochée sur geste ; sans jeton, la section le dit ; un projet
+// sans dépôt n'a rien.
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  await ctx.addInitScript(sessionScript());
+  const fk = fakeSupabase(), appels = [];
+  const il = h => new Date(Date.now() - h * 3600e3).toISOString();
+  let relie = true;
+  fk.code = async body => relie ? { status: 200, json: { projet: body.projet, pushed_at: il(3), branche: 'main', prs: [{ n: 61, titre: 'Panier verrouillé', maj: il(2) }],
+    commits: Array.from({ length: 8 }, (_, i) => ({ sha: 'abc' + i + '123', titre: i === 0 ? 'PANIER-ÉCRAN-1 : le panier verrouillé le dit à l’écran (#467)' : 'Envoi numéro ' + i, date: il(3 + i * 5) })) } }
+    : { status: 501, json: { error: { message: 'Code non relié : GITHUB_TOKEN absent', source: 'arc-proxy' } } };
+  fk.proxy = async body => { if (body.task === 'file') return { status: 500, json: {} }; appels.push(body);
+    return { status: 200, json: { content: [{ type: 'text', text: JSON.stringify({ reponse: 'D’après ton code, l’essai « Ma boutique » est fait.', propositions: [{ type: 'faite', texte: 'Essai « Ma boutique » : Boulangerie affichée à l\'ouverture, bouton grisé (#385)' }, { type: 'faite', texte: 'Une tâche qui n’existe pas' }] }) }] } }; };
+  const { page, errors } = await openPage(browser, url, { ctx, fk });
+  await page.evaluate(() => { if (typeof matinClose === 'function') matinClose(); });
+  await page.waitForTimeout(800);
+  // Au lancement : les deux dépôts sont lus, l'accueil dit ARYAN actif aujourd'hui (rien d'autre n'a bougé)
+  const acc = await page.evaluate(() => { const l = document.querySelector('#S1 .pj[data-wid="0"]'); return { lus: (window._code && Object.keys(_code)) || [], etat: l ? l.querySelector('.pj-f') && l.querySelector('.pj-f').textContent : '' }; });
+  const lancement = (fk.log.codeCalls || []).map(b => b.projet).sort().join();
+  await page.evaluate(() => enterWorld(0)); await page.waitForTimeout(500);
+  const r = await page.evaluate(() => ({ vu: !document.getElementById('wsec-code').hidden, n: document.getElementById('wcode-n').textContent,
+    lignes: [...document.querySelectorAll('#wcode-list .wpen-row')].map(a => a.querySelector('.wpen-t').textContent + ' | ' + a.querySelector('.wpen-m').textContent + ' | ' + a.getAttribute('href')),
+    plus: document.getElementById('wcode-plus').textContent, points: _wc.items.filter(it => it.type === 'code').length, legende: document.getElementById('wcarte-fiche').innerText,
+    ordre: [...document.querySelectorAll('#wmain > .wsec')].filter(e => !e.hidden).map(e => e.id).slice(0, 3).join(),
+    sug: (document.querySelector('.wat-sug') || {}).textContent, ligne: document.getElementById('wat-ligne').textContent }));
+  // Toucher un point de code : la fiche le dit
+  const pt = await page.evaluate(() => { const c = _wc.cv.getBoundingClientRect(), o = _wc.pos.find(x => x.it.type === 'code' && x.z >= 0) || _wc.pos.find(x => x.it.type === 'code'); return [c.left + o.x, c.top + o.y, o.it.txt]; });
+  await page.touchscreen.tap(pt[0], pt[1]); await page.waitForTimeout(150);
+  const fiche = await page.evaluate(() => document.getElementById('wcarte-fiche').innerText.replace(/\n/g, ' · '));
+  // Avec ARC : le code part dans le contexte ; « Déjà faite » coche la tâche sur geste, l'introuvable ne fait rien
+  await page.tap('.wat-sug'); await page.waitForTimeout(500);
+  const sys = appels[0] ? appels[0].system : '';
+  const avant = await page.evaluate(() => !!(S.tasks[0] || {}).a30);
+  await page.locator('.wat-prop .wat-ajout').nth(0).tap(); await page.waitForTimeout(200);
+  await page.locator('.wat-prop .wat-ajout').nth(1).tap(); await page.waitForTimeout(200);
+  const apres = await page.evaluate(() => ({ fait: !!S.tasks[0].a30, revue: (S.revue[0] || {})['t:a30'], aujourdhui: !!((S.taskDone || {})[0] || {}).a30, boutons: [...document.querySelectorAll('.wat-ajout')].map(b => b.textContent + (b.disabled ? '·off' : '')).join() }));
+  // Projet sans dépôt : rien ; dépôt pas encore relié : la section le dit
+  await page.evaluate(() => enterWorld(1)); await page.waitForTimeout(300);
+  const fba = await page.evaluate(() => document.getElementById('wsec-code').hidden);
+  relie = false; await page.evaluate(() => { _code = {}; localStorage.removeItem('arc_code_v1'); enterWorld(4); }); await page.waitForTimeout(500);
+  const nonRelie = await page.evaluate(() => ({ vu: !document.getElementById('wsec-code').hidden, t: document.getElementById('wcode-etat').textContent, lignes: document.querySelectorAll('#wcode-list .wpen-row').length }));
+  const codeConsole = errors.filter(e => !/status of 50[01]/.test(e));
+  ok(lancement === 'aryan,atlas' && acc.etat === 'Actif aujourd’hui' && r.vu && /^Envoyé il y a 3\sh$/.test(r.n)
+     && r.lignes.length === 6 && /^Panier verrouillé \| Demande de fusion ouverte · n° 61/.test(r.lignes[0]) && /\/RR269\/aryan\/pull\/61$/.test(r.lignes[0])
+     && /^PANIER-ÉCRAN-1/.test(r.lignes[1]) && /Envoi · il y a 3\sh · abc0123 \| https:\/\/github.com\/RR269\/aryan\/commit\/abc0123$/.test(r.lignes[1]) && r.plus === 'Voir les 3 envois d’avant'
+     && r.points === 8 && /Code/.test(r.legende) && r.ordre === 'wsec-code,wsec-arc,wsec-taches' && r.sug === 'Qu’est-ce qui est déjà fait d’après mon code ?' && /8 envois du code/.test(r.ligne)
+     && /^Envoi de code · .+ · .+ · Ouvrir$/.test(fiche) && /Ouvrir$/.test(fiche),
+     'Le code d\'ARYAN : lu au lancement (ARYAN et ATLAS), activité vraie sur l\'accueil, section en tête du bas (demande de fusion, cinq envois, liens GitHub), huit points sur la carte et leur fiche, suggestion d\'Avec ARC',
+     JSON.stringify({ lancement, acc, r, fiche, conds: [lancement === 'aryan,atlas', acc.etat === 'Actif aujourd\u2019hui', r.vu, /^Envoyé il y a 3\sh$/.test(r.n), r.lignes.length === 6, /^Panier verrouillé \| Demande de fusion ouverte · n° 61/.test(r.lignes[0]), /\/RR269\/aryan\/pull\/61$/.test(r.lignes[0]), r.plus === 'Voir les 3 envois d’avant', r.points === 8, r.ordre === 'wsec-code,wsec-arc,wsec-taches', r.sug === 'Qu’est-ce qui est déjà fait d’après mon code ?'] }));
+  ok(/PANIER-ÉCRAN-1/.test(sys) && /Demandes de fusion ouvertes/.test(sys) && !avant && apres.fait && apres.revue && apres.revue.v === 'fait' && !apres.aujourdhui && apres.boutons === 'Cochée·off,Introuvable·off'
+     && fba && nonRelie.vu && /pas encore relié/.test(nonRelie.t) && nonRelie.lignes === 0 && !codeConsole.length,
+     'Avec ARC lit le code ; « Déjà faite » coche la tâche nommée sur geste (sans compter « aujourd\'hui »), l\'introuvable ne fait rien ; FBA sans dépôt n\'a pas de section ; sans jeton, la section le dit',
+     JSON.stringify({ avant, apres, fba, nonRelie, codeConsole }));
+  await ctx.close();
+}
+
 // Le monde vivant et la liste unique (13 octobre, Rayan : « un nouveau monde s'ouvre en mode science-fiction
 // productive » ; la carte vivante en premier écran ; « une seule liste, repliée » ; la description longue sort de l'écran)
 {

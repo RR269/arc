@@ -43,6 +43,13 @@ export function fakeSupabase() {
     const json = (status, body) => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) });
     if (url.pathname === '/functions/v1/ARC-CLAUDE-PROXY') {
       const body = JSON.parse(req.postData() || '{}');
+      // Le code d'un projet (task « code », 13 octobre) : à part, pour ne pas fausser les comptes des autres essais ;
+      // par défaut un dépôt sans envoi ; fk.code(body) → { status, json } pour un essai précis
+      if (body.task === 'code') {
+        log.codeCalls = (log.codeCalls || []).concat([body]);
+        const r = fk.code ? await fk.code(body) : { status: 200, json: { projet: body.projet, pushed_at: null, branche: 'main', commits: [], prs: [] } };
+        try { return await json(r.status || 200, r.json); } catch { return; }
+      }
       log.proxyCalls.push(body);
       const r = fk.proxy ? await fk.proxy(body) : { status: 500, json: { error: { message: 'pas de faux proxy' } } };
       if (r.abort) return route.abort('internetdisconnected');   // réseau coupé vers le proxy
