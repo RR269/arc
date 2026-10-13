@@ -1748,6 +1748,38 @@ ARC en orbite, et Relier (11 octobre) :
     lecture seule ; (2) Supabase › Edge Functions › Secrets : `GITHUB_TOKEN` = ce jeton ; (3) redéployer
     `ARC-CLAUDE-PROXY` avec le fichier de cette branche ; (4) fusionner la PR.
 
+- **PR #57 fusionnée le 13 octobre.** Rayan (9 h 05) : Avec ARC lui donne pour prochaine étape l'essai « Ma boutique »
+  (#385), les anomalies Stripe (#387), les quatre courses (#284) : « des choses qu'on a déjà faites et qui n'ont pas été
+  mises à jour », « l'état d'ARYAN est incompréhensible et incorrect ».
+- **Cause** : le contenu d'ARYAN dans `WORLDS` date du tour 113 (4 octobre) ; Avec ARC le lit tel quel. Le dépôt
+  (`RR269/aryan`, lu le 13 octobre en lecture seule) en est au tour 158 : `docs/REPRISE.md` (bloc du 13/10 02:55 UTC),
+  `docs/BOUSSOLE.md` (lignes 2 à 7 faites, 5 à 7 avec réserves ; ligne 1 code fait ; ligne 8 ouverte : #392, #390, Q1 ;
+  reste 1 à 2 tours), `DETTES.md` (#284, #425, #454, #467 fermées ; #385 « corrigée mais non vue » et #387 encore
+  ouvertes dans le dépôt, **faites d'après Rayan**, c'est sa parole qui est retenue).
+- **ARYAN à jour (branche `aryan-a-jour`, 13 octobre 9 h 20)** :
+  - **Recalé sur le dépôt** (`WORLDS_V` = 4, `migrateWorlds` v4) : description et contexte du tour 158 ; action prioritaire
+    = la ligne 8 de la boussole ; **faites** : #385, Q1-Q4 et #284, #387, la boussole (a30, a32, a33, a34), et cinq
+    avancées d'octobre (a50 à a54 : catalogue ligne 6, nettoyage ligne 7, #454, pages client, panier verrouillé) ;
+    **à faire** (a60 à a68, marquées `maj`) : cacher la boutique d'essai (#392), sauvegarde automatique (#390), nature des
+    quatre comptes (Q1), commande de test du panier sur téléphone, sauvegardes à supprimer (#391), juriste pour le statut
+    du livreur (#125), Stripe en réel (#339), pages légales, premier commerçant et premier livreur ; **bloquants** :
+    #392 et #390 avant le premier commerçant, #125 avant le premier livreur (`blockersMaj`). **Retirées, jamais
+    effacées** (`S.revue` « retire », sous « Retirées » avec « Remettre ») : a31 (groupe grisé à rapporter), a35 (#345),
+    a36 (#95), a37 (#386), a38 (#356, #379) — hors du chemin critique d'après la boussole, §3 — et a39, a40, remplacées
+    par a68 et a66. Le focus d'une ancienne tâche est levé.
+  - **La revue d'avril ne montre pas ce qui a été recalé** (`t.maj`, `w.blockersMaj`) : ARYAN n'a plus rien à revoir ;
+    ATLAS, encore écrit en avril, garde sa revue.
+  - **Pour que ça ne se reproduise pas** : le proxy lit aussi la **boussole** du dépôt (`CODE_REPOS.aryan.boussole` =
+    `docs/BOUSSOLE.md`, `readBoussole` : les lignes du tableau de la section « ## 1. », faite ou non, « avec réserves »,
+    et le reste estimé). La section « Le code » l'affiche en tête (« Chemin critique · boussole du dépôt · 2 ouvertes ·
+    reste 1 à 2 tours », une ligne par point) et Avec ARC la reçoit dans son contexte. Dès que le jeton GitHub est posé,
+    l'état d'ARYAN vient de son dépôt, à chaque ouverture.
+  - Tests : proxy 45/45 (le contrôle de lecture vérifie la boussole : section 1 seulement, faite, réserves, reste),
+    mondes 18/18 (Avec ARC, « Déjà faite », le monde vivant et la prochaine tâche suivent le nouvel ARYAN ; la revue
+    d'avril se vérifie sur ATLAS et ARYAN n'a plus rien à revoir).
+  - **Pas fait, à décider avec Rayan** : ATLAS est encore écrit en avril (immatriculation, pages légales, achat en mode
+    test : non confirmés) ; son dépôt n'a pas de boussole lisible de la même façon.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

@@ -48,8 +48,13 @@ const EXTRAS_MAX = 5;
 const UNKNOWN_SPACE = "inconnu";
 
 // ── Le code des projets (task "code") ──
-// Clé envoyée par la page → dépôt GitHub. La page ne peut demander que ces dépôts-là.
-const CODE_REPOS: Record<string, string> = { aryan: "RR269/aryan", atlas: "RR269/atlas" };
+// Clé envoyée par la page → dépôt GitHub. La page ne peut demander que ces dépôts-là. `boussole` : le plan de
+// travail du dépôt, dont le proxy lit le chemin critique (section « ## 1. », une ligne de tableau par point).
+const CODE_REPOS: Record<string, { repo: string; boussole?: string }> = {
+  aryan: { repo: "RR269/aryan", boussole: "docs/BOUSSOLE.md" },
+  atlas: { repo: "RR269/atlas" },
+};
+const BOUSSOLE_MAX = 200_000;
 const CODE_COMMITS = 20;
 const CODE_PRS = 10;
 const CODE_TIMEOUT_MS = 12_000;
@@ -428,16 +433,16 @@ async function fileThought(req: Request, body: Record<string, unknown>, anthropi
 
 // ═══ Le code d'un projet (task "code") ═══
 // Rien de ce qui est lu n'est gardé ni envoyé ailleurs qu'à la page ; les journaux ne gardent que le dépôt et le statut.
-async function github(path: string, token: string): Promise<{ ok: true; data: unknown } | { ok: false; status: number }> {
+async function github(path: string, token: string, raw = false): Promise<{ ok: true; data: unknown } | { ok: false; status: number }> {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), CODE_TIMEOUT_MS);
   try {
     const r = await fetch("https://api.github.com" + path, {
-      headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "ARC-CLAUDE-PROXY" },
+      headers: { "Authorization": `Bearer ${token}`, "Accept": raw ? "application/vnd.github.raw" : "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "ARC-CLAUDE-PROXY" },
       signal: ctl.signal,
     });
     if (!r.ok) return { ok: false, status: r.status };
-    return { ok: true, data: await r.json() };
+    return { ok: true, data: raw ? (await r.text()).slice(0, BOUSSOLE_MAX) : await r.json() };
   } catch {
     return { ok: false, status: 0 };
   } finally {
@@ -448,19 +453,48 @@ function firstLine(x: unknown): string {
   const t = String(x ?? "").split("\n")[0].trim();
   return t.length > CODE_TITLE_MAX ? t.slice(0, CODE_TITLE_MAX - 1) + "…" : t;
 }
+// Le chemin critique d'une boussole : les lignes du tableau de la section « ## 1. ». Une ligne commence par « ✅ » quand
+// elle est faite (« AVEC RÉSERVES » si elle le dit) ; son titre est le premier passage en gras après l'état.
+function plainMd(x: string): string {
+  return x.replace(/\*\*/g, "").replace(/`/g, "").replace(/\s+/g, " ").trim();
+}
+export function readBoussole(md: string): { lignes: { n: number; titre: string; fait: boolean; reserves: boolean }[]; reste: string | null } {
+  const i = md.search(/^## 1\./m);
+  if (i < 0) return { lignes: [], reste: null };
+  const j = md.slice(i + 5).search(/^## /m);
+  const sec = j < 0 ? md.slice(i) : md.slice(i, i + 5 + j);
+  const lignes: { n: number; titre: string; fait: boolean; reserves: boolean }[] = [];
+  for (const row of sec.split("\n")) {
+    const m = row.match(/^\|\s*(\d{1,2})\s*\|\s*(.+?)\s*\|/);
+    if (!m) continue;
+    const cell = m[2];
+    const fait = cell.startsWith("✅");
+    const reserves = fait && /AVEC R[ÉE]SERVES/i.test(cell.slice(0, 120));
+    const bolds = [...cell.matchAll(/\*\*(.+?)\*\*/g)].map((b) => b[1]);
+    let titre = fait ? (bolds.find((b) => !/^(FAITE?|FAITE ET VUE|CODE FAIT|FAITE le .*|FAITE?, .*)$/i.test(b) && !/^FAIT/i.test(b)) ?? "") : (bolds[0] ?? "");
+    titre = plainMd(titre || cell).replace(/[.:;,—\s]+$/, "");
+    if (titre.length > CODE_TITLE_MAX) titre = titre.slice(0, CODE_TITLE_MAX - 1) + "…";
+    lignes.push({ n: Number(m[1]), titre, fait, reserves });
+  }
+  const r = sec.match(/Total estimé restant\s*:\s*([^(\n]+?)\*\*/i) ?? sec.match(/Total estimé restant\s*:\s*\*\*?([^*(\n]+)/i);
+  return { lignes, reste: r ? plainMd(r[1]).replace(/[.\s]+$/, "") : null };
+}
+
 async function projectCode(req: Request, body: Record<string, unknown>): Promise<Response> {
   const key = typeof body.projet === "string" ? body.projet : "";
-  const repo = Object.prototype.hasOwnProperty.call(CODE_REPOS, key) ? CODE_REPOS[key] : null;
-  if (!repo) return fail(req, 400, "Projet sans dépôt connu");
+  const conf = Object.prototype.hasOwnProperty.call(CODE_REPOS, key) ? CODE_REPOS[key] : null;
+  if (!conf) return fail(req, 400, "Projet sans dépôt connu");
+  const repo = conf.repo;
   const token = (Deno.env.get("GITHUB_TOKEN") ?? "").trim();
   if (!token) {
     console.log("code 501 : GITHUB_TOKEN absent");
     return fail(req, 501, "Code non relié : GITHUB_TOKEN absent");
   }
-  const [info, commits, prs] = await Promise.all([
+  const [info, commits, prs, bous] = await Promise.all([
     github(`/repos/${repo}`, token),
     github(`/repos/${repo}/commits?per_page=${CODE_COMMITS}`, token),
     github(`/repos/${repo}/pulls?state=open&per_page=${CODE_PRS}`, token),
+    conf.boussole ? github(`/repos/${repo}/contents/${conf.boussole}`, token, true) : Promise.resolve({ ok: false as const, status: 0 }),
   ]);
   if (!info.ok || !commits.ok) {
     const st = !info.ok ? info.status : (commits as { status: number }).status;
@@ -480,6 +514,7 @@ async function projectCode(req: Request, body: Record<string, unknown>): Promise
       date: String(c?.commit?.committer?.date ?? c?.commit?.author?.date ?? ""),
     })).filter((c) => c.sha && c.titre),
     prs: open.map((p) => ({ n: Number(p?.number) || 0, titre: firstLine(p?.title), maj: String(p?.updated_at ?? "") })).filter((p) => p.n),
+    boussole: bous.ok && typeof bous.data === "string" ? readBoussole(bous.data) : null,
   };
   console.log(`code ${key} : ${out.commits.length} envois, ${out.prs.length} demandes ouvertes`);
   return reply(req, 200, out);

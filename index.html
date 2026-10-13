@@ -2564,6 +2564,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 .wcode-pt{width:8px;height:8px;border-radius:2px;background:color-mix(in srgb,var(--wc,#fff) 55%,#fff)}
 #S2 .wcode-pt.pr{border-radius:50%;background:none;box-shadow:inset 0 0 0 1.8px color-mix(in srgb,var(--wc,#fff) 70%,#fff)}
 #S2 .wcf-s-code{width:7px;height:7px;border-radius:1.5px;background:color-mix(in srgb,var(--wc,#fff) 55%,#fff)}
+
+#S2 .wcode-bous{margin:0 0 10px;padding:6px 0 4px;border-radius:18px;border:1px solid color-mix(in srgb,var(--wc,#fff) 26%,rgba(255,255,255,.08));background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.012)),#0B0B0E}
+#S2 .wcode-bous[hidden]{display:none}
+#S2 .wcode-bh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 16px 6px;font-size:13px;line-height:18px;font-weight:600;color:var(--t2)}
+#S2 .wcode-bn{font-weight:500;text-align:right}
+#S2 .wcode-bl{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:10px;min-height:48px;padding:6px 16px;border-top:1px solid rgba(255,255,255,.06)}
+#S2 .wcode-bnum{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:700;color:#0B0B0F;background:color-mix(in srgb,var(--wc,#fff) 75%,#fff)}
+#S2 .wcode-bl.fait .wcode-bnum{color:#C4C4CC;background:none;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28)}
+#S2 .wcode-bt{font-size:15px;line-height:1.35;font-weight:500;letter-spacing:-.15px;color:#F5F5F7;overflow-wrap:anywhere}
+#S2 .wcode-bl.fait .wcode-bt{font-weight:400;color:#C4C4CC}
+#S2 .wcode-be{font-size:13px;font-weight:600;white-space:nowrap;color:color-mix(in srgb,var(--wc,#fff) 55%,#fff)}
+#S2 .wcode-bl.fait .wcode-be{font-weight:500;color:#A6A6AE}
 </style>
 </head>
 <body>
@@ -2681,6 +2693,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
       <div class="wsec" id="wsec-code" hidden>
         <div class="wsec-head"><span class="wsec-lbl">Le code</span><div class="wsec-line"></div><span class="wsec-info" id="wcode-n"></span></div>
         <p class="wcode-etat" id="wcode-etat" hidden></p>
+        <div class="wcode-bous" id="wcode-bous" hidden></div>
         <div class="wpen wcode" id="wcode-list"></div>
         <button class="wtask-plus" id="wcode-plus" type="button" hidden></button>
       </div>
@@ -4134,13 +4147,13 @@ var WORLDS = [
     id:0, icon:"🚀", name:"ARYAN", color:"#ff6b35", wbg:"#050200", repo:"aryan", repoNom:"RR269/aryan",
     cat:"App · Livraison halal · Valence 26",
     tags:["React + Vite", "Supabase", "Stripe Connect", "Vercel"],
-    desc:"Marketplace de livraison halal locale, en production : client, commerçant, livreur et espace admin. Au tour 113 (4 octobre) : 928 tests verts, 387 dettes numérotées et suivies. Ce qui reste : le dernier mètre avant le premier vrai client.",
+    desc:"Marketplace de livraison halal locale, en production : client, commerçant, livreur et espace admin. Au tour 158 (13 octobre) : panier verrouillé au paiement, pages client refaites, 2 292 tests verts. Ce qui reste : la ligne 8 de la boussole, avant le premier vrai commerçant.",
     mission:"Amener ARYAN à son premier vrai client. Pilote décidé en août : 2 boutiques, 2 à 3 livreurs de confiance, 1 zone, 2 à 3 semaines — les boutiques avant les livreurs.",
     priority:{
       num:1,
-      title:"Essai « Ma boutique », puis réponses Q1-Q4",
-      detail:"Ouvrir « Ma boutique » : le métier Boulangerie doit s'afficher dès l'ouverture, bouton Enregistrer grisé. C'est la seule preuve qui manque à la correction du tour 113. Ensuite, répondre à Q1-Q4 pour débloquer le nettoyage des courses anciennes.",
-      badge:"TOUR 113"
+      title:"Boussole, ligne 8 : la boutique d'essai cachée, la sauvegarde, les quatre comptes",
+      detail:"Avant l'entrée du premier commerçant : la boutique d'essai n'est plus visible d'un client (#392), une sauvegarde automatique de la production est active (#390), la nature des quatre comptes existants est établie (Q1). #454 est faite (11/10). Reste estimé : 1 à 2 tours, plus tes gestes.",
+      badge:"TOUR 158"
     },
     tasks_done:[
       {id:"a1", t:"Projet React créé",
@@ -4184,19 +4197,47 @@ var WORLDS = [
       {id:"a20", t:"Métier de boutique obligatoire + catégories de produit (tours 108-109)",
        prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Chaque boutique a un métier, chaque produit une catégorie. Comment présenter ça à un commerçant en une phrase ?"},
       {id:"a21", t:"Tour 113 en production : métier affiché, en-tête admin, numéro des versements",
-       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le tour 113 est en production (commit ea9f67c). Résume ce qu'il reste à voir de mes yeux pour le clore."}
-    ],
-    tasks_todo:[
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le tour 113 est en production (commit ea9f67c). Résume ce qu'il reste à voir de mes yeux pour le clore."},
       {id:"a30", t:"Essai « Ma boutique » : Boulangerie affichée à l'ouverture, bouton grisé (#385)",
        prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La dette #385 est corrigée mais pas encore vue dans un navigateur. Donne-moi le parcours d'essai exact, en 4 gestes, et ce que je dois noter."},
-      {id:"a31", t:"Rapporter le groupe grisé « Hors du périmètre d'ARYAN » (métiers et catégories)",
-       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Je n'ai pas encore confirmé à l'écran le groupe grisé en bas des listes de métiers et de catégories (tour 109). Où regarder et que noter ?"},
       {id:"a32", t:"Répondre à Q1-Q4, puis nettoyer les courses anciennes (#284)",
        prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — 22 courses sont listées dans l'admin, dont 8 de plus de 30 jours, et 4 payées et capturées attendent un livreur. Aide-moi à trancher Q1-Q4 : pose-moi les questions une par une avec les conséquences de chaque réponse."},
       {id:"a33", t:"Lire les deux anomalies Stripe en production (#387)",
        prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Deux événements stripe_anomaly « à router » apparaissent dans la salle de commandement, sans date, jamais lus. Comment les instruire proprement, et que décider selon ce qu'ils contiennent ?"},
       {id:"a34", t:"Mettre à jour la boussole (ligne 6, §0.5, ligne 7)",
        prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La boussole du projet doit être mise à jour avec mon accord. Aide-moi à formuler les trois lignes à partir de ce que j'ai vu le 4 octobre."},
+      {id:"a50", t:"Catalogue : ce qu'ARYAN ne vend pas est interdit (boussole ligne 6, 03/10)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La ligne 6 de la boussole est faite avec réserves (#381, #380). Que reste-t-il à surveiller ?"},
+      {id:"a51", t:"Production nettoyée des données de test, courses visibles dans l'admin (ligne 7, 05/10)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La ligne 7 est faite avec réserves : la boutique d'essai reste en production (#392). Comment la traiter avant le premier commerçant ?"},
+      {id:"a52", t:"Vue publique des boutiques fermée à l'écriture (#454, 11/10)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — #454 est fermée (migration 20261011080316). Quelle autre écriture vérifier avant le premier commerçant ?"},
+      {id:"a53", t:"Pages client refaites : boutiques, boutique, fiche produit, panier (10-12/10)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Les pages client ont été refaites du 10 au 12 octobre. Que faire voir en premier à un commerçant ?"},
+      {id:"a54", t:"Panier verrouillé au paiement, et l'écran le dit (#425, #467, 13/10)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le verrou du panier est en production et l'écran le dit. Quel parcours de test faire sur téléphone ?"}
+    ],
+    tasks_todo:[
+      {id:"a60", t:"Cacher la boutique d'essai aux clients (#392)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Boussole ligne 8 : un vrai client ne doit pas commander dans la boutique d'essai. Quelle est la façon la plus sûre de la cacher ?"},
+      {id:"a61", t:"Activer la sauvegarde automatique de la production (#390)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La production tourne sans sauvegarde automatique (#390), due avant le premier commerçant. Que dois-je faire et vérifier ?"},
+      {id:"a62", t:"Établir la nature des quatre comptes existants (Q1)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Boussole ligne 8, Q1 : quatre comptes existent en production. Que faut-il établir pour chacun ?"},
+      {id:"a63", t:"Commande de test sur téléphone : le verrou du panier et son écran", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Tour 158 : créer un groupe, revenir au panier, lire le bandeau, ouvrir la commande, l'annuler. Que noter à chaque étape ?"},
+      {id:"a64", t:"Supprimer les sauvegardes aux dates prévues (#391 : 04/11, 10/11, 12/11)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Trois dossiers de sauvegarde ont une date de suppression (#391). Comment ne pas les oublier ?"},
+      {id:"a65", t:"Avis d'un juriste sur le statut du livreur (#125)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le statut juridique du livreur conditionne la forme du paiement (#125). Quelles questions poser à un juriste ?"},
+      {id:"a66", t:"Stripe en réel : renommer le compte, taux et délai réels, documentation des transferts (#339)", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Avant le réel : renommer le compte Stripe, relever taux et délai réels, lire la documentation des transferts. Dans quel ordre ?"},
+      {id:"a67", t:"Pages légales : mentions, CGU et CGV", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Les blancs légaux restent à remplir avant le réel. Lesquels en premier ?"},
+      {id:"a68", t:"Trouver le premier commerçant et le premier livreur", maj:"2026-10-13",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Le premier commerçant dira quelles catégories le catalogue doit vraiment couvrir. Prépare mon approche pour un commerçant de Valence."},
+      {id:"a31", t:"Rapporter le groupe grisé « Hors du périmètre d'ARYAN » (métiers et catégories)",
+       prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Je n'ai pas encore confirmé à l'écran le groupe grisé en bas des listes de métiers et de catégories (tour 109). Où regarder et que noter ?"},
       {id:"a35", t:"Livreur affiché « En ligne » sans aucune course (#345)",
        prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — Un livreur qui ferme l'app reste affiché en ligne. Quelles règles simples pour le repasser hors ligne, et quels risques pour le pilote si je ne corrige pas ?"},
       {id:"a36", t:"Verrou de publication sur l'identité légale (#95)",
@@ -4210,26 +4251,26 @@ var WORLDS = [
       {id:"a40", t:"Bascule Stripe en réel : clés, webhook, comptes Connect à recréer",
        prompt:"ARYAN (marketplace de livraison halal locale, Valence ; React + Vite, Supabase, Stripe Connect, en production sur aryan-drab.vercel.app) — La bascule en réel dépend du terrain, du juridique et des CGU. Donne-moi la liste de contrôle dans l'ordre, avec le point de non-retour."}
     ],
+    blockersMaj:"2026-10-13",
     blockers:[
-      "Quatre courses payées et capturées attendent un livreur ; 8 courses sur 22 ont plus de 30 jours (#284)",
-      "Deux anomalies Stripe signalées, jamais lues (#387)",
-      "Bascule en réel conditionnée au terrain, au juridique et aux CGU (point d'août, à confirmer)"
+      "Avant le premier commerçant : la boutique d'essai est visible des clients (#392) et la production n'a aucune sauvegarde automatique (#390)",
+      "Avant le premier vrai livreur : son statut juridique, à trancher par un juriste (#125)"
     ],
     nextActions:[
-      "Faire l'essai « Ma boutique » et rapporter ce que je vois",
-      "Répondre à Q1-Q4",
-      "Lire les deux anomalies Stripe en production",
-      "Mettre à jour la boussole",
-      "Prospecter les 2 boutiques du pilote"
+      "Cacher la boutique d'essai aux clients",
+      "Activer la sauvegarde automatique",
+      "Établir la nature des quatre comptes",
+      "Commande de test sur téléphone",
+      "Trouver le premier commerçant"
     ],
     suggestions:[
-      "Où en est ARYAN par rapport au premier vrai client ?",
-      "Aide-moi à trancher Q1-Q4 sur les courses anciennes",
+      "Où en est ARYAN par rapport au premier vrai commerçant ?",
+      "Qu'est-ce qui reste sur la ligne 8 de la boussole ?",
       "Prépare mon argumentaire pour un commerçant de Valence",
-      "Quelles dettes traiter avant le pilote, lesquelles après ?"
+      "Quelles questions poser à un juriste sur le statut du livreur ?"
     ],
     lovable:"https://aryan-drab.vercel.app", linkLabel:"Prod ↗",
-    context:"ARYAN — marketplace de livraison halal locale, Valence\nStack : React + Vite, Supabase, Stripe Connect, Vercel (aryan-drab.vercel.app)\nRôles : client, commerçant, livreur, admin\nÉtat au 4 octobre 2026 (tour 113) : 928 tests verts, 387 dettes numérotées, dernière mise en production ea9f67c\nPilote décidé : 2 boutiques, 2-3 livreurs, 1 zone, 2-3 semaines ; offre 0 % pendant 3 semaines puis 17 %, tarif fondateur\nOuvert : essai « Ma boutique » (#385), courses anciennes (#284, Q1-Q4), anomalies Stripe (#387), état en ligne (#345), verrou de publication (#95)\nMéthode : une cause se prouve avant de se corriger ; rien n'est clos sans que Rayan l'ait vu à l'écran"
+    context:"ARYAN — marketplace de livraison halal locale, Valence\nStack : React + Vite, Supabase, Stripe Connect, Vercel (aryan-drab.vercel.app)\nRôles : client, commerçant, livreur, admin\nÉtat au 13 octobre 2026 (tour 158, dépôt RR269/aryan) : boussole lignes 2 à 7 faites (5, 6, 7 avec réserves), ligne 1 code fait, ligne 8 ouverte (#392, #390, Q1), reste estimé 1 à 2 tours ; panier verrouillé au paiement (#425, #467)\nPilote décidé : 2 boutiques, 2-3 livreurs, 1 zone, 2-3 semaines ; offre 0 % pendant 3 semaines puis 17 %, tarif fondateur\nAvant le réel : statut du livreur (#125), Stripe en réel (#339), pages légales\nMéthode : une cause se prouve avant de se corriger ; rien n'est clos sans que Rayan l'ait vu à l'écran"
   },
   {
     id:1, icon:"📦", name:"FBA", color:"#ff9f0a", wbg:"#050300",
@@ -4495,7 +4536,7 @@ var S = {tasks:{},notes:{},journal:{},custom:{},blkCustom:{},seen:new Date().toI
 
 /* Mondes v2 (octobre 2026) : Trading retiré, Atlas prend sa place (id 4), ARYAN remis à son état réel.
    Les données de l'ancien monde Trading sont mises de côté dans S.archive.trading, jamais effacées. */
-var WORLDS_V=3;
+var WORLDS_V=4;
 function migrateWorlds(){
   var v=S._worldsV||0;
   if(v>=WORLDS_V) return;
@@ -4511,6 +4552,17 @@ function migrateWorlds(){
   // v3 (8 octobre 2026) : décision de Rayan du 5 octobre, FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
   // Posé une seule fois : ensuite c'est Rayan qui réveille ou endort un projet (S.sleep, par identifiant de monde).
   if(v<3){ if(!S.sleep) S.sleep={}; [1,2,3].forEach(function(i){ if(S.sleep[i]===undefined) S.sleep[i]=true; }); }
+  // v4 (13 octobre 2026) : ARYAN recalé sur son dépôt (tour 158, boussole du 12/10). Rayan, 9 h 05 : l'essai « Ma
+  // boutique » (#385), les anomalies Stripe (#387) et les courses anciennes (#284, Q1-Q4) sont faits. Ce qui est fait
+  // est coché ; les tâches d'avril dépassées (hors du chemin critique ou remplacées) sont retirées, jamais effacées :
+  // elles restent sous « Retirées », avec « Remettre ».
+  if(v<4){
+    if(!S.tasks) S.tasks={}; if(!S.tasks[0]) S.tasks[0]={};
+    ["a30","a32","a33","a34","a50","a51","a52","a53","a54"].forEach(function(id){ S.tasks[0][id]=true; });
+    if(!S.revue) S.revue={}; if(!S.revue[0]) S.revue[0]={};
+    ["a31","a35","a36","a37","a38","a39","a40"].forEach(function(id){ if(!S.revue[0]["t:"+id]) S.revue[0]["t:"+id]={ v:"retire", at:Date.now() }; });
+    if(S.focus && ["a30","a31","a32","a33","a34","a35","a36","a37","a38","a39","a40"].indexOf(S.focus[0])>=0) S.focus[0]=null;
+  }
   S._worldsV=WORLDS_V;
 }
 /* Un projet endormi reste entier (tâches, notes, journal) : il quitte seulement les projets en cours de l'accueil. */
@@ -7616,8 +7668,9 @@ function revuePoser(wid, cle, v) {
 function revueFile(w) {
   if(!w || w.cree) return [];
   var fait = S.tasks[w.id] || {}, out = [];
-  (w.tasks_todo || []).concat(w.tasks_done || []).forEach(function(t) { if(t && !fait[t.id] && !revueEtat(w.id, 't:' + t.id)) out.push({ cle: 't:' + t.id, type: 'tache', id: t.id, txt: t.t }); });
-  (w.blockers || []).forEach(function(b) { if(!revueEtat(w.id, blocCle(b))) out.push({ cle: blocCle(b), type: 'bloquant', txt: b }); });
+  // Ce qui a été recalé sur le dépôt (t.maj, w.blockersMaj) n'est pas « écrit en avril » : il ne passe pas en revue
+  (w.tasks_todo || []).concat(w.tasks_done || []).forEach(function(t) { if(t && !t.maj && !fait[t.id] && !revueEtat(w.id, 't:' + t.id)) out.push({ cle: 't:' + t.id, type: 'tache', id: t.id, txt: t.t }); });
+  if(!w.blockersMaj) (w.blockers || []).forEach(function(b) { if(!revueEtat(w.id, blocCle(b))) out.push({ cle: blocCle(b), type: 'bloquant', txt: b }); });
   return out;
 }
 function revueBilan(wid) { var r = (S.revue || {})[wid] || {}, n = { garde: 0, fait: 0, retire: 0 }; Object.keys(r).forEach(function(k) { if(n[r[k].v] != null) n[r[k].v]++; }); return n; }
@@ -7731,7 +7784,7 @@ function renderCode() {
   var c = codeDe(w), d = c && c.data, list = document.getElementById('wcode-list'), info = document.getElementById('wcode-n'), etat = document.getElementById('wcode-etat');
   list.innerHTML = '';
   // Un dépôt relié mais sans aucun envoi ni demande ouverte : rien à dire, pas de section
-  if(c && !c.erreur && d && !(d.commits || []).length && !(d.prs || []).length) { sec.hidden = true; return; }
+  if(c && !c.erreur && d && !(d.commits || []).length && !(d.prs || []).length && !(d.boussole && (d.boussole.lignes || []).length)) { sec.hidden = true; return; }
   var der = codeDernier(w);
   info.textContent = der ? 'Envoyé ' + ilYA(der) : '';
   var msg = '';
@@ -7739,8 +7792,25 @@ function renderCode() {
   else if(c && c.erreur) msg = 'GitHub n’a pas répondu (' + c.erreur + ').' + (d ? ' Dernière lecture ' + ilYA(c.lu || c.at) + '.' : '');
   else if(!c) msg = 'Lecture du code…';
   etat.textContent = msg; etat.hidden = !msg;
+  var bous = document.getElementById('wcode-bous'); bous.innerHTML = ''; bous.hidden = !(d && d.boussole && (d.boussole.lignes || []).length);
   if(!d) { document.getElementById('wcode-plus').hidden = true; return; }
   if(!c.erreur) c.lu = c.at;
+  if(!bous.hidden) {
+    // Le chemin critique, lu dans la boussole du dépôt : une ligne par point, son état tel que la boussole l'écrit
+    var B = d.boussole, ouvertes = B.lignes.filter(function(l) { return !l.fait; }).length;
+    var h = document.createElement('div'); h.className = 'wcode-bh';
+    var ht = document.createElement('span'); ht.textContent = 'Chemin critique · boussole du dépôt'; h.appendChild(ht);
+    var hn = document.createElement('span'); hn.className = 'wcode-bn'; hn.textContent = (ouvertes ? ouvertes + (ouvertes > 1 ? ' ouvertes' : ' ouverte') : 'Tout est fait') + (B.reste ? ' · reste ' + B.reste : ''); h.appendChild(hn);
+    bous.appendChild(h);
+    B.lignes.forEach(function(l) {
+      var r = document.createElement('div'); r.className = 'wcode-bl' + (l.fait ? ' fait' : '');
+      var n = document.createElement('span'); n.className = 'wcode-bnum'; n.textContent = l.n; n.setAttribute('aria-hidden', 'true');
+      var tx = document.createElement('span'); tx.className = 'wcode-bt'; tx.textContent = l.titre.charAt(0).toUpperCase() + l.titre.slice(1);
+      var e = document.createElement('span'); e.className = 'wcode-be'; e.textContent = l.fait ? (l.reserves ? 'Faite, avec réserves' : 'Faite') : 'À faire';
+      r.setAttribute('aria-label', 'Ligne ' + l.n + ' : ' + tx.textContent + ', ' + e.textContent);
+      r.appendChild(n); r.appendChild(tx); r.appendChild(e); bous.appendChild(r);
+    });
+  }
   (d.prs || []).slice(0, 3).forEach(function(p) {
     var a = document.createElement('a'); a.className = 'wpen-row wcode-pr'; a.href = codeUrl(w) + '/pull/' + p.n; a.target = '_blank'; a.rel = 'noopener';
     var pt = document.createElement('span'); pt.className = 'wcode-pt pr'; pt.setAttribute('aria-hidden', 'true');
@@ -7800,6 +7870,8 @@ function watContexte(w) {
   var lies = projetLies(wid); if(lies.length) lignes.push('Projets reliés : ' + lies.join(', '));
   var cd = codeDe(w), envois = cd && cd.data ? (cd.data.commits || []).slice(0, 12) : [], prs = cd && cd.data ? (cd.data.prs || []).slice(0, 5) : [];
   if(envois.length) lignes.push('Travail réel dans le code du projet (derniers envois, du plus récent au plus ancien) :\n' + envois.map(function(c) { var d = Date.parse(c.date); return '- ' + (d ? new Date(d).toLocaleDateString('fr-FR') + ' ' : '') + c.titre; }).join('\n'));
+  var bl2 = cd && cd.data && cd.data.boussole ? cd.data.boussole.lignes || [] : [];
+  if(bl2.length) lignes.push('Chemin critique (boussole du dépôt, à jour) :\n' + bl2.map(function(l) { return '- ligne ' + l.n + ' : ' + l.titre + ' — ' + (l.fait ? (l.reserves ? 'faite, avec réserves' : 'faite') : 'à faire'); }).join('\n') + (cd.data.boussole.reste ? '\nReste estimé : ' + cd.data.boussole.reste : ''));
   if(prs.length) lignes.push('Demandes de fusion ouvertes :\n' + prs.map(function(p) { return '- n° ' + p.n + ' ' + p.titre; }).join('\n'));
   var parti = ['la mission'];
   if(L.todo.length + L.done.length) parti.push((L.todo.length + L.done.length) + ((L.todo.length + L.done.length) > 1 ? ' tâches' : ' tâche'));
@@ -7808,6 +7880,7 @@ function watContexte(w) {
   if(jou.length) parti.push(jou.length + (jou.length > 1 ? ' entrées du journal' : ' entrée du journal'));
   if(notes) parti.push('tes notes');
   if(envois.length) parti.push(envois.length + (envois.length > 1 ? ' envois du code' : ' envoi du code'));
+  if(bl2.length) parti.push('le chemin critique de la boussole');
   var dernier = parti.pop();
   return { texte: lignes.join('\n\n'), parti: (parti.length ? parti.join(', ') + ' et ' : '') + dernier };
 }
