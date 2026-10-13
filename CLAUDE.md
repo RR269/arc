@@ -1661,6 +1661,53 @@ ARC en orbite, et Relier (11 octobre) :
     Vérifié dans Chromium seulement : **la fluidité des orbites et le toucher des points restent à voir par Rayan sur
     son iPhone.**
 
+- **PR #55 fusionnée le 13 octobre.** Rayan (7 h 40), après l'avoir vue sur son iPhone : le haut (la carte vivante) est
+  accepté ; « à l'intérieur des mondes, il faut vraiment retravailler tout le contenu ». Questions à choix : le bas sert
+  d'abord à **construire avec Claude** ; le contenu d'avril : **on le révise ensemble** ; ce qu'on fusionne : « choisis
+  le meilleur » ; l'agent de nuit (vu dans une vidéo, il prépare et Rayan valide le matin) : **après les mondes**.
+  Avis donné : le graphe de la vidéo, ARC l'a déjà (liens confirmés) ; un agent qui agit seul n'est pas recommandé
+  (« ARC propose, Rayan confirme » reste) ; un agent qui prépare la nuit demanderait que Claude lise une bonne partie
+  d'ARC, ce qui touche la règle « jamais tout ARC » : décision de Rayan, à venir.
+- **Le bas d'un monde : construire (branche `monde-construire`, 13 octobre 8 h)**. Ordre sous la carte : **Avec ARC**,
+  Tâches, **Mémoire**, Projets liés, **Le projet**, Endormir. Fait :
+  - **Avec ARC** (`#wsec-arc`, module « AVEC ARC » : `watContexte`, `watEnvoyer`, `watLire`, `watAjouter`, `watRendre`) :
+    une conversation sur CE projet, sur iPhone comme sur Mac. **Le panneau Claude de droite (Mac, `#wcp`) n'est plus
+    montré** (son code reste ; son ancien historique n'est pas repris). À chaque demande, et seulement sur le geste de
+    Rayan (touche d'envoi, Entrée sur Mac, ou une des trois suggestions tant que la conversation est vide), partent au
+    proxy : nom, catégorie, mission, description, état, tâches à faire (15) et faites (nombre, 5 titres), ce qui bloque,
+    pensées rangées ici (10), journal (8 dernières), notes libres (700 caractères), projets reliés. Une ligne vraie le dit
+    avant (« Partira à Claude avec ta demande : … ») et après (« Parti à Claude : … »). Chemin de la discussion du proxy,
+    900 jetons, consigne `WAT_SYSTEM` (court, conclusion d'abord, aucun fait inventé, JSON `reponse` / `propositions`),
+    **aucun redéploiement**. Lecture tolérante (bloc ```json, clés accentuées, texte brut accepté). Claude propose au plus
+    trois actions : **Tâche** (va dans `S.custom`), **Journal**, **Bloquant** ; **rien n'entre sans « Ajouter »**, qui devient
+    « Ajouté ». Les huit derniers messages partent avec la demande, en alternance. La conversation est gardée **sur
+    l'appareil seulement** (`arc_atelier_v1`, trente messages par projet, jamais dans `S` ni dans Supabase) ; seul le
+    dernier échange se voit, « Voir les N messages d'avant » ; « Effacer » en deux gestes. Panne : la raison en mots
+    (`PJ_RAISONS`) et « Réessayer ».
+  - **La revue d'avril** (`#wrevue`, feuille `#revue-modal`, `revueOuvrir`, `revueChoisir`, `revueRetour`, `renderRevue`) :
+    pour les cinq projets d'origine seulement, chaque tâche écrite pas encore faite et chaque bloquant écrit, un à la
+    fois : « Toujours à faire » (blanc) / « Déjà faite » / « Plus d'actualité » ; « Toujours vrai » / « Résolu » ;
+    « Revenir au précédent ». Données : `S.revue[wid][clé] = { v: 'garde'|'fait'|'retire', at }` (clés `t:` + id,
+    `b:` + 60 caractères ; `revueEtat`, `tacheRetiree`, `blocCle`, synchronisé comme les autres objets). « Déjà faite »
+    coche la tâche **sans** `S.taskDone` (elle ne compte pas dans « étapes faites aujourd'hui »). **Une tâche ou un bloquant
+    retiré quitte la liste, la carte, les pourcentages (anneau, accueil, planète) et la recherche** (`tachesEcrites`,
+    `bloquantsActifs`) ; rien n'est effacé : « Retirées (N) » dans les tâches dépliées et « N résolus » dans « Ce qui
+    bloque » avec « Remettre ».
+  - **Mémoire** (`#wsec-memoire`, `renderMemoire`, `memFil`) : les pensées rangées ici et le journal sur un seul fil, du
+    plus récent au plus ancien (« Pensée · faite · déposée il y a 2 j », « Journal · hier ») ; huit lignes puis « Voir les
+    N autres » ; une entrée du journal se supprime en deux gestes (« Supprimer », 4 s) ; « Note du jour, décision,
+    avancée… » ajoute au journal ; les **notes libres** sont repliées dessous (« Notes libres · 3 mots »). Les sections
+    Pensées, Journal et Notes séparées n'existent plus ; `renderJournal` appelle `renderMemoire` ; `sectionsVides` est vide.
+  - **« Le projet »** : mission, étiquettes, description repliée, puis **Ce qui bloque** (chaque bloquant avec « Résolu »)
+    et **Outils**. **Les quatre compteurs sont retirés** (la carte, sa fiche et « N à faire » les disent) ; `allerA('journal')`
+    mène à la Mémoire.
+  - Tests : mondes 16/16 (le contrôle des compteurs est remplacé par quatre contrôles : Avec ARC, sa ligne vraie, ce qui
+    part, « Ajouter », la conversation qui suit, la panne et « Réessayer » ; la revue, « Revenir », retirée hors liste,
+    carte et pourcentage, « Remettre » ; la Mémoire, la suppression en deux gestes, les notes, « Résolu » et « Remettre » ;
+    contraste du bas et de la revue, Échap), accueil (les pensées d'un projet se lisent dans sa Mémoire), cockpit (« C'est
+    fait » se lit dans « N à faire »), projet (le bas d'un projet neuf), recherche (une entrée du journal ouvre la Mémoire).
+    Vérifié dans Chromium seulement, contre un faux proxy : **le vrai Claude reste à essayer par Rayan sur son iPhone.**
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

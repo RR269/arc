@@ -463,14 +463,15 @@ for (const vp of ECRANS) {
     document.activeElement && document.activeElement.blur(); enterWorld(0);
   }, T);
   await page.waitForTimeout(500);
-  const lire = () => page.evaluate(() => { const s = document.getElementById('wsec-pensees');
-    return { vu: !s.hidden && s.offsetParent !== null, n: document.getElementById('wpen-n').textContent,
-             lignes: [...document.querySelectorAll('#wpen-list .wpen-row')].map(e => ({ t: e.querySelector('.wpen-t').textContent, m: e.querySelector('.wpen-m').textContent, fait: e.classList.contains('fait'), h: Math.round(e.getBoundingClientRect().height) })) }; });
+  // Depuis le 13 octobre, les pensées d'un projet vivent dans sa Mémoire, avec le journal, du plus récent au plus ancien
+  const lire = () => page.evaluate(() => { const s = document.getElementById('wsec-memoire');
+    return { vu: !s.hidden && s.offsetParent !== null, n: document.getElementById('wmem-n').textContent,
+             lignes: [...document.querySelectorAll('#jou-list .wpen-row:not(.wmem-jou)')].map(e => ({ t: e.querySelector('.wpen-t').textContent, m: e.querySelector('.wpen-m').textContent, fait: e.classList.contains('fait'), h: Math.round(e.getBoundingClientRect().height) })) }; });
   const a = await lire();
-  await page.evaluate(() => document.getElementById('wsec-pensees').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
-  const m = await mesurer(page, { racine: '#wsec-pensees' });
-  await page.evaluate(() => document.querySelectorAll('#wpen-list .wpen-row')[0].click()); await page.waitForTimeout(400);
-  const ouvert = await page.evaluate(() => { const it = document.querySelector('#depot-list [data-id="' + document.querySelectorAll('#wpen-list .wpen-row')[0].dataset.tid + '"]'); const r = it && it.getBoundingClientRect();
+  await page.evaluate(() => document.getElementById('wsec-memoire').scrollIntoView({ block: 'center' })); await page.waitForTimeout(200);
+  const m = await mesurer(page, { racine: '#wsec-memoire' });
+  await page.evaluate(() => document.querySelectorAll('#jou-list .wpen-row:not(.wmem-jou)')[0].click()); await page.waitForTimeout(400);
+  const ouvert = await page.evaluate(() => { const it = document.querySelector('#depot-list [data-id="' + document.querySelectorAll('#jou-list .wpen-row:not(.wmem-jou)')[0].dataset.tid + '"]'); const r = it && it.getBoundingClientRect();
     return document.getElementById('depot-screen').classList.contains('open') && !!r && r.top >= 0 && r.bottom <= innerHeight; });
   await page.evaluate(() => { depotClose(); enterWorld(1); }); await page.waitForTimeout(300);
   const fba = await lire();
@@ -487,11 +488,11 @@ for (const vp of ECRANS) {
   const t = a.lignes.map(l => l.t).join(' | ');
   // sans faux proxy, le faux Supabase répond 500 au rangement (tests/outils.mjs, « pas de faux proxy ») : rangé ici à la main
   const vraies = errors.filter(e => !/status of 500/.test(e));
-  ok(a.vu && a.n === '2 à faire' && t === 'Refaire la page produit | Appeler le fournisseur des sacs | Vérifier le paiement test'
-     && /^Demain · 09:00 · déposée/.test(a.lignes[1].m) && a.lignes[2].fait && /^Faite · déposée/.test(a.lignes[2].m) && a.lignes.every(l => l.h >= 44)
-     && ouvert && !fba.vu && atlas.vu && atlas.lignes.length === 1 && atlas.lignes[0].t === 'Relire les statuts' && jur.vu && jur.n === '1 à faire' && jur.lignes.join() === 'Relancer la banque' && !mj.sous.length && !sante && !m.sous.length && m.n >= 6 && !vraies.length,
-     'Projet et Juridique : leurs pensées rangées s\'y retrouvent (à faire puis faites, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section (Santé comprise) ; contraste ≥ 4,5 : 1',
-     `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.vu ? 'section visible' : 'sans section'} ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; Juridique « ${jur.n} » ${jur.lignes.join(', ')}, le plus faible ${mj.pire ? fmt(mj.pire.ratio) : '?'} ; Santé ${sante ? 'section visible sans pensée' : 'section cachée (aucune pensée)'} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
+  ok(a.vu && a.n === '2 pensées à faire' && t === 'Vérifier le paiement test | Refaire la page produit | Appeler le fournisseur des sacs'
+     && /^Pensée · Demain · 09:00 · déposée/.test(a.lignes[2].m) && a.lignes[0].fait && /^Pensée · faite · déposée/.test(a.lignes[0].m) && a.lignes.every(l => l.h >= 44)
+     && ouvert && !fba.lignes.length && atlas.vu && atlas.lignes.length === 1 && atlas.lignes[0].t === 'Relire les statuts' && jur.vu && jur.n === '1 à faire' && jur.lignes.join() === 'Relancer la banque' && !mj.sous.length && !sante && !m.sous.length && m.n >= 6 && !vraies.length,
+     'Projet et Juridique : leurs pensées rangées s\'y retrouvent (dans la Mémoire du projet, de la plus récente à la plus ancienne, moment et date), ni annulées ni rangées ailleurs ; la ligne ouvre « Déposé » sur elle ; sans pensée, pas de section (Santé comprise) ; contraste ≥ 4,5 : 1',
+     `ARYAN « ${a.n} » : ${t} ; métas ${a.lignes.map(l => l.m).join(' | ')} ; ouvre Déposé ${ouvert} ; FBA ${fba.lignes.length} pensée(s) ; ATLAS ${atlas.lignes.map(l => l.t).join(', ')} ; Juridique « ${jur.n} » ${jur.lignes.join(', ')}, le plus faible ${mj.pire ? fmt(mj.pire.ratio) : '?'} ; Santé ${sante ? 'section visible sans pensée' : 'section cachée (aucune pensée)'} ; ${m.n} morceaux, le plus faible ${m.pire ? fmt(m.pire.ratio) : '?'}${vraies.length ? ' ; ' + vraies.join(' | ') : ''}`);
   await ctx.close();
 }
 

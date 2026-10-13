@@ -85,7 +85,7 @@ const vus = page => page.evaluate(() => {
   const o2 = await page.evaluate(() => ({ cockpit: document.getElementById('cockpit').classList.contains('open'), tache: cockpitState.tid === WORLDS[4].tasks_todo[0].id, notes: document.getElementById('cockpit-textarea').value }));
   await page.evaluate(() => closeCockpit()); await page.waitForTimeout(150);
   await chercher(page, 'decision prise'); await page.tap('#search-results .sr-item'); await page.waitForTimeout(400);
-  const o3 = await page.evaluate(() => { const r = document.getElementById('wsec-journal').getBoundingClientRect(); return { monde: !document.getElementById('S2').classList.contains('off') && CUR.wid === 0, journal: r.top < innerHeight && r.bottom > 0 }; });
+  const o3 = await page.evaluate(() => { const r = document.getElementById('wsec-memoire').getBoundingClientRect(); return { monde: !document.getElementById('S2').classList.contains('off') && CUR.wid === 0, journal: r.top < innerHeight && r.bottom > 0 }; });
   await page.evaluate(() => goHome()); await page.waitForTimeout(150);
   await chercher(page, 'urssaf'); await page.tap('#search-results .sr-item'); await page.waitForTimeout(400);
   const o4 = await page.evaluate(() => ({ jur: !document.getElementById('S4').classList.contains('off'), champ: document.getElementById('jur-search-inp').value }));
