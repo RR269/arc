@@ -1708,6 +1708,46 @@ ARC en orbite, et Relier (11 octobre) :
     fait » se lit dans « N à faire »), projet (le bas d'un projet neuf), recherche (une entrée du journal ouvre la Mémoire).
     Vérifié dans Chromium seulement, contre un faux proxy : **le vrai Claude reste à essayer par Rayan sur son iPhone.**
 
+- **PR #56 fusionnée le 13 octobre.** Rayan (8 h 21) : « je bosse sur ARYAN et ATLAS tous les jours, depuis très
+  longtemps ; la synchronisation ne s'est pas faite en temps réel, ni du tout ». Précisé par question à choix : **son vrai
+  travail → ARC** (pas la synchronisation entre appareils, qui marche depuis le 10 octobre).
+- **Cause prouvée** : ARC n'a jamais lu les dépôts. Le contenu d'ARYAN et d'ATLAS est écrit dans `WORLDS` (ARYAN au
+  tour 113, 4 octobre) ; aucune ligne d'`index.html` ne lit GitHub ; « Code ↗ » ouvrait `https://github.com`
+  (`index.html`, gestionnaire `btn-code`). Pendant ce temps, `RR269/aryan` a reçu des envois chaque jour jusqu'au
+  13 octobre à 4 h 59 (`bce5472`, PANIER-ÉCRAN-1, tour ~158) et `RR269/atlas` jusqu'à 5 h 22 (`f2de32e`), lus le 13 octobre
+  par un clone en lecture seule (hors dépôt d'ARC).
+- **Le code relié (branche `code-relie`, 13 octobre 8 h 40)** :
+  - **Proxy, task « code »** (`projectCode`, `github`, `CODE_REPOS` : `aryan` → `RR269/aryan`, `atlas` → `RR269/atlas`) :
+    lecture seule de l'API GitHub avec le secret `GITHUB_TOKEN` (facultatif ; absent → 501 « Code non relié », le reste du
+    proxy marche comme avant) : le dépôt (`pushed_at`), les 20 derniers envois (sha court, première ligne, date), les
+    10 demandes de fusion ouvertes. Seuls les dépôts de la liste ; un autre compte → 403 avant toute lecture ; rien ne
+    part à Anthropic ; les journaux ne gardent ni les messages ni le jeton. **À redéployer par Rayan, avec le secret.**
+  - **Page** (module « LE CODE D'UN PROJET » : `codeCharger`, `codeTousCharger`, `codeDe`, `codeDernier`, `renderCode`,
+    `codeUrl`) : `WORLDS` porte `repo` et `repoNom` pour ARYAN et ATLAS. Lecture au lancement avec session (`depotSync`),
+    à l'entrée dans le projet, toutes les deux minutes tant qu'il est ouvert, au retour au premier plan et au retour du
+    réseau (90 s au moins entre deux lectures d'un même dépôt). Gardé sur l'appareil (`arc_code_v1`), jamais dans `S` ni
+    dans Supabase.
+  - **Ce qui en sort** : la section **« Le code »** (`#wsec-code`, en tête du bas, juste sous la carte) : « Envoyé il y a
+    3 h », les demandes de fusion ouvertes, les cinq derniers envois (« Envoi · il y a 3 h · bce5472 »), chacun ouvre
+    GitHub ; « Voir les N envois d'avant ». Sans jeton : « Le code d'ARYAN n'est pas encore relié : il le sera dès que le
+    jeton GitHub est posé dans Supabase. » ; panne : la raison et l'heure de la dernière lecture. **L'activité vraie** :
+    `projetActivite` compte le dernier envoi (accueil « Actif aujourd'hui », planète). **La carte du monde** : les douze
+    derniers envois, petits carrés sur l'orbite du fait (fiche « Envoi de code · il y a 3 h · … · Ouvrir » vers GitHub ;
+    légende « Code »). **Avec ARC** : les douze derniers envois et les demandes ouvertes partent dans le contexte (la ligne
+    vraie dit « 8 envois du code ») ; suggestion « Qu'est-ce qui est déjà fait d'après mon code ? » ; nouvelle proposition
+    **« Déjà faite »** (titre exact d'une tâche à faire) : « Cocher » la coche comme la revue (`S.revue` « fait », sans
+    `S.taskDone`), « Introuvable » si aucun titre ne correspond. « Code ↗ » ouvre le vrai dépôt.
+  - Tests : proxy 45/45 (quatre contrôles ajoutés : sans jeton 501 sans appel ; projet hors liste 400, `__proto__`
+    compris ; lecture d'ARYAN, première ligne seulement, jeton en en-tête, rien dans les journaux ; jeton refusé 502,
+    autre compte 403 avant lecture), mondes 18/18 (deux contrôles ajoutés : lecture au lancement, accueil, section, liens,
+    points et fiche, suggestion ; contexte d'Avec ARC, « Déjà faite » cochée sur geste, introuvable, FBA sans section,
+    « pas encore relié »). `tests/outils.mjs` : le faux Supabase répond à part à la task « code » (`fk.code`, par défaut
+    un dépôt vide, compté dans `log.codeCalls`), pour ne pas fausser les comptes d'appels des autres essais.
+  - **À faire par Rayan, sans quoi la section dit « pas encore relié »** : (1) GitHub › Settings › Developer settings ›
+    Fine-grained tokens › Generate : dépôts `aryan` et `atlas` seulement ; permissions Contents et Pull requests en
+    lecture seule ; (2) Supabase › Edge Functions › Secrets : `GITHUB_TOKEN` = ce jeton ; (3) redéployer
+    `ARC-CLAUDE-PROXY` avec le fichier de cette branche ; (4) fusionner la PR.
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).

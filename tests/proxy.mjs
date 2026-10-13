@@ -24,8 +24,19 @@ globalThis.fetch = async (url, init = {}) => {
     const b = JSON.parse(init.body); sent.push(b);
     return Response.json(anthropic ? anthropic(b) : { content: [{ type: 'text', text: 'ok' }] });
   }
+  if (url.startsWith('https://api.github.com/')) {
+    gh.push({ url, auth: init.headers && init.headers.Authorization });
+    if (ghMode === 'refus') return new Response('{"message":"Bad credentials"}', { status: 401 });
+    if (url.endsWith('/repos/RR269/aryan')) return Response.json({ pushed_at: '2026-10-13T02:56:42Z', default_branch: 'main', private: true });
+    if (url.includes('/repos/RR269/aryan/commits')) return Response.json([
+      { sha: 'bce5472aaaaaaa', commit: { message: 'PANIER-ÉCRAN-1 : le panier verrouillé le dit à l\'écran (#467)\n\nDétail long', committer: { date: '2026-10-13T02:59:00Z' } } },
+      { sha: '2ffe22ebbbbbbb', commit: { message: 'PANIER-VERROU-1 application', author: { date: '2026-10-13T00:03:00Z' } } }]);
+    if (url.includes('/repos/RR269/aryan/pulls')) return Response.json([{ number: 61, title: 'Panier verrouillé', updated_at: '2026-10-13T03:00:00Z' }]);
+    return new Response('{}', { status: 404 });
+  }
   throw new Error('URL inattendue ' + url);
 };
+const gh = []; let ghMode = 'ok';
 await import('../supabase/functions/ARC-CLAUDE-PROXY/index.ts');
 
 const call = (body, jwt = 'jwt-rayan') => handler(new Request('https://x/functions/v1/ARC-CLAUDE-PROXY', {
@@ -278,6 +289,36 @@ await t('Modèle du rangement : claude-sonnet-5-5', async () => {
 await t('Tâche inconnue → 400', async () => {
   const r = await call({ task: 'autre' });
   return [r.status === 400 && sent.length === 0, `statut ${r.status}`];
+});
+
+
+// Le code d'un projet (task « code », 13 octobre) : lecture seule, dépôts connus seulement, sans jeton = 501
+await t('Code : sans GITHUB_TOKEN, 501 « non relié » et rien d\'envoyé', async () => {
+  gh.length = 0; delete env.GITHUB_TOKEN;
+  const r = await call({ task: 'code', projet: 'aryan' }); const j = await r.json();
+  return [r.status === 501 && /non relié/.test(j.error.message) && gh.length === 0 && sent.length === 0, `statut ${r.status}, ${gh.length} appel(s) GitHub`];
+});
+await t('Code : un projet hors liste est refusé (400), aucun dépôt arbitraire', async () => {
+  gh.length = 0; env.GITHUB_TOKEN = 'ghp_test';
+  const a = await call({ task: 'code', projet: 'RR269/arc' }); const b = await call({ task: 'code', projet: '__proto__' }); const c = await call({ task: 'code' });
+  return [a.status === 400 && b.status === 400 && c.status === 400 && gh.length === 0, `statuts ${a.status} ${b.status} ${c.status}`];
+});
+await t('Code : derniers envois et demandes ouvertes d\'ARYAN, première ligne seulement, jeton en en-tête', async () => {
+  gh.length = 0; env.GITHUB_TOKEN = ' ghp_test\n'; ghMode = 'ok';
+  const r = await call({ task: 'code', projet: 'aryan' }); const j = await r.json();
+  const ok = r.status === 200 && j.projet === 'aryan' && j.pushed_at === '2026-10-13T02:56:42Z' && j.commits.length === 2 && j.commits[0].sha === 'bce5472'
+    && j.commits[0].titre === 'PANIER-ÉCRAN-1 : le panier verrouillé le dit à l\'écran (#467)' && j.commits[1].date === '2026-10-13T00:03:00Z' && j.prs[0].n === 61
+    && gh.length === 3 && gh.every(x => x.auth === 'Bearer ghp_test' && x.url.includes('/repos/RR269/aryan')) && sent.length === 0
+    && !logs.some(l => l.includes('PANIER')) && !logs.some(l => l.includes('ghp_test'));
+  return [ok, JSON.stringify({ status: r.status, j, appels: gh.map(x => x.url) })];
+});
+await t('Code : jeton refusé par GitHub → 502 dit en mots ; un autre compte → 403 avant toute lecture', async () => {
+  gh.length = 0; ghMode = 'refus';
+  const r = await call({ task: 'code', projet: 'aryan' }); const j = await r.json();
+  ghMode = 'ok'; const n = gh.length; gh.length = 0;
+  const o = await call({ task: 'code', projet: 'aryan' }, 'jwt-autre');
+  delete env.GITHUB_TOKEN;
+  return [r.status === 502 && /refuse le jeton/.test(j.error.message) && n === 3 && o.status === 403 && gh.length === 0, `${r.status} « ${j.error.message} », autre compte ${o.status}`];
 });
 
 for (const r of results) out(`${r.ok ? 'OK   ' : 'ÉCHEC'} ${r.name}${r.detail ? ' — ' + r.detail : ''}`);
