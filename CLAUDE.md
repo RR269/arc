@@ -1586,6 +1586,37 @@ ARC en orbite, et Relier (11 octobre) :
     revient » ; un contrôle ajouté : la plus ancienne, une seule, « Garder » 30 jours puis retour, « Plus besoin »,
     note trop récente et action jamais là, Santé sans « En faire un projet », « Ajouter une étape », cibles ≥ 44 px).
     Vérifié dans Chromium seulement.
+- **PR #53 fusionnée le 13 octobre.** Point fait avec Rayan (1 h 45) ; **son ordre (1 h 52) : l'accueil en entier, puis
+  l'intérieur d'un monde** ; « rien ne se perd », les trente jours et les fondations viennent après.
+- **L'accueil, centre de contrôle (branche `accueil-controle`, 13 octobre 5 h 30)**. Questions à choix de Rayan (2 h) : il
+  ouvre ARC d'abord pour **voir où en sont ses projets**, ensuite **ce qui l'attend** ; ressenti : « pas assez vivant »,
+  « trop de blocs », « la planète me plaît » ; ambiance : un Jarvis renouveau, avec Minority Report, la précision d'Apple
+  et l'esprit d'Interstellar, « l'impression de tout contrôler et d'avoir un visuel sur tout » ; par projet : état vrai,
+  progression, liens ; « ce qui m'attend » : sur la planète ET en ligne de chiffres ; à retirer : le bloc Ma vie, la
+  dernière pensée ; **« point du jour, je n'en comprends pas l'intérêt réel »**. Fait :
+  - **Trois zones** : la planète, une console, Projets. **Retirés** : le bloc Ma vie (Santé et Juridique restent sur la
+    planète), la dernière pensée (`#h-echo`, `homeEcho` reste sans effet), les deux grandes tuiles Déposé / Point du jour,
+    et « N pensées déposées » sous le titre (il contredisait « Déposé ») : le haut ne dit plus que « N étapes faites
+    aujourd'hui », absent à zéro.
+  - **La console** (`#h-poste`, lignes `.h-cl`) : « Aujourd'hui » + « 1 étape · 1 rendez-vous » (étapes du jour,
+    rendez-vous et échéances du jour, « N à replacer » ; « Rien de prévu » sinon ; `matinLabels`) qui ouvre la liste ;
+    « N pensées à ranger » ; « Déposé · 5 pensées » ; « Demande à ARC · Pose ta question » (`#h-ask`, ouvre la recherche).
+  - **La planète** : un anneau de progression autour de chaque projet éveillé (`e.pct`, `projetPct`, le même calcul que la
+    ligne du projet) ; **ce qui attend aujourd'hui s'allume** (`plAujourdhui` : pensée à faire dont le moment tombe
+    aujourd'hui, rendez-vous et échéance du jour) : deux ondes qui partent de l'espace et une lueur, une image fixe si
+    l'appareil demande moins de mouvement ; sous chaque projet éveillé, une ligne (`plLigneBande` : « Aujourd'hui · 1 »,
+    sinon son état vrai) ; rien sous les pôles (leur colonne est étroite, l'onde suffit). Les ponts entre projets reliés
+    existaient déjà.
+  - **Projets** : la ligne d'un projet dit aussi ses liens (« Actif aujourd'hui · Lié à FBA », `projetLies`, `.pj-lie`).
+  - **Le Point du jour ne s'ouvre plus de lui-même** : `matinNorm` coupe l'ouverture automatique une fois sur chaque
+    appareil (`settings.v = 2`) et pour tout appareil neuf ; le menu « ··· » la remet (« Aujourd'hui chaque matin · 08 h 00 »,
+    sinon « · non »). La liste elle-même ne change pas (étapes, rendez-vous, échéances, Ça revient).
+  - Tests : accueil 28/28 (contrôles réécrits pour la console : ordre, lignes et chiffres, « Demande à ARC » ouvre la
+    recherche, plus de Ma vie ni d'écho ; le garde-fou « plus de 250 textes mesurés » passe à 200, l'accueil en ayant
+    moins), matin 29/29 (les contrôles d'ouverture automatique activent le réglage sur l'appareil de test ; un contrôle
+    ajouté : appareil neuf sans ouverture, ancien réglage coupé une fois, « 1 étape · 1 rendez-vous », progression et
+    ondes de la planète, « Lié à FBA »), pôles 19/19 (le rendez-vous de Santé est lu sur la planète), les 12 autres suites
+    passent ; 512 `<div` / 512 `</div>`. Vérifié dans Chromium seulement.
 
 ### Décisions de Rayan (5 octobre)
 

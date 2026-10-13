@@ -131,7 +131,7 @@ for (const vp of ECRANS) {
 }
 
 /* Santé, la mémoire (11 octobre, docs/ETUDE-POLES.md étape 1) : la feuille refuse sans spécialité ni date et le dit ;
-   le rendez-vous s'affiche, avec « 1 à venir », la spécialité allumée, la ligne du haut et l'accueil (Ma vie) ; modifié,
+   le rendez-vous s'affiche, avec « 1 à venir », la spécialité allumée, la ligne du haut et la planète de l'accueil ; modifié,
    il propose « Ce qui en est sorti » ; supprimé en deux gestes ; passé, il va sous « Passés » ; l'ancien suivi n'est
    plus à l'écran et ses données restent ; plus aucun bouton de conseil. */
 {
@@ -151,7 +151,9 @@ for (const vp of ECRANS) {
   const apres = await page.evaluate(() => ({ lignes: [...document.querySelectorAll('#srdv-list .wpen-row')].map(e => e.textContent), n: document.getElementById('srdv-n').textContent,
     chip: [...document.querySelectorAll('#sspe-list .sm-chip.on')].map(e => e.textContent), sous: document.getElementById('sm-sous').textContent, ferme: !document.getElementById('sante-modal').classList.contains('open') }));
   await page.evaluate(() => goHome()); await page.waitForTimeout(250);
-  const vie = await page.evaluate(() => (document.querySelector('#S1 .vie[data-pole="sante"] .vie-s') || {}).textContent || '');
+  // Depuis le 13 octobre, Santé n'a plus de tuile sur l'accueil : son rendez-vous est un point de la planète
+  const vie = await page.evaluate(() => { if (typeof plRendre === 'function') plRendre(); const e = _pl.band && _pl.band.sc.tous.find(x => x.id === 'sante');
+    return e ? e.items.filter(it => it.type === 'rdv').map(it => it.txt + (it.faite ? '' : ' · à venir')).join() : ''; });
   await page.evaluate(() => enterPole('sante')); await page.waitForTimeout(300);
   await page.click('#srdv-list .wpen-row'); await page.waitForTimeout(200);
   const edit = await page.evaluate(() => ({ sortie: !document.getElementById('sm-sortie-champ').hidden, suppr: !document.getElementById('sm-suppr').hidden, date: document.getElementById('sm-date').value }));
@@ -167,7 +169,7 @@ for (const vp of ECRANS) {
   const vraies = errors.filter(e => !/status of 500/.test(e));
   ok(avant.suivi && avant.conseils === 0 && avant.vide && avant.blanc === 'rgb(245, 245, 247)' && /spécialité/.test(e1) && /date/.test(e2[0]) && e2[1]
      && apres.lignes.length === 1 && /Kiné/.test(apres.lignes[0]) && /Cabinet du centre/.test(apres.lignes[0]) && /18 h 00/.test(apres.lignes[0]) && apres.n === '1 à venir' && apres.chip.join() === 'Kiné' && /^Prochain rendez-vous : Kiné, /.test(apres.sous) && apres.ferme
-     && /^Kiné · /.test(vie) && edit.sortie && edit.suppr && edit.date === j(3) && passe.avenir === 0 && passe.vide && passe.passes === '1' && /Exercices à faire chaque soir/.test(pl)
+     && /^Kiné.* · à venir$/.test(vie) && edit.sortie && edit.suppr && edit.date === j(3) && passe.avenir === 0 && passe.vide && passe.passes === '1' && /Exercices à faire chaque soir/.test(pl)
      && unGeste === 1 && fin.rdv === 0 && fin.garde === 1 && fin.sauve && !vraies.length,
      'Santé, la mémoire : la feuille dit ce qui manque (spécialité, date) ; le rendez-vous s\'affiche avec son heure, « 1 à venir », sa spécialité allumée, la ligne du haut et l\'accueil ; modifié, « Ce qui en est sorti » ; passé, il va sous « Passés » ; supprimé en deux gestes ; l\'ancien suivi n\'est plus à l\'écran, ses données restent ; plus aucun bouton de conseil',
      JSON.stringify({ avant, e1, e2, apres, vie, edit, passe, pl, unGeste, fin, erreurs: vraies }));
