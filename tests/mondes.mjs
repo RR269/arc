@@ -41,7 +41,7 @@ const releve = () => {
   const mono = [], capit = []; const tw2 = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   for (let nd; (nd = tw2.nextNode());) { const e = nd.parentElement; if (!nd.nodeValue.trim() || !vis(e)) continue; const cs = getComputedStyle(e); if (parseFloat(cs.fontSize) === 0) continue; if (/mono/i.test(cs.fontFamily)) mono.push(nom(e)); if (cs.textTransform === 'uppercase') capit.push(nom(e)); }
   const desc = root.querySelector('.w-hero-desc');
-  return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], champs, fusion, horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), mono: [...new Set(mono)], capit: [...new Set(capit)], systeme: [police('.w-hero-desc'), police('.wsec-lbl'), police('.wtask-txt'), police('.wm-l'), police('.w-back')], titre: police('.w-hero-name'), section: getComputedStyle(root.querySelector('.wsec-lbl')).fontSize,
+  return { cibles: [...new Set(cibles)], petits: [...new Set(petits)], champs, fusion, horizon: /radial-gradient/.test(hz.maskImage || hz.webkitMaskImage || '') && /gradient/.test(hz.backgroundImage), mono: [...new Set(mono)], capit: [...new Set(capit)], systeme: [police('.w-hero-desc'), police('.wsec-lbl'), police('.wtask-txt'), police('.wat-inp'), police('.w-back')], titre: police('.w-hero-name'), section: getComputedStyle(root.querySelector('.wsec-lbl')).fontSize,
            reperes: [...root.querySelectorAll('.w-pct-b, .wband-ring-pct')].filter(vis).length, pct: root.querySelector('.wband-ring-pct').textContent, descVue: desc.offsetParent !== null, suite: !root.querySelector('.w-hero-more').hidden, aDesc: !!desc.textContent.trim(),
            picto: picto.concat([...root.querySelectorAll('.wtask-row button, .wblk-arr, .w-focus-open')].filter(vis).filter(e => parseFloat(getComputedStyle(e).fontSize) > 0 && /[★✕↕→↗]/.test(e.textContent)).map(e => e.textContent.trim())), poignee: [...root.querySelectorAll('.drag-handle')].filter(vis).length, fait: root.querySelector('.wband-ring-lbl').textContent,
            large: document.documentElement.scrollWidth <= innerWidth && document.getElementById('wmain').scrollWidth <= document.getElementById('wmain').clientWidth + 1,
@@ -72,7 +72,7 @@ for (const vp of ECRANS) {
     if (r.reperes !== 1 || !/^\d+[\u00A0\u202F]%$/.test(r.pct)) defauts.push(`${r.nom} : ${r.reperes} repères de progression, « ${r.pct} »`);
     if (r.descVue || r.suite !== r.aDesc || r.poignee) defauts.push(`${r.nom} : description visible ${r.descVue}, « Lire la description » ${r.suite} (description ${r.aDesc}), poignée ${r.poignee}`);
     // contraste : la barre du haut, puis tout ce qui défile, écran par écran ; sur Mac, le panneau Claude aussi
-    const zones = [{ racine: '#S2 .wtop' }]; if (!vp.tel) zones.push({ racine: '#wcp' });
+    const zones = [{ racine: '#S2 .wtop' }];
     for (const z of zones) { const m = await mesurer(page, z); n += m.n; contrastes.push(...m.sous.map(x => ({ ...x, t: r.nom + ' › ' + x.t }))); if (m.pire.ratio < pire.ratio) pire = { ...m.pire, t: r.nom + ' › ' + m.pire.t }; }
     const sc = await page.evaluate(() => { const m = document.getElementById('wmain'); return { h: m.scrollHeight, c: m.clientHeight }; });
     for (let y = 0; y < sc.h; y += Math.round(sc.c * 0.7)) {
@@ -91,30 +91,107 @@ for (const vp of ECRANS) {
   await ctx.close();
 }
 
-// Les compteurs mènent à leur section (les tiroirs qui recopiaient la page sont retirés, le 8 octobre)
+// Le bas d'un monde (13 octobre, Rayan : « construire avec Claude », le contenu d'avril « on le révise ensemble ») :
+// Avec ARC (rien ne part sans le geste, la ligne vraie, les propositions n'entrent qu'avec « Ajouter », panne), la revue
+// d'avril (un geste par élément, « Revenir », retirées hors du pourcentage, « Remettre »), la Mémoire (pensées et journal
+// sur un seul fil, suppression en deux gestes, notes repliées), « Ce qui bloque » (Résolu, Remettre) ; plus de compteurs
+// ni de panneau Claude à droite.
 {
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
   await ctx.addInitScript(sessionScript());
-  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
-  await page.evaluate(() => enterWorld(0)); await page.waitForTimeout(400);
-  const vus = {};
-  for (const [quoi, sel] of [['taches', '#wsec-taches'], ['bloquants', '#wsec-bloquants'], ['journal', '#wsec-journal'], ['faites', '#done-grp']]) {
-    await page.evaluate(() => { document.getElementById('wmain').scrollTop = 0; });
-    await page.tap(`[data-aller="${quoi}"]`); await page.waitForTimeout(250);
-    vus[quoi] = await page.evaluate(s => { const e = document.querySelector(s), r = e.getBoundingClientRect(), m = document.getElementById('wmain').getBoundingClientRect(); return { visible: e.offsetParent !== null, haut: Math.round(r.top - m.top), place: Math.round(m.height * 0.6) }; }, sel);
+  const fk = fakeSupabase(), appels = [];
+  let panne = false;
+  fk.proxy = async body => { if (body.task === 'file') return { status: 500, json: {} }; appels.push(body);
+    if (panne) return { status: 503, json: {} };
+    return { status: 200, json: { content: [{ type: 'text', text: '```json\n' + JSON.stringify({ reponse: 'Fais l’essai « Ma boutique » d’abord.', propositions: [{ type: 'tâche', texte: 'Filmer l’essai sur iPhone' }, { type: 'journal', texte: 'Décision : essai avant Q1-Q4' }, { type: 'bloquant', texte: 'Pas de boulangerie partante' }, { type: 'autre', texte: 'ignoré' }] }) + '\n```' }] } }; };
+  const { page, errors } = await openPage(browser, url, { ctx, fk });
+  await page.evaluate(() => {
+    const id = depotUUID(); _depot.thoughts[id] = { id, body: 'Relancer la boulangère', source: 'text', device: 'iphone', created_at: new Date(Date.now() - 2 * 864e5).toISOString(), status: 'pending' }; depotSave();
+    rangeAdd(id, { status: 'filed', space: 'aryan', step: 'Relancer la boulangère', moment: { type: 'none' }, extras: [] }, 'ai', 'm');
+    S.journal[0] = [{ ts: Date.now() - 864e5, t: 'Boulangère partante.' }]; S.notes[0] = 'Penser au pilote.'; saveS();
+    if (typeof matinClose === 'function') matinClose(); enterWorld(0);
+  });
+  await page.waitForTimeout(400);
+  const avant = await page.evaluate(() => ({ appels: 0, ligne: document.getElementById('wat-ligne').textContent, sugs: [...document.querySelectorAll('.wat-sug')].map(b => b.textContent),
+    compteurs: !!document.getElementById('wmetrics'), wcp: getComputedStyle(document.getElementById('wcp')).display, ordre: [...document.querySelectorAll('#wmain > .wsec')].filter(e => !e.hidden).map(e => e.id) }));
+  avant.appels = appels.length;
+  await page.tap('.wat-sug'); await page.waitForTimeout(500);
+  const r1 = await page.evaluate(() => ({ moi: document.querySelector('.wat-moi').textContent, arc: document.querySelector('.wat-arc .wat-t').textContent,
+    props: [...document.querySelectorAll('.wat-prop')].map(p => p.querySelector('.wat-prop-t').textContent), parti: document.querySelector('.wat-parti').textContent }));
+  const sys = appels[0] ? appels[0].system : '', msgs = appels[0] ? appels[0].messages : [];
+  const contexte = /Mission : Amener ARYAN/.test(sys) && /Relancer la boulangère/.test(sys) && /Boulangère partante/.test(sys) && /Penser au pilote/.test(sys) && /Quatre courses payées/.test(sys) && msgs.length === 1 && msgs[0].role === 'user';
+  const avantAjout = await page.evaluate(() => ({ c: (S.custom[0] || []).length, j: S.journal[0].length, b: (S.blkCustom[0] || []).length }));
+  for (const i of [0, 1, 2]) { await page.locator('.wat-prop .wat-ajout').nth(i).tap(); await page.waitForTimeout(150); }
+  const apresAjout = await page.evaluate(() => ({ c: (S.custom[0] || []).map(t => t.t), j: S.journal[0].map(x => x.t), b: S.blkCustom[0], boutons: [...document.querySelectorAll('.wat-ajout')].map(b => b.textContent + (b.disabled ? '·off' : '')) }));
+  // une deuxième demande : l'échange précédent part avec elle, en alternance
+  await page.fill('#wat-inp', 'Et ensuite ?'); await page.tap('#wat-envoi'); await page.waitForTimeout(500);
+  const m2 = appels[1] ? appels[1].messages.map(m => m.role).join(',') : '';
+  panne = true; await page.fill('#wat-inp', 'Une troisième ?'); await page.tap('#wat-envoi'); await page.waitForTimeout(500);
+  const err = await page.evaluate(() => ({ t: [...document.querySelectorAll('.wat-arc.err .wat-t')].map(e => e.textContent).join(), re: !!document.querySelector('.wat-arc.err .wat-re'), avant: document.getElementById('wat-avant').textContent }));
+  panne = false; await page.tap('.wat-arc.err .wat-re'); await page.waitForTimeout(500);
+  const repris = await page.evaluate(() => ({ err: document.querySelectorAll('.wat-arc.err').length, n: watFil(0).length }));
+  ok(avant.appels === 0 && /^Partira à Claude avec ta demande : la mission, \d+ tâches, 3 bloquants, 1 pensée, 1 entrée du journal et tes notes\.$/.test(avant.ligne) && avant.sugs.length === 3
+     && !avant.compteurs && avant.wcp === 'none' && avant.ordre.slice(0, 3).join() === 'wsec-arc,wsec-taches,wsec-memoire' && avant.ordre.includes('wsec-projet')
+     && r1.moi === 'Quelle est la prochaine étape ?' && /essai « Ma boutique »/.test(r1.arc) && r1.props.length === 3 && /^Parti à Claude : la mission/.test(r1.parti) && contexte
+     && avantAjout.c === 0 && apresAjout.c.includes('Filmer l’essai sur iPhone') && apresAjout.j.includes('Décision : essai avant Q1-Q4') && apresAjout.b.includes('Pas de boulangerie partante') && apresAjout.boutons.every(b => b === 'Ajouté·off')
+     && m2 === 'user,assistant,user' && /ARC n’a pas pu répondre/.test(err.t) && err.re && repris.err === 0 && repris.n === 6,
+     'Avec ARC : rien ne part avant le geste, la ligne dit ce qui partira ; la suggestion part avec le contexte du projet ; trois propositions, chacune n\'entre qu\'avec « Ajouter » ; la conversation suit ; panne dite et « Réessayer » ; plus de compteurs ni de panneau de droite',
+     JSON.stringify({ avant, r1, contexte, avantAjout, apresAjout, m2, err, repris }));
+  // La revue d'avril
+  const rv0 = await page.evaluate(() => ({ vu: !document.getElementById('wrevue').hidden, t: document.getElementById('wrevue').textContent, pct: document.getElementById('ring-pct').textContent }));
+  await page.tap('#wrevue-go'); await page.waitForTimeout(250);
+  const rvPos = await page.evaluate(() => [document.getElementById('rv-pos').textContent, document.getElementById('rv-k').textContent, document.getElementById('rv-t').textContent, [...document.querySelectorAll('.rv-b')].map(b => b.textContent + (b.classList.contains('blanc') ? '·blanc' : '')).join('/')]);
+  await page.locator('.rv-b', { hasText: 'Toujours à faire' }).tap(); await page.waitForTimeout(120);
+  await page.locator('.rv-b', { hasText: 'Déjà faite' }).tap(); await page.waitForTimeout(120);
+  await page.locator('.rv-b', { hasText: 'Plus d’actualité' }).tap(); await page.waitForTimeout(120);
+  await page.tap('#rv-retour'); await page.waitForTimeout(120);
+  await page.locator('.rv-b', { hasText: 'Plus d’actualité' }).tap(); await page.waitForTimeout(120);
+  const rv1 = await page.evaluate(() => ({ revue: S.revue[0], fait: !!S.tasks[0].a31, aujourdhui: !!(S.taskDone && S.taskDone[0] && S.taskDone[0].a31), pos: document.getElementById('rv-pos').textContent }));
+  await page.tap('#rv-fermer'); await page.waitForTimeout(250);
+  const rv2 = await page.evaluate(() => ({ pct: document.getElementById('ring-pct').textContent, carte: _wc.items.some(it => it.id === 'a32'), liste: [...document.querySelectorAll('#wnext .wnext-t, #tasks-container .wtask-row .wtask-txt')].some(e => /^Répondre à Q1-Q4/.test(e.textContent)),
+    retiree: [...document.querySelectorAll('.wretiree-t')].map(e => e.textContent).join(), t: document.getElementById('wrevue').textContent }));
+  await page.tap('#wtask-plus'); await page.waitForTimeout(150);
+  await page.tap('.wretiree .wblk-res'); await page.waitForTimeout(200);
+  const rv3 = await page.evaluate(() => ({ revue: S.revue[0]['t:a32'] || null, retirees: document.querySelectorAll('.wretiree').length }));
+  ok(rv0.vu && /14 éléments écrits en avril/.test(rv0.t) && rvPos[0] === '1 sur 14' && rvPos[1] === 'Tâche écrite en avril' && /^Essai « Ma boutique »/.test(rvPos[2]) && rvPos[3] === 'Toujours à faire·blanc/Déjà faite/Plus d’actualité'
+     && rv1.revue['t:a30'].v === 'garde' && rv1.revue['t:a31'].v === 'fait' && rv1.revue['t:a32'].v === 'retire' && rv1.fait && !rv1.aujourdhui && rv1.pos === '4 sur 14'
+     && rv2.pct !== rv0.pct && !rv2.carte && !rv2.liste && /^Répondre à Q1-Q4/.test(rv2.retiree) && /11 à revoir/.test(rv2.t) && !rv3.revue && rv3.retirees === 0,
+     'Revue d\'avril : un élément à la fois, une touche blanche ; « Déjà faite » coche sans compter « aujourd\'hui » ; « Revenir » défait ; une tâche retirée quitte la liste, la carte et le pourcentage ; « Remettre » la rend',
+     JSON.stringify({ rv0, rvPos, rv1, rv2, rv3 }));
+  // La Mémoire, les notes, ce qui bloque
+  const mem = await page.evaluate(() => ({ lignes: [...document.querySelectorAll('#jou-list .wpen-row')].map(e => (e.classList.contains('wmem-jou') ? 'J ' : 'P ') + e.querySelector('.wpen-t').textContent), n: document.getElementById('wmem-n').textContent,
+    notes: document.getElementById('wnotes-box').hidden, notesLbl: document.getElementById('wnotes-tog').textContent }));
+  await page.locator('.wmem-jou', { hasText: 'Boulangère partante.' }).locator('.wmem-del').tap(); await page.waitForTimeout(120);
+  const arme = await page.evaluate(() => ({ n: S.journal[0].length, t: document.querySelector('.wmem-del.arme') ? document.querySelector('.wmem-del.arme').textContent : '' }));
+  await page.locator('.wmem-del.arme').tap(); await page.waitForTimeout(150);
+  const suppr = await page.evaluate(() => S.journal[0].map(j => j.t));
+  await page.tap('#wnotes-tog'); await page.waitForTimeout(120);
+  const notesOuv = await page.evaluate(() => ({ vu: !document.getElementById('wnotes-box').hidden, v: document.getElementById('notes-ta').value }));
+  await page.locator('.wblk', { hasText: 'Deux anomalies Stripe' }).locator('.wblk-res').tap(); await page.waitForTimeout(150);
+  const blk = await page.evaluate(() => ({ actifs: [...document.querySelectorAll('.wblk:not(.resolu) .wblk-text')].map(e => e.textContent), tog: (document.querySelector('.wblk-tog') || {}).textContent, n: document.getElementById('wblk-n').textContent }));
+  await page.tap('.wblk-tog'); await page.waitForTimeout(120); await page.locator('.wblk.resolu .wblk-res').tap(); await page.waitForTimeout(150);
+  const blk2 = await page.evaluate(() => document.querySelectorAll('.wblk:not(.resolu)').length);
+  const cibles = await page.evaluate(() => [...document.querySelectorAll('#wsec-arc button, #wsec-taches button, #wsec-memoire button, #wsec-projet button')].filter(e => e.offsetParent).map(e => e.getBoundingClientRect()).filter(b => b.height < 43.5 || b.width < 43.5).length);
+  ok(mem.lignes.slice(0, 2).join(' | ') === 'J Décision : essai avant Q1-Q4 | J Boulangère partante.' && mem.lignes.includes('P Relancer la boulangère') && mem.n === '1 pensée à faire' && mem.notes && /Notes libres · 3 mots/.test(mem.notesLbl)
+     && arme.n === 2 && arme.t === 'Supprimer' && suppr.join() === 'Décision : essai avant Q1-Q4' && notesOuv.vu && notesOuv.v === 'Penser au pilote.'
+     && blk.actifs.length === 3 && !blk.actifs.some(t => /anomalies Stripe/.test(t)) && blk.tog === '1 résolu' && blk.n === '3' && blk2 === 4 && !cibles,
+     'Mémoire : pensées et journal sur un seul fil, du plus récent au plus ancien ; supprimer une entrée demande un second geste ; notes libres repliées ; « Ce qui bloque » : Résolu puis Remettre ; cibles ≥ 44 px',
+     JSON.stringify({ mem, arme, suppr, notesOuv, blk, blk2, cibles }));
+  // Contraste du bas, mesuré dans l'image
+  let pireBas = { ratio: Infinity }, sous = [];
+  for (const sel of ['#wsec-arc', '#wsec-taches', '#wsec-memoire', '#wsec-projet']) {
+    await page.evaluate(s => document.querySelector(s).scrollIntoView({ block: 'start' }), sel); await page.waitForTimeout(150);
+    const m = await mesurer(page, { racine: sel, cadre: '#wmain', hors: ['#depot-bar', '.depot-pill', '.depot-note'] });
+    sous.push(...m.sous); if (m.pire.ratio < pireBas.ratio) pireBas = m.pire;
   }
-  await page.focus('[data-aller="journal"]'); await page.evaluate(() => { document.getElementById('wmain').scrollTop = 0; });
-  await page.keyboard.press('Enter'); await page.waitForTimeout(250);
-  const clavier = await page.evaluate(() => Math.round(document.getElementById('wsec-journal').getBoundingClientRect().top - document.getElementById('wmain').getBoundingClientRect().top));
-  const reste = await page.evaluate(() => ({ tiroir: !!document.getElementById('tdrawer'), contexte: !!document.getElementById('btn-ctx'), fleches: document.querySelectorAll('#S2 .wblk-arr').length, mission: getComputedStyle(document.querySelector('#S2 .wmission'), '::after').content }));
-  // la section arrive en haut de l'écran, ou, tout en bas de la page, au moins dans les 60 % du haut
-  const ok4 = Object.values(vus).every(v => v.visible && v.haut > -5 && v.haut < v.place) && Math.abs(clavier - vus.journal.haut) <= 2;   // arrondi d’un pixel près, au clavier comme au doigt
-  ok(ok4 && !reste.tiroir && !reste.contexte && !reste.fleches && reste.mission === 'none' && !errors.length,
-     'iPhone : chaque compteur mène à sa section (Accomplies déplie les tâches faites), au doigt comme au clavier ; plus de tiroir qui recopiait la page, ni de flèche sur la mission et les bloquants',
-     JSON.stringify({ ...vus, clavier, ...reste }));
+  await page.tap('#wrevue-go'); await page.waitForTimeout(250);
+  const mr = await mesurer(page, { racine: '#rv-box' }); sous.push(...mr.sous); if (mr.pire.ratio < pireBas.ratio) pireBas = mr.pire;
+  await page.keyboard.press('Escape'); await page.waitForTimeout(200);
+  const ferme = await page.evaluate(() => !document.getElementById('revue-modal').classList.contains('open'));
+  ok(!sous.length && ferme, 'Le bas d\'un monde et la revue : contraste ≥ 4,5 : 1 ; Échap ferme la revue', `le plus faible : ${dit(pireBas)}${sous.length ? ' ; ' + sous.slice(0, 3).map(dit).join(' ; ') : ''}`);
+  ok(!errors.filter(e => !/status of 50[03]/.test(e)).length, 'Le bas d\'un monde : aucune erreur de console', errors.join(' | '));
   await ctx.close();
 }
-
 
 // Le monde vivant et la liste unique (13 octobre, Rayan : « un nouveau monde s'ouvre en mode science-fiction
 // productive » ; la carte vivante en premier écran ; « une seule liste, repliée » ; la description longue sort de l'écran)

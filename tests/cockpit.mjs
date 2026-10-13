@@ -147,13 +147,13 @@ for (const vp of [{ n: 'iPhone 390 × 844', width: 390, height: 844, tel: true }
      'Minuteur : en français, le temps restant s\'affiche sur son bouton pendant qu\'il tourne', JSON.stringify({ m0, m1, m2, m3 }));
 
   // « C'est fait » : la tâche est faite, le cockpit se ferme, le projet est à jour ; rouvrir la tâche le dit
-  const avantFait = await page.evaluate(() => ({ fait: document.getElementById('m-done').textContent, tid: cockpitState.tid }));
+  const avantFait = await page.evaluate(() => ({ fait: parseInt(document.getElementById('wsec-tasks-count').textContent), tid: cockpitState.tid }));
   await page.tap('#cockpit-done-btn'); await page.waitForTimeout(300);
-  const fait = await page.evaluate(t => ({ ferme: !document.getElementById('cockpit').classList.contains('open'), coche: !!S.tasks[0][t], compteur: document.getElementById('m-done').textContent }), avantFait.tid);
+  const fait = await page.evaluate(t => ({ ferme: !document.getElementById('cockpit').classList.contains('open'), coche: !!S.tasks[0][t], compteur: parseInt(document.getElementById('wsec-tasks-count').textContent) }), avantFait.tid);
   await page.evaluate(t => openCockpit(0, t), avantFait.tid); await page.waitForTimeout(200);
   const rouvert = await page.evaluate(() => ({ bouton: document.getElementById('cockpit-done-btn').textContent, etat: document.getElementById('cockpit-etat').textContent, blanc: /255, 255, 255/.test(getComputedStyle(document.getElementById('cockpit-done-btn')).backgroundImage) }));
-  ok(fait.ferme && fait.coche && Number(fait.compteur) === Number(avantFait.fait) + 1 && rouvert.bouton === 'Rouvrir la tâche' && rouvert.etat === 'Tâche faite' && !rouvert.blanc,
-     '« C\'est fait » : la tâche est cochée, le cockpit se ferme, le compteur du projet suit ; rouverte, elle dit « Tâche faite » et propose « Rouvrir la tâche » (sans touche blanche)', JSON.stringify({ ...fait, avant: avantFait.fait, ...rouvert }));
+  ok(fait.ferme && fait.coche && Number(fait.compteur) === Number(avantFait.fait) - 1 && rouvert.bouton === 'Rouvrir la tâche' && rouvert.etat === 'Tâche faite' && !rouvert.blanc,
+     '« C\'est fait » : la tâche est cochée, le cockpit se ferme, le nombre de tâches à faire du projet suit ; rouverte, elle dit « Tâche faite » et propose « Rouvrir la tâche » (sans touche blanche)', JSON.stringify({ ...fait, avant: avantFait.fait, ...rouvert }));
 
   // Une autre tâche : la liste des réponses de Claude repart vide ; le retour ramène au projet
   await page.evaluate(() => openCockpit(0, WORLDS[0].tasks_todo[1].id)); await page.waitForTimeout(200);

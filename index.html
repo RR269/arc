@@ -2077,13 +2077,13 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
    « Développer · Fais-en un projet, étape par étape. » Depuis une pensée de « Déposé » : ARC propose un nom, une
    mission et trois premières étapes ; Rayan corrige ; « Créer le projet » l'ajoute à Projets. Même écriture que la
    recherche : verre sombre, police du système, libellés au-dessus des champs, une seule touche blanche. */
-#projet-modal,#sante-modal{--t2:#C4C4CC;--t3:#A6A6AE;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.16);position:fixed;inset:0;z-index:210;display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 40px) 16px 16px;background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-family:var(--fa);letter-spacing:-.1px;overflow-y:auto;overscroll-behavior:contain}
-#projet-modal.open,#sante-modal.open{display:flex;animation:searchIn .22s cubic-bezier(.16,1,.3,1)}
-#projet-box,#sm-box{position:relative;width:min(560px,100%);margin-bottom:24px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(14,14,17,.94);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -20px #000;overflow:hidden}
-#projet-box::before,#sm-box::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--pjc,#64d2ff),transparent);opacity:.9}
+#projet-modal,#sante-modal,#revue-modal{--t2:#C4C4CC;--t3:#A6A6AE;--b1:rgba(255,255,255,.08);--b2:rgba(255,255,255,.16);position:fixed;inset:0;z-index:210;display:none;align-items:flex-start;justify-content:center;padding:calc(env(safe-area-inset-top) + 40px) 16px 16px;background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-family:var(--fa);letter-spacing:-.1px;overflow-y:auto;overscroll-behavior:contain}
+#projet-modal.open,#sante-modal.open,#revue-modal.open{display:flex;animation:searchIn .22s cubic-bezier(.16,1,.3,1)}
+#projet-box,#sm-box,#rv-box{position:relative;width:min(560px,100%);margin-bottom:24px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(14,14,17,.94);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 90px -20px #000;overflow:hidden}
+#projet-box::before,#sm-box::before,#rv-box::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,var(--pjc,#64d2ff),transparent);opacity:.9}
 .npj-head{display:flex;align-items:center;gap:12px;padding:14px 10px 6px 20px}
-#pj-titre,#sm-titre{flex:1;font-family:var(--ft);font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.5px;color:#F5F5F7}
-#pj-fermer,#sm-fermer{flex-shrink:0;min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
+#pj-titre,#sm-titre,#rv-titre{flex:1;font-family:var(--ft);font-size:22px;line-height:28px;font-weight:700;letter-spacing:-.5px;color:#F5F5F7}
+#pj-fermer,#sm-fermer,#rv-fermer{flex-shrink:0;min-height:44px;padding:0 14px;border-radius:14px;border:1px solid var(--b2);background:rgba(255,255,255,.05);font-family:var(--fa);font-size:15px;font-weight:500;color:#E8E8EC;cursor:pointer}
 .npj-body{padding:4px 20px 20px}
 .npj-source{margin:0 0 14px;font-size:15px;line-height:1.45;color:var(--t2);overflow-wrap:anywhere}
 .npj-source b{font-weight:500;color:#F5F5F7}
@@ -2114,8 +2114,8 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #pj-creer:disabled{opacity:.55;cursor:default}
 #pj-annuler,#sm-annuler{min-height:50px;padding:0 16px;border-radius:16px;border:1px solid transparent;background:none;font-family:var(--fa);font-size:16px;font-weight:500;color:var(--t2);cursor:pointer}
 #projet-modal :is(#pj-fermer,#pj-creer,#pj-annuler,#pj-reessayer):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
-@media(max-width:560px){#projet-modal,#sante-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}}
-@media(prefers-reduced-motion:reduce){#projet-modal.open,#sante-modal.open{animation:none}#pj-etat .npj-pulse{animation:none}}
+@media(max-width:560px){#projet-modal,#sante-modal,#revue-modal{padding-top:calc(env(safe-area-inset-top) + 12px)}}
+@media(prefers-reduced-motion:reduce){#projet-modal.open,#sante-modal.open,#revue-modal.open{animation:none}#pj-etat .npj-pulse{animation:none}}
 /* ═══ SECTIONS VIDES REPLIÉES (branche projet-sections, 10 octobre) ═══
    Un projet neuf montrait quatre sections vides (Bloquants, Notes, Journal, Outils) sur un écran et demi. Vide, une
    section n'est plus qu'une ligne : son titre, et une touche « Ajouter » ou « Écrire » qui ouvre le champ. */
@@ -2464,6 +2464,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 .wtask-plus-chev,#S2 .wtask-grp-fait i{flex-shrink:0;width:8px;height:8px;margin-right:4px;border-right:1.7px solid var(--t2);border-bottom:1.7px solid var(--t2);transform:rotate(45deg) translateY(-2px);transition:transform .2s}
 #S2 .wtask-plus[aria-expanded="true"] .wtask-plus-chev,#S2 .wtask-grp-fait[aria-expanded="true"] i{transform:rotate(-135deg) translateY(-2px)}
 #S2 .wtask-reste{margin-top:12px}
+#S2 .wtask-plus[hidden]{display:none}
 #S2 .wtask-reste[hidden]{display:none}
 #S2 .wtask-grp-fait{width:100%;justify-content:space-between;border:0;background:none;padding-left:0;padding-right:0;color:#8FE3A6;cursor:pointer}
 /* Le projet : mission, outils techniques, description repliée */
@@ -2476,6 +2477,85 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S2 .wprojet .w-hero-desc[hidden]{display:none}
 @media(min-width:861px){
 }
+
+/* ═══ LE BAS D'UN MONDE : CONSTRUIRE (branche monde-construire, 13 octobre) ═══
+   Avec ARC d'abord, puis les tâches (la revue d'avril au-dessus), la Mémoire (pensées + journal + notes), « Le projet »
+   (mission, ce qui bloque, outils). Le panneau Claude de droite (Mac) n'est plus montré : Avec ARC le remplace partout. */
+#S2 .wcp{display:none!important}
+/* Avec ARC */
+#S2 .wat-panneau{position:relative;isolation:isolate;overflow:hidden;padding:14px;border-radius:22px;border:1px solid color-mix(in srgb,var(--wc,#fff) 30%,rgba(255,255,255,.08));background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012)),#0B0B0E;box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+#S2 .wat-panneau::before{content:"";position:absolute;left:18px;right:18px;top:0;height:1.5px;background:linear-gradient(90deg,transparent,#FF9F0A,#FF2D55,#BF5AF2,transparent);opacity:.85}
+#S2 .wat-effacer{margin-left:auto;min-height:44px;padding:0 14px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);font-size:15px;font-weight:500;color:#E8E8EC}
+#S2 .wat-effacer[hidden]{display:none}
+#S2 .wat-avant{display:block;width:100%;min-height:44px;margin:0 0 6px;padding:0;border:0;background:none;text-align:center;font-size:14px;font-weight:500;color:var(--t2)}
+#S2 .wat-avant[hidden]{display:none}
+#S2 .wat-fil{display:flex;flex-direction:column;gap:10px}
+#S2 .wat-fil:not(:empty){margin-bottom:12px}
+#S2 .wat-moi{align-self:flex-end;max-width:86%;padding:10px 14px;border-radius:18px 18px 6px 18px;background:rgba(255,255,255,.1);font-size:16px;line-height:1.4;letter-spacing:-.2px;color:#F5F5F7;white-space:pre-line;overflow-wrap:anywhere}
+#S2 .wat-arc{align-self:stretch;padding:12px 14px;border-radius:18px 18px 18px 6px;border:1px solid color-mix(in srgb,var(--wc,#fff) 26%,transparent);background:radial-gradient(90% 120% at 0% 0%,color-mix(in srgb,var(--wc,#fff) 12%,transparent),transparent 70%),rgba(255,255,255,.03)}
+#S2 .wat-k{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:13px;line-height:18px;font-weight:600;color:color-mix(in srgb,var(--wc,#fff) 55%,#fff)}
+#S2 .wat-pt{width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px color-mix(in srgb,var(--wc,#fff) 70%,transparent),0 0 10px var(--wc,#fff)}
+#S2 .wat-arc.attente .wat-pt{animation:pjPulse 1.2s ease-in-out infinite}
+#S2 .wat-arc.err{border-color:rgba(255,179,64,.35);background:rgba(255,179,64,.06)}
+#S2 .wat-arc.err .wat-k{color:#FFC46B}
+#S2 .wat-t{font-size:16px;line-height:1.45;letter-spacing:-.2px;color:#F5F5F7;white-space:pre-line;overflow-wrap:anywhere}
+#S2 .wat-re{min-height:44px;margin-top:8px;padding:0 16px;border-radius:13px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);font-size:15px;font-weight:600;color:#fff}
+#S2 .wat-prop{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin-top:10px;padding:10px 10px 10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.3)}
+#S2 .wat-prop-t{min-width:0;font-size:15px;line-height:1.35;letter-spacing:-.15px;color:#F0F0F4;overflow-wrap:anywhere}
+#S2 .wat-prop-k{display:block;font-size:13px;line-height:18px;font-weight:600;color:var(--t2)}
+#S2 .wat-ajout{min-height:44px;padding:0 14px;border-radius:13px;border:1px solid color-mix(in srgb,var(--wc,#fff) 50%,transparent);background:color-mix(in srgb,var(--wc,#fff) 20%,#0B0B0E);font-size:15px;font-weight:600;color:#fff;white-space:nowrap}
+#S2 .wat-prop.ok .wat-ajout{border-color:rgba(255,255,255,.12);background:none;color:#C4C4CC}
+#S2 .wat-parti{margin-top:10px;font-size:13px;line-height:18px;color:var(--t2)}
+#S2 .wat-sugs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+#S2 .wat-sugs[hidden]{display:none}
+#S2 .wat-sug{min-height:44px;padding:0 14px;border-radius:22px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);font-size:15px;font-weight:500;letter-spacing:-.2px;color:#F0F0F4;text-align:left}
+#S2 .wat-saisie{display:flex;align-items:flex-end;gap:8px}
+#S2 .wat-inp{flex:1;min-width:0;min-height:48px;max-height:160px;padding:12px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.04);font-family:var(--fa);font-size:16px;line-height:1.4;letter-spacing:-.2px;color:#F5F5F7;resize:none;-webkit-appearance:none;appearance:none}
+#S2 .wat-inp::placeholder{color:#A6A6AE}
+#S2 .wat-inp:focus{outline:none;border-color:color-mix(in srgb,var(--wc,#fff) 70%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--wc,#fff) 18%,transparent)}
+#S2 .wat-envoi{flex-shrink:0;display:grid;place-items:center;width:48px;height:48px;border-radius:16px;border:1px solid color-mix(in srgb,var(--wc,#fff) 50%,transparent);background:color-mix(in srgb,var(--wc,#fff) 22%,#0B0B0E)}
+#S2 .wat-envoi i{width:10px;height:10px;margin-top:4px;border-left:2px solid #fff;border-top:2px solid #fff;transform:rotate(45deg)}
+#S2 .wat-envoi:disabled{opacity:.5}
+#S2 .wat-ligne{margin:10px 2px 0;font-size:13px;line-height:18px;color:var(--t2)}
+/* La revue d'avril */
+#S2 .wrevue{margin:0 0 12px;padding:14px 16px;border-radius:18px;border:1px dashed rgba(255,179,64,.45);background:rgba(255,179,64,.05)}
+#S2 .wrevue[hidden]{display:none}
+#S2 .wrevue-t{font-size:16px;line-height:21px;font-weight:600;letter-spacing:-.25px;color:#FFD08A}
+#S2 .wrevue-p{margin:4px 0 10px;font-size:15px;line-height:1.4;color:#E6E6EB}
+#S2 .wrevue-go{min-height:44px;padding:0 18px;border-radius:14px;border:1px solid rgba(255,179,64,.5);background:rgba(255,179,64,.14);font-size:15px;font-weight:600;color:#fff}
+.rv-tete{font-size:14px;line-height:20px;font-weight:500;color:var(--t2)}
+.rv-barre{height:3px;margin:8px 0 18px;border-radius:2px;background:rgba(255,255,255,.1);overflow:hidden}
+.rv-barre i{display:block;height:100%;background:var(--pjc,#fff);transform-origin:left;transform:scaleX(0);transition:transform .3s cubic-bezier(.16,1,.3,1)}
+.rv-k{margin:0;font-size:14px;line-height:20px;font-weight:600;color:var(--t2)}
+.rv-t{margin:6px 0 20px;font-size:20px;line-height:1.35;font-weight:600;letter-spacing:-.4px;color:#F5F5F7;overflow-wrap:anywhere}
+.rv-acts{display:flex;flex-direction:column;gap:10px}
+.rv-b{min-height:50px;padding:0 18px;border-radius:15px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);font-family:var(--fa);font-size:17px;font-weight:600;letter-spacing:-.25px;color:#fff;cursor:pointer}
+.rv-b.blanc{border-color:#fff;background:#fff;color:#0B0B0F}
+.rv-retour{display:block;min-height:44px;margin:12px auto 0;padding:0 14px;border:0;background:none;font-family:var(--fa);font-size:15px;font-weight:500;color:#C4C4CC;cursor:pointer}
+.rv-retour[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){.rv-barre i{transition:none}#S2 .wat-arc.attente .wat-pt{animation:none}}
+/* La mémoire */
+#S2 .wmem{margin-top:10px}
+#S2 .wmem-vide{margin:0;padding:16px;font-size:15px;line-height:1.45;color:#C4C4CC}
+#S2 .wmem-jou{cursor:default;grid-template-columns:10px minmax(0,1fr) auto}
+#S2 .wmem-jou:hover,#S2 .wmem-jou:active{background:none}
+#S2 .wmem-los{width:8px;height:8px;margin-left:1px;border-radius:1px;background:#E8E8EE;transform:rotate(45deg)}
+#S2 .wmem-del{width:44px;height:44px;margin:-8px -10px -8px 0;border:0;border-radius:12px;background:none;position:relative;font-size:13px;font-weight:600;color:#FFC46B}
+#S2 .wmem-del:not(.arme)::before,#S2 .wmem-del:not(.arme)::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:1.6px;background:#9A9AA2;transform:translate(-50%,-50%) rotate(45deg)}
+#S2 .wmem-del:not(.arme)::after{transform:translate(-50%,-50%) rotate(-45deg)}
+#S2 .wmem-del.arme{width:auto;padding:0 10px}
+#S2 .wnotes-box{margin-top:10px}
+#S2 .wnotes-box[hidden]{display:none}
+#S2 .wnotes-hint{margin:6px 2px 0;font-size:13px;color:var(--t2)}
+/* Le projet : ce qui bloque, outils */
+#S2 .wpj-sous{margin-top:18px}
+#S2 .wpj-h{display:flex;justify-content:space-between;align-items:baseline;margin:0 2px 8px;font-size:15px;line-height:20px;font-weight:600;letter-spacing:-.2px;color:#F5F5F7}
+#S2 .wblk{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-height:56px;padding:8px 8px 8px 14px}
+#S2 .wblk.resolu .wblk-text{color:#B8B8BF;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.3)}
+#S2 .wblk-res{min-height:44px;padding:0 14px;border-radius:13px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);font-size:15px;font-weight:500;color:#E8E8EC;white-space:nowrap}
+#S2 .wblk-tog{margin-top:4px}
+#S2 .wretiree{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;min-height:56px;padding:6px 8px 6px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+#S2 .wretiree-t{font-size:15px;line-height:1.35;color:#B8B8BF;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -2589,34 +2669,30 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <div class="wcarte-fiche" id="wcarte-fiche" aria-live="polite"></div>
       </div>
 
-      <!-- MÉTRIQUES RAPIDES -->
-      <div class="wmetrics" id="wmetrics">
-        <div class="wm" data-aller="faites" role="button" tabindex="0">
-          <div class="wm-v" id="m-done">0</div>
-          <div class="wm-l">Accomplies</div>
-        </div>
-        <div class="wm" data-aller="taches" role="button" tabindex="0">
-          <div class="wm-v" id="m-todo">0</div>
-          <div class="wm-l">En cours</div>
-        </div>
-        <div class="wm" data-aller="bloquants" role="button" tabindex="0">
-          <div class="wm-v" id="m-blk">0</div>
-          <div class="wm-l">Bloquants</div>
-        </div>
-        <div class="wm" data-aller="journal" role="button" tabindex="0">
-          <div class="wm-v" id="m-jou">0</div>
-          <div class="wm-l">Journal</div>
+      <!-- AVEC ARC (13 octobre, Rayan : le bas d'un monde sert d'abord à « construire avec Claude ») : une conversation
+           sur CE projet ; ARC propose des tâches, des notes de journal, des bloquants ; rien n'entre sans « Ajouter ». -->
+      <div class="wsec wat" id="wsec-arc">
+        <div class="wsec-head"><span class="wsec-lbl">Avec ARC</span><div class="wsec-line"></div><button class="wat-effacer" id="wat-effacer" type="button" hidden>Effacer</button></div>
+        <div class="wat-panneau">
+          <button class="wat-avant" id="wat-avant" type="button" aria-expanded="false" hidden></button>
+          <div class="wat-fil" id="wat-fil" aria-live="polite"></div>
+          <div class="wat-sugs" id="wat-sugs"></div>
+          <div class="wat-saisie">
+            <textarea class="wat-inp" id="wat-inp" rows="1" maxlength="1200" placeholder="Construis ce projet avec ARC…" aria-label="Ta demande à ARC sur ce projet"></textarea>
+            <button class="wat-envoi" id="wat-envoi" type="button" aria-label="Envoyer à ARC"><i aria-hidden="true"></i></button>
+          </div>
+          <p class="wat-ligne" id="wat-ligne"></p>
         </div>
       </div>
 
-      <!-- TÂCHES : une seule liste (13 octobre). La prochaine en tête, le reste replié. L'« Action prioritaire » et les
-           « Prochaines actions » d'avril recopiaient ces tâches : elles quittent l'écran, les données restent. -->
+      <!-- TÂCHES : une seule liste. La prochaine en tête, le reste replié ; la revue du contenu d'avril au-dessus. -->
       <div class="wsec" id="wsec-taches">
         <div class="wsec-head">
           <span class="wsec-lbl">T&#226;ches</span>
           <div class="wsec-line"></div>
           <span class="wsec-info" id="wsec-tasks-count"></span>
         </div>
+        <div class="wrevue" id="wrevue" hidden></div>
         <div class="wnext" id="wnext"></div>
         <button class="wtask-plus" id="wtask-plus" type="button" aria-expanded="false" aria-controls="wtask-reste"></button>
         <div class="wtask-reste" id="wtask-reste" hidden>
@@ -2628,10 +2704,21 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         </div>
       </div>
 
-      <!-- PENSÉES : celles que tu as déposées et qui sont rangées dans ce projet (absente s'il n'y en a aucune) -->
-      <div class="wsec" id="wsec-pensees" hidden>
-        <div class="wsec-head"><span class="wsec-lbl">Pensées</span><div class="wsec-line"></div><span class="wsec-info" id="wpen-n"></span></div>
-        <div class="wpen" id="wpen-list"></div>
+      <!-- MÉMOIRE : les pensées rangées ici et le journal, sur un seul fil, du plus récent au plus ancien ; les notes libres
+           repliées dessous. -->
+      <div class="wsec" id="wsec-memoire">
+        <div class="wsec-head"><span class="wsec-lbl">Mémoire</span><div class="wsec-line"></div><span class="wsec-info" id="wmem-n"></span></div>
+        <div class="wjou-add-row">
+          <input class="wjou-inp" id="jou-inp" placeholder="Note du jour, décision, avancée…" autocomplete="off" aria-label="Ajouter au journal du projet">
+          <button class="wjou-btn" id="jou-add-btn">Ajouter</button>
+        </div>
+        <div class="wpen wmem" id="jou-list"></div>
+        <button class="wtask-plus" id="wmem-plus" type="button" hidden></button>
+        <button class="wtask-plus wnotes-tog" id="wnotes-tog" type="button" aria-expanded="false" aria-controls="wnotes-box"><span class="wtask-plus-t">Notes libres · <span id="notes-chars">0 mots</span></span><i class="wtask-plus-chev" aria-hidden="true"></i></button>
+        <div class="wnotes-box" id="wnotes-box" hidden>
+          <textarea class="wnotes-ta" id="notes-ta" placeholder="Tes notes, id&#233;es, r&#233;flexions..." aria-label="Notes libres du projet"></textarea>
+          <div class="wnotes-hint" id="wnotes-hint">Enregistré au fil de la frappe.</div>
+        </div>
       </div>
 
       <!-- PROJETS LIÉS : confirmés par Rayan, et propositions d'ARC avec leur raison (absente s'il n'y a rien) -->
@@ -2641,7 +2728,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
         <div id="wlien-list"></div>
       </div>
 
-      <!-- LE PROJET : sa mission, ses outils techniques, sa description (repliée) -->
+      <!-- LE PROJET : sa mission, ce qui bloque, ses outils, ses étiquettes, sa description (repliée) -->
       <div class="wsec wprojet" id="wsec-projet">
         <div class="wsec-head"><span class="wsec-lbl">Le projet</span><div class="wsec-line"></div></div>
         <div class="wmission">
@@ -2654,39 +2741,18 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
             <div class="w-hero-desc" id="wband-desc" hidden></div>
           </div>
         </div>
-      </div>
-
-      <!-- BLOQUANTS -->
-      <div class="wsec" id="wsec-bloquants">
-        <div class="wsec-head"><span class="wsec-lbl">Bloquants</span><div class="wsec-line"></div><button class="wsec-ouvrir" type="button" data-ouvrir="bloquants" aria-label="Ajouter un bloquant">Ajouter</button></div>
-        <div class="wblk-list" id="blk-list"></div>
-        <div class="wblk-add">
-          <input class="wblk-inp" id="blk-inp" placeholder="Ajouter un bloquant...">
-          <button class="wblk-add-btn" id="blk-add-btn">+ Ajouter</button>
+        <div class="wpj-sous" id="wsec-bloquants">
+          <div class="wpj-h"><span>Ce qui bloque</span><span class="wsec-info" id="wblk-n"></span></div>
+          <div class="wblk-list" id="blk-list"></div>
+          <div class="wblk-add">
+            <input class="wblk-inp" id="blk-inp" placeholder="Ajouter un bloquant..." aria-label="Ajouter un bloquant">
+            <button class="wblk-add-btn" id="blk-add-btn">Ajouter</button>
+          </div>
         </div>
-      </div>
-
-      <!-- NOTES -->
-      <div class="wsec" id="wsec-notes">
-        <div class="wsec-head"><span class="wsec-lbl">Notes</span><div class="wsec-line"></div><span class="wsec-info" id="notes-chars">0 mots</span><button class="wsec-ouvrir" type="button" data-ouvrir="notes" aria-label="Écrire une note">Écrire</button></div>
-        <textarea class="wnotes-ta" id="notes-ta" placeholder="Tes notes, id&#233;es, r&#233;flexions..."></textarea>
-        <div class="wnotes-hint">Sauvegarde automatique</div>
-      </div>
-
-      <!-- JOURNAL -->
-      <div class="wsec" id="wsec-journal">
-        <div class="wsec-head"><span class="wsec-lbl">Journal</span><div class="wsec-line"></div><button class="wsec-ouvrir" type="button" data-ouvrir="journal" aria-label="Ajouter une entrée au journal">Ajouter</button></div>
-        <div class="wjou-add-row">
-          <input class="wjou-inp" id="jou-inp" placeholder="Entr&#233;e du jour..." autocomplete="off">
-          <button class="wjou-btn" id="jou-add-btn">+ Ajouter</button>
+        <div class="wpj-sous" id="wsec-outils">
+          <div class="wpj-h"><span>Outils</span></div>
+          <div class="wtools-grid" id="tools-grid"></div>
         </div>
-        <div id="jou-list"></div>
-      </div>
-
-      <!-- OUTILS -->
-      <div class="wsec" id="wsec-outils">
-        <div class="wsec-head"><span class="wsec-lbl">Outils</span><div class="wsec-line"></div><button class="wsec-ouvrir" type="button" data-ouvrir="outils" aria-label="Ajouter un outil">Ajouter</button></div>
-        <div class="wtools-grid" id="tools-grid"></div>
       </div>
       <!-- Endormir ou réveiller ce projet (S.sleep) : il quitte ou rejoint les projets en cours de l'accueil -->
       <div class="w-sommeil">
@@ -3218,6 +3284,19 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   </div>
 </div>
 <!-- SANTÉ : la feuille d'un rendez-vous ou d'un document (même dessin que « Nouveau projet ») -->
+<div id="revue-modal" role="dialog" aria-modal="true" aria-labelledby="rv-titre">
+  <div id="rv-box">
+    <div class="npj-head"><div id="rv-titre">Revue</div><button id="rv-fermer" type="button">Fermer</button></div>
+    <div class="npj-body">
+      <div class="rv-tete"><span id="rv-pos"></span></div>
+      <div class="rv-barre" aria-hidden="true"><i id="rv-prog"></i></div>
+      <p class="rv-k" id="rv-k"></p>
+      <p class="rv-t" id="rv-t" aria-live="polite"></p>
+      <div class="rv-acts" id="rv-acts"></div>
+      <button class="rv-retour" id="rv-retour" type="button" hidden>Revenir au précédent</button>
+    </div>
+  </div>
+</div>
 <div id="sante-modal" role="dialog" aria-modal="true" aria-labelledby="sm-titre">
   <div id="sm-box">
     <div class="npj-head"><div id="sm-titre">Nouveau rendez-vous</div><button id="sm-fermer" type="button">Fermer</button></div>
@@ -4478,6 +4557,7 @@ function mondesConstruire() {
 
 /* Valeurs par défaut et migrations : appelé au chargement local et après une récupération cloud */
 function normalizeS(){
+  if(!S.revue || typeof S.revue !== 'object') S.revue = {};
   if(!S.mondes) S.mondes={};
   if(!S.liens||typeof S.liens!=='object') S.liens={};
   if(!S.propNon||typeof S.propNon!=='object') S.propNon={};
@@ -4698,8 +4778,19 @@ function projetLies(wid) {
     var w = monde(isNaN(+autre) ? autre : +autre) || monde(autre); if(w && out.indexOf(w.name) < 0) out.push(w.name); });
   return out;
 }
+
+/* LA REVUE (13 octobre, Rayan : le contenu écrit en avril « on le révise ensemble ») : S.revue[wid][clé] = { v, at },
+   v = 'garde' (toujours vrai), 'fait' (déjà fait), 'retire' (plus d'actualité). Une tâche ou un bloquant retiré quitte
+   l'écran, la carte et les pourcentages ; rien n'est effacé, « Remettre » le rend. Clés : 't:' + id de tâche,
+   'b:' + les 60 premiers caractères d'un bloquant. */
+function revueEtat(wid, cle) { var r = (S.revue || {})[wid]; return r && r[cle] ? r[cle].v : null; }
+function tacheRetiree(wid, tid) { return revueEtat(wid, 't:' + tid) === 'retire'; }
+function blocCle(txt) { return 'b:' + String(txt).replace(/\s+/g, ' ').trim().slice(0, 60); }
+function bloquantsTous(w) { return [].concat(w.blockers || [], (S.blkCustom || {})[w.id] || []); }
+function bloquantsActifs(w) { return bloquantsTous(w).filter(function(b) { return revueEtat(w.id, blocCle(b)) !== 'retire'; }); }
+function tachesEcrites(w) { return (w.tasks_done || []).concat(w.tasks_todo || []).filter(function(t) { return t && !tacheRetiree(w.id, t.id); }); }
 function projetPct(wd) {
-  var allT = wd.tasks_done.concat(wd.tasks_todo);
+  var allT = tachesEcrites(wd);
   var done = allT.filter(function(t){ return S.tasks[wd.id] && S.tasks[wd.id][t.id]; }).length;
   return allT.length > 0 ? Math.round(done / allT.length * 100) : 0;
 }
@@ -4709,7 +4800,7 @@ function renderCards(){
   WORLDS.forEach(function(wd, rang){
     if(mondeDort(wd.id)){ dort.push(wd); return; }
     actifs++;
-    var allT=wd.tasks_done.concat(wd.tasks_todo);
+    var allT=tachesEcrites(wd);
     var done=allT.filter(function(t){ return S.tasks[wd.id]&&S.tasks[wd.id][t.id]; }).length;
     var pct=allT.length>0?Math.round(done/allT.length*100):0;
     var act=projetActivite(wd), calme=!!act&&(Date.now()-act)>7*86400000;
@@ -4753,14 +4844,13 @@ function renderCards(){
 /* ===== ENTER WORLD ===== */
 var wTimer={s:0,running:false,iv:null};
 function enterWorld(wid){
-  CUR.wid=wid; _secOuvertes={}; _tachesOuvertes=false; _wc.sel=null;
+  CUR.wid=wid; _secOuvertes={}; _tachesOuvertes=false; _wc.sel=null; _memTout=false; _memSuppr=null; _blkResolusOuverts=false; notesDeplier(false);
   var w=monde(wid);
   document.documentElement.style.setProperty("--wc",w.color);
   document.getElementById("S2").setAttribute("data-wid",wid);
   document.getElementById("w-icon").textContent=w.icon;
   document.getElementById("w-name").textContent=w.name;
-  // Update metrics data-wid
-  var allT=w.tasks_done.concat(w.tasks_todo);
+  var allT=tachesEcrites(w);
   var done=allT.filter(function(t){ return S.tasks[wid]&&S.tasks[wid][t.id]; }).length;
   var pct=allT.length>0?Math.round(done/allT.length*100):0;
   var pctB=document.getElementById("w-pct-b");
@@ -4812,51 +4902,31 @@ function renderWorld(){
   descRepli(false);
   var tagsEl=document.getElementById("wband-tags");
   if(tagsEl){ tagsEl.innerHTML=""; (w.tags||[]).forEach(function(t){ var s=document.createElement("span"); s.className="wband-tag"; s.textContent=t; tagsEl.appendChild(s); }); tagsEl.hidden=!(w.tags||[]).length; }
-  var allT=w.tasks_done.concat(w.tasks_todo);
+  var allT=tachesEcrites(w);
   var done=allT.filter(function(t){ return S.tasks[wid]&&S.tasks[wid][t.id]; }).length;
   var pct=allT.length>0?Math.round(done/allT.length*100):0;
   var arc=document.getElementById("ring-arc"); var ringPct=document.getElementById("ring-pct");
   if(arc){ var c=2*Math.PI*34; arc.style.strokeDashoffset=c*(1-pct/100); arc.style.stroke=w.color; }
   if(ringPct) ringPct.textContent=pct+" %";   // espace fine insécable : « 100 % » tient dans l'anneau
-  // Metrics
-  var dm=allT.filter(function(t){return S.tasks[wid]&&S.tasks[wid][t.id];}).length;
-  var tm=allT.filter(function(t){return !S.tasks[wid]||!S.tasks[wid][t.id];}).length;
-  var bm=(S.blkCustom[wid]||[]).length+w.blockers.length;
-  var jm=(S.journal[wid]||[]).length;
-  document.getElementById("m-done").textContent=dm;
-  document.getElementById("m-todo").textContent=tm;
-  document.getElementById("m-blk").textContent=bm;
-  document.getElementById("m-jou").textContent=jm;
   // Mission
   document.getElementById("miss-txt").textContent=w.mission;
   var dot=document.getElementById("miss-dot"); if(dot) dot.style.background=w.color;
   renderTasks();
+  renderRevue();
   renderBlockers();
   renderTools(wid);
-  renderJournal();
-  // Notes
-  var na=document.getElementById("notes-ta"); if(na){ na.value=S.notes[wid]||""; updateNotesChars(); }
-  sectionsVides();
+  // Notes libres (repliées dans la Mémoire)
+  var na=document.getElementById("notes-ta"); if(na && document.activeElement!==na){ na.value=S.notes[wid]||""; updateNotesChars(); }
   renderPenseesProjet();
+  watRendre();
 }
 
-// Sections vides repliées : une ligne et une touche, tant que rien n'y est écrit (sauf si on vient de l'ouvrir)
+// Les sections vides repliées du 10 octobre n'existent plus (13 octobre : Mémoire et « Le projet » les réunissent).
 var _secOuvertes={};
-function sectionsVides(){
-  var wid=CUR.wid, w=monde(wid); if(!w) return;
-  var vide={
-    bloquants: !(w.blockers||[]).length && !(S.blkCustom[wid]||[]).length,
-    notes: !String(S.notes[wid]||"").trim(),
-    journal: !(S.journal[wid]||[]).length,
-    outils: !(S.tools[wid]||[]).length
-  };
-  Object.keys(vide).forEach(function(k){
-    var sec=document.getElementById("wsec-"+k); if(sec) sec.classList.toggle("vide", vide[k] && !_secOuvertes[k]);
-  });
-}
+function sectionsVides(){}
 function sectionOuvrir(k){
-  if(k==="outils"){ addTool(CUR.wid); sectionsVides(); return; }
-  _secOuvertes[k]=true; sectionsVides();
+  if(k==="outils"){ addTool(CUR.wid); return; }
+  if(k==="notes") notesDeplier(true);
   var champ=document.getElementById({bloquants:"blk-inp",notes:"notes-ta",journal:"jou-inp"}[k]);
   if(champ){ champ.focus(); champ.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"}); }
 }
@@ -4878,7 +4948,7 @@ var _tachesOuvertes=false, _wcNext=null;
 function tacheMots(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").split(/[^a-z0-9]+/).filter(function(m){ return m.length>=4; }); }
 function tachesDuMonde(wid){
   var w=monde(wid), fait=S.tasks[wid]||{};
-  var allT=w.tasks_done.concat(w.tasks_todo);
+  var allT=tachesEcrites(w);
   var sorted=[].concat(allT,(S.custom[wid]||[]).map(function(t){ return {id:t.id,t:t.t,custom:true}; }));
   var order=S.taskOrder[wid]||[];
   if(order.length>0){
@@ -4947,12 +5017,19 @@ function renderTasks(){
     L.reste.forEach(function(t){ html+=renderTaskRow(t,wid,false,focusId); });
     html+='</div>';
   }
+  var retirees=(w.tasks_done||[]).concat(w.tasks_todo||[]).filter(function(t){ return t&&tacheRetiree(wid,t.id); });
   if(L.done.length>0){
     html+='<button type="button" class="wtask-grp-lbl wtask-grp-fait" data-action="toggle-done-grp" aria-expanded="false">Accomplies ('+(L.done.length)+')<i aria-hidden="true"></i></button><div id="done-grp" style="display:none"><div class="wtask-list">';
     L.done.forEach(function(t){ html+=renderTaskRow(t,wid,true,focusId); });
     html+='</div></div>';
   }
+  if(retirees.length){
+    html+='<div class="wtask-grp-lbl">Retirées ('+retirees.length+')</div><div class="wtask-list wretirees">';
+    retirees.forEach(function(t){ html+='<div class="wretiree"><span class="wretiree-t">'+esc(t.t)+'</span><button type="button" class="wblk-res" data-remettre="t:'+esc(t.id)+'">Remettre</button></div>'; });
+    html+='</div>';
+  }
   container.innerHTML=html;
+  container.querySelectorAll('[data-remettre]').forEach(function(b){ b.addEventListener('click',function(){ revuePoser(wid, b.getAttribute('data-remettre'), null); }); });
 }
 function tachesDeplier(ouvert){
   _tachesOuvertes=ouvert;
@@ -4984,30 +5061,93 @@ function renderTaskRow(t,wid,done,focusId){
     (t.custom?'<button class="wtask-del" data-action="del-task" data-wid="'+wid+'" data-tid="'+t.id+'" aria-label="Supprimer cette tâche">&#10005;</button>':'')+'</div>';
 }
 
+/* Ce qui bloque (dans « Le projet ») : les bloquants actifs, chacun avec « Résolu » ; les résolus repliés, avec
+   « Remettre ». Un bloquant résolu est une décision de Rayan (S.revue), rien n'est effacé. */
+var _blkResolusOuverts=false;
 function renderBlockers(){
   var wid=CUR.wid; var w=monde(wid);
   var list=document.getElementById("blk-list"); if(!list) return;
-  var blk=[].concat(w.blockers,S.blkCustom[wid]||[]);
-  if(blk.length===0){ list.innerHTML='<div class="wjou-empty">Aucun bloquant.</div>'; return; }
-  var html="";
-  blk.forEach(function(b,i){
-    html+='<div class="wblk">'+
-      '<span class="wblk-num">B'+(i+1)+'</span>'+
-      '<span class="wblk-text">'+esc(b)+'</span></div>';
+  var actifs=bloquantsActifs(w), resolus=bloquantsTous(w).filter(function(b){ return revueEtat(wid, blocCle(b))==='retire'; });
+  var n=document.getElementById("wblk-n"); if(n) n.textContent=actifs.length?String(actifs.length):"";
+  list.innerHTML="";
+  if(!actifs.length){ var v=document.createElement("div"); v.className="wjou-empty"; v.textContent="Rien ne bloque."; list.appendChild(v); }
+  actifs.forEach(function(b){
+    var row=document.createElement("div"); row.className="wblk";
+    var t=document.createElement("span"); t.className="wblk-text"; t.textContent=b;
+    var bt=document.createElement("button"); bt.type="button"; bt.className="wblk-res"; bt.textContent="Résolu"; bt.setAttribute("aria-label","Résolu : "+b);
+    bt.addEventListener("click",function(){ revuePoser(wid, blocCle(b), 'retire'); });
+    row.appendChild(t); row.appendChild(bt); list.appendChild(row);
   });
-  list.innerHTML=html;
+  if(resolus.length){
+    var tog=document.createElement("button"); tog.type="button"; tog.className="wtask-grp-lbl wtask-grp-fait wblk-tog"; tog.setAttribute("aria-expanded",_blkResolusOuverts?"true":"false");
+    tog.textContent=resolus.length+(resolus.length>1?" résolus":" résolu"); var ch=document.createElement("i"); ch.setAttribute("aria-hidden","true"); tog.appendChild(ch);
+    tog.addEventListener("click",function(){ _blkResolusOuverts=!_blkResolusOuverts; renderBlockers(); });
+    list.appendChild(tog);
+    if(_blkResolusOuverts) resolus.forEach(function(b){
+      var row=document.createElement("div"); row.className="wblk resolu";
+      var t=document.createElement("span"); t.className="wblk-text"; t.textContent=b;
+      var bt=document.createElement("button"); bt.type="button"; bt.className="wblk-res"; bt.textContent="Remettre";
+      bt.addEventListener("click",function(){ revuePoser(wid, blocCle(b), null); });
+      row.appendChild(t); row.appendChild(bt); list.appendChild(row);
+    });
+  }
 }
 
-function renderJournal(){
-  var wid=CUR.wid;
+/* LA MÉMOIRE du projet (13 octobre) : un seul fil, du plus récent au plus ancien : les pensées rangées ici (lumière si à
+   faire, anneau si faite ; elles s'ouvrent dans « Déposé ») et les entrées du journal (losange ; supprimer demande un
+   second geste). Huit lignes, puis « Voir les N autres ». */
+var _memTout=false, _memSuppr=null;
+function memFil(w){
+  var out=[];
+  penseesDuProjet(w).forEach(function(x){ out.push({ type:'pensee', ts:new Date(x.t.created_at).getTime(), x:x }); });
+  ((S.journal||{})[w.id]||[]).forEach(function(j){ if(j&&(j.t||j.txt)) out.push({ type:'journal', ts:j.ts||0, j:j }); });
+  out.sort(function(a,b){ return b.ts-a.ts; });
+  return out;
+}
+function renderMemoire(){
+  var w=(typeof CUR!=='undefined'&&CUR.wid>=0)?monde(CUR.wid):null; if(!w) return;
   var list=document.getElementById("jou-list"); if(!list) return;
-  var jou=(S.journal[wid]||[]).slice().reverse();
-  if(jou.length===0){ list.innerHTML='<div class="wjou-empty">Pas encore d\'entrée.</div>'; return; }
-  var html="";
-  jou.slice(0,20).forEach(function(j){
-    html+='<div class="wjou-entry"><span class="wjou-ts">'+fmtTs(j.ts)+'</span><span class="wjou-text">'+esc(j.t)+'</span><button class="wjou-del" data-action="del-jou" data-ts="'+j.ts+'">&#10005;</button></div>';
+  var fil=memFil(w), afaire=fil.filter(function(e){ return e.type==='pensee'&&e.x.f.status!=='done'; }).length;
+  var info=document.getElementById("wmem-n"); if(info) info.textContent=afaire?(afaire+(afaire>1?" pensées à faire":" pensée à faire")):(fil.length?String(fil.length):"");
+  list.innerHTML="";
+  if(!fil.length){ var v=document.createElement("p"); v.className="wmem-vide"; v.textContent="Rien encore. Ce que tu déposes pour ce projet et ce que tu notes ici s’y retrouvent."; list.appendChild(v); }
+  var MAX=8;
+  (_memTout?fil:fil.slice(0,MAX)).forEach(function(e){
+    if(e.type==='pensee'){
+      var x=e.x, fait=x.f.status==='done', row=document.createElement("button");
+      row.type="button"; row.className="wpen-row"+(fait?" fait":""); row.setAttribute("data-tid",x.t.id);
+      var pt=document.createElement("span"); pt.className="wpen-pt"; pt.setAttribute("aria-hidden","true");
+      var tx=document.createElement("span"); tx.className="wpen-txt";
+      var b=document.createElement("span"); b.className="wpen-t"; b.textContent=x.t.body.replace(/\s+/g," ").trim();
+      var mm=document.createElement("span"); mm.className="wpen-m"; mm.textContent=["Pensée", fait?"faite":rangeMomentText(x.f.moment), "déposée "+ilYA(e.ts)].filter(Boolean).join(" · ");
+      tx.appendChild(b); tx.appendChild(mm);
+      var ch=document.createElement("i"); ch.className="wpen-chev"; ch.setAttribute("aria-hidden","true");
+      row.appendChild(pt); row.appendChild(tx); row.appendChild(ch);
+      row.addEventListener("click",function(){ penseeOuvrir(x.t.id); });
+      list.appendChild(row);
+    } else {
+      var j=e.j, row2=document.createElement("div"); row2.className="wpen-row wmem-jou";
+      var pt2=document.createElement("span"); pt2.className="wmem-los"; pt2.setAttribute("aria-hidden","true");
+      var tx2=document.createElement("span"); tx2.className="wpen-txt";
+      var b2=document.createElement("span"); b2.className="wpen-t"; b2.textContent=String(j.t||j.txt).replace(/\s+/g," ").trim();
+      var m2=document.createElement("span"); m2.className="wpen-m"; m2.textContent="Journal · "+(j.ts?ilYA(j.ts):"");
+      tx2.appendChild(b2); tx2.appendChild(m2);
+      var del=document.createElement("button"); del.type="button"; var arme=_memSuppr===j.ts;
+      del.className="wmem-del"+(arme?" arme":""); del.textContent=arme?"Supprimer":""; del.setAttribute("aria-label",arme?"Toucher encore pour supprimer":"Supprimer cette entrée");
+      del.addEventListener("click",function(ev){ ev.stopPropagation();
+        if(_memSuppr===j.ts){ S.journal[w.id]=(S.journal[w.id]||[]).filter(function(y){ return y.ts!==j.ts; }); _memSuppr=null; saveS(); renderMemoire(); wcConstruire(); }
+        else { _memSuppr=j.ts; renderMemoire(); setTimeout(function(){ if(_memSuppr===j.ts){ _memSuppr=null; renderMemoire(); } },4000); } });
+      row2.appendChild(pt2); row2.appendChild(tx2); row2.appendChild(del);
+      list.appendChild(row2);
+    }
   });
-  list.innerHTML=html;
+  var plus=document.getElementById("wmem-plus");
+  if(plus){ plus.hidden=fil.length<=MAX; plus.textContent=_memTout?"Réduire":"Voir les "+(fil.length-MAX)+(fil.length-MAX>1?" autres":" autre"); }
+}
+function renderJournal(){ renderMemoire(); }
+function notesDeplier(ouvert){
+  var b=document.getElementById("wnotes-box"), t=document.getElementById("wnotes-tog"); if(!b||!t) return;
+  b.hidden=!ouvert; t.setAttribute("aria-expanded",ouvert?"true":"false");
 }
 
 function renderTools(wid){
@@ -5984,6 +6124,8 @@ document.addEventListener("click",function(ev){
   // Toggle done group
   if(t.closest("[data-action='toggle-done-grp']")){ var grp=document.getElementById("done-grp"), lblG=t.closest("[data-action='toggle-done-grp']"); if(grp){ var ouvreG=grp.style.display==="none"; grp.style.display=ouvreG?"block":"none"; lblG.setAttribute("aria-expanded",ouvreG?"true":"false"); } return; }
   if(t.closest("#wtask-plus")){ tachesDeplier(!_tachesOuvertes); return; }
+  if(t.closest("#wnotes-tog")){ var nb=document.getElementById("wnotes-box"); notesDeplier(nb&&nb.hidden); return; }
+  if(t.closest("#wmem-plus")){ _memTout=!_memTout; renderMemoire(); return; }
   // Task row click → open task drawer
   var taskRow=t.closest(".wtask-row");
   if(taskRow&&!t.closest("[data-action]")&&!t.closest(".wtask-cb")&&!t.closest(".drag-handle")){ var tid=taskRow.getAttribute("data-tid"); var wid=parseInt(taskRow.getAttribute("data-wid")); if(tid&&wid>=0) openCockpit(wid,tid); return; }
@@ -6308,7 +6450,7 @@ function allerA(quoi){
     var g = document.getElementById("done-grp"), lbl = document.querySelector('#S2 [data-action="toggle-done-grp"]');
     if(g && lbl){ if(g.style.display==="none") lbl.click(); cible = lbl; }
     else cible = document.getElementById("wsec-taches");
-  } else cible = document.getElementById("wsec-"+quoi);
+  } else cible = document.getElementById("wsec-"+({journal:"memoire"}[quoi]||quoi));
   if(!cible) return;
   var doux = !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
   cible.scrollIntoView({ behavior: doux ? "smooth" : "auto", block: "start" });
@@ -6408,7 +6550,7 @@ function searchQuery(q) {
   // Tâches : le titre, ou les notes du cockpit
   var gt = [];
   WORLDS.forEach(function(w) { var wid = w.id;
-    var all = w.tasks_todo.concat(w.tasks_done).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
+    var all = tachesEcrites(w).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
     all.forEach(function(t) {
       var note = (S.taskNotes[wid] || {})[t.id] || '', fait = !!(S.tasks[wid] && S.tasks[wid][t.id]);
       var parTitre = srMatch(t.t, mots), parNote = !parTitre && note && srMatch(note, mots);
@@ -6546,7 +6688,7 @@ function askCorpus() {
     ajoute({ k: 'projet', cherche: [w.name, w.cat, w.mission, w.desc].join(' '), date: 0,
       texte: 'Projet ' + w.name + (dort ? ' (endormi)' : '') + ' · ' + [w.cat, w.mission, w.desc].filter(Boolean).join(' · ').slice(0, 260),
       titre: w.name, meta: ['Projet', w.cat, dort ? 'Endormi' : ''].filter(Boolean).join(' · '), ouvrir: function() { closeSearch(); enterWorld(wid); } });
-    var all = w.tasks_todo.concat(w.tasks_done).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
+    var all = tachesEcrites(w).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
     all.forEach(function(t) {
       var note = (S.taskNotes[wid] || {})[t.id] || '', fait = !!(S.tasks[wid] && S.tasks[wid][t.id]);
       ajoute({ k: 'tache', cherche: [t.t, note, w.name].join(' '), date: 0, afaire: !fait && !dort,
@@ -7400,7 +7542,7 @@ function penseesDe(key) {
 }
 function renderPenseesProjet() {
   var w = (typeof CUR !== 'undefined' && CUR.wid >= 0) ? monde(CUR.wid) : null;
-  renderPensees('wsec-pensees', 'wpen-list', 'wpen-n', penseesDuProjet(w));
+  renderMemoire();
   renderLiensProjet();
   wcConstruire();
 }
@@ -7440,6 +7582,240 @@ function penseeOuvrir(tid) {
   var el = document.querySelector('#depot-list [data-id="' + tid + '"]');
   if(el) el.scrollIntoView({ block: 'center' });
 }
+/* ═══ LA REVUE DU CONTENU D'AVRIL (branche monde-construire, 13 octobre) ═══
+   Les cinq projets d'origine portent des tâches et des bloquants écrits en avril. Rayan les revoit un par un, en un
+   geste chacun : une tâche est « Toujours à faire », « Déjà faite » ou « Plus d'actualité » ; un bloquant est
+   « Toujours vrai » ou « Résolu ». « Revenir » défait le dernier choix. Une tâche déjà faite par la revue n'est pas
+   comptée dans « étapes faites aujourd'hui » (elle l'a été avant). */
+var _rv = { wid: null, file: [], i: 0, hist: [] };
+function revuePoser(wid, cle, v) {
+  if(!S.revue[wid]) S.revue[wid] = {};
+  if(v) S.revue[wid][cle] = { v: v, at: Date.now() }; else delete S.revue[wid][cle];
+  saveS(); if(CUR.wid === wid) renderWorld();
+}
+function revueFile(w) {
+  if(!w || w.cree) return [];
+  var fait = S.tasks[w.id] || {}, out = [];
+  (w.tasks_todo || []).concat(w.tasks_done || []).forEach(function(t) { if(t && !fait[t.id] && !revueEtat(w.id, 't:' + t.id)) out.push({ cle: 't:' + t.id, type: 'tache', id: t.id, txt: t.t }); });
+  (w.blockers || []).forEach(function(b) { if(!revueEtat(w.id, blocCle(b))) out.push({ cle: blocCle(b), type: 'bloquant', txt: b }); });
+  return out;
+}
+function revueBilan(wid) { var r = (S.revue || {})[wid] || {}, n = { garde: 0, fait: 0, retire: 0 }; Object.keys(r).forEach(function(k) { if(n[r[k].v] != null) n[r[k].v]++; }); return n; }
+function renderRevue() {
+  var box = document.getElementById('wrevue'); if(!box) return;
+  var w = monde(CUR.wid), file = revueFile(w), b = revueBilan(CUR.wid), deja = b.garde + b.fait + b.retire;
+  box.hidden = !file.length; box.innerHTML = ''; if(!file.length) return;
+  var t = document.createElement('div'); t.className = 'wrevue-t'; t.textContent = deja ? 'Revue d’avril · ' + file.length + ' à revoir' : 'Revoir ce qui a été écrit en avril';
+  var p = document.createElement('p'); p.className = 'wrevue-p'; p.textContent = file.length + (file.length > 1 ? ' éléments écrits en avril attendent' : ' élément écrit en avril attend') + ' ton avis : toujours vrai, fait, ou plus d’actualité.';
+  var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'wrevue-go'; bt.id = 'wrevue-go'; bt.textContent = deja ? 'Reprendre' : 'Commencer';
+  bt.addEventListener('click', revueOuvrir);
+  box.appendChild(t); box.appendChild(p); box.appendChild(bt);
+}
+function revueOuvrir() {
+  var w = monde(CUR.wid); _rv = { wid: w.id, file: revueFile(w), i: 0, hist: [] };
+  var m = document.getElementById('revue-modal'); m.style.setProperty('--pjc', w.color); m.classList.add('open');
+  revueMontrer();
+}
+function revueFermer() { document.getElementById('revue-modal').classList.remove('open'); if(CUR.wid === _rv.wid) renderWorld(); }
+function revueMontrer() {
+  var w = monde(_rv.wid), n = _rv.file.length, it = _rv.file[_rv.i];
+  document.getElementById('rv-titre').textContent = 'Revue · ' + w.name;
+  document.getElementById('rv-prog').style.transform = 'scaleX(' + (n ? Math.min(1, _rv.i / n) : 1) + ')';
+  var acts = document.getElementById('rv-acts'); acts.innerHTML = '';
+  document.getElementById('rv-retour').hidden = !_rv.hist.length;
+  var bouton = function(txt, v, blanc) { var b = document.createElement('button'); b.type = 'button'; b.className = 'rv-b' + (blanc ? ' blanc' : ''); b.textContent = txt; b.addEventListener('click', function() { revueChoisir(v); }); acts.appendChild(b); return b; };
+  if(!it) {
+    var bl = revueBilan(_rv.wid), parts = [];
+    if(bl.garde) parts.push(bl.garde + ' toujours vrai' + (bl.garde > 1 ? 's' : ''));
+    if(bl.fait) parts.push(bl.fait + ' déjà fait' + (bl.fait > 1 ? 's' : ''));
+    if(bl.retire) parts.push(bl.retire + ' retiré' + (bl.retire > 1 ? 's' : ''));
+    document.getElementById('rv-pos').textContent = 'Revue finie';
+    document.getElementById('rv-k').textContent = parts.join(' · ');
+    document.getElementById('rv-t').textContent = 'Ce projet ne montre plus que ce qui est encore vrai. Ce qui est retiré se remet depuis la liste des tâches ou « Ce qui bloque ».';
+    var f = document.createElement('button'); f.type = 'button'; f.className = 'rv-b blanc'; f.textContent = 'Fermer'; f.addEventListener('click', revueFermer); acts.appendChild(f);
+    return;
+  }
+  document.getElementById('rv-pos').textContent = (_rv.i + 1) + ' sur ' + n;
+  document.getElementById('rv-k').textContent = it.type === 'tache' ? 'Tâche écrite en avril' : 'Bloquant écrit en avril';
+  document.getElementById('rv-t').textContent = it.txt;
+  if(it.type === 'tache') { bouton('Toujours à faire', 'garde', true); bouton('Déjà faite', 'fait'); bouton('Plus d’actualité', 'retire'); }
+  else { bouton('Toujours vrai', 'garde', true); bouton('Résolu', 'retire'); }
+}
+function revueChoisir(v) {
+  var it = _rv.file[_rv.i]; if(!it) return;
+  var wid = _rv.wid; if(!S.revue[wid]) S.revue[wid] = {};
+  S.revue[wid][it.cle] = { v: v, at: Date.now() };
+  if(v === 'fait' && it.type === 'tache') { if(!S.tasks[wid]) S.tasks[wid] = {}; S.tasks[wid][it.id] = true; }
+  _rv.hist.push({ it: it, v: v }); _rv.i++;
+  saveS(); revueMontrer();
+}
+function revueRetour() {
+  var h = _rv.hist.pop(); if(!h) return;
+  var wid = _rv.wid; if(S.revue[wid]) delete S.revue[wid][h.it.cle];
+  if(h.v === 'fait' && h.it.type === 'tache' && S.tasks[wid]) S.tasks[wid][h.it.id] = false;
+  _rv.i--; saveS(); revueMontrer();
+}
+(function() {
+  var on = function(id, ev, fn) { var e = document.getElementById(id); if(e) e.addEventListener(ev, fn); };
+  on('rv-fermer', 'click', revueFermer); on('rv-retour', 'click', revueRetour);
+  on('revue-modal', 'click', function(ev) { if(ev.target.id === 'revue-modal') revueFermer(); });
+  document.addEventListener('keydown', function(ev) { if(ev.key === 'Escape' && document.getElementById('revue-modal').classList.contains('open')) revueFermer(); });
+})();
+
+/* ═══ AVEC ARC : CONSTRUIRE UN PROJET AVEC CLAUDE (branche monde-construire, 13 octobre) ═══
+   Rayan : le bas d'un monde sert d'abord à « construire avec Claude ». Une conversation sur CE projet, sur iPhone comme
+   sur Mac (le panneau Claude de droite, Mac seulement, n'est plus montré). Claude reçoit, à chaque demande et seulement
+   sur le geste de Rayan, ce que le projet garde : nom, mission, description, tâches, bloquants, pensées rangées ici,
+   journal, notes libres, projets reliés ; une ligne vraie dit ce qui part. Il répond court et propose au plus trois
+   actions (tâche, note de journal, bloquant) ; rien n'entre dans le projet sans « Ajouter ». La conversation est gardée
+   sur l'appareil seulement (arc_atelier_v1, trente messages par projet), jamais dans S ni dans Supabase. */
+var WAT_CLE = 'arc_atelier_v1', WAT_MAX = 30;
+var WAT_SYSTEM = 'Tu es ARC, le partenaire de Rayan pour construire un de ses projets. Tu parles français, tu le tutoies, phrases courtes, la conclusion d’abord. Tu t’appuies seulement sur le contexte du projet fourni et sur ce que Rayan te dit : si une information manque, dis-le et pose une seule question ; n’invente aucun fait (chiffres, dates, noms, résultats). Tu peux proposer au plus trois actions concrètes, formulées comme Rayan les écrirait : « tache » (une action à faire, qui commence par un verbe), « journal » (une décision ou un fait à garder), « bloquant » (ce qui empêche d’avancer). Ne propose pas une tâche qui existe déjà. Réponds uniquement en JSON, sans texte autour : {"reponse":"…","propositions":[{"type":"tache","texte":"…"}]}. La réponse fait au plus 120 mots.';
+var _wat = { fils: null, enCours: false, avant: false, effacer: false };
+function watFils() { if(_wat.fils) return _wat.fils; try { _wat.fils = JSON.parse(localStorage.getItem(WAT_CLE) || '{}') || {}; } catch(e) { _wat.fils = {}; } return _wat.fils; }
+function watGarder() { try { localStorage.setItem(WAT_CLE, JSON.stringify(_wat.fils || {})); } catch(e) {} }
+function watFil(wid) { var f = watFils(); if(!f[wid]) f[wid] = []; return f[wid]; }
+function watContexte(w) {
+  var wid = w.id, L = tachesDuMonde(wid), bl = bloquantsActifs(w), pens = penseesDuProjet(w).slice(0, 10), jou = ((S.journal || {})[wid] || []).slice(-8), notes = String((S.notes || {})[wid] || '').trim();
+  var lignes = ['Projet : ' + w.name + (w.cat ? ' (' + w.cat + ')' : ''), 'Mission : ' + (w.mission || '—')];
+  if(w.desc) lignes.push('Description : ' + String(w.desc).slice(0, 400));
+  var etat = rlEtatProjet(w); if(etat) lignes.push('État : ' + etat);
+  lignes.push('Tâches à faire (' + L.todo.length + ') :' + (L.todo.length ? '\n' + L.todo.slice(0, 15).map(function(t) { return '- ' + t.t + (L.next && t.id === L.next.id ? ' (la prochaine)' : ''); }).join('\n') : ' aucune'));
+  lignes.push('Tâches faites : ' + L.done.length + (L.done.length ? ' (dont : ' + L.done.slice(-5).map(function(t) { return t.t; }).join(' ; ') + ')' : ''));
+  if(bl.length) lignes.push('Ce qui bloque :\n' + bl.map(function(b) { return '- ' + b; }).join('\n'));
+  if(pens.length) lignes.push('Pensées de Rayan rangées dans ce projet :\n' + pens.map(function(x) { return '- « ' + x.t.body.replace(/\s+/g, ' ').slice(0, 220) + ' »' + (x.f.status === 'done' ? ' (faite)' : x.f.step ? ' → étape : ' + x.f.step : ''); }).join('\n'));
+  if(jou.length) lignes.push('Journal du projet :\n' + jou.map(function(j) { return '- ' + new Date(j.ts).toLocaleDateString('fr-FR') + ' : ' + String(j.t || j.txt).slice(0, 220); }).join('\n'));
+  if(notes) lignes.push('Notes libres : ' + notes.slice(0, 700));
+  var lies = projetLies(wid); if(lies.length) lignes.push('Projets reliés : ' + lies.join(', '));
+  var parti = ['la mission'];
+  if(L.todo.length + L.done.length) parti.push((L.todo.length + L.done.length) + ((L.todo.length + L.done.length) > 1 ? ' tâches' : ' tâche'));
+  if(bl.length) parti.push(bl.length + (bl.length > 1 ? ' bloquants' : ' bloquant'));
+  if(pens.length) parti.push(pens.length + (pens.length > 1 ? ' pensées' : ' pensée'));
+  if(jou.length) parti.push(jou.length + (jou.length > 1 ? ' entrées du journal' : ' entrée du journal'));
+  if(notes) parti.push('tes notes');
+  var dernier = parti.pop();
+  return { texte: lignes.join('\n\n'), parti: (parti.length ? parti.join(', ') + ' et ' : '') + dernier };
+}
+function watLire(txt) {
+  var t = String(txt || '').trim(), m = t.match(/```(?:json)?\s*([\s\S]*?)```/); if(m) t = m[1].trim();
+  var i = t.indexOf('{'), j = t.lastIndexOf('}'), o = null;
+  if(i >= 0 && j > i) { try { o = JSON.parse(t.slice(i, j + 1)); } catch(e) { o = null; } }
+  if(!o || typeof o !== 'object') return { reponse: String(txt || '').trim(), props: [] };
+  var rep = String(o.reponse || o['réponse'] || o.response || o.texte || '').trim();
+  var ps = Array.isArray(o.propositions) ? o.propositions : Array.isArray(o.actions) ? o.actions : [];
+  var types = { tache: 'tache', 'tâche': 'tache', task: 'tache', journal: 'journal', note: 'journal', bloquant: 'bloquant', blocker: 'bloquant' };
+  var vus = {};
+  var props = ps.map(function(p) { return p && typeof p === 'object' ? { type: types[String(p.type || '').toLowerCase()] || null, texte: String(p.texte || p.text || '').replace(/\s+/g, ' ').trim().slice(0, 160) } : null; })
+    .filter(function(p) { if(!p || !p.type || p.texte.length < 3) return false; var k = p.type + srNorm(p.texte); if(vus[k]) return false; vus[k] = 1; return true; }).slice(0, 3);
+  return { reponse: rep || (props.length ? 'Voici ce que je te propose.' : ''), props: props };
+}
+async function watEnvoyer(q) {
+  q = String(q || '').replace(/\s+$/, '').trim(); if(q.length < 2 || _wat.enCours) return;
+  var w = monde(CUR.wid); if(!w) return;
+  var wid = w.id, fil = watFil(wid), ctx = watContexte(w);
+  fil.push({ role: 'user', texte: q.slice(0, 1200), at: Date.now() });
+  var attente = { role: 'arc', attente: true, at: Date.now() }; fil.push(attente);
+  _wat.enCours = true; _wat.avant = false; watRendre(true);
+  var fin = function(m) { var k = fil.indexOf(attente); if(k >= 0) fil[k] = m; else fil.push(m); while(fil.length > WAT_MAX) fil.shift(); watGarder(); _wat.enCours = false; if(CUR.wid === wid) watRendre(true); };
+  try {
+    if(!(_sb && getUID()) || navigator.onLine === false) throw projetErreur(navigator.onLine === false ? 'reseau' : 'session');
+    var sess = await _sb.auth.getSession(), token = sess.data && sess.data.session && sess.data.session.access_token;
+    if(!token) throw projetErreur('session');
+    // La conversation : les derniers échanges, en commençant par Rayan, en alternance
+    var msgs = [];
+    fil.filter(function(m) { return !m.attente && !m.erreur && m.texte; }).slice(-9).forEach(function(m) {
+      var role = m.role === 'user' ? 'user' : 'assistant';
+      if(!msgs.length && role !== 'user') return;
+      if(msgs.length && msgs[msgs.length - 1].role === role) msgs[msgs.length - 1].content += '\n\n' + m.texte; else msgs.push({ role: role, content: m.texte });
+    });
+    var maintenant = new Date();
+    var system = WAT_SYSTEM + '\n\nAujourd’hui : ' + maintenant.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '.\n\nContexte du projet :\n' + ctx.texte;
+    var resp;
+    try {
+      resp = await fetch(SB_URL + '/functions/v1/ARC-CLAUDE-PROXY', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ model: CLAUDE_MODEL, max_tokens: 900, system: system, messages: msgs }) });
+    } catch(e) { throw projetErreur('reseau'); }
+    if(!resp.ok) throw projetErreur(resp.status === 401 ? 'expire' : resp.status === 403 ? 'interdit' : resp.status === 429 ? 'trop' : resp.status >= 500 ? 'panne' : 'refus');
+    var data = await resp.json().catch(function() { return {}; });
+    var txt = (data.content || []).filter(function(c) { return c && c.type === 'text'; }).map(function(c) { return c.text; }).join('');
+    if(!txt.trim()) throw projetErreur('vide');
+    var lu = watLire(txt);
+    if(!lu.reponse) throw projetErreur(data.stop_reason === 'max_tokens' ? 'coupee' : 'forme');
+    fin({ role: 'arc', texte: lu.reponse, props: lu.props, parti: 'Parti à Claude : ' + ctx.parti + '.', at: Date.now() });
+  } catch(e) {
+    var raison = e.raison || 'reseau';
+    console.warn('Avec ARC : impossible :', raison);
+    fin({ role: 'arc', erreur: 'ARC n’a pas pu répondre : ' + PJ_RAISONS[raison], q: q, at: Date.now() });
+  }
+}
+function watAjouter(m, p) {
+  var w = monde(CUR.wid); if(!w || p.ajoute) return;
+  var wid = w.id;
+  if(p.type === 'tache') { if(!S.custom[wid]) S.custom[wid] = []; S.custom[wid].push({ id: 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), t: p.texte }); }
+  else if(p.type === 'journal') { if(!S.journal[wid]) S.journal[wid] = []; S.journal[wid].push({ ts: Date.now(), t: p.texte }); }
+  else if(p.type === 'bloquant') { if(!S.blkCustom[wid]) S.blkCustom[wid] = []; S.blkCustom[wid].push(p.texte); }
+  p.ajoute = true; watGarder(); saveS(); renderWorld();
+}
+var WAT_NOMS = { tache: 'Tâche', journal: 'Journal', bloquant: 'Bloquant' };
+function watRendre(enBas) {
+  var filBox = document.getElementById('wat-fil'); if(!filBox) return;
+  var w = monde(CUR.wid); if(!w) return;
+  var fil = watFil(w.id), visibles = _wat.avant ? fil : fil.slice(-2);
+  var avant = document.getElementById('wat-avant'), cachees = fil.length - visibles.length;
+  avant.hidden = fil.length <= 2; avant.setAttribute('aria-expanded', _wat.avant ? 'true' : 'false');
+  avant.textContent = _wat.avant ? 'Ne montrer que le dernier échange' : 'Voir les ' + cachees + ' messages d’avant';
+  var ef = document.getElementById('wat-effacer'); ef.hidden = !fil.length || _wat.enCours; ef.textContent = _wat.effacer ? 'Toucher encore pour effacer' : 'Effacer';
+  filBox.innerHTML = '';
+  visibles.forEach(function(m) {
+    var b = document.createElement('div');
+    if(m.role === 'user') { b.className = 'wat-moi'; b.textContent = m.texte; filBox.appendChild(b); return; }
+    b.className = 'wat-arc' + (m.erreur ? ' err' : '') + (m.attente ? ' attente' : '');
+    var k = document.createElement('div'); k.className = 'wat-k'; k.innerHTML = '<span class="wat-pt" aria-hidden="true"></span>'; k.appendChild(document.createTextNode(m.attente ? 'ARC réfléchit…' : 'ARC')); b.appendChild(k);
+    if(m.texte) { var t = document.createElement('div'); t.className = 'wat-t'; t.textContent = m.texte; b.appendChild(t); }
+    if(m.erreur) {
+      var e = document.createElement('div'); e.className = 'wat-t'; e.textContent = m.erreur; b.appendChild(e);
+      var r = document.createElement('button'); r.type = 'button'; r.className = 'wat-re'; r.textContent = 'Réessayer';
+      r.addEventListener('click', function() { var f = watFil(w.id), i = f.indexOf(m); if(i >= 0) { var av = f[i - 1] && f[i - 1].role === 'user'; f.splice(av ? i - 1 : i, av ? 2 : 1); } watGarder(); watEnvoyer(m.q); });
+      b.appendChild(r);
+    }
+    (m.props || []).forEach(function(p) {
+      var c = document.createElement('div'); c.className = 'wat-prop' + (p.ajoute ? ' ok' : '');
+      var tx = document.createElement('div'); tx.className = 'wat-prop-t';
+      var ty = document.createElement('span'); ty.className = 'wat-prop-k'; ty.textContent = WAT_NOMS[p.type]; tx.appendChild(ty);
+      var mo = document.createElement('span'); mo.textContent = p.texte; tx.appendChild(mo);
+      var bt = document.createElement('button'); bt.type = 'button'; bt.className = 'wat-ajout'; bt.textContent = p.ajoute ? 'Ajouté' : 'Ajouter'; bt.disabled = !!p.ajoute;
+      bt.setAttribute('aria-label', (p.ajoute ? 'Ajouté : ' : 'Ajouter ' + WAT_NOMS[p.type].toLowerCase() + ' : ') + p.texte);
+      bt.addEventListener('click', function() { watAjouter(m, p); });
+      c.appendChild(tx); c.appendChild(bt); b.appendChild(c);
+    });
+    if(m.parti) { var pa = document.createElement('div'); pa.className = 'wat-parti'; pa.textContent = m.parti; b.appendChild(pa); }
+    filBox.appendChild(b);
+  });
+  // Les suggestions, tant que la conversation est vide ; la ligne vraie de ce qui partira
+  var sugs = document.getElementById('wat-sugs'); sugs.innerHTML = '';
+  if(!fil.length) {
+    var L = tachesDuMonde(w.id), liste = L.todo.length ? ['Quelle est la prochaine étape ?', 'Découpe la prochaine tâche en petits pas', 'Qu’est-ce qui me freine ?'] : ['Par où commencer ?', 'Propose-moi les trois premières étapes', 'Qu’est-ce qui pourrait bloquer ?'];
+    liste.forEach(function(q) { var c = document.createElement('button'); c.type = 'button'; c.className = 'wat-sug'; c.textContent = q; c.addEventListener('click', function() { watEnvoyer(q); }); sugs.appendChild(c); });
+  }
+  sugs.hidden = !fil.length ? false : true;
+  document.getElementById('wat-ligne').textContent = 'Partira à Claude avec ta demande : ' + watContexte(w).parti + '.';
+  var env = document.getElementById('wat-envoi'); if(env) env.disabled = _wat.enCours;
+  if(enBas) { var sec = document.getElementById('wsec-arc'), wm = document.getElementById('wmain'); if(sec && wm) { var r = sec.getBoundingClientRect(), rm = wm.getBoundingClientRect(); if(r.bottom > rm.bottom - 60) sec.scrollIntoView({ block: 'end', behavior: plCalme() ? 'auto' : 'smooth' }); } }
+}
+function watTaille() { var t = document.getElementById('wat-inp'); if(!t) return; t.style.height = 'auto'; t.style.height = Math.min(160, Math.max(48, t.scrollHeight)) + 'px'; }
+(function() {
+  var inp = document.getElementById('wat-inp'), env = document.getElementById('wat-envoi'); if(!inp || !env) return;
+  var go = function() { var q = inp.value; if(q.trim().length < 2 || _wat.enCours) return; inp.value = ''; watTaille(); watEnvoyer(q); };
+  env.addEventListener('click', go);
+  inp.addEventListener('input', watTaille);
+  inp.addEventListener('keydown', function(ev) { if(ev.key === 'Enter' && !ev.shiftKey && !ev.isComposing && matchMedia('(hover: hover) and (pointer: fine)').matches) { ev.preventDefault(); go(); } });
+  document.getElementById('wat-avant').addEventListener('click', function() { _wat.avant = !_wat.avant; watRendre(); });
+  document.getElementById('wat-effacer').addEventListener('click', function() {
+    if(!_wat.effacer) { _wat.effacer = true; watRendre(); setTimeout(function() { if(_wat.effacer) { _wat.effacer = false; watRendre(); } }, 4000); return; }
+    _wat.effacer = false; watFils()[CUR.wid] = []; watGarder(); watRendre();
+  });
+})();
+
 /* ═══ LE MONDE VIVANT (branche monde-interieur, 13 octobre) ═══
    Rayan, en ouvrant un projet : « un nouveau monde s'ouvre en mode science-fiction productive » ; son premier écran : la
    carte vivante du projet. Le projet au centre, une sphère à sa couleur. Autour, sur trois orbites, ses vraies choses :
@@ -7461,7 +7837,7 @@ function wcMix(a, b, t) {
 }
 function wcItems(w) {
   var out = [], wid = w.id, fait = S.tasks[wid] || {}, quand = (S.taskDone || {})[wid] || {};
-  (w.tasks_done || []).concat(w.tasks_todo || [], (S.custom || {})[wid] || []).forEach(function(t) {
+  tachesEcrites(w).concat((S.custom || {})[wid] || []).forEach(function(t) {
     if(!t || !t.id) return;
     if(fait[t.id]) out.push({ ring: 3, type: 'tache', id: t.id, txt: t.t || '', ts: quand[t.id] || 0 });
     else out.push({ ring: 1, type: 'afaire', id: t.id, txt: t.t || '', ts: 0, next: t.id === _wcNext });
@@ -8897,7 +9273,7 @@ function plElements(e) {
   if(!e.pole) {
     var w = monde(e.id); if(w) {
       var fait = (S.tasks || {})[w.id] || {}, quand = (S.taskDone || {})[w.id] || {};
-      (w.tasks_done || []).concat(w.tasks_todo || [], (S.custom || {})[w.id] || []).forEach(function(t) { if(t && fait[t.id]) out.push({ type: 'tache', id: 't' + w.id + '_' + t.id, txt: t.t || '', ts: quand[t.id] || 0, faite: true }); });
+      tachesEcrites(w).concat((S.custom || {})[w.id] || []).forEach(function(t) { if(t && fait[t.id]) out.push({ type: 'tache', id: 't' + w.id + '_' + t.id, txt: t.t || '', ts: quand[t.id] || 0, faite: true }); });
       ((S.journal || {})[w.id] || []).forEach(function(j, i) { if(j && (j.t || j.txt)) out.push({ type: 'journal', id: 'j' + w.id + '_' + i, txt: j.t || j.txt, ts: j.ts || 0 }); });
     }
   } else if(e.id === 'sante' && typeof santeRdv === 'function') {
