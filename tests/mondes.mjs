@@ -208,9 +208,12 @@ for (const vp of ECRANS) {
   await ctx.addInitScript(sessionScript());
   const fk = fakeSupabase(), appels = [];
   const il = h => new Date(Date.now() - h * 3600e3).toISOString();
+  // Le dernier envoi est « il y a 3 h » ; avant 3 h 10 (heure de Paris) il serait d'hier : il est alors posé il y a 2 minutes
+  const minuit = (() => { const [hh, mm] = new Date().toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' }).split(':').map(Number); return hh * 60 + mm; })();
+  const H0 = minuit >= 190 ? 3 : 2 / 60, DIT = minuit >= 190 ? 'il y a 3\\sh' : 'il y a 2\\smin';
   let relie = true;
-  fk.code = async body => relie ? { status: 200, json: { projet: body.projet, pushed_at: il(3), branche: 'main', prs: [{ n: 61, titre: 'Panier verrouillé', maj: il(2) }],
-    commits: Array.from({ length: 8 }, (_, i) => ({ sha: 'abc' + i + '123', titre: i === 0 ? 'PANIER-ÉCRAN-1 : le panier verrouillé le dit à l’écran (#467)' : 'Envoi numéro ' + i, date: il(3 + i * 5) })) } }
+  fk.code = async body => relie ? { status: 200, json: { projet: body.projet, pushed_at: il(H0), branche: 'main', prs: [{ n: 61, titre: 'Panier verrouillé', maj: il(2) }],
+    commits: Array.from({ length: 8 }, (_, i) => ({ sha: 'abc' + i + '123', titre: i === 0 ? 'PANIER-ÉCRAN-1 : le panier verrouillé le dit à l’écran (#467)' : 'Envoi numéro ' + i, date: il(H0 + i * 5) })) } }
     : { status: 501, json: { error: { message: 'Code non relié : GITHUB_TOKEN absent', source: 'arc-proxy' } } };
   fk.proxy = async body => { if (body.task === 'file') return { status: 500, json: {} }; appels.push(body);
     return { status: 200, json: { content: [{ type: 'text', text: JSON.stringify({ reponse: 'D’après ton code, l’essai « Ma boutique » est fait.', propositions: [{ type: 'faite', texte: 'Cacher la boutique d\'essai aux clients (#392)' }, { type: 'faite', texte: 'Une tâche qui n’existe pas' }] }) }] } }; };
@@ -243,13 +246,13 @@ for (const vp of ECRANS) {
   relie = false; await page.evaluate(() => { _code = {}; localStorage.removeItem('arc_code_v1'); enterWorld(4); }); await page.waitForTimeout(500);
   const nonRelie = await page.evaluate(() => ({ vu: !document.getElementById('wsec-code').hidden, t: document.getElementById('wcode-etat').textContent, lignes: document.querySelectorAll('#wcode-list .wpen-row').length }));
   const codeConsole = errors.filter(e => !/status of 50[01]/.test(e));
-  ok(lancement === 'aryan,atlas' && acc.etat === 'Actif aujourd’hui' && r.vu && /^Envoyé il y a 3\sh$/.test(r.n)
+  ok(lancement === 'aryan,atlas' && acc.etat === 'Actif aujourd’hui' && r.vu && new RegExp('^Envoyé ' + DIT + '$').test(r.n)
      && r.lignes.length === 6 && /^Panier verrouillé \| Demande de fusion ouverte · n° 61/.test(r.lignes[0]) && /\/RR269\/aryan\/pull\/61$/.test(r.lignes[0])
-     && /^PANIER-ÉCRAN-1/.test(r.lignes[1]) && /Envoi · il y a 3\sh · abc0123 \| https:\/\/github.com\/RR269\/aryan\/commit\/abc0123$/.test(r.lignes[1]) && r.plus === 'Voir les 3 envois d’avant'
+     && /^PANIER-ÉCRAN-1/.test(r.lignes[1]) && new RegExp('Envoi · ' + DIT + ' · abc0123 \\| https://github.com/RR269/aryan/commit/abc0123$').test(r.lignes[1]) && r.plus === 'Voir les 3 envois d’avant'
      && r.points === 8 && /Code/.test(r.legende) && r.ordre === 'wsec-code,wsec-arc,wsec-taches' && r.sug === 'Qu’est-ce qui est déjà fait d’après mon code ?' && /8 envois du code/.test(r.ligne)
      && /^Envoi de code · .+ · .+ · Ouvrir$/.test(fiche) && /Ouvrir$/.test(fiche),
      'Le code d\'ARYAN : lu au lancement (ARYAN et ATLAS), activité vraie sur l\'accueil, section en tête du bas (demande de fusion, cinq envois, liens GitHub), huit points sur la carte et leur fiche, suggestion d\'Avec ARC',
-     JSON.stringify({ lancement, acc, r, fiche, conds: [lancement === 'aryan,atlas', acc.etat === 'Actif aujourd\u2019hui', r.vu, /^Envoyé il y a 3\sh$/.test(r.n), r.lignes.length === 6, /^Panier verrouillé \| Demande de fusion ouverte · n° 61/.test(r.lignes[0]), /\/RR269\/aryan\/pull\/61$/.test(r.lignes[0]), r.plus === 'Voir les 3 envois d’avant', r.points === 8, r.ordre === 'wsec-code,wsec-arc,wsec-taches', r.sug === 'Qu’est-ce qui est déjà fait d’après mon code ?'] }));
+     JSON.stringify({ lancement, acc, r, fiche, conds: [lancement === 'aryan,atlas', acc.etat === 'Actif aujourd\u2019hui', r.vu, new RegExp('^Envoyé ' + DIT + '$').test(r.n), r.lignes.length === 6, /^Panier verrouillé \| Demande de fusion ouverte · n° 61/.test(r.lignes[0]), /\/RR269\/aryan\/pull\/61$/.test(r.lignes[0]), r.plus === 'Voir les 3 envois d’avant', r.points === 8, r.ordre === 'wsec-code,wsec-arc,wsec-taches', r.sug === 'Qu’est-ce qui est déjà fait d’après mon code ?'] }));
   ok(/PANIER-ÉCRAN-1/.test(sys) && /Demandes de fusion ouvertes/.test(sys) && !avant && apres.fait && apres.revue && apres.revue.v === 'fait' && !apres.aujourdhui && apres.boutons === 'Cochée·off,Introuvable·off'
      && fba && nonRelie.vu && /pas encore relié/.test(nonRelie.t) && nonRelie.lignes === 0 && !codeConsole.length,
      'Avec ARC lit le code ; « Déjà faite » coche la tâche nommée sur geste (sans compter « aujourd\'hui »), l\'introuvable ne fait rien ; FBA sans dépôt n\'a pas de section ; sans jeton, la section le dit',
@@ -316,6 +319,35 @@ for (const vp of ECRANS) {
      && neuf.n === 0 && neuf.h < 300 && /^Rien encore autour de ce projet/.test(neuf.fiche) && neuf.next && neuf.plus === 'Ajouter une tâche' && neuf.suite,
      '« C\'est fait » coche la prochaine (son point passe au fait) et la suivante monte ; le reste se déplie ; un projet neuf : aucun point, « Rien encore », « Ajouter une tâche », pas de description', JSON.stringify({ apres, deplie, neuf }));
   ok(!errors.length, 'Le monde vivant : aucune erreur de console', errors.join(' | '));
+  await ctx.close();
+}
+
+// Rien ne se perd (14 octobre) : la croix d'une tâche ajoutée la retire au lieu de l'effacer ; elle reste sous « Retirées »,
+// « Remettre » la rend avec son état ; l'anneau compte les tâches ajoutées (avant : « N à faire » les comptait, l'anneau non)
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true, serviceWorkers: 'block', timezoneId: 'Europe/Paris', locale: 'fr-FR', reducedMotion: 'reduce' });
+  await ctx.addInitScript(sessionScript());
+  const { page, errors } = await openPage(browser, url, { ctx, fk: fakeSupabase() });
+  const r0 = await page.evaluate(() => { if (typeof matinClose === 'function') matinClose();
+    const id = Date.now(); S.mondes[String(id)] = { id, name: 'Jardin partagé', key: 'jardinpartage', color: '#30D158', mission: 'Ouvrir un jardin.', desc: '', etapes: [{ id: 'e1', t: 'Trouver un terrain' }], from: null };
+    normalizeS(); S.custom[id] = [{ id: 'c1', t: 'Appeler la mairie' }, { id: 'c2', t: 'Acheter des graines' }]; S.tasks[id].c1 = true; S.taskNotes[id] = { c2: 'Bio, de saison.' }; saveS(); enterWorld(id);
+    return { id, pct: projetPct(monde(id)), ring: document.getElementById('ring-pct').textContent }; });
+  await page.tap('#wtask-plus'); await page.waitForTimeout(150);
+  const croix = await page.evaluate(() => [...document.querySelectorAll('.wtask-del')].map(b => b.getAttribute('data-tid')));
+  await page.tap('.wtask-del[data-tid="c2"]'); await page.waitForTimeout(200);
+  const r1 = await page.evaluate(id => ({ garde: (S.custom[id] || []).some(t => t.id === 'c2'), note: (S.taskNotes[id] || {}).c2, retiree: tacheRetiree(id, 'c2'),
+    liste: [...document.querySelectorAll('#tasks-container .wtask-row .wtask-txt'), ...document.querySelectorAll('#wnext .wnext-t')].map(e => e.textContent),
+    retirees: [...document.querySelectorAll('.wretiree-t')].map(e => e.textContent), toast: document.getElementById('toast-el').textContent,
+    pct: projetPct(monde(id)), carte: _wc.items.some(it => it.id === 'c2'), cherche: (searchQuery('graines'), document.getElementById('search-results') ? document.getElementById('search-results').textContent : '') }), r0.id);
+  await page.evaluate(() => closeSearch && closeSearch());
+  await page.tap('.wretiree [data-remettre="t:c2"]'); await page.waitForTimeout(200);
+  const r2 = await page.evaluate(id => ({ retiree: tacheRetiree(id, 'c2'), retirees: document.querySelectorAll('.wretiree').length, pct: projetPct(monde(id)), note: (S.taskNotes[id] || {}).c2 }), r0.id);
+  ok(r0.pct === 33 && /^33\s%$/.test(r0.ring) && croix.includes('c2') && r1.garde && r1.note === 'Bio, de saison.' && r1.retiree && !r1.liste.includes('Acheter des graines')
+     && r1.retirees.includes('Acheter des graines') && /retirée/.test(r1.toast) && r1.pct === 50 && !r1.carte && !/Acheter des graines/.test(r1.cherche)
+     && !r2.retiree && r2.retirees === 0 && r2.pct === 33 && r2.note === 'Bio, de saison.',
+     'Rien ne se perd : la croix retire une tâche ajoutée (gardée avec ses notes, sous « Retirées », hors liste, carte, pourcentage et recherche) ; « Remettre » la rend ; l\'anneau compte les tâches ajoutées',
+     JSON.stringify({ r0, croix, r1, r2 }));
+  ok(!errors.filter(e => !/status of 50[03]/.test(e)).length, 'Rien ne se perd : aucune erreur de console', errors.join(' | '));
   await ctx.close();
 }
 

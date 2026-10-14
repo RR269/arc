@@ -4,7 +4,7 @@ Application web mono-fichier, en français, servie par GitHub Pages depuis `main
 
 ## Les fichiers
 
-- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 6 750 lignes, sans étape de build.
+- `index.html` : toute l'application (CSS, HTML, JavaScript), environ 10 600 lignes, sans étape de build.
 - `supabase/functions/ARC-CLAUDE-PROXY/index.ts` : code du proxy Claude, sans aucun secret (copie de ce qui est déployé).
 - `sw.js` : service worker, réseau d'abord (la page et les fichiers d'ARC toujours revalidés), cache `arc-v7` en secours hors ligne.
 - `supabase/schema/` : SQL des tables, pour mémoire (personne ne l'exécute depuis le dépôt).
@@ -1780,6 +1780,37 @@ ARC en orbite, et Relier (11 octobre) :
   - **Pas fait, à décider avec Rayan** : ATLAS est encore écrit en avril (immatriculation, pages légales, achat en mode
     test : non confirmés) ; son dépôt n'a pas de boussole lisible de la même façon.
 
+- **PR #58 fusionnée le 13 octobre** (`main` à `63f049d`). Seule PR ouverte : la #5 (sa fermeture est à Rayan).
+- **Rien ne se perd, et ce qui traînait (branche `rien-ne-se-perd`, 14 octobre 2 h)**. Rayan (1 h 57) : « règle tout ce qui
+  te semble nécessaire, ensuite je te partagerai mon avis ». Lu comme : ce qui relève de moi, sans ses décisions (renommer
+  ou supprimer un projet, PR #5, agent de nuit, ATLAS, « Ce soir » après 23 h, données, police du logo). Fait :
+  - **La croix d'une tâche ajoutée ne l'efface plus** (défaut prouvé : `index.html`, gestionnaire `del-task`, retirait la
+    tâche de `S.custom` et son état de `S.tasks`, sans confirmation ni retour ; charte, règle 11). Elle la **retire**
+    comme la revue d'avril (`S.revue[wid]['t:' + id] = { v: 'retire' }`) : la tâche, ses notes et son état restent ;
+    elle quitte la liste, la carte, le pourcentage et la recherche ; elle passe sous « Retirées » avec « Remettre » ;
+    bulle « Tâche retirée · elle reste sous « Retirées » ». Fonctions : `tachesAjoutees(wid)`, `tachesToutes(w)`.
+  - **L'anneau compte les tâches ajoutées** (faux signal prouvé : `projetPct` et l'anneau ne lisaient que les tâches
+    écrites, alors que « N à faire » comptait les ajoutées ; un projet né d'une pensée avec une étape à faire et deux
+    tâches ajoutées, dont une faite, disait 0 % au lieu de 33 %). Même calcul partout : anneau, ligne de l'accueil,
+    planète, carte du monde, « N étapes faites aujourd'hui », recherche, Avec ARC.
+  - **Code mort retiré** (« Ouvert », point 5) ; **`supabase-js` figé** en `2.117.2` (25 septembre ; `@2` suivait la
+    dernière version publiée, une version cassée serait arrivée d'elle-même sur l'iPhone).
+  - **Test réparé, cause prouvée** : `tests/mondes.mjs`, « Le code d'ARYAN », échouait de minuit à 3 h, **sur `main`
+    aussi** (série de référence du 14 octobre à 2 h : 17/18) : le dernier envoi était posé « il y a 3 h », donc hier.
+    Avant 3 h 10 (Paris), il est posé il y a 2 minutes.
+  - **La connexion au vrai Supabase vue le 8 octobre n'est pas reproduite** : une sonde (hors dépôt) a noté toute
+    requête vers `supabase.co` et toute WebSocket pendant la série complète du 14 octobre ; seules apparaissent les
+    coupures simulées par les faux serveurs (`internetdisconnected`), aucune requête partie sur le réseau. Le service
+    worker laisse passer `supabase.co` sans le toucher (`sw.js`). Cause d'origine non trouvée.
+  - Le test de `tests/rangement.mjs` signalé intermittent le 12 octobre est celui dont la cause a été prouvée et
+    réparée le même jour (horloge de Playwright) : 26/26 sur `main` et sur la branche.
+  - Tests : mondes 20/20 (un contrôle ajouté : la croix retire, garde les notes, « Retirées », hors liste, carte,
+    pourcentage et recherche, « Remettre » ; anneau à 33 % puis 50 %), les 14 autres suites passent ;
+    499 `<div` / 499 `</div>`. Vérifié dans Chromium seulement.
+  - **Outillage de cette session** : cdnjs, jsdelivr et Google Fonts injoignables ; `/tmp/arc-outils` reconstruit
+    (Playwright 1.56.1, marked 9.1.6, DOMPurify 3.1.6, supabase-js 2.117.2, Big Shoulders par `@fontsource`), servi par
+    une interception de `cdn.mjs` (sauf pour `tests/sw.mjs`, qui mesure le cache HTTP).
+
 ### Décisions de Rayan (5 octobre)
 
 - FBA, KITCHEN et TELENEUF sont « endormis » (pas archivés).
@@ -1834,11 +1865,13 @@ Projet ARC (organisation RAYAN, offre gratuite), rallumé le 4 octobre.
    seule ligne par compte : le modèle par élément (version 3) reste à faire avant d'ouvrir ARC à d'autres personnes.
 3. **Santé reste un suivi à curseurs** (check-in, score, série) : les consignes envoyées à Claude ne jouent plus
    le « conseiller » (branche `rangement`), mais l'écran reste à ramener à la mémoire, aux échéances et aux documents.
-4. **Un seul fichier** de plus de 5 000 lignes, `supabase-js@2` non figé, insertions
-   `innerHTML` non échappées. L'ancien jeton `x-arc-token` reste lisible dans l'historique public ; il a été
+4. **Un seul fichier** de plus de 10 000 lignes. `supabase-js` est figé en `2.117.2` depuis le 14 octobre. Les
+   insertions `innerHTML` relues le 14 octobre passent par `esc()` ou `mdSafe()` ; restent des couleurs et des
+   identifiants internes. L'ancien jeton `x-arc-token` reste lisible dans l'historique public ; il a été
    remplacé le 4 octobre et le proxy v2 ne le lit plus.
-5. **Code jamais appelé** : `autoWorldBriefing`, `fmtDate`, `initClaude`, `renderChatHistory`,
-   `renderSanteHistory`, `resetPomoWR`.
+5. **Code jamais appelé** : retiré le 14 octobre (`autoWorldBriefing`, `fmtDate`, `initClaude`, `renderChatHistory`,
+   `renderSanteHistory`, `homeEcho` et les styles de l'écho ; `resetPomoWR` n'existait déjà plus). Le panneau Claude
+   de droite (`#wcp`) et l'ancien suivi de Santé (`#sante-suivi`) restent, cachés, exprès (voir plus haut).
 
 ### Chantier suivant
 

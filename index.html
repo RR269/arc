@@ -1499,7 +1499,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   mask:radial-gradient(circle at var(--hx) calc(108px + var(--hr)),transparent 0,transparent calc(var(--hr) - 84px),rgba(0,0,0,.14) calc(var(--hr) - 2px),#000 calc(var(--hr) - .8px),#000 calc(var(--hr) + .9px),rgba(0,0,0,.6) calc(var(--hr) + 1.9px),rgba(0,0,0,.32) calc(var(--hr) + 10px),rgba(0,0,0,.15) calc(var(--hr) + 34px),rgba(0,0,0,.05) calc(var(--hr) + 74px),transparent calc(var(--hr) + 108px))}
 /* Ce qui se touche répond : léger enfoncement, pas de voile */
 #S1 :is(.h-search-btn,.h-menu-btn,#sync-pill,.pj,.vie):active{transform:scale(.985)}
-#S1 :is(.h-inst,.h-echo,.h-ranger,.h-search-btn,.h-menu-btn,.h-menu-item):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
+#S1 :is(.h-inst,.h-ranger,.h-search-btn,.h-menu-btn,.h-menu-item):focus-visible{outline:2px solid rgba(0,143,200,.95);outline-offset:2px}
 /* L'horizon s'allume à l'arrivée sur l'accueil */
 @keyframes hHorizon{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:no-preference){:is(#S1:not(.off) .h-horizon,.scr:not(.off) .x-horizon)::before{animation:hHorizon 1.1s cubic-bezier(.2,.7,.2,1) .15s both}}
@@ -1564,12 +1564,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 #S1 .h-inst-v{max-width:100%;margin-top:6px;font-size:36px;line-height:40px;font-weight:600;letter-spacing:-1.4px;font-variant-numeric:tabular-nums;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #S1 .h-inst-s{max-width:100%;margin-top:2px;font-size:13px;line-height:18px;letter-spacing:-.05px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* L'écho : la dernière pensée déposée, ses mots à elle, et depuis quand ; ouvre « Déposé » sur elle */
-#S1 .h-echo{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:56px;margin:0;padding:9px 16px 10px;border:0;border-top:1px solid rgba(255,255,255,.08);background:none;font-family:var(--fa);text-align:left;color:var(--t1);cursor:pointer;transition:background .2s}
-#S1 .h-echo:hover,#S1 .h-ranger:hover{background:rgba(255,255,255,.03)}
-#S1 .h-echo[hidden],#S1 .h-ranger[hidden]{display:none}
-#S1 .h-echo-l{grid-area:1/1;min-width:0;font-size:13px;line-height:18px;letter-spacing:-.05px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S1 .h-echo-t{grid-area:2/1;min-width:0;font-size:15px;line-height:20px;letter-spacing:-.15px;color:#EBEBF0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-#S1 :is(.h-echo,.h-ranger) .h-chev{grid-area:1/2/3/3;width:7px;height:7px;margin:0 1px 0 0;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
+#S1 .h-ranger .h-chev{grid-area:1/2/3/3;width:7px;height:7px;margin:0 1px 0 0;border-top:1.7px solid var(--t3);border-right:1.7px solid var(--t3);transform:rotate(45deg)}
 /* Ce qui attend un choix : une ligne, un point ambre (un fait, pas une alarme) ; absente quand il n'y a rien */
 #S1 .h-ranger{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;margin:0;padding:0 16px;border:0;border-top:1px solid rgba(255,255,255,.08);background:none;font-family:var(--fa);font-size:15px;letter-spacing:-.15px;color:#E8E8EC;text-align:left;cursor:pointer;transition:background .2s}
 #S1 .h-ranger::before{content:"";flex-shrink:0;width:7px;height:7px;border-radius:50%;background:#FFB340;box-shadow:0 0 8px rgba(255,179,64,.6)}
@@ -1646,10 +1641,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
   #S1 .h-poste{margin-top:8px}
   #S1 .h-inst{padding:20px 40px 18px 22px}
   #S1 .h-inst-v{font-size:44px;line-height:48px;letter-spacing:-1.8px}
-  #S1 .h-inst-s,#S1 .h-echo-l{font-size:14px;line-height:19px}
-  #S1 .h-echo-t,#S1 .h-ranger{font-size:16px}
-  #S1 .h-echo,#S1 .h-ranger{padding-left:22px;padding-right:22px}
-}
+  #S1 .h-inst-s,    }
 @media(prefers-reduced-motion:reduce){#S1 :is(.h-dort-btn,.pj,.vie):active{transform:none}#S1 .h-dort-tog i{transition:none}}
 /* Le monde vu de l'intérieur : l'endormir ou le réveiller */
 #S2 .w-sommeil{margin:8px 0 0;padding:18px 20px;border-radius:20px;border:1px solid var(--b1);background:rgba(255,255,255,.025)}
@@ -3496,7 +3488,7 @@ body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bot
 <div id="toast-el"></div>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" onerror="window._sbLoadFailed=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js" onerror="window._sbLoadFailed=true"></script>
 <script>
 
 
@@ -4714,7 +4706,6 @@ function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")
 function uid(){ return Math.random().toString(36).slice(2,10); }
 var _toastT;
 function toast(msg){ var el=document.getElementById("toast-el"); el.textContent=msg; el.classList.add("on"); clearTimeout(_toastT); _toastT=setTimeout(function(){ el.classList.remove("on"); },2400); }
-function fmtDate(d){ var now=d||new Date(); return now.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"}); }
 function fmtTs(ts){ var d=new Date(ts); return d.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"}); }
 
 var CUR={wid:-1,autocap:true,intel:[],sug:[],pole:null};
@@ -4858,8 +4849,12 @@ function blocCle(txt) { return 'b:' + String(txt).replace(/\s+/g, ' ').trim().sl
 function bloquantsTous(w) { return [].concat(w.blockers || [], (S.blkCustom || {})[w.id] || []); }
 function bloquantsActifs(w) { return bloquantsTous(w).filter(function(b) { return revueEtat(w.id, blocCle(b)) !== 'retire'; }); }
 function tachesEcrites(w) { return (w.tasks_done || []).concat(w.tasks_todo || []).filter(function(t) { return t && !tacheRetiree(w.id, t.id); }); }
+// Les tâches ajoutées à la main (S.custom). La croix ne les efface plus : elle les retire (S.revue « retire »), comme la revue,
+// et elles restent sous « Retirées » avec « Remettre ». Rien ne se perd.
+function tachesAjoutees(wid) { return ((S.custom || {})[wid] || []).filter(function(t) { return t && t.id && !tacheRetiree(wid, t.id); }).map(function(t) { return { id: t.id, t: t.t || t.title || '', custom: true }; }); }
+function tachesToutes(w) { return tachesEcrites(w).concat(tachesAjoutees(w.id)); }
 function projetPct(wd) {
-  var allT = tachesEcrites(wd);
+  var allT = tachesToutes(wd);
   var done = allT.filter(function(t){ return S.tasks[wd.id] && S.tasks[wd.id][t.id]; }).length;
   return allT.length > 0 ? Math.round(done / allT.length * 100) : 0;
 }
@@ -4869,7 +4864,7 @@ function renderCards(){
   WORLDS.forEach(function(wd, rang){
     if(mondeDort(wd.id)){ dort.push(wd); return; }
     actifs++;
-    var allT=tachesEcrites(wd);
+    var allT=tachesToutes(wd);
     var done=allT.filter(function(t){ return S.tasks[wd.id]&&S.tasks[wd.id][t.id]; }).length;
     var pct=allT.length>0?Math.round(done/allT.length*100):0;
     var act=projetActivite(wd), calme=!!act&&(Date.now()-act)>7*86400000;
@@ -4919,7 +4914,7 @@ function enterWorld(wid){
   document.getElementById("S2").setAttribute("data-wid",wid);
   document.getElementById("w-icon").textContent=w.icon;
   document.getElementById("w-name").textContent=w.name;
-  var allT=tachesEcrites(w);
+  var allT=tachesToutes(w);
   var done=allT.filter(function(t){ return S.tasks[wid]&&S.tasks[wid][t.id]; }).length;
   var pct=allT.length>0?Math.round(done/allT.length*100):0;
   var pctB=document.getElementById("w-pct-b");
@@ -4953,16 +4948,6 @@ function enterWorld(wid){
   saveS();
 }
 
-function autoWorldBriefing(wid){
-  var brief=document.getElementById("cp-brief"); if(brief) brief.style.display="flex";
-  var w=monde(wid);
-  var allT=w.tasks_done.concat(w.tasks_todo);
-  var done=allT.filter(function(t){ return S.tasks[wid][t.id]; });
-  var todo=allT.filter(function(t){ return !S.tasks[wid][t.id]; });
-  var blk=w.blockers.concat(S.blkCustom[wid]||[]);
-  var prompt="Tu es le partenaire stratégique de Rayan, entrepreneur à Valence (France).\n\nProjet: "+w.name+"\nMission: "+w.mission+"\n\nTâches accomplies ("+done.length+"): "+done.slice(0,5).map(function(t){return t.t;}).join(", ")+"\nTâches en cours ("+todo.length+"): "+todo.slice(0,5).map(function(t){return t.t;}).join(", ")+"\nBloquants: "+blk.slice(0,3).join(", ")+"\n\nEn 3 phrases max: identifie l'action la plus impactante à faire maintenant. Sois direct, sans intro.";
-  claudeCall(prompt,wid,"briefing");
-}
 
 /* ===== RENDER WORLD ===== */
 function renderWorld(){
@@ -4973,7 +4958,7 @@ function renderWorld(){
   descRepli(false);
   var tagsEl=document.getElementById("wband-tags");
   if(tagsEl){ tagsEl.innerHTML=""; (w.tags||[]).forEach(function(t){ var s=document.createElement("span"); s.className="wband-tag"; s.textContent=t; tagsEl.appendChild(s); }); tagsEl.hidden=!(w.tags||[]).length; }
-  var allT=tachesEcrites(w);
+  var allT=tachesToutes(w);
   var done=allT.filter(function(t){ return S.tasks[wid]&&S.tasks[wid][t.id]; }).length;
   var pct=allT.length>0?Math.round(done/allT.length*100):0;
   var arc=document.getElementById("ring-arc"); var ringPct=document.getElementById("ring-pct");
@@ -5020,8 +5005,7 @@ var _tachesOuvertes=false, _wcNext=null;
 function tacheMots(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").split(/[^a-z0-9]+/).filter(function(m){ return m.length>=4; }); }
 function tachesDuMonde(wid){
   var w=monde(wid), fait=S.tasks[wid]||{};
-  var allT=tachesEcrites(w);
-  var sorted=[].concat(allT,(S.custom[wid]||[]).map(function(t){ return {id:t.id,t:t.t,custom:true}; }));
+  var sorted=tachesToutes(w);
   var order=S.taskOrder[wid]||[];
   if(order.length>0){
     sorted.sort(function(a,b){
@@ -5089,7 +5073,7 @@ function renderTasks(){
     L.reste.forEach(function(t){ html+=renderTaskRow(t,wid,false,focusId); });
     html+='</div>';
   }
-  var retirees=(w.tasks_done||[]).concat(w.tasks_todo||[]).filter(function(t){ return t&&tacheRetiree(wid,t.id); });
+  var retirees=(w.tasks_done||[]).concat(w.tasks_todo||[],S.custom[wid]||[]).filter(function(t){ return t&&tacheRetiree(wid,t.id); });
   if(L.done.length>0){
     html+='<button type="button" class="wtask-grp-lbl wtask-grp-fait" data-action="toggle-done-grp" aria-expanded="false">Accomplies ('+(L.done.length)+')<i aria-hidden="true"></i></button><div id="done-grp" style="display:none"><div class="wtask-list">';
     L.done.forEach(function(t){ html+=renderTaskRow(t,wid,true,focusId); });
@@ -5130,7 +5114,7 @@ function renderTaskRow(t,wid,done,focusId){
     '<span class="wtask-txt" data-action="open-cockpit" data-wid="'+wid+'" data-tid="'+t.id+'">'+esc(t.t)+'</span>'+
     '<button class="task-focus-btn'+(isFocus?" pinned":"")+'" data-action="toggle-focus" data-wid="'+wid+'" data-tid="'+t.id+'" title="Focus du jour" aria-label="Focus du jour">&#9733;</button>'+
     '<span class="wtask-open-hint">Ouvrir Cockpit ↗</span>'+
-    (t.custom?'<button class="wtask-del" data-action="del-task" data-wid="'+wid+'" data-tid="'+t.id+'" aria-label="Supprimer cette tâche">&#10005;</button>':'')+'</div>';
+    (t.custom?'<button class="wtask-del" data-action="del-task" data-wid="'+wid+'" data-tid="'+t.id+'" aria-label="Retirer cette tâche">&#10005;</button>':'')+'</div>';
 }
 
 /* Ce qui bloque (dans « Le projet ») : les bloquants actifs, chacun avec « Résolu » ; les résolus repliés, avec
@@ -5474,9 +5458,6 @@ function renderSanteChart(){
   container.innerHTML = html;
 }
 
-function renderSanteHistory(){
-  renderSanteChart();
-}
 
 function saveCheckin(){
   var ci = { date: new Date().toISOString() };
@@ -6188,7 +6169,7 @@ document.addEventListener("click",function(ev){
   if(focusEl){ var wid=parseInt(focusEl.getAttribute("data-wid")); var tid=focusEl.getAttribute("data-tid"); S.focus[wid]=S.focus[wid]===tid?null:tid; saveS(); renderTasks(); renderWorld(); return; }
   // Del task
   var delEl=t.closest("[data-action='del-task']");
-  if(delEl){ var wid=parseInt(delEl.getAttribute("data-wid")); var tid=delEl.getAttribute("data-tid"); S.custom[wid]=S.custom[wid].filter(function(t){ return t.id!==tid; }); delete S.tasks[wid][tid]; saveS(); renderTasks(); renderWorld(); return; }
+  if(delEl){ var wid=parseInt(delEl.getAttribute("data-wid")); var tid=delEl.getAttribute("data-tid"); if(!S.revue[wid]) S.revue[wid]={}; S.revue[wid]["t:"+tid]={v:"retire",at:Date.now()}; saveS(); renderTasks(); renderWorld(); toast("Tâche retirée · elle reste sous « Retirées »"); return; }
   // Del journal
   var delJou=t.closest("[data-action='del-jou']");
   if(delJou){ var ts=parseInt(delJou.getAttribute("data-ts")); var wid=CUR.wid; S.journal[wid]=S.journal[wid].filter(function(j){ return j.ts!==ts; }); saveS(); renderJournal(); return; }
@@ -6622,7 +6603,7 @@ function searchQuery(q) {
   // Tâches : le titre, ou les notes du cockpit
   var gt = [];
   WORLDS.forEach(function(w) { var wid = w.id;
-    var all = tachesEcrites(w).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
+    var all = tachesToutes(w);
     all.forEach(function(t) {
       var note = (S.taskNotes[wid] || {})[t.id] || '', fait = !!(S.tasks[wid] && S.tasks[wid][t.id]);
       var parTitre = srMatch(t.t, mots), parNote = !parTitre && note && srMatch(note, mots);
@@ -6760,7 +6741,7 @@ function askCorpus() {
     ajoute({ k: 'projet', cherche: [w.name, w.cat, w.mission, w.desc].join(' '), date: 0,
       texte: 'Projet ' + w.name + (dort ? ' (endormi)' : '') + ' · ' + [w.cat, w.mission, w.desc].filter(Boolean).join(' · ').slice(0, 260),
       titre: w.name, meta: ['Projet', w.cat, dort ? 'Endormi' : ''].filter(Boolean).join(' · '), ouvrir: function() { closeSearch(); enterWorld(wid); } });
-    var all = tachesEcrites(w).concat((S.custom[wid] || []).map(function(t) { return { id: t.id, t: t.t }; }));
+    var all = tachesToutes(w);
     all.forEach(function(t) {
       var note = (S.taskNotes[wid] || {})[t.id] || '', fait = !!(S.tasks[wid] && S.tasks[wid][t.id]);
       ajoute({ k: 'tache', cherche: [t.t, note, w.name].join(' '), date: 0, afaire: !fait && !dort,
@@ -7108,24 +7089,8 @@ async function cpSend(widOverride, textOverride){
 }
 /* ═══ PÔLE SANTÉ ═══ */
 
-function initClaude(wid){ /* Claude appelé uniquement à la demande */ }
 
 
-function renderChatHistory(wid){
-  var msgs=document.getElementById("cp-msgs"); if(!msgs) return;
-  var history=S.chatMsgs[wid]||[];
-  if(history.length===0){ document.getElementById("cp-welcome").style.display="block"; return; }
-  document.getElementById("cp-welcome").style.display="none";
-  var existingMsgs=msgs.querySelectorAll(".msg");
-  existingMsgs.forEach(function(m){ m.remove(); });
-  var typing=document.getElementById("cp-typing");
-  history.slice(-30).forEach(function(m){
-    var w=monde(CUR.wid); var color=w?w.color:"#fff";
-    var el=createMsgEl(m.r,m.t,color);
-    msgs.insertBefore(el,typing);
-  });
-  msgs.scrollTop=msgs.scrollHeight;
-}
 
 
 function createMsgEl(role,txt,color){
@@ -8034,7 +7999,7 @@ function wcMix(a, b, t) {
 }
 function wcItems(w) {
   var out = [], wid = w.id, fait = S.tasks[wid] || {}, quand = (S.taskDone || {})[wid] || {};
-  tachesEcrites(w).concat((S.custom || {})[wid] || []).forEach(function(t) {
+  tachesToutes(w).forEach(function(t) {
     if(!t || !t.id) return;
     if(fait[t.id]) out.push({ ring: 3, type: 'tache', id: t.id, txt: t.t || '', ts: quand[t.id] || 0 });
     else out.push({ ring: 1, type: 'afaire', id: t.id, txt: t.t || '', ts: 0, next: t.id === _wcNext });
@@ -9397,23 +9362,12 @@ function rangeHomeRender() {
   var n = rangeToSortCount(), tr = document.getElementById('h-ranger');
   tr.hidden = n === 0;
   document.getElementById('h-ranger-t').textContent = n + (n > 1 ? ' pensées à ranger' : ' pensée à ranger');
-  homeEcho();
   homeCiel();
   // Les rangements arrivent après le rendu de l'accueil : les faits du jour et l'activité des projets les suivent
   if(typeof renderFaits === 'function') renderFaits();
   if(typeof renderCards === 'function' && !_renderCardsEnCours) { _renderCardsEnCours = true; try { renderCards(); } finally { _renderCardsEnCours = false; } }
 }
 var _renderCardsEnCours = false;
-// L'écho : la dernière pensée déposée (ni annulée ni refusée), ses mots, et depuis quand
-var _echoTid = null;
-function homeEcho() {
-  var el = document.getElementById('h-echo'); if(!el) return;
-  var idx = rangeIndex(), t = depotList().filter(function(x) { var f = idx.latest[x.id]; return x.status !== 'rejected' && !(f && f.status === 'cancelled'); })[0];
-  el.hidden = !t; _echoTid = t ? t.id : null;
-  if(!t) return;
-  document.getElementById('h-echo-l').textContent = 'Dernière pensée · ' + ilYA(new Date(t.created_at).getTime());
-  document.getElementById('h-echo-t').textContent = '« ' + t.body.replace(/\s+/g, ' ').trim() + ' »';
-}
 function ilYA(ts) {
   var m = Math.floor((Date.now() - ts) / 60000);
   if(m < 1) return 'à l’instant';
@@ -9475,7 +9429,7 @@ function plElements(e) {
   if(!e.pole) {
     var w = monde(e.id); if(w) {
       var fait = (S.tasks || {})[w.id] || {}, quand = (S.taskDone || {})[w.id] || {};
-      tachesEcrites(w).concat((S.custom || {})[w.id] || []).forEach(function(t) { if(t && fait[t.id]) out.push({ type: 'tache', id: 't' + w.id + '_' + t.id, txt: t.t || '', ts: quand[t.id] || 0, faite: true }); });
+      tachesToutes(w).forEach(function(t) { if(t && fait[t.id]) out.push({ type: 'tache', id: 't' + w.id + '_' + t.id, txt: t.t || '', ts: quand[t.id] || 0, faite: true }); });
       ((S.journal || {})[w.id] || []).forEach(function(j, i) { if(j && (j.t || j.txt)) out.push({ type: 'journal', id: 'j' + w.id + '_' + i, txt: j.t || j.txt, ts: j.ts || 0 }); });
     }
   } else if(e.id === 'sante' && typeof santeRdv === 'function') {
